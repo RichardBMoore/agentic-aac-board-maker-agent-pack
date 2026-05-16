@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title>Open Boardmaker</title>
+  <rect width="512" height="512" rx="88" fill="#ffffff"/>
+  <rect x="34" y="34" width="444" height="444" rx="64" fill="#eef5ff" stroke="#16212d" stroke-width="18"/>
+  <g stroke="#16212d" stroke-width="14" fill="#ffffff">
+    <rect x="86" y="92" width="146" height="132" rx="22"/>
+    <rect x="280" y="92" width="146" height="132" rx="22"/>
+    <rect x="86" y="288" width="146" height="132" rx="22"/>
+    <rect x="280" y="288" width="146" height="132" rx="22"/>
+  </g>
+  <path d="M128 168l28 28 54-70" fill="none" stroke="#237847" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M316 132l74 74M390 132l-74 74" fill="none" stroke="#b3261e" stroke-width="20" stroke-linecap="round"/>
+  <circle cx="159" cy="354" r="34" fill="#1d62d5"/>
+  <path d="M324 350h58M353 321v58" fill="none" stroke="#a85a00" stroke-width="20" stroke-linecap="round"/>
+</svg>

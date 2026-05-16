@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "0.1.0",
+  "app": "Open Boardmaker",
+  "name": "Animal Book Reader",
+  "type": "interactive",
+  "settings": {
+    "speakLabels": true,
+    "showLabels": true,
+    "dwellTimeMs": 1200,
+    "switchScanning": false,
+    "scanSpeedMs": 1400,
+    "scanPattern": "linear"
+  },
+  "pages": [
+    {
+      "id": "page-dog",
+      "name": "Dog",
+      "layout": "grid",
+      "gridColumns": 2,
+      "gridRows": 1,
+      "margin": 10,
+      "backgroundColour": "#ffffff",
+      "buttons": [
+        { "id": "btn-dog", "label": "I see a dog", "symbolId": "7202", "result": "selected", "style": { "fillColour": "#ffffff" } },
+        { "id": "btn-dog-next", "label": "Next", "symbolId": "6630", "result": "selected", "style": { "fillColour": "#e8f2ff" }, "actions": [{ "id": "act-dog-next-speak", "type": "speak-label" }, { "id": "act-dog-next-log", "type": "log-attempt" }, { "id": "act-dog-next-page", "type": "next-page" }] }
+      ]
+    },
+    {
+      "id": "page-cat",
+      "name": "Cat",
+      "layout": "grid",
+      "gridColumns": 2,
+      "gridRows": 1,
+      "margin": 10,
+      "backgroundColour": "#ffffff",
+      "buttons": [
+        { "id": "btn-cat", "label": "I see a cat", "symbolId": "7114", "result": "selected", "style": { "fillColour": "#ffffff" } },
+        { "id": "btn-cat-next", "label": "Next", "symbolId": "6630", "result": "selected", "style": { "fillColour": "#e8f2ff" }, "actions": [{ "id": "act-cat-next-speak", "type": "speak-label" }, { "id": "act-cat-next-log", "type": "log-attempt" }, { "id": "act-cat-next-page", "type": "next-page" }] }
+      ]
+    },
+    {
+      "id": "page-bird",
+      "name": "Bird",
+      "layout": "grid",
+      "gridColumns": 2,
+      "gridRows": 1,
+      "margin": 10,
+      "backgroundColour": "#ffffff",
+      "buttons": [
+        { "id": "btn-bird", "label": "I see a bird", "symbolId": "2490", "result": "selected", "style": { "fillColour": "#ffffff" } },
+        { "id": "btn-book-finished", "label": "Finished", "symbolId": "28429", "result": "correct", "style": { "fillColour": "#eaf7ed" } }
+      ]
+    }
+  ],
+  "metadata": {
+    "tags": ["book-reader", "animals", "early-literacy"],
+    "privacyLevel": "anonymous"
+  }
+}

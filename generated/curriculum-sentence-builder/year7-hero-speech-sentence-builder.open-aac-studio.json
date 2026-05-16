@@ -1,0 +1,679 @@
+{
+  "schemaVersion": "0.1.0",
+  "app": "Open AAC Studio",
+  "id": "year7-hero-speech-sentence-builder",
+  "name": "Year 7 Hero Speech Sentence Builder",
+  "type": "interactive",
+  "created": "2026-05-16T04:24:15.699800Z",
+  "modified": "2026-05-16T04:24:15.699800Z",
+  "settings": {
+    "orientation": "landscape",
+    "width": 1024,
+    "height": 768,
+    "speakLabels": true,
+    "showLabels": true,
+    "highlightColour": "#ffeb3b",
+    "font": "Verdana",
+    "fontSize": 18,
+    "fontColour": "#000000",
+    "backgroundColour": "#ffffff",
+    "showStopButton": true,
+    "dwellTimeMs": 1100,
+    "switchScanning": false,
+    "scanSpeedMs": 1400,
+    "scanPattern": "linear"
+  },
+  "accessibility": {
+    "intendedAccess": [
+      "touch",
+      "keyboard",
+      "mouse",
+      "eye-gaze-dwell"
+    ],
+    "minimumTargetSizePx": 132,
+    "dwellSafe": true,
+    "scanOrder": "left-to-right sentence-building order",
+    "audioCues": true
+  },
+  "pages": [
+    {
+      "id": "page-main",
+      "name": "Main",
+      "pattern": "sentence-builder",
+      "layout": "grid",
+      "gridColumns": 4,
+      "gridRows": 3,
+      "margin": 18,
+      "backgroundColour": "#f7fbff",
+      "backgroundImage": null,
+      "buttons": [
+        {
+          "id": "btn-my-hero",
+          "type": "standard",
+          "label": "My hero is...",
+          "role": "sentence",
+          "function": "comment",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "hero",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 25.0,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "My hero is",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-my-hero-speak",
+              "type": "speak-text",
+              "text": "My hero is"
+            },
+            {
+              "id": "act-btn-my-hero-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-i-think",
+          "type": "standard",
+          "label": "I think...",
+          "role": "sentence",
+          "function": "comment",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "opinion",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 25.0,
+            "y": 0.0,
+            "width": 25.0,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "I think",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-i-think-speak",
+              "type": "speak-text",
+              "text": "I think"
+            },
+            {
+              "id": "act-btn-i-think-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-because",
+          "type": "standard",
+          "label": "because",
+          "role": "sentence",
+          "function": "explain",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "because",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 50.0,
+            "y": 0.0,
+            "width": 25.0,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "because",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-because-speak",
+              "type": "speak-text",
+              "text": "because"
+            },
+            {
+              "id": "act-btn-because-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-example",
+          "type": "standard",
+          "label": "For example...",
+          "role": "evidence",
+          "function": "explain",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "example",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 75.0,
+            "y": 0.0,
+            "width": 25.0,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "For example",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-example-speak",
+              "type": "speak-text",
+              "text": "For example"
+            },
+            {
+              "id": "act-btn-example-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-brave",
+          "type": "standard",
+          "label": "brave",
+          "role": "fringe",
+          "function": "comment",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "brave",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 0.0,
+            "y": 33.3333,
+            "width": 25.0,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "brave",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-brave-speak",
+              "type": "speak-text",
+              "text": "brave"
+            },
+            {
+              "id": "act-btn-brave-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-kind",
+          "type": "standard",
+          "label": "kind",
+          "role": "fringe",
+          "function": "comment",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "kind",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 25.0,
+            "y": 33.3333,
+            "width": 25.0,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "kind",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-kind-speak",
+              "type": "speak-text",
+              "text": "kind"
+            },
+            {
+              "id": "act-btn-kind-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-help-others",
+          "type": "standard",
+          "label": "helps others",
+          "role": "fringe",
+          "function": "comment",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "helping others",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 50.0,
+            "y": 33.3333,
+            "width": 25.0,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "helps others",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-help-others-speak",
+              "type": "speak-text",
+              "text": "helps others"
+            },
+            {
+              "id": "act-btn-help-others-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-faces-danger",
+          "type": "standard",
+          "label": "faces danger",
+          "role": "fringe",
+          "function": "comment",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "danger",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 75.0,
+            "y": 33.3333,
+            "width": 25.0,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "faces danger",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-faces-danger-speak",
+              "type": "speak-text",
+              "text": "faces danger"
+            },
+            {
+              "id": "act-btn-faces-danger-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-rehearse",
+          "type": "standard",
+          "label": "Rehearse",
+          "role": "sentence",
+          "function": "reflect",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "practice speak",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 0.0,
+            "y": 66.6667,
+            "width": 25.0,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "I want to rehearse that sentence",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-rehearse-speak",
+              "type": "speak-text",
+              "text": "I want to rehearse that sentence"
+            },
+            {
+              "id": "act-btn-rehearse-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-say-again",
+          "type": "standard",
+          "label": "Say it again",
+          "role": "repair",
+          "function": "repair",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "repeat",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 25.0,
+            "y": 66.6667,
+            "width": 25.0,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "Please say it again",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-say-again-speak",
+              "type": "speak-text",
+              "text": "Please say it again"
+            },
+            {
+              "id": "act-btn-say-again-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-change",
+          "type": "standard",
+          "label": "Change my idea",
+          "role": "repair",
+          "function": "repair",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "change",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 50.0,
+            "y": 66.6667,
+            "width": 25.0,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "I want to change my idea",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-change-speak",
+              "type": "speak-text",
+              "text": "I want to change my idea"
+            },
+            {
+              "id": "act-btn-change-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-help",
+          "type": "standard",
+          "label": "Help please",
+          "role": "repair",
+          "function": "request",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "help",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 75.0,
+            "y": 66.6667,
+            "width": 25.0,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "Help please",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-help-speak",
+              "type": "speak-text",
+              "text": "Help please"
+            },
+            {
+              "id": "act-btn-help-log",
+              "type": "log-attempt"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variables": {},
+  "teacherNotes": {
+    "curriculum": "Supports Year 7 English speaking/listening by giving access to opinion, reasoning and evidence language for a short hero speech.",
+    "customisation": "Replace adjectives and example prompts with the class text, film, novel or local hero being studied.",
+    "repair": "Keep Say it again, Change my idea and Help please available so the student can repair the sentence-building task.",
+    "use": "Use for planning, rehearsal or supported oral presentation. Do not treat the board as the student's full expressive system.",
+    "modeling": "Model a complete sentence chain: My hero is... I think... because... For example.... Accept partial selections as valid drafting or rehearsal."
+  },
+  "communicationFunctions": [
+    "comment",
+    "explain",
+    "reflect",
+    "repair",
+    "request"
+  ],
+  "metadata": {
+    "tags": [
+      "aac",
+      "agent-generated",
+      "proof-of-concept",
+      "curriculum-sentence-builder",
+      "english",
+      "year-7",
+      "sentence-builder"
+    ],
+    "level": "",
+    "curriculum": "Australian Curriculum English Year 7: expressing a viewpoint, developing spoken texts, using reasons/examples, rehearsing presentation language.",
+    "privacyLevel": "anonymous",
+    "generatedFrom": "agentic-aac-board-ir",
+    "sourceIrSchemaVersion": "0.2.0"
+  },
+  "licences": [
+    {
+      "source": "ARASAAC",
+      "licence": "CC BY-NC-SA",
+      "attribution": "Pictograms by ARASAAC (Government of Aragon) if ARASAAC symbols are later inserted; these HTML drafts use text placeholders only."
+    }
+  ]
+}

@@ -1,0 +1,534 @@
+{
+  "schemaVersion": "0.1.0",
+  "app": "Open AAC Studio",
+  "id": "qcia-community-shops",
+  "name": "QCIA Community Access: Going to the Shops",
+  "type": "interactive",
+  "created": "2026-05-16T04:24:15.758598Z",
+  "modified": "2026-05-16T04:24:15.758598Z",
+  "settings": {
+    "orientation": "landscape",
+    "width": 1024,
+    "height": 768,
+    "speakLabels": true,
+    "showLabels": true,
+    "highlightColour": "#ffeb3b",
+    "font": "Verdana",
+    "fontSize": 18,
+    "fontColour": "#000000",
+    "backgroundColour": "#ffffff",
+    "showStopButton": true,
+    "dwellTimeMs": 1100,
+    "switchScanning": false,
+    "scanSpeedMs": 1400,
+    "scanPattern": "linear"
+  },
+  "accessibility": {
+    "intendedAccess": [
+      "touch",
+      "keyboard",
+      "mouse",
+      "eye-gaze-dwell"
+    ],
+    "minimumTargetSizePx": 132,
+    "dwellSafe": true,
+    "scanOrder": "left-to-right, top-to-bottom",
+    "audioCues": true
+  },
+  "pages": [
+    {
+      "id": "page-main",
+      "name": "Main",
+      "pattern": "community-access-board",
+      "layout": "grid",
+      "gridColumns": 3,
+      "gridRows": 3,
+      "margin": 18,
+      "backgroundColour": "#f7fbff",
+      "backgroundImage": null,
+      "buttons": [
+        {
+          "id": "btn-hello",
+          "type": "standard",
+          "label": "Hello",
+          "role": "core",
+          "function": "initiate",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "hello greeting",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 33.3333,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "Hello",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-hello-speak",
+              "type": "speak-text",
+              "text": "Hello"
+            },
+            {
+              "id": "act-btn-hello-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-buy",
+          "type": "standard",
+          "label": "I want to buy this",
+          "role": "fringe",
+          "function": "request",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "buy item",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 33.3333,
+            "y": 0.0,
+            "width": 33.3333,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "I want to buy this",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-buy-speak",
+              "type": "speak-text",
+              "text": "I want to buy this"
+            },
+            {
+              "id": "act-btn-buy-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-pay",
+          "type": "standard",
+          "label": "Pay now",
+          "role": "fringe",
+          "function": "request",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "pay money",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 66.6667,
+            "y": 0.0,
+            "width": 33.3333,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "I am ready to pay",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-pay-speak",
+              "type": "speak-text",
+              "text": "I am ready to pay"
+            },
+            {
+              "id": "act-btn-pay-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-where",
+          "type": "standard",
+          "label": "Where is it?",
+          "role": "question",
+          "function": "ask",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "where question",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 0.0,
+            "y": 33.3333,
+            "width": 33.3333,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "Where is it?",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-where-speak",
+              "type": "speak-text",
+              "text": "Where is it?"
+            },
+            {
+              "id": "act-btn-where-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-choose",
+          "type": "standard",
+          "label": "I choose this",
+          "role": "fringe",
+          "function": "choose",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "choose",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 33.3333,
+            "y": 33.3333,
+            "width": 33.3333,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "I choose this one",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-choose-speak",
+              "type": "speak-text",
+              "text": "I choose this one"
+            },
+            {
+              "id": "act-btn-choose-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-too-much",
+          "type": "standard",
+          "label": "Too expensive",
+          "role": "comment",
+          "function": "comment",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "expensive",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 66.6667,
+            "y": 33.3333,
+            "width": 33.3333,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "That is too expensive",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-too-much-speak",
+              "type": "speak-text",
+              "text": "That is too expensive"
+            },
+            {
+              "id": "act-btn-too-much-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-help",
+          "type": "standard",
+          "label": "Help please",
+          "role": "repair",
+          "function": "repair",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "help",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 0.0,
+            "y": 66.6667,
+            "width": 33.3333,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "Help please",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-help-speak",
+              "type": "speak-text",
+              "text": "Help please"
+            },
+            {
+              "id": "act-btn-help-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-stop",
+          "type": "standard",
+          "label": "Stop / wait",
+          "role": "repair",
+          "function": "refuse",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "stop wait",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 33.3333,
+            "y": 66.6667,
+            "width": 33.3333,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "Stop, please wait",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-stop-speak",
+              "type": "speak-text",
+              "text": "Stop, please wait"
+            },
+            {
+              "id": "act-btn-stop-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-finished",
+          "type": "standard",
+          "label": "Finished",
+          "role": "repair",
+          "function": "regulate-rest",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "finished",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 66.6667,
+            "y": 66.6667,
+            "width": 33.3333,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "I am finished",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-finished-speak",
+              "type": "speak-text",
+              "text": "I am finished"
+            },
+            {
+              "id": "act-btn-finished-log",
+              "type": "log-attempt"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variables": {},
+  "teacherNotes": {
+    "evidence": "QCIA evidence can note participation in a familiar community routine, functional communication attempts, help-seeking, choice-making and safety language.",
+    "customisation": "Replace shop/item vocabulary with the actual excursion, class enterprise or role-play context. Keep Help, Stop/wait and Finished stable.",
+    "privacy": "Use de-identified notes only. Do not record names, behaviour details or community incidents inside the generated files.",
+    "safety": "This supports communication during community access; it does not replace adult supervision, risk assessment or emergency processes.",
+    "modeling": "Model real community phrases before the trip and during role play: greeting, asking where something is, paying, asking for help and saying stop/wait."
+  },
+  "communicationFunctions": [
+    "initiate",
+    "request",
+    "choose",
+    "ask",
+    "repair",
+    "refuse",
+    "reflect"
+  ],
+  "metadata": {
+    "tags": [
+      "aac",
+      "agent-generated",
+      "proof-of-concept",
+      "qcia-community-shops",
+      "qcia",
+      "community-access",
+      "shopping"
+    ],
+    "level": "",
+    "curriculum": "QCIA community, communication, personal and living skills: participating safely in a shopping/community access routine.",
+    "privacyLevel": "anonymous",
+    "generatedFrom": "agentic-aac-board-ir",
+    "sourceIrSchemaVersion": "0.2.0"
+  },
+  "licences": [
+    {
+      "source": "ARASAAC",
+      "licence": "CC BY-NC-SA",
+      "attribution": "Pictograms by ARASAAC (Government of Aragon) if ARASAAC symbols are later inserted; these HTML drafts use text placeholders only."
+    }
+  ]
+}

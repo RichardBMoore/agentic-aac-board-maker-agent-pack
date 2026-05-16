@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "0.2.0",
+  "format": "agentic-aac-board-ir",
+  "app": "Agentic AAC Board Maker",
+  "id": "activity-slug",
+  "title": "Board Title",
+  "name": "Board Title",
+  "type": "interactive",
+  "purpose": "Short statement of what the student can communicate or show.",
+  "audience": {
+    "ageBand": "unspecified",
+    "tone": "age-respectful"
+  },
+  "access": {
+    "intended": ["touch", "keyboard"],
+    "profile": "direct-selection",
+    "minimumTargetSizePx": 96,
+    "dwellTimeMs": null,
+    "switchScanning": false,
+    "scanSpeedMs": 1400,
+    "scanPattern": "linear"
+  },
+  "settings": {
+    "orientation": "landscape",
+    "width": 1024,
+    "height": 768,
+    "speakLabels": true,
+    "showLabels": true,
+    "dwellTimeMs": 1200,
+    "switchScanning": false,
+    "scanSpeedMs": 1400,
+    "scanPattern": "linear"
+  },
+  "accessibility": {
+    "intendedAccess": ["touch", "keyboard"],
+    "minimumTargetSizePx": 96,
+    "dwellSafe": false,
+    "scanOrder": "dom-order",
+    "audioCues": true
+  },
+  "communicationFunctions": ["choose", "repair", "comment"],
+  "pages": [
+    {
+      "id": "page-main",
+      "name": "Main",
+      "pattern": "choice-board",
+      "layout": "grid",
+      "gridColumns": 3,
+      "gridRows": 3,
+      "buttons": [
+        {
+          "id": "btn-help",
+          "label": "Help",
+          "role": "repair",
+          "function": "repair",
+          "searchTerm": "help",
+          "spokenText": "Help",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "Help",
+          "result": "selected",
+          "position": { "x": 0, "y": 0, "width": 33.3333, "height": 33.3333 },
+          "actions": [
+            { "id": "act-help-speak", "type": "speak-label" },
+            { "id": "act-help-log", "type": "log-attempt" }
+          ]
+        }
+      ]
+    }
+  ],
+  "teacherNotes": {
+    "modeling": "Model key words while speaking; wait; respond to all communication; accept multimodal responses.",
+    "evidence": "Teacher can observe selections, repair attempts, comments, and participation in the shared task.",
+    "customisation": "Replace labels/search terms with local vocabulary as needed."
+  },
+  "symbolStrategy": {
+    "defaultSource": "ARASAAC search terms",
+    "textFallback": true,
+    "customMediaPolicy": "teacher-owned local media only unless explicitly approved"
+  },
+  "privacy": {
+    "level": "anonymous",
+    "containsSensitiveData": false
+  },
+  "metadata": {
+    "tags": ["aac", "agent-generated"],
+    "curriculum": "",
+    "privacyLevel": "anonymous"
+  },
+  "licences": [
+    {
+      "source": "ARASAAC",
+      "licence": "CC BY-NC-SA",
+      "attribution": "Pictograms by ARASAAC (Government of Aragon)"
+    }
+  ]
+}

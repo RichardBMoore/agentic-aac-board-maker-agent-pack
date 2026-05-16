@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "0.1.0",
+  "app": "Open Boardmaker",
+  "name": "First Then",
+  "type": "interactive",
+  "settings": {
+    "speakLabels": true,
+    "showLabels": true,
+    "dwellTimeMs": 1200,
+    "switchScanning": false,
+    "scanSpeedMs": 1400,
+    "scanPattern": "linear"
+  },
+  "pages": [
+    {
+      "id": "page-first-then",
+      "name": "First Then",
+      "layout": "grid",
+      "gridColumns": 2,
+      "gridRows": 1,
+      "margin": 10,
+      "backgroundColour": "#ffffff",
+      "buttons": [
+        { "id": "btn-first-work", "label": "First: Work", "symbolId": "6624", "result": "selected", "style": { "fillColour": "#e8f2ff" } },
+        { "id": "btn-then-break", "label": "Then: Break", "symbolId": "6604", "result": "selected", "style": { "fillColour": "#eaf7ed" } }
+      ]
+    }
+  ],
+  "metadata": {
+    "tags": ["first-then", "routine"],
+    "privacyLevel": "anonymous"
+  }
+}

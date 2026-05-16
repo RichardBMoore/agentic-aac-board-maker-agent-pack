@@ -1,0 +1,385 @@
+{
+  "schemaVersion": "0.1.0",
+  "app": "Open AAC Studio",
+  "id": "gaze-choice-class-activity",
+  "name": "Choose a Class Activity",
+  "type": "interactive",
+  "created": "2026-05-15T12:20:47.813093Z",
+  "modified": "2026-05-15T12:20:47.813093Z",
+  "settings": {
+    "orientation": "landscape",
+    "width": 1024,
+    "height": 768,
+    "speakLabels": true,
+    "showLabels": true,
+    "highlightColour": "#ffeb3b",
+    "font": "Verdana",
+    "fontSize": 18,
+    "fontColour": "#000000",
+    "backgroundColour": "#ffffff",
+    "showStopButton": true,
+    "dwellTimeMs": 1000,
+    "switchScanning": false,
+    "scanSpeedMs": 1400,
+    "scanPattern": "linear"
+  },
+  "accessibility": {
+    "intendedAccess": [
+      "eye-gaze-dwell",
+      "mouse",
+      "keyboard",
+      "touch"
+    ],
+    "minimumTargetSizePx": 150,
+    "dwellSafe": true,
+    "scanOrder": "dom-order",
+    "audioCues": true
+  },
+  "pages": [
+    {
+      "id": "page-main",
+      "name": "Main",
+      "pattern": "choice-board",
+      "layout": "grid",
+      "gridColumns": 3,
+      "gridRows": 2,
+      "margin": 18,
+      "backgroundColour": "#f7fbff",
+      "backgroundImage": null,
+      "buttons": [
+        {
+          "id": "btn-read",
+          "type": "standard",
+          "label": "Read",
+          "role": "fringe",
+          "function": "choose",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "reading book",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 0.0,
+            "y": 0,
+            "width": 33.3333,
+            "height": 50
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "Read",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-read-speak",
+              "type": "speak-text",
+              "text": "Read"
+            },
+            {
+              "id": "act-btn-read-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-art",
+          "type": "standard",
+          "label": "Art",
+          "role": "fringe",
+          "function": "choose",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "painting",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 33.3333,
+            "y": 0,
+            "width": 33.3333,
+            "height": 50
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "Art",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-art-speak",
+              "type": "speak-text",
+              "text": "Art"
+            },
+            {
+              "id": "act-btn-art-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-game",
+          "type": "standard",
+          "label": "Game",
+          "role": "fringe",
+          "function": "choose",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "board game",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 66.6666,
+            "y": 0,
+            "width": 33.3333,
+            "height": 50
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "Game",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-game-speak",
+              "type": "speak-text",
+              "text": "Game"
+            },
+            {
+              "id": "act-btn-game-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-music",
+          "type": "standard",
+          "label": "Music",
+          "role": "fringe",
+          "function": "choose",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "music",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 0.0,
+            "y": 50,
+            "width": 33.3333,
+            "height": 50
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "Music",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-music-speak",
+              "type": "speak-text",
+              "text": "Music"
+            },
+            {
+              "id": "act-btn-music-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-help",
+          "type": "standard",
+          "label": "Help",
+          "role": "repair",
+          "function": "repair",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "help",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 33.3333,
+            "y": 50,
+            "width": 33.3333,
+            "height": 50
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "Help please",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-help-speak",
+              "type": "speak-text",
+              "text": "Help please"
+            },
+            {
+              "id": "act-btn-help-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-different",
+          "type": "standard",
+          "label": "Different",
+          "role": "repair",
+          "function": "repair",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "different",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 66.6666,
+            "y": 50,
+            "width": 33.3333,
+            "height": 50
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "I want something different",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-different-speak",
+              "type": "speak-text",
+              "text": "I want something different"
+            },
+            {
+              "id": "act-btn-different-log",
+              "type": "log-attempt"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variables": {},
+  "teacherNotes": {
+    "modeling": "Model the board by saying and selecting options yourself: “I choose Art”, “Help please”, “Different”. Wait after modelling and accept gaze, gesture, voice, partner interpretation, or keyboard selection.",
+    "evidence": "Teacher can note whether the student initiates a choice, confirms/rejects an activity, asks for help, or uses Different to repair the offered choices.",
+    "customisation": "Replace the four activity labels/search terms with the real lesson choices. Keep Help and Different/Finished-style repair vocabulary stable where possible.",
+    "access": "Default dwell is 1000 ms. Targets are arranged 2 by 3 with large buttons, visible dwell progress, pointer-leave cancellation, and keyboard fallback.",
+    "caveat": "Draft classroom support only. Review with the teaching/SLP/OT team and test on the actual student device/access setup before relying on it."
+  },
+  "communicationFunctions": [
+    "initiate",
+    "request",
+    "choose",
+    "repair",
+    "refuse",
+    "comment"
+  ],
+  "metadata": {
+    "tags": [
+      "aac",
+      "agent-generated",
+      "proof-of-concept",
+      "eye-gaze",
+      "dwell",
+      "choice-board"
+    ],
+    "level": "",
+    "curriculum": "Classroom participation and communication access: making choices, requesting help, and repairing communication during shared class activities.",
+    "privacyLevel": "anonymous",
+    "generatedFrom": "agentic-aac-board-ir",
+    "sourceIrSchemaVersion": "0.2.0"
+  },
+  "licences": [
+    {
+      "source": "ARASAAC",
+      "licence": "CC BY-NC-SA",
+      "attribution": "Pictograms by ARASAAC (Government of Aragon) if ARASAAC symbols are later inserted; this HTML draft uses text/emoji placeholders only."
+    }
+  ]
+}

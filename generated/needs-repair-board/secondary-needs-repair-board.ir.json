@@ -1,0 +1,449 @@
+{
+  "schemaVersion": "0.2.0",
+  "format": "agentic-aac-board-ir",
+  "app": "Agentic AAC Board Maker",
+  "id": "secondary-needs-repair-board",
+  "title": "Secondary Needs and Communication Repair Board",
+  "name": "Secondary Needs and Communication Repair Board",
+  "type": "interactive",
+  "purpose": "An age-respectful needs and repair board that lets a secondary student request support, privacy, clarification, a break, different choices or communication repair without behaviour-control framing.",
+  "sourcePrompt": "Make a respectful needs and communication repair board for a secondary student.",
+  "fixtureId": "needs-repair-board",
+  "audience": {
+    "ageBand": "secondary",
+    "tone": "age-respectful, non-infantilising"
+  },
+  "access": {
+    "intended": [
+      "touch",
+      "keyboard",
+      "mouse",
+      "eye-gaze-dwell"
+    ],
+    "profile": "mixed-access",
+    "minimumTargetSizePx": 132,
+    "dwellTimeMs": 1100,
+    "switchScanning": false,
+    "scanSpeedMs": 1400,
+    "scanPattern": "linear",
+    "scanOrder": "left-to-right, top-to-bottom"
+  },
+  "settings": {
+    "orientation": "landscape",
+    "width": 1024,
+    "height": 768,
+    "speakLabels": true,
+    "showLabels": true,
+    "dwellTimeMs": 1100,
+    "switchScanning": false,
+    "scanSpeedMs": 1400,
+    "scanPattern": "linear"
+  },
+  "accessibility": {
+    "intendedAccess": [
+      "touch",
+      "keyboard",
+      "mouse",
+      "eye-gaze-dwell"
+    ],
+    "minimumTargetSizePx": 132,
+    "dwellSafe": true,
+    "scanOrder": "left-to-right, top-to-bottom",
+    "audioCues": true
+  },
+  "communicationFunctions": [
+    "request",
+    "repair",
+    "refuse",
+    "comment",
+    "regulate-rest",
+    "ask"
+  ],
+  "pages": [
+    {
+      "id": "page-main",
+      "name": "Main",
+      "pattern": "needs-repair-board",
+      "layout": "grid",
+      "grid": {
+        "rows": 3,
+        "columns": 4
+      },
+      "gridRows": 3,
+      "gridColumns": 4,
+      "margin": 18,
+      "backgroundColour": "#f7fbff",
+      "buttons": [
+        {
+          "id": "btn-break",
+          "label": "I need a break",
+          "role": "repair",
+          "function": "regulate-rest",
+          "searchTerm": "break",
+          "spokenText": "I need a break",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "I need a break",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-break-speak",
+              "type": "speak-text",
+              "text": "I need a break"
+            },
+            {
+              "id": "act-btn-break-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-quiet",
+          "label": "Too loud",
+          "role": "comment",
+          "function": "comment",
+          "searchTerm": "too loud",
+          "spokenText": "It is too loud",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "It is too loud",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-quiet-speak",
+              "type": "speak-text",
+              "text": "It is too loud"
+            },
+            {
+              "id": "act-btn-quiet-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-unwell",
+          "label": "I feel unwell",
+          "role": "core",
+          "function": "request",
+          "searchTerm": "unwell",
+          "spokenText": "I feel unwell",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "I feel unwell",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-unwell-speak",
+              "type": "speak-text",
+              "text": "I feel unwell"
+            },
+            {
+              "id": "act-btn-unwell-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-privacy",
+          "label": "I need privacy",
+          "role": "core",
+          "function": "request",
+          "searchTerm": "privacy",
+          "spokenText": "I need privacy",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "I need privacy",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-privacy-speak",
+              "type": "speak-text",
+              "text": "I need privacy"
+            },
+            {
+              "id": "act-btn-privacy-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-help",
+          "label": "Help please",
+          "role": "repair",
+          "function": "repair",
+          "searchTerm": "help",
+          "spokenText": "Help please",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "Help please",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-help-speak",
+              "type": "speak-text",
+              "text": "Help please"
+            },
+            {
+              "id": "act-btn-help-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-say-again",
+          "label": "Say it another way",
+          "role": "repair",
+          "function": "repair",
+          "searchTerm": "clarify",
+          "spokenText": "Please say it another way",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "Please say it another way",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-say-again-speak",
+              "type": "speak-text",
+              "text": "Please say it another way"
+            },
+            {
+              "id": "act-btn-say-again-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-not-that",
+          "label": "Not that",
+          "role": "repair",
+          "function": "refuse",
+          "searchTerm": "not that",
+          "spokenText": "Not that",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "Not that",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-not-that-speak",
+              "type": "speak-text",
+              "text": "Not that"
+            },
+            {
+              "id": "act-btn-not-that-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-wait",
+          "label": "Wait",
+          "role": "repair",
+          "function": "regulate-rest",
+          "searchTerm": "wait",
+          "spokenText": "Please wait",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "Please wait",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-wait-speak",
+              "type": "speak-text",
+              "text": "Please wait"
+            },
+            {
+              "id": "act-btn-wait-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-disagree",
+          "label": "I disagree",
+          "role": "comment",
+          "function": "comment",
+          "searchTerm": "disagree",
+          "spokenText": "I disagree",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "I disagree",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-disagree-speak",
+              "type": "speak-text",
+              "text": "I disagree"
+            },
+            {
+              "id": "act-btn-disagree-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-choose",
+          "label": "Can I choose?",
+          "role": "question",
+          "function": "ask",
+          "searchTerm": "choose question",
+          "spokenText": "Can I choose?",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "Can I choose?",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-choose-speak",
+              "type": "speak-text",
+              "text": "Can I choose?"
+            },
+            {
+              "id": "act-btn-choose-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-different",
+          "label": "Different",
+          "role": "repair",
+          "function": "repair",
+          "searchTerm": "different",
+          "spokenText": "I need something different",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "I need something different",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-different-speak",
+              "type": "speak-text",
+              "text": "I need something different"
+            },
+            {
+              "id": "act-btn-different-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-finished",
+          "label": "Finished",
+          "role": "repair",
+          "function": "refuse",
+          "searchTerm": "finished",
+          "spokenText": "I am finished",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "I am finished",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-finished-speak",
+              "type": "speak-text",
+              "text": "I am finished"
+            },
+            {
+              "id": "act-btn-finished-log",
+              "type": "log-attempt"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "teacherNotes": {
+    "age_respectful": "Language is plain and secondary-appropriate. Avoid childish praise, token language or public commentary about private needs.",
+    "privacy": "Do not log sensitive health, behaviour or family details in the file. Use separate approved school processes for confidential notes.",
+    "repair": "Honour repair messages such as Not that, Different, Say it another way and Wait before repeating demands.",
+    "use": "Use as a support for needs and communication repair, not as a behaviour-control board or replacement AAC system.",
+    "modeling": "Model the board neutrally during calm moments. Treat selections as communication, not behaviour compliance."
+  },
+  "symbolStrategy": {
+    "defaultSource": "ARASAAC search terms",
+    "textFallback": true,
+    "customMediaPolicy": "teacher-owned local media only unless explicitly approved",
+    "notes": "Use simple, respectful symbols or text. Avoid infantilising cartoons for secondary students unless the student prefers them."
+  },
+  "privacy": {
+    "level": "anonymous",
+    "containsSensitiveData": false
+  },
+  "metadata": {
+    "tags": [
+      "aac",
+      "agent-generated",
+      "proof-of-concept",
+      "needs-repair-board",
+      "needs",
+      "repair",
+      "secondary",
+      "privacy-safe"
+    ],
+    "curriculum": "Access to participation and self-advocacy: requesting support, regulating access and repairing communication.",
+    "privacyLevel": "anonymous"
+  },
+  "attribution": [
+    {
+      "source": "ARASAAC",
+      "licence": "CC BY-NC-SA",
+      "note": "Symbol search terms are provided for later ARASAAC replacement; confirm exact current licence wording when publishing beyond local classroom use."
+    }
+  ],
+  "licences": [
+    {
+      "source": "ARASAAC",
+      "licence": "CC BY-NC-SA",
+      "attribution": "Pictograms by ARASAAC (Government of Aragon) if ARASAAC symbols are later inserted; these HTML drafts use text placeholders only."
+    }
+  ]
+}

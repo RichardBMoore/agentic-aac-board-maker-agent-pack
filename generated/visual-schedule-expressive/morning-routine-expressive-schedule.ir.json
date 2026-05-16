@@ -1,0 +1,367 @@
+{
+  "schemaVersion": "0.2.0",
+  "format": "agentic-aac-board-ir",
+  "app": "Agentic AAC Board Maker",
+  "id": "morning-routine-expressive-schedule",
+  "title": "Morning Routine Expressive Visual Schedule",
+  "name": "Morning Routine Expressive Visual Schedule",
+  "type": "interactive",
+  "purpose": "A visual schedule that shows morning routine order while preserving expressive options for waiting, help, change, finished and student comments.",
+  "sourcePrompt": "Make a morning routine visual schedule with expressive options.",
+  "fixtureId": "visual-schedule-expressive",
+  "audience": {
+    "ageBand": "school-age",
+    "tone": "calm, routine-focused"
+  },
+  "access": {
+    "intended": [
+      "touch",
+      "keyboard",
+      "mouse",
+      "eye-gaze-dwell"
+    ],
+    "profile": "mixed-access",
+    "minimumTargetSizePx": 132,
+    "dwellTimeMs": 1100,
+    "switchScanning": false,
+    "scanSpeedMs": 1400,
+    "scanPattern": "linear",
+    "scanOrder": "schedule order, then expressive supports"
+  },
+  "settings": {
+    "orientation": "landscape",
+    "width": 1024,
+    "height": 768,
+    "speakLabels": true,
+    "showLabels": true,
+    "dwellTimeMs": 1100,
+    "switchScanning": false,
+    "scanSpeedMs": 1400,
+    "scanPattern": "linear"
+  },
+  "accessibility": {
+    "intendedAccess": [
+      "touch",
+      "keyboard",
+      "mouse",
+      "eye-gaze-dwell"
+    ],
+    "minimumTargetSizePx": 132,
+    "dwellSafe": true,
+    "scanOrder": "schedule order, then expressive supports",
+    "audioCues": true
+  },
+  "communicationFunctions": [
+    "sequence",
+    "request",
+    "repair",
+    "comment",
+    "refuse",
+    "regulate-rest"
+  ],
+  "pages": [
+    {
+      "id": "page-main",
+      "name": "Main",
+      "pattern": "visual-schedule",
+      "layout": "grid",
+      "grid": {
+        "rows": 3,
+        "columns": 3
+      },
+      "gridRows": 3,
+      "gridColumns": 3,
+      "margin": 18,
+      "backgroundColour": "#f7fbff",
+      "buttons": [
+        {
+          "id": "btn-arrive",
+          "label": "Arrive",
+          "role": "fringe",
+          "function": "sequence",
+          "searchTerm": "arrive school",
+          "spokenText": "Arrive",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "Arrive",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-arrive-speak",
+              "type": "speak-text",
+              "text": "Arrive"
+            },
+            {
+              "id": "act-btn-arrive-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-bag",
+          "label": "Bag away",
+          "role": "fringe",
+          "function": "sequence",
+          "searchTerm": "school bag",
+          "spokenText": "Bag away",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "Bag away",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-bag-speak",
+              "type": "speak-text",
+              "text": "Bag away"
+            },
+            {
+              "id": "act-btn-bag-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-morning",
+          "label": "Morning job",
+          "role": "fringe",
+          "function": "sequence",
+          "searchTerm": "morning work",
+          "spokenText": "Morning job",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "Morning job",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-morning-speak",
+              "type": "speak-text",
+              "text": "Morning job"
+            },
+            {
+              "id": "act-btn-morning-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-group",
+          "label": "Group time",
+          "role": "fringe",
+          "function": "sequence",
+          "searchTerm": "group time",
+          "spokenText": "Group time",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "Group time",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-group-speak",
+              "type": "speak-text",
+              "text": "Group time"
+            },
+            {
+              "id": "act-btn-group-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-next",
+          "label": "What next?",
+          "role": "question",
+          "function": "ask",
+          "searchTerm": "what next",
+          "spokenText": "What is next?",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "What is next?",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-next-speak",
+              "type": "speak-text",
+              "text": "What is next?"
+            },
+            {
+              "id": "act-btn-next-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-wait",
+          "label": "Wait",
+          "role": "repair",
+          "function": "regulate-rest",
+          "searchTerm": "wait",
+          "spokenText": "I need to wait",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "I need to wait",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-wait-speak",
+              "type": "speak-text",
+              "text": "I need to wait"
+            },
+            {
+              "id": "act-btn-wait-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-help",
+          "label": "Help please",
+          "role": "repair",
+          "function": "repair",
+          "searchTerm": "help",
+          "spokenText": "Help please",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "Help please",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-help-speak",
+              "type": "speak-text",
+              "text": "Help please"
+            },
+            {
+              "id": "act-btn-help-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-change",
+          "label": "Change",
+          "role": "repair",
+          "function": "repair",
+          "searchTerm": "change",
+          "spokenText": "I need a change",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "I need a change",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-change-speak",
+              "type": "speak-text",
+              "text": "I need a change"
+            },
+            {
+              "id": "act-btn-change-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-finished",
+          "label": "Finished",
+          "role": "repair",
+          "function": "refuse",
+          "searchTerm": "finished",
+          "spokenText": "I am finished",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "I am finished",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-finished-speak",
+              "type": "speak-text",
+              "text": "I am finished"
+            },
+            {
+              "id": "act-btn-finished-log",
+              "type": "log-attempt"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "teacherNotes": {
+    "schedule_order": "The first row and early second-row buttons are the routine sequence; the remaining buttons are expressive supports, not compliance controls.",
+    "customisation": "Replace routine steps with the actual class morning sequence and photos if available and approved.",
+    "not_full_aac_claim": "This is a visual schedule with communication supports. It is not a replacement for the student's full AAC system.",
+    "evidence": "Note whether the student anticipates next steps, requests help/wait/change, or comments on readiness.",
+    "modeling": "Point to schedule steps as they happen and model expressive messages, especially Wait, Help please, Change and Finished."
+  },
+  "symbolStrategy": {
+    "defaultSource": "ARASAAC search terms",
+    "textFallback": true,
+    "customMediaPolicy": "teacher-owned local media only unless explicitly approved",
+    "notes": "Routine search terms can be swapped for classroom photos where staff own the image and privacy is managed."
+  },
+  "privacy": {
+    "level": "anonymous",
+    "containsSensitiveData": false
+  },
+  "metadata": {
+    "tags": [
+      "aac",
+      "agent-generated",
+      "proof-of-concept",
+      "visual-schedule-expressive",
+      "visual-schedule",
+      "routine",
+      "expressive-options"
+    ],
+    "curriculum": "Classroom participation and routine access: sequencing, transitions, requesting support and regulating participation.",
+    "privacyLevel": "anonymous"
+  },
+  "attribution": [
+    {
+      "source": "ARASAAC",
+      "licence": "CC BY-NC-SA",
+      "note": "Symbol search terms are provided for later ARASAAC replacement; confirm exact current licence wording when publishing beyond local classroom use."
+    }
+  ],
+  "licences": [
+    {
+      "source": "ARASAAC",
+      "licence": "CC BY-NC-SA",
+      "attribution": "Pictograms by ARASAAC (Government of Aragon) if ARASAAC symbols are later inserted; these HTML drafts use text placeholders only."
+    }
+  ]
+}

@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choose a Class Activity</title>
+<style>
+  :root {
+    --bg: #f7fbff; --ink:#102033; --panel:#ffffff; --focus:#003f8f; --accent:#0b6fdd;
+    --repair:#7a1f1f; --shadow: 0 10px 30px rgba(16,32,51,.12); --dwell-ms: 1000ms;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; min-height:100dvh; font-family: Verdana, Arial, sans-serif; background:var(--bg); color:var(--ink); display:grid; grid-template-rows:auto minmax(0,1fr) auto; }
+  header { padding: 10px 24px 6px; text-align:center; }
+  h1 { margin:.05rem 0 .2rem; font-size:clamp(1.55rem, 2.4vw, 2.5rem); }
+  header p { margin:.1rem auto; max-width: 900px; font-size:clamp(.95rem, 1.25vw, 1.15rem); }
+  main { min-height:0; display:grid; place-items:center; padding: 8px 24px 10px; }
+  .board { width:min(1120px, 100%); min-height: min(48vh, 500px); display:grid; grid-template-columns:repeat(3, minmax(150px, 1fr)); grid-template-rows:repeat(2, minmax(130px, 1fr)); gap:18px; }
+  .dwell-btn { min-width:150px; min-height:150px; }
+  .aac-button { position:relative; overflow:hidden; border:5px solid #17212b; border-radius:28px; background:#fff; color:var(--ink); box-shadow:var(--shadow); min-height:150px; padding:16px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.25rem; cursor:pointer; touch-action:manipulation; }
+  .aac-button:nth-child(1) { background:#E8F3FF; } .aac-button:nth-child(2) { background:#FFF2CC; } .aac-button:nth-child(3) { background:#E7F7E7; }
+  .aac-button:nth-child(4) { background:#F2E8FF; } .aac-button:nth-child(5) { background:#FFE6E6; } .aac-button:nth-child(6) { background:#F4F4F4; }
+  .aac-button.repair { border-style:dashed; }
+  .symbol { font-size:clamp(2.8rem, 7vw, 5.8rem); line-height:1; }
+  .label { font-size:clamp(1.7rem, 3.5vw, 3rem); font-weight:800; }
+  .spoken { font-size:clamp(.95rem, 1.3vw, 1.2rem); opacity:.85; }
+  .aac-button:focus-visible, .aac-button.is-dwelling { outline:8px solid var(--focus); outline-offset:6px; transform:translateY(-2px); }
+  .aac-button.activated { outline:10px solid #087f23; }
+  .dwell-progress { position:absolute; left:0; bottom:0; height:14px; width:0; background:linear-gradient(90deg, #0b6fdd, #22a06b); transition:none; }
+  .aac-button.is-dwelling .dwell-progress { animation:dwellFill var(--dwell-ms) linear forwards; }
+  @keyframes dwellFill { from { width:0; } to { width:100%; } }
+  .controls { display:flex; justify-content:center; gap:16px; padding: 0 24px 12px; flex-wrap:wrap; }
+  .control { font-size:1.1rem; min-height:54px; padding:10px 18px; border:3px solid #17212b; border-radius:16px; background:#fff; font-weight:700; }
+  .last-message { min-width:min(640px,90vw); text-align:center; font-size:1.2rem; font-weight:700; }
+  details.teacher-notes { margin:0 auto 12px; width:min(1080px, calc(100% - 32px)); background:#fff; border:2px solid #17212b; border-radius:16px; padding:10px 16px; }
+  details.teacher-notes summary { font-weight:800; cursor:pointer; padding:8px; }
+  footer { font-size:.9rem; padding:8px 16px 14px; text-align:center; }
+  @media (max-width: 760px) { body { display:block; } .board { grid-template-columns:1fr; grid-template-rows:none; } .aac-button { min-height:132px; } }
+  @media (prefers-reduced-motion: reduce) { .aac-button { transition:none; } }
+  @media (forced-colors: active) { .aac-button, .control { border: 4px solid ButtonText; background: Canvas; color: ButtonText; forced-color-adjust: auto; } .aac-button:focus-visible, .aac-button.is-dwelling { outline: 6px solid Highlight; } .dwell-progress { background: Highlight; } }
+  @media print { body { display:block; background:#fff; } header, main, footer { padding:8mm; } .board { display:grid; grid-template-columns:repeat(3, 1fr); gap:5mm; min-height:auto; } .aac-button { min-height:38mm; box-shadow:none; break-inside:avoid; border:2.5pt solid #000; } .controls, .dwell-progress { display:none !important; } details.teacher-notes { page-break-before:always; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Choose a Class Activity</h1>
+  <p>Look at, click, or tab to a choice. Hold gaze for 1.0 second to choose. Leaving the button cancels dwell.</p>
+</header>
+<main>
+  <section class="board" aria-label="AAC communication choice board">
+      <button class="aac-button dwell-btn fringe" aria-label="Read: Read" data-speak="Read" data-label="Read">
+        <span class="symbol" aria-hidden="true">📖</span>
+        <span class="label">Read</span>
+        <span class="spoken">Read</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+      <button class="aac-button dwell-btn fringe" aria-label="Art: Art" data-speak="Art" data-label="Art">
+        <span class="symbol" aria-hidden="true">🎨</span>
+        <span class="label">Art</span>
+        <span class="spoken">Art</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+      <button class="aac-button dwell-btn fringe" aria-label="Game: Game" data-speak="Game" data-label="Game">
+        <span class="symbol" aria-hidden="true">🎲</span>
+        <span class="label">Game</span>
+        <span class="spoken">Game</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+      <button class="aac-button dwell-btn fringe" aria-label="Music: Music" data-speak="Music" data-label="Music">
+        <span class="symbol" aria-hidden="true">🎵</span>
+        <span class="label">Music</span>
+        <span class="spoken">Music</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+      <button class="aac-button dwell-btn repair" aria-label="Help: Help please" data-speak="Help please" data-label="Help">
+        <span class="symbol" aria-hidden="true">?</span>
+        <span class="label">Help</span>
+        <span class="spoken">Help please</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+      <button class="aac-button dwell-btn repair" aria-label="Different: I want something different" data-speak="I want something different" data-label="Different">
+        <span class="symbol" aria-hidden="true">↻</span>
+        <span class="label">Different</span>
+        <span class="spoken">I want something different</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+  </section>
+</main>
+<section class="controls" aria-label="Speech and status controls">
+  <button class="control" id="stopSpeech" type="button" aria-label="Stop speech">Stop speech</button>
+  <div class="last-message" id="lastMessage" role="status" aria-live="polite">Ready</div>
+</section>
+<details class="teacher-notes">
+  <summary>Teacher notes, customisation, and QA</summary>
+  <p><strong>Purpose:</strong> An eye-gaze/dwell-safe AAC choice board that lets a student choose, request help, or repair the choice when selecting a class activity.</p>
+  <p><strong>Model:</strong> Model the board by saying and selecting options yourself: “I choose Art”, “Help please”, “Different”. Wait after modelling and accept gaze, gesture, voice, partner interpretation, or keyboard selection.</p>
+  <p><strong>Evidence:</strong> Teacher can note whether the student initiates a choice, confirms/rejects an activity, asks for help, or uses Different to repair the offered choices.</p>
+  <p><strong>Customise:</strong> Replace the four activity labels/search terms with the real lesson choices. Keep Help and Different/Finished-style repair vocabulary stable where possible.</p>
+  <p><strong>Access:</strong> Default dwell is 1000 ms. Targets are arranged 2 by 3 with large buttons, visible dwell progress, pointer-leave cancellation, and keyboard fallback.</p>
+  <p><strong>Caveat:</strong> Draft classroom support only. Review with the teaching/SLP/OT team and test on the actual student device/access setup before relying on it.</p>
+</details>
+<footer>
+  Source of truth: <code>gaze-choice-class-activity.ir.json</code>. Privacy: anonymous, no student data. Symbol strategy: ARASAAC search terms with text fallback; HTML uses text/emoji placeholders only.
+</footer>
+<script>
+class DwellManager {
+  constructor(options) {
+    this.dwellMs = options.dwellMs;
+    this.buttons = Array.from(options.buttons);
+    this.lastMessage = options.lastMessage;
+    this.stopSpeech = options.stopSpeech;
+    this.dwellTimer = null;
+    this.current = null;
+    this.cooldown = new WeakSet();
+  }
+  speak(text) {
+    try {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-AU';
+        window.speechSynthesis.speak(utterance);
+      }
+    } catch (error) { console.warn('Speech unavailable', error); }
+  }
+  clearDwell(button) {
+    if (this.dwellTimer) clearTimeout(this.dwellTimer);
+    this.dwellTimer = null;
+    if (button) button.classList.remove('is-dwelling');
+    this.current = null;
+  }
+  activate(button) {
+    this.clearDwell(button);
+    const text = button.dataset.speak || button.textContent.trim();
+    this.lastMessage.textContent = 'Selected: ' + text;
+    this.speak(text);
+    button.classList.add('activated');
+    setTimeout(() => button.classList.remove('activated'), 650);
+    this.cooldown.add(button);
+  }
+  startDwell(button) {
+    if (this.cooldown.has(button)) return;
+    this.clearDwell(this.current);
+    this.current = button;
+    button.classList.add('is-dwelling');
+    this.dwellTimer = setTimeout(() => this.activate(button), this.dwellMs);
+  }
+  bind() {
+    this.buttons.forEach(button => {
+      button.addEventListener('pointerenter', () => this.startDwell(button));
+      button.addEventListener('pointerleave', () => { this.cooldown.delete(button); this.clearDwell(button); });
+      button.addEventListener('focus', () => { this.lastMessage.textContent = 'Focus: ' + (button.dataset.label || button.textContent.trim()); });
+      button.addEventListener('blur', () => { this.cooldown.delete(button); this.clearDwell(button); });
+      button.addEventListener('click', event => { if (event.detail !== 0) this.activate(button); });
+      button.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.activate(button); }
+        if (event.key === 'Escape') this.clearDwell(button);
+      });
+    });
+    this.stopSpeech.addEventListener('click', () => {
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      this.lastMessage.textContent = 'Speech stopped';
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        this.clearDwell(this.current);
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      }
+    });
+  }
+}
+const dwellManager = new DwellManager({
+  dwellMs: 1000,
+  buttons: document.querySelectorAll('.aac-button'),
+  lastMessage: document.getElementById('lastMessage'),
+  stopSpeech: document.getElementById('stopSpeech')
+});
+dwellManager.bind();
+</script>
+</body>
+</html>

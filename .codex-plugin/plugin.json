@@ -1,0 +1,36 @@
+{
+  "name": "agentic-aac-board-maker",
+  "version": "0.1.0",
+  "description": "Generate evidence-informed, accessible AAC boards and classroom communication resources from teacher intent.",
+  "author": {
+    "name": "Richard Moore"
+  },
+  "license": "MIT",
+  "keywords": [
+    "aac",
+    "accessibility",
+    "education",
+    "eye-gaze",
+    "switch-scanning",
+    "qcia",
+    "offline-html"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Agentic AAC Board Maker",
+    "shortDescription": "Generate accessible AAC classroom resources",
+    "longDescription": "Turns teacher intent into draft AAC boards, visual supports, printable resources, Open AAC Studio JSON, and offline HTML tools with communication rights, access method, curriculum/QCIA translation, privacy, and QA built in.",
+    "developerName": "Richard Moore",
+    "category": "Education",
+    "capabilities": [
+      "Write",
+      "Local Files"
+    ],
+    "defaultPrompt": [
+      "Make an eye-gaze AAC board for this lesson.",
+      "Create a QCIA community access board.",
+      "Review this AAC board against the QA rubric."
+    ],
+    "brandColor": "#0057B8"
+  }
+}

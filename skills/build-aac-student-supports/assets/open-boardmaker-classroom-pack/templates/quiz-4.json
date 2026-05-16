@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "0.1.0",
+  "app": "Open Boardmaker",
+  "name": "Quiz 4",
+  "type": "interactive",
+  "settings": {
+    "speakLabels": true,
+    "showLabels": true,
+    "dwellTimeMs": 1200,
+    "switchScanning": false,
+    "scanSpeedMs": 1400,
+    "scanPattern": "linear"
+  },
+  "pages": [
+    {
+      "id": "page-quiz-woof",
+      "name": "Which animal says woof?",
+      "layout": "grid",
+      "gridColumns": 2,
+      "gridRows": 2,
+      "margin": 10,
+      "backgroundColour": "#ffffff",
+      "buttons": [
+        { "id": "btn-dog-answer", "label": "Dog", "symbolId": "7202", "result": "correct", "style": { "fillColour": "#eaf7ed" } },
+        { "id": "btn-cat-answer", "label": "Cat", "symbolId": "7114", "result": "incorrect", "style": { "fillColour": "#fff7df" } },
+        { "id": "btn-bird-answer", "label": "Bird", "symbolId": "2490", "result": "incorrect", "style": { "fillColour": "#e8f2ff" } },
+        { "id": "btn-help-answer", "label": "I don't know", "symbolId": "32648", "result": "selected", "style": { "fillColour": "#f7e9ff" } }
+      ]
+    }
+  ],
+  "metadata": {
+    "tags": ["quiz", "animals", "comprehension"],
+    "privacyLevel": "anonymous"
+  }
+}

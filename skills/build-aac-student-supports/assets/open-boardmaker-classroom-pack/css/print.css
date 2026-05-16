@@ -1,0 +1,52 @@
+@media print {
+  body {
+    background: #ffffff !important;
+  }
+
+  .app-bar,
+  .player-bar,
+  .side-panel,
+  .session-panel,
+  .stage-header,
+  .message-bar {
+    display: none !important;
+  }
+
+  .editor-shell,
+  .player-shell {
+    display: block !important;
+    min-height: auto !important;
+    padding: 0 !important;
+  }
+
+  .workspace,
+  .player-stage {
+    display: block !important;
+  }
+
+  .board-header {
+    display: none !important;
+  }
+
+  .editor-board,
+  .player-board {
+    min-height: 90vh !important;
+    box-shadow: none !important;
+    border: 1px solid #000000 !important;
+    border-radius: 0 !important;
+    page-break-inside: avoid;
+  }
+
+  .print-attribution {
+    display: block !important;
+    margin-top: 0.35rem !important;
+    color: #000000 !important;
+    font-size: 9pt !important;
+  }
+
+  .board-button,
+  .activity-button {
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+}

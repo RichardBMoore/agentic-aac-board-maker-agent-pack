@@ -1,0 +1,7 @@
+interface:
+  display_name: "Build AAC Student Supports"
+  short_description: "Build accessible student supports"
+  brand_color: "#3B5BDB"
+  default_prompt: "Use $build-aac-student-supports to build this accessible classroom support."
+policy:
+  allow_implicit_invocation: true

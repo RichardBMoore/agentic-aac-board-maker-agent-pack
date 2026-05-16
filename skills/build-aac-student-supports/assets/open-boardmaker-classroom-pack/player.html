@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="application-name" content="Open Boardmaker">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Open Boardmaker Player</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="css/player.css">
+  <link rel="stylesheet" href="css/print.css">
+</head>
+<body>
+  <a href="#player-board" class="skip-link">Skip to activity board</a>
+  <header class="player-bar">
+    <div>
+      <h1 id="activity-title">Open Boardmaker Player</h1>
+      <p id="player-status" class="status-line" aria-live="polite">Ready</p>
+    </div>
+    <nav class="toolbar" aria-label="Player actions">
+      <a class="button-link" href="index.html" id="editor-link">Editor</a>
+      <button id="previous-page" type="button">Previous</button>
+      <button id="next-page" type="button">Next</button>
+      <button id="start-classroom" type="button">Start Classroom</button>
+      <button id="full-screen" type="button">Full Screen</button>
+      <button id="export-csv" type="button">Export CSV</button>
+      <button id="export-report" type="button">Export Report</button>
+      <button id="clear-log" type="button">Clear Log</button>
+      <label class="file-button">
+        Load JSON
+        <input id="load-activity" type="file" accept="application/json,.json">
+      </label>
+      <details class="teacher-controls" id="teacher-controls" open>
+        <summary>Teacher controls</summary>
+        <div class="teacher-controls-row">
+          <button id="stop-speech" type="button">Stop Speech</button>
+          <button id="toggle-lock" type="button">Lock</button>
+          <button id="finish-session" type="button">Finish Session</button>
+          <button id="exit-classroom" type="button" class="classroom-only">Exit Classroom</button>
+        </div>
+      </details>
+    </nav>
+  </header>
+
+  <main class="player-shell">
+    <section class="player-stage" aria-labelledby="page-title">
+      <div id="offline-banner" class="offline-banner is-checking" aria-live="polite">
+        <strong>Offline readiness</strong>
+        <span>Checking app and symbol cache</span>
+      </div>
+      <div class="stage-header">
+        <div>
+          <h2 id="page-title">Page 1</h2>
+          <p id="page-count" class="status-line">Page 1 of 1</p>
+        </div>
+        <div class="access-controls" aria-label="Access settings">
+          <label class="check-row">
+            <input id="enable-dwell" type="checkbox" checked>
+            Dwell
+          </label>
+          <label>
+            <span>Dwell time</span>
+            <input id="player-dwell-time" type="range" min="500" max="3000" step="100" aria-describedby="dwell-help">
+          </label>
+          <output id="player-dwell-output" for="player-dwell-time">1200 ms</output>
+          <span id="dwell-help" class="visually-hidden">How long the student must look at a button before it activates</span>
+          <label class="check-row">
+            <input id="enable-tts" type="checkbox" checked>
+            TTS
+          </label>
+          <label class="check-row">
+            <input id="enable-switch" type="checkbox">
+            Switch
+          </label>
+          <label>
+            <span>Scan speed</span>
+            <input id="scan-speed" type="range" min="600" max="3000" step="100">
+          </label>
+          <output id="scan-speed-output" for="scan-speed">1400 ms</output>
+          <label>
+            <span>Pattern</span>
+            <select id="scan-pattern">
+              <option value="linear">Linear</option>
+              <option value="row-column">Row-column</option>
+            </select>
+          </label>
+          <label class="classroom-keep">
+            <span>Size</span>
+            <select id="board-size">
+              <option value="standard">Standard</option>
+              <option value="large">Large AAC</option>
+              <option value="compact">Compact</option>
+            </select>
+          </label>
+          <label class="classroom-keep">
+            <span>Contrast</span>
+            <select id="contrast-mode">
+              <option value="standard">Standard</option>
+              <option value="high">High contrast</option>
+              <option value="black-white">Black and white</option>
+              <option value="yellow-black">Yellow on black</option>
+            </select>
+          </label>
+          <button id="toggle-scan" type="button">Start Scan</button>
+          <button id="step-scan" type="button">Step</button>
+          <button id="select-scan" type="button">Select</button>
+        </div>
+      </div>
+      <div id="message-bar" class="message-bar" aria-live="polite"></div>
+      <div id="player-board" class="player-board" role="group" aria-labelledby="page-title"></div>
+      <p class="print-attribution">Pictograms by ARASAAC (Government of Aragon), CC BY-NC-SA; verify exact source/version before publication, plus any teacher-uploaded images.</p>
+    </section>
+
+    <aside class="session-panel" aria-labelledby="session-heading">
+      <h2 id="session-heading">Session</h2>
+      <label>
+        Student
+        <select id="student-select"></select>
+      </label>
+      <label>
+        Profile name
+        <input id="student-name" type="text" autocomplete="off" placeholder="Optional local profile">
+      </label>
+      <div class="button-row">
+        <button id="save-student" type="button">Save Student</button>
+        <button id="anonymous-student" type="button">Anonymous</button>
+        <button id="delete-student" type="button">Delete</button>
+        <button id="clear-student-data" type="button">Clear Data</button>
+      </div>
+      <div class="session-stat">
+        <span>Attempts</span>
+        <strong id="attempt-count">0</strong>
+      </div>
+      <div class="session-stat">
+        <span>Correct</span>
+        <strong id="correct-count">0</strong>
+      </div>
+      <div class="session-stat">
+        <span>Incorrect</span>
+        <strong id="incorrect-count">0</strong>
+      </div>
+      <div id="session-summary" class="session-summary"></div>
+      <div id="recent-log" class="recent-log"></div>
+    </aside>
+  </main>
+
+  <script src="js/data.js"></script>
+  <script src="js/symbols.js"></script>
+  <script src="js/file-io.js"></script>
+  <script src="js/tts.js"></script>
+  <script src="js/actions.js"></script>
+  <script src="js/access.js"></script>
+  <script src="js/player.js"></script>
+</body>
+</html>

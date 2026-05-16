@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="application-name" content="Open Boardmaker">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Open Boardmaker Editor</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="css/editor.css">
+  <link rel="stylesheet" href="css/print.css">
+</head>
+<body>
+  <a href="#editor-board" class="skip-link">Skip to board editor</a>
+  <header class="app-bar">
+    <div>
+      <h1>Open Boardmaker</h1>
+      <p id="editor-status" class="status-line" aria-live="polite">Ready</p>
+    </div>
+    <nav class="toolbar" aria-label="Editor actions">
+      <button id="new-activity" type="button">New</button>
+      <button id="undo-change" type="button">Undo</button>
+      <button id="redo-change" type="button">Redo</button>
+      <button id="save-local" type="button">Save</button>
+      <button id="download-json" type="button">Export JSON</button>
+      <label class="file-button">
+        Import JSON
+        <input id="import-json" type="file" accept="application/json,.json">
+      </label>
+      <a class="button-link" href="player.html" id="open-player">Player</a>
+      <button id="print-current" type="button">Print</button>
+    </nav>
+  </header>
+
+  <main class="editor-shell">
+    <aside class="side-panel" aria-labelledby="settings-heading">
+      <h2 id="settings-heading" class="visually-hidden">Activity settings</h2>
+      <section class="panel-section">
+        <h2>Activity</h2>
+        <label>
+          Name
+          <input id="activity-name" type="text" autocomplete="off">
+        </label>
+        <div class="field-row">
+          <label>
+            Rows
+            <input id="grid-rows" type="number" min="1" max="8" step="1">
+          </label>
+          <label>
+            Columns
+            <input id="grid-columns" type="number" min="1" max="8" step="1">
+          </label>
+        </div>
+        <button id="apply-grid" type="button" class="wide-button">Apply Grid</button>
+      </section>
+
+      <section class="panel-section">
+        <h2>Templates</h2>
+        <label>
+          Starter board
+          <select id="template-select">
+            <option value="templates/yes-no-choice.json">Yes No Choice</option>
+            <option value="templates/choice-board-9.json">Choice Board 9</option>
+            <option value="templates/visual-schedule.json">Visual Schedule</option>
+            <option value="templates/first-then.json">First Then</option>
+            <option value="templates/book-reader.json">Book Reader</option>
+            <option value="templates/quiz-4.json">Quiz 4</option>
+          </select>
+        </label>
+        <button id="load-template" type="button" class="wide-button">Load Template</button>
+      </section>
+
+      <section class="panel-section">
+        <h2>Classroom Builder</h2>
+        <label>
+          Board type
+          <select id="quick-board-type">
+            <option value="choice">Choice board</option>
+            <option value="core">Core words</option>
+            <option value="needs">Needs</option>
+            <option value="feelings">Feelings</option>
+            <option value="schedule">Visual schedule</option>
+          </select>
+        </label>
+        <label>
+          Board title
+          <input id="quick-board-name" type="text" autocomplete="off" placeholder="Morning choices">
+        </label>
+        <label>
+          Labels
+          <textarea id="quick-fill-labels" rows="5" placeholder="yes, no, more, finished"></textarea>
+        </label>
+        <div class="button-row">
+          <button id="build-quick-board" type="button">Build Board</button>
+          <button id="build-with-symbols" type="button">Build + Symbols</button>
+          <button id="auto-symbols" type="button">Auto Symbols</button>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <h2>Classroom Check</h2>
+        <div id="readiness-list" class="readiness-list" aria-live="polite"></div>
+        <div class="button-row">
+          <button id="fix-missing-symbols" type="button">Fix Symbols</button>
+          <button id="prepare-offline" type="button">Prepare Offline</button>
+          <a class="button-link" href="player.html?classroom=1">Classroom Player</a>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <h2>Library</h2>
+        <label>
+          Saved activity
+          <select id="library-select"></select>
+        </label>
+        <div class="button-row">
+          <button id="save-library" type="button">Save Copy</button>
+          <button id="open-library" type="button">Open</button>
+          <button id="delete-library" type="button">Delete</button>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <h2>Pages</h2>
+        <div id="page-list" class="page-list" role="list"></div>
+        <div class="button-row">
+          <button id="add-page" type="button">Add Page</button>
+          <button id="duplicate-page" type="button">Duplicate</button>
+          <button id="delete-page" type="button">Delete</button>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <h2>Player</h2>
+        <label class="check-row">
+          <input id="speak-labels" type="checkbox">
+          Speak labels
+        </label>
+        <label class="check-row">
+          <input id="show-labels" type="checkbox">
+          Show labels
+        </label>
+        <label>
+          Dwell time
+          <input id="dwell-time" type="range" min="500" max="3000" step="100" aria-describedby="editor-dwell-help">
+        </label>
+        <output id="dwell-time-output" for="dwell-time">1200 ms</output>
+        <span id="editor-dwell-help" class="visually-hidden">How long the student must look at a button before it activates</span>
+      </section>
+    </aside>
+
+    <section class="workspace" aria-labelledby="current-page-name">
+      <div id="offline-banner" class="offline-banner is-checking" aria-live="polite">
+        <strong>Offline readiness</strong>
+        <span>Checking app and symbol cache</span>
+      </div>
+      <div class="board-header">
+        <div>
+          <h2 id="current-page-name">Page 1</h2>
+          <p id="board-meta" class="status-line">2 by 2 grid</p>
+        </div>
+        <div class="button-row">
+          <button id="add-button" type="button">Add Button</button>
+          <button id="remove-button" type="button">Remove Button</button>
+        </div>
+      </div>
+      <div id="editor-board" class="editor-board" role="group" aria-labelledby="current-page-name"></div>
+      <p class="print-attribution">Pictograms by ARASAAC (Government of Aragon), CC BY-NC-SA; verify exact source/version before publication, plus any teacher-uploaded images.</p>
+    </section>
+
+    <aside class="side-panel" aria-labelledby="button-settings-heading">
+      <h2 id="button-settings-heading" class="visually-hidden">Selected button settings</h2>
+      <section class="panel-section">
+        <h2>Button</h2>
+        <label>
+          Label
+          <input id="button-label" type="text" autocomplete="off">
+        </label>
+        <div id="word-predictions" class="word-predictions" aria-label="Word predictions"></div>
+        <label>
+          Symbol ID
+          <input id="button-symbol-id" type="text" inputmode="numeric" autocomplete="off">
+        </label>
+        <label>
+          Symbol layout
+          <select id="button-layout">
+            <option value="label-bottom">Label bottom</option>
+            <option value="label-top">Label top</option>
+            <option value="symbol-only">Symbol only</option>
+            <option value="label-only">Label only</option>
+            <option value="symbolate">Symbolate</option>
+          </select>
+        </label>
+        <div class="button-row">
+          <button id="symbolate-label" type="button">Symbolate Label</button>
+          <button id="clear-symbolate" type="button">Clear Symbolate</button>
+        </div>
+        <label>
+          Result
+          <select id="button-result">
+            <option value="selected">Selected</option>
+            <option value="correct">Correct</option>
+            <option value="incorrect">Incorrect</option>
+          </select>
+        </label>
+        <label>
+          After press
+          <select id="button-action">
+            <option value="stay">Stay on page</option>
+            <option value="next-page">Next page</option>
+            <option value="previous-page">Previous page</option>
+          </select>
+        </label>
+        <label>
+          Action preset
+          <select id="action-preset">
+            <option value="">Choose a preset</option>
+            <option value="correct-answer">Correct answer</option>
+            <option value="wrong-answer">Wrong answer</option>
+            <option value="go-next">Go next after press</option>
+            <option value="add-score">Add 1 to score</option>
+            <option value="score-finish">If score is 3, go next</option>
+            <option value="speak-then-next">Speak custom text then go next</option>
+          </select>
+        </label>
+        <button id="apply-action-preset" type="button" class="wide-button">Apply Preset</button>
+        <label>
+          Animation
+          <select id="button-animation">
+            <option value="">None</option>
+            <option value="pulse">Pulse</option>
+            <option value="pop">Pop</option>
+            <option value="shake">Shake</option>
+          </select>
+        </label>
+        <label>
+          Media action
+          <select id="button-media-action">
+            <option value="">None</option>
+            <option value="speak-text">Speak custom text</option>
+            <option value="open-url">Open URL</option>
+            <option value="play-audio">Play audio URL</option>
+          </select>
+        </label>
+        <label>
+          Media text or URL
+          <input id="button-media-value" type="text" autocomplete="off" placeholder="Text, https://..., or audio URL">
+        </label>
+        <fieldset class="advanced-action-group">
+          <legend>Variable update</legend>
+          <div class="field-row">
+            <label>
+              Name
+              <input id="variable-name" type="text" autocomplete="off" placeholder="score">
+            </label>
+            <label>
+              Operation
+              <select id="variable-operation">
+                <option value="">None</option>
+                <option value="set">Set</option>
+                <option value="increment">Increment</option>
+              </select>
+            </label>
+            <label>
+              Value
+              <input id="variable-value" type="text" autocomplete="off" placeholder="1">
+            </label>
+          </div>
+        </fieldset>
+        <fieldset class="advanced-action-group">
+          <legend>Conditional action</legend>
+          <div class="field-row">
+            <label>
+              Variable
+              <input id="condition-variable" type="text" autocomplete="off" placeholder="score">
+            </label>
+            <label>
+              Test
+              <select id="condition-operator">
+                <option value="">None</option>
+                <option value="equals">Equals</option>
+                <option value="not-equals">Does not equal</option>
+                <option value="greater-than">Greater than</option>
+                <option value="less-than">Less than</option>
+              </select>
+            </label>
+            <label>
+              Value
+              <input id="condition-value" type="text" autocomplete="off" placeholder="3">
+            </label>
+            <label>
+              If true
+              <select id="condition-true-action">
+                <option value="stay">Stay</option>
+                <option value="next-page">Next page</option>
+                <option value="previous-page">Previous page</option>
+              </select>
+            </label>
+            <label>
+              If false
+              <select id="condition-false-action">
+                <option value="stay">Stay</option>
+                <option value="next-page">Next page</option>
+                <option value="previous-page">Previous page</option>
+              </select>
+            </label>
+          </div>
+        </fieldset>
+        <fieldset class="swatch-group">
+          <legend>Fill</legend>
+          <div class="swatch-row" role="radiogroup" aria-label="Button fill colour">
+            <label class="swatch">
+              <input type="radio" name="button-fill" value="#ffffff">
+              <span class="swatch-chip" style="background:#ffffff" aria-hidden="true"></span>
+              <span class="visually-hidden">White</span>
+            </label>
+            <label class="swatch">
+              <input type="radio" name="button-fill" value="#fff4cc">
+              <span class="swatch-chip" style="background:#fff4cc" aria-hidden="true"></span>
+              <span class="visually-hidden">Soft yellow</span>
+            </label>
+            <label class="swatch">
+              <input type="radio" name="button-fill" value="#dff4e8">
+              <span class="swatch-chip" style="background:#dff4e8" aria-hidden="true"></span>
+              <span class="visually-hidden">Soft green</span>
+            </label>
+            <label class="swatch">
+              <input type="radio" name="button-fill" value="#dde9ff">
+              <span class="swatch-chip" style="background:#dde9ff" aria-hidden="true"></span>
+              <span class="visually-hidden">Soft blue</span>
+            </label>
+            <label class="swatch">
+              <input type="radio" name="button-fill" value="#f8e0e0">
+              <span class="swatch-chip" style="background:#f8e0e0" aria-hidden="true"></span>
+              <span class="visually-hidden">Soft red</span>
+            </label>
+          </div>
+        </fieldset>
+        <fieldset class="swatch-group">
+          <legend>Border</legend>
+          <div class="swatch-row" role="radiogroup" aria-label="Button border colour">
+            <label class="swatch">
+              <input type="radio" name="button-border" value="#17212b">
+              <span class="swatch-chip" style="background:#17212b" aria-hidden="true"></span>
+              <span class="visually-hidden">Black</span>
+            </label>
+            <label class="swatch">
+              <input type="radio" name="button-border" value="#0b57d0">
+              <span class="swatch-chip" style="background:#0b57d0" aria-hidden="true"></span>
+              <span class="visually-hidden">Blue</span>
+            </label>
+            <label class="swatch">
+              <input type="radio" name="button-border" value="#237847">
+              <span class="swatch-chip" style="background:#237847" aria-hidden="true"></span>
+              <span class="visually-hidden">Green</span>
+            </label>
+            <label class="swatch">
+              <input type="radio" name="button-border" value="#b3261e">
+              <span class="swatch-chip" style="background:#b3261e" aria-hidden="true"></span>
+              <span class="visually-hidden">Red</span>
+            </label>
+            <label class="swatch">
+              <input type="radio" name="button-border" value="#7a4d00">
+              <span class="swatch-chip" style="background:#7a4d00" aria-hidden="true"></span>
+              <span class="visually-hidden">Brown</span>
+            </label>
+          </div>
+        </fieldset>
+      </section>
+
+      <section class="panel-section">
+        <h2>Symbol Search</h2>
+        <form id="symbol-search-form" class="search-form">
+          <input id="symbol-search-term" type="search" autocomplete="off" placeholder="Search ARASAAC">
+          <button type="submit">Search</button>
+        </form>
+        <label class="file-button wide-button">
+          Upload Image
+          <input id="custom-symbol-upload" type="file" accept="image/*">
+        </label>
+        <div id="symbol-results" class="symbol-results" aria-live="polite"></div>
+      </section>
+
+      <section class="panel-section">
+        <h2>Buttons</h2>
+        <div id="button-table" class="button-table"></div>
+      </section>
+    </aside>
+  </main>
+
+  <script src="js/data.js"></script>
+  <script src="js/file-io.js"></script>
+  <script src="js/symbols.js"></script>
+  <script src="js/editor.js"></script>
+</body>
+</html>

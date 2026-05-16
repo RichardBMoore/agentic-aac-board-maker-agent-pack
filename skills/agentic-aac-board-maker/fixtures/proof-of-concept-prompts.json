@@ -1,0 +1,41 @@
+{
+  "version": "0.1.0",
+  "fixtures": [
+    {
+      "id": "gaze-choice-2x2",
+      "prompt": "Make an eye-gaze choice board for choosing a class activity.",
+      "expectedOutputs": ["aac-board-ir", "single-file-html", "teacher-notes"],
+      "requiredChecks": ["dwell-safe", "large-targets", "repair-option", "keyboard-fallback"]
+    },
+    {
+      "id": "qcia-community-shops",
+      "prompt": "Create a QCIA community access board for going to the shops.",
+      "expectedOutputs": ["aac-board-ir", "single-file-html-or-resource-pack", "printable", "teacher-evidence-note"],
+      "requiredChecks": ["qcia-evidence", "safety-language", "help-route", "privacy-note"]
+    },
+    {
+      "id": "curriculum-sentence-builder",
+      "prompt": "Make a Year 7 English hero speech sentence-builder board.",
+      "expectedOutputs": ["aac-board-ir", "sentence-builder-resource", "teacher-notes"],
+      "requiredChecks": ["opinion", "because", "rehearse-or-speak", "repair-option"]
+    },
+    {
+      "id": "visual-schedule-expressive",
+      "prompt": "Make a morning routine visual schedule with expressive options.",
+      "expectedOutputs": ["aac-board-ir", "visual-schedule", "teacher-notes"],
+      "requiredChecks": ["schedule-order", "wait-help-change", "not-full-aac-claim"]
+    },
+    {
+      "id": "needs-repair-board",
+      "prompt": "Make a respectful needs and communication repair board for a secondary student.",
+      "expectedOutputs": ["aac-board-ir", "html-or-printable-board", "teacher-notes"],
+      "requiredChecks": ["age-respectful", "repair-language", "privacy-safe", "not-behaviour-control"]
+    },
+    {
+      "id": "partner-assisted-print",
+      "prompt": "Make a printable partner-assisted scanning board for help, stop, different, finished, and choices.",
+      "expectedOutputs": ["aac-board-ir", "printable-board", "partner-script"],
+      "requiredChecks": ["scan-order", "black-and-white-readable", "partner-wait-confirm", "attribution"]
+    }
+  ]
+}

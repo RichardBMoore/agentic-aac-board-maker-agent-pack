@@ -1,0 +1,7 @@
+interface:
+  display_name: "Eye Gaze Dwell HTML"
+  short_description: "Build offline dwell-access HTML tools"
+  brand_color: "#7A4CC2"
+  default_prompt: "Use $eyegaze-dwell-html to build a single-file dwell HTML activity."
+policy:
+  allow_implicit_invocation: true

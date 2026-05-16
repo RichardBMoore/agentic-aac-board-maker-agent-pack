@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "0.1.0",
+  "app": "Open Boardmaker",
+  "name": "Visual Schedule",
+  "type": "interactive",
+  "settings": {
+    "speakLabels": true,
+    "showLabels": true,
+    "dwellTimeMs": 1200,
+    "switchScanning": false,
+    "scanSpeedMs": 1400
+  },
+  "pages": [
+    {
+      "id": "page-visual-schedule",
+      "name": "Today",
+      "layout": "grid",
+      "gridColumns": 4,
+      "gridRows": 2,
+      "margin": 10,
+      "backgroundColour": "#ffffff",
+      "buttons": [
+        { "id": "btn-school", "label": "School", "symbolId": "32446", "result": "selected", "style": { "fillColour": "#e8f2ff" } },
+        { "id": "btn-morning", "label": "Morning", "symbolId": "25704", "result": "selected", "style": { "fillColour": "#fff7df" } },
+        { "id": "btn-work", "label": "Work", "symbolId": "6624", "result": "selected", "style": { "fillColour": "#ffffff" } },
+        { "id": "btn-break", "label": "Break", "symbolId": "6604", "result": "selected", "style": { "fillColour": "#eaf7ed" } },
+        { "id": "btn-lunch", "label": "Lunch", "symbolId": "4611", "result": "selected", "style": { "fillColour": "#fff7df" } },
+        { "id": "btn-outside", "label": "Outside", "symbolId": "5475", "result": "selected", "style": { "fillColour": "#eaf7ed" } },
+        { "id": "btn-pack-up", "label": "Pack Up", "symbolId": "10245", "result": "selected", "style": { "fillColour": "#f7e9ff" } },
+        { "id": "btn-home", "label": "Home", "symbolId": "6964", "result": "selected", "style": { "fillColour": "#ffece7" } }
+      ]
+    }
+  ],
+  "metadata": {
+    "tags": ["visual-schedule", "routine"],
+    "privacyLevel": "anonymous"
+  }
+}

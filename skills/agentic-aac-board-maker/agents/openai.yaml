@@ -1,0 +1,7 @@
+interface:
+  display_name: "Agentic AAC Board Maker"
+  short_description: "Generate accessible AAC classroom boards"
+  brand_color: "#0057B8"
+  default_prompt: "Use $agentic-aac-board-maker to make an eye-gaze AAC board for this lesson."
+policy:
+  allow_implicit_invocation: true

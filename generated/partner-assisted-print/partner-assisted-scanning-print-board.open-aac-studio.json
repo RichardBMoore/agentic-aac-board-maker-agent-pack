@@ -1,0 +1,535 @@
+{
+  "schemaVersion": "0.1.0",
+  "app": "Open AAC Studio",
+  "id": "partner-assisted-scanning-print-board",
+  "name": "Partner-Assisted Scanning Print Board",
+  "type": "interactive",
+  "created": "2026-05-16T04:24:33.622796Z",
+  "modified": "2026-05-16T04:24:33.622796Z",
+  "settings": {
+    "orientation": "landscape",
+    "width": 1024,
+    "height": 768,
+    "speakLabels": true,
+    "showLabels": true,
+    "highlightColour": "#ffeb3b",
+    "font": "Verdana",
+    "fontSize": 18,
+    "fontColour": "#000000",
+    "backgroundColour": "#ffffff",
+    "showStopButton": true,
+    "dwellTimeMs": 1200,
+    "switchScanning": true,
+    "scanSpeedMs": 1800,
+    "scanPattern": "linear"
+  },
+  "accessibility": {
+    "intendedAccess": [
+      "partner-assisted-scanning",
+      "print",
+      "touch",
+      "keyboard",
+      "mouse"
+    ],
+    "minimumTargetSizePx": 132,
+    "dwellSafe": false,
+    "scanOrder": "numbered partner scan order",
+    "audioCues": true
+  },
+  "pages": [
+    {
+      "id": "page-main",
+      "name": "Main",
+      "pattern": "partner-assisted-scanning",
+      "layout": "grid",
+      "gridColumns": 3,
+      "gridRows": 3,
+      "margin": 18,
+      "backgroundColour": "#f7fbff",
+      "backgroundImage": null,
+      "buttons": [
+        {
+          "id": "btn-help",
+          "type": "standard",
+          "label": "Help",
+          "role": "repair",
+          "function": "repair",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "help",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 33.3333,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "Help please",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-help-speak",
+              "type": "speak-text",
+              "text": "Help please"
+            },
+            {
+              "id": "act-btn-help-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-stop",
+          "type": "standard",
+          "label": "Stop",
+          "role": "repair",
+          "function": "refuse",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "stop",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 33.3333,
+            "y": 0.0,
+            "width": 33.3333,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "Stop",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-stop-speak",
+              "type": "speak-text",
+              "text": "Stop"
+            },
+            {
+              "id": "act-btn-stop-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-different",
+          "type": "standard",
+          "label": "Different",
+          "role": "repair",
+          "function": "repair",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "different",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 66.6667,
+            "y": 0.0,
+            "width": 33.3333,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "Different please",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-different-speak",
+              "type": "speak-text",
+              "text": "Different please"
+            },
+            {
+              "id": "act-btn-different-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-finished",
+          "type": "standard",
+          "label": "Finished",
+          "role": "repair",
+          "function": "regulate-rest",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "finished",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 0.0,
+            "y": 33.3333,
+            "width": 33.3333,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "I am finished",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-finished-speak",
+              "type": "speak-text",
+              "text": "I am finished"
+            },
+            {
+              "id": "act-btn-finished-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-choice-a",
+          "type": "standard",
+          "label": "Choice A",
+          "role": "fringe",
+          "function": "choose",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "choice one",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 33.3333,
+            "y": 33.3333,
+            "width": 33.3333,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "Choice A",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-choice-a-speak",
+              "type": "speak-text",
+              "text": "Choice A"
+            },
+            {
+              "id": "act-btn-choice-a-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-choice-b",
+          "type": "standard",
+          "label": "Choice B",
+          "role": "fringe",
+          "function": "choose",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "choice two",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 66.6667,
+            "y": 33.3333,
+            "width": 33.3333,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "Choice B",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-choice-b-speak",
+              "type": "speak-text",
+              "text": "Choice B"
+            },
+            {
+              "id": "act-btn-choice-b-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-yes",
+          "type": "standard",
+          "label": "Yes",
+          "role": "core",
+          "function": "answer",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "yes",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 0.0,
+            "y": 66.6667,
+            "width": 33.3333,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "Yes",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-yes-speak",
+              "type": "speak-text",
+              "text": "Yes"
+            },
+            {
+              "id": "act-btn-yes-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-no",
+          "type": "standard",
+          "label": "No",
+          "role": "core",
+          "function": "answer",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "no",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 33.3333,
+            "y": 66.6667,
+            "width": 33.3333,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "No",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-no-speak",
+              "type": "speak-text",
+              "text": "No"
+            },
+            {
+              "id": "act-btn-no-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-more-time",
+          "type": "standard",
+          "label": "More time",
+          "role": "repair",
+          "function": "regulate-rest",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "more time",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 66.6667,
+            "y": 66.6667,
+            "width": 33.3333,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#ffffff",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "I need more time",
+          "result": "selected",
+          "actions": [
+            {
+              "id": "act-btn-more-time-speak",
+              "type": "speak-text",
+              "text": "I need more time"
+            },
+            {
+              "id": "act-btn-more-time-log",
+              "type": "log-attempt"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variables": {},
+  "teacherNotes": {
+    "partner_script": "Partner says each option slowly in numbered order, waits, watches for the agreed signal, then confirms: I saw you choose __. Is that right?",
+    "scan_order": "Scan left to right, top to bottom: 1 Help, 2 Stop, 3 Different, 4 Finished, 5 Choice A, 6 Choice B, 7 Yes, 8 No, 9 More time.",
+    "wait_confirm": "Pause long enough for the student to respond. If unsure, repeat the scan or offer Yes/No confirmation without rushing.",
+    "print": "Print in black and white if needed. Strong borders, large labels and numbered order are included for readability.",
+    "attribution": "If adding symbols, record the symbol source and licence. Text-only printing is usable without symbols.",
+    "modeling": "Model the scan process with another adult first: say each numbered option slowly, wait, observe the agreed signal, and confirm the selected message before acting."
+  },
+  "communicationFunctions": [
+    "request",
+    "refuse",
+    "choose",
+    "repair",
+    "regulate-rest",
+    "answer"
+  ],
+  "metadata": {
+    "tags": [
+      "aac",
+      "agent-generated",
+      "proof-of-concept",
+      "partner-assisted-print",
+      "partner-assisted-scanning",
+      "printable",
+      "low-tech"
+    ],
+    "level": "",
+    "curriculum": "Access and communication support for partner-assisted choice-making, repair, refusal and confirmation.",
+    "privacyLevel": "anonymous",
+    "generatedFrom": "agentic-aac-board-ir",
+    "sourceIrSchemaVersion": "0.2.0"
+  },
+  "licences": [
+    {
+      "source": "ARASAAC",
+      "licence": "CC BY-NC-SA",
+      "attribution": "Pictograms by ARASAAC (Government of Aragon) if ARASAAC symbols are later inserted; these HTML drafts use text placeholders only."
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "0.1.0",
+  "app": "Open Boardmaker",
+  "name": "Choice Board 9",
+  "type": "interactive",
+  "settings": {
+    "speakLabels": true,
+    "showLabels": true,
+    "dwellTimeMs": 1200,
+    "switchScanning": false,
+    "scanSpeedMs": 1400
+  },
+  "pages": [
+    {
+      "id": "page-choice-board-9",
+      "name": "Choices",
+      "layout": "grid",
+      "gridColumns": 3,
+      "gridRows": 3,
+      "margin": 10,
+      "backgroundColour": "#ffffff",
+      "buttons": [
+        { "id": "btn-yes", "label": "Yes", "symbolId": "5584", "result": "selected", "style": { "fillColour": "#eaf7ed" } },
+        { "id": "btn-no", "label": "No", "symbolId": "5526", "result": "selected", "style": { "fillColour": "#ffece7" } },
+        { "id": "btn-more", "label": "More", "symbolId": "5508", "result": "selected", "style": { "fillColour": "#fff7df" } },
+        { "id": "btn-stop", "label": "Stop", "symbolId": "7196", "result": "selected", "style": { "fillColour": "#f8e8e8" } },
+        { "id": "btn-help", "label": "Help", "symbolId": "32648", "result": "selected", "style": { "fillColour": "#e8f2ff" } },
+        { "id": "btn-go", "label": "Go", "symbolId": "8142", "result": "selected", "style": { "fillColour": "#eaf7ed" } },
+        { "id": "btn-like", "label": "Like", "symbolId": "37826", "result": "selected", "style": { "fillColour": "#f7e9ff" } },
+        { "id": "btn-want", "label": "Want", "symbolId": "5441", "result": "selected", "style": { "fillColour": "#fff7df" } },
+        { "id": "btn-finished", "label": "Finished", "symbolId": "28429", "result": "selected", "style": { "fillColour": "#e8f2ff" } }
+      ]
+    }
+  ],
+  "metadata": {
+    "tags": ["choice-board", "core-vocabulary"],
+    "privacyLevel": "anonymous"
+  }
+}

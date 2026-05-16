@@ -1,0 +1,447 @@
+{
+  "schemaVersion": "0.2.0",
+  "format": "agentic-aac-board-ir",
+  "app": "Agentic AAC Board Maker",
+  "id": "year7-hero-speech-sentence-builder",
+  "title": "Year 7 Hero Speech Sentence Builder",
+  "name": "Year 7 Hero Speech Sentence Builder",
+  "type": "interactive",
+  "purpose": "A sentence-builder board for a Year 7 English hero speech that supports opinion, evidence, because statements, rehearsal and repair language.",
+  "sourcePrompt": "Make a Year 7 English hero speech sentence-builder board.",
+  "fixtureId": "curriculum-sentence-builder",
+  "audience": {
+    "ageBand": "year-7",
+    "tone": "secondary, curriculum-facing"
+  },
+  "access": {
+    "intended": [
+      "touch",
+      "keyboard",
+      "mouse",
+      "eye-gaze-dwell"
+    ],
+    "profile": "mixed-access",
+    "minimumTargetSizePx": 132,
+    "dwellTimeMs": 1100,
+    "switchScanning": false,
+    "scanSpeedMs": 1400,
+    "scanPattern": "linear",
+    "scanOrder": "left-to-right sentence-building order"
+  },
+  "settings": {
+    "orientation": "landscape",
+    "width": 1024,
+    "height": 768,
+    "speakLabels": true,
+    "showLabels": true,
+    "dwellTimeMs": 1100,
+    "switchScanning": false,
+    "scanSpeedMs": 1400,
+    "scanPattern": "linear"
+  },
+  "accessibility": {
+    "intendedAccess": [
+      "touch",
+      "keyboard",
+      "mouse",
+      "eye-gaze-dwell"
+    ],
+    "minimumTargetSizePx": 132,
+    "dwellSafe": true,
+    "scanOrder": "left-to-right sentence-building order",
+    "audioCues": true
+  },
+  "communicationFunctions": [
+    "comment",
+    "explain",
+    "reflect",
+    "repair",
+    "request"
+  ],
+  "pages": [
+    {
+      "id": "page-main",
+      "name": "Main",
+      "pattern": "sentence-builder",
+      "layout": "grid",
+      "grid": {
+        "rows": 3,
+        "columns": 4
+      },
+      "gridRows": 3,
+      "gridColumns": 4,
+      "margin": 18,
+      "backgroundColour": "#f7fbff",
+      "buttons": [
+        {
+          "id": "btn-my-hero",
+          "label": "My hero is...",
+          "role": "sentence",
+          "function": "comment",
+          "searchTerm": "hero",
+          "spokenText": "My hero is",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "My hero is",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-my-hero-speak",
+              "type": "speak-text",
+              "text": "My hero is"
+            },
+            {
+              "id": "act-btn-my-hero-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-i-think",
+          "label": "I think...",
+          "role": "sentence",
+          "function": "comment",
+          "searchTerm": "opinion",
+          "spokenText": "I think",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "I think",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-i-think-speak",
+              "type": "speak-text",
+              "text": "I think"
+            },
+            {
+              "id": "act-btn-i-think-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-because",
+          "label": "because",
+          "role": "sentence",
+          "function": "explain",
+          "searchTerm": "because",
+          "spokenText": "because",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "because",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-because-speak",
+              "type": "speak-text",
+              "text": "because"
+            },
+            {
+              "id": "act-btn-because-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-example",
+          "label": "For example...",
+          "role": "evidence",
+          "function": "explain",
+          "searchTerm": "example",
+          "spokenText": "For example",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "For example",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-example-speak",
+              "type": "speak-text",
+              "text": "For example"
+            },
+            {
+              "id": "act-btn-example-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-brave",
+          "label": "brave",
+          "role": "fringe",
+          "function": "comment",
+          "searchTerm": "brave",
+          "spokenText": "brave",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "brave",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-brave-speak",
+              "type": "speak-text",
+              "text": "brave"
+            },
+            {
+              "id": "act-btn-brave-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-kind",
+          "label": "kind",
+          "role": "fringe",
+          "function": "comment",
+          "searchTerm": "kind",
+          "spokenText": "kind",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "kind",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-kind-speak",
+              "type": "speak-text",
+              "text": "kind"
+            },
+            {
+              "id": "act-btn-kind-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-help-others",
+          "label": "helps others",
+          "role": "fringe",
+          "function": "comment",
+          "searchTerm": "helping others",
+          "spokenText": "helps others",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "helps others",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-help-others-speak",
+              "type": "speak-text",
+              "text": "helps others"
+            },
+            {
+              "id": "act-btn-help-others-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-faces-danger",
+          "label": "faces danger",
+          "role": "fringe",
+          "function": "comment",
+          "searchTerm": "danger",
+          "spokenText": "faces danger",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "faces danger",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-faces-danger-speak",
+              "type": "speak-text",
+              "text": "faces danger"
+            },
+            {
+              "id": "act-btn-faces-danger-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-rehearse",
+          "label": "Rehearse",
+          "role": "sentence",
+          "function": "reflect",
+          "searchTerm": "practice speak",
+          "spokenText": "I want to rehearse that sentence",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "I want to rehearse that sentence",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-rehearse-speak",
+              "type": "speak-text",
+              "text": "I want to rehearse that sentence"
+            },
+            {
+              "id": "act-btn-rehearse-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-say-again",
+          "label": "Say it again",
+          "role": "repair",
+          "function": "repair",
+          "searchTerm": "repeat",
+          "spokenText": "Please say it again",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "Please say it again",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-say-again-speak",
+              "type": "speak-text",
+              "text": "Please say it again"
+            },
+            {
+              "id": "act-btn-say-again-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-change",
+          "label": "Change my idea",
+          "role": "repair",
+          "function": "repair",
+          "searchTerm": "change",
+          "spokenText": "I want to change my idea",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "I want to change my idea",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-change-speak",
+              "type": "speak-text",
+              "text": "I want to change my idea"
+            },
+            {
+              "id": "act-btn-change-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-help",
+          "label": "Help please",
+          "role": "repair",
+          "function": "request",
+          "searchTerm": "help",
+          "spokenText": "Help please",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "Help please",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-help-speak",
+              "type": "speak-text",
+              "text": "Help please"
+            },
+            {
+              "id": "act-btn-help-log",
+              "type": "log-attempt"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "teacherNotes": {
+    "curriculum": "Supports Year 7 English speaking/listening by giving access to opinion, reasoning and evidence language for a short hero speech.",
+    "customisation": "Replace adjectives and example prompts with the class text, film, novel or local hero being studied.",
+    "repair": "Keep Say it again, Change my idea and Help please available so the student can repair the sentence-building task.",
+    "use": "Use for planning, rehearsal or supported oral presentation. Do not treat the board as the student's full expressive system.",
+    "modeling": "Model a complete sentence chain: My hero is... I think... because... For example.... Accept partial selections as valid drafting or rehearsal."
+  },
+  "symbolStrategy": {
+    "defaultSource": "ARASAAC search terms",
+    "textFallback": true,
+    "customMediaPolicy": "teacher-owned local media only unless explicitly approved",
+    "notes": "Search terms prioritise abstract curriculum language; teacher modelling and text labels are more important than decorative symbols."
+  },
+  "privacy": {
+    "level": "anonymous",
+    "containsSensitiveData": false
+  },
+  "metadata": {
+    "tags": [
+      "aac",
+      "agent-generated",
+      "proof-of-concept",
+      "curriculum-sentence-builder",
+      "english",
+      "year-7",
+      "sentence-builder"
+    ],
+    "curriculum": "Australian Curriculum English Year 7: expressing a viewpoint, developing spoken texts, using reasons/examples, rehearsing presentation language.",
+    "privacyLevel": "anonymous"
+  },
+  "attribution": [
+    {
+      "source": "ARASAAC",
+      "licence": "CC BY-NC-SA",
+      "note": "Symbol search terms are provided for later ARASAAC replacement; confirm exact current licence wording when publishing beyond local classroom use."
+    }
+  ],
+  "licences": [
+    {
+      "source": "ARASAAC",
+      "licence": "CC BY-NC-SA",
+      "attribution": "Pictograms by ARASAAC (Government of Aragon) if ARASAAC symbols are later inserted; these HTML drafts use text placeholders only."
+    }
+  ]
+}

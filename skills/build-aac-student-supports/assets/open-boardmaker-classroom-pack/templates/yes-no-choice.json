@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "0.1.0",
+  "app": "Open Boardmaker",
+  "name": "Yes No Choice Board",
+  "type": "interactive",
+  "created": "2026-05-06T00:00:00.000Z",
+  "modified": "2026-05-06T00:00:00.000Z",
+  "author": "Richard Moore",
+  "settings": {
+    "orientation": "landscape",
+    "width": 1024,
+    "height": 768,
+    "speakLabels": true,
+    "showLabels": true,
+    "highlightColour": "#ffeb3b",
+    "font": "Verdana",
+    "fontSize": 18,
+    "fontColour": "#000000",
+    "backgroundColour": "#ffffff",
+    "showStopButton": true,
+    "dwellTimeMs": 1200
+  },
+  "accessibility": {
+    "intendedAccess": ["touch", "mouse", "keyboard", "eye-gaze-dwell"],
+    "minimumTargetSizePx": 96,
+    "dwellSafe": true,
+    "scanOrder": "dom-order",
+    "audioCues": true
+  },
+  "pages": [
+    {
+      "id": "page-yes-no-choice",
+      "name": "Page 1",
+      "layout": "grid",
+      "gridColumns": 2,
+      "gridRows": 2,
+      "margin": 10,
+      "backgroundColour": "#ffffff",
+      "backgroundImage": null,
+      "buttons": [
+        {
+          "id": "btn-yes",
+          "type": "standard",
+          "label": "Yes",
+          "symbolId": "5584",
+          "symbolSrc": "https://api.arasaac.org/api/pictograms/5584?download=false&color=true&resolution=500",
+          "symbolLayout": "label-bottom",
+          "position": { "x": 0, "y": 0, "width": 50, "height": 50 },
+          "style": { "borderColour": "#17212b", "borderWidth": 3, "borderStyle": "solid", "shape": "rounded-rect", "fillColour": "#eaf7ed", "gradientColour": null, "gradientType": "none" },
+          "font": { "family": "Verdana", "size": 18, "bold": true, "italic": false, "colour": "#000000", "align": "centre" },
+          "state": "selectable",
+          "audioCue": "Yes",
+          "result": "correct",
+          "actions": [{ "id": "action-yes-speak", "type": "speak-label" }, { "id": "action-yes-log", "type": "log-attempt" }]
+        },
+        {
+          "id": "btn-no",
+          "type": "standard",
+          "label": "No",
+          "symbolId": "5526",
+          "symbolSrc": "https://api.arasaac.org/api/pictograms/5526?download=false&color=true&resolution=500",
+          "symbolLayout": "label-bottom",
+          "position": { "x": 50, "y": 0, "width": 50, "height": 50 },
+          "style": { "borderColour": "#17212b", "borderWidth": 3, "borderStyle": "solid", "shape": "rounded-rect", "fillColour": "#ffece7", "gradientColour": null, "gradientType": "none" },
+          "font": { "family": "Verdana", "size": 18, "bold": true, "italic": false, "colour": "#000000", "align": "centre" },
+          "state": "selectable",
+          "audioCue": "No",
+          "result": "incorrect",
+          "actions": [{ "id": "action-no-speak", "type": "speak-label" }, { "id": "action-no-log", "type": "log-attempt" }]
+        },
+        {
+          "id": "btn-more",
+          "type": "standard",
+          "label": "More",
+          "symbolId": "5508",
+          "symbolSrc": "https://api.arasaac.org/api/pictograms/5508?download=false&color=true&resolution=500",
+          "symbolLayout": "label-bottom",
+          "position": { "x": 0, "y": 50, "width": 50, "height": 50 },
+          "style": { "borderColour": "#17212b", "borderWidth": 3, "borderStyle": "solid", "shape": "rounded-rect", "fillColour": "#fff7df", "gradientColour": null, "gradientType": "none" },
+          "font": { "family": "Verdana", "size": 18, "bold": true, "italic": false, "colour": "#000000", "align": "centre" },
+          "state": "selectable",
+          "audioCue": "More",
+          "result": "selected",
+          "actions": [{ "id": "action-more-speak", "type": "speak-label" }, { "id": "action-more-log", "type": "log-attempt" }]
+        },
+        {
+          "id": "btn-finished",
+          "type": "standard",
+          "label": "Finished",
+          "symbolId": "28429",
+          "symbolSrc": "https://api.arasaac.org/api/pictograms/28429?download=false&color=true&resolution=500",
+          "symbolLayout": "label-bottom",
+          "position": { "x": 50, "y": 50, "width": 50, "height": 50 },
+          "style": { "borderColour": "#17212b", "borderWidth": 3, "borderStyle": "solid", "shape": "rounded-rect", "fillColour": "#e8f2ff", "gradientColour": null, "gradientType": "none" },
+          "font": { "family": "Verdana", "size": 18, "bold": true, "italic": false, "colour": "#000000", "align": "centre" },
+          "state": "selectable",
+          "audioCue": "Finished",
+          "result": "selected",
+          "actions": [{ "id": "action-finished-speak", "type": "speak-label" }, { "id": "action-finished-log", "type": "log-attempt" }]
+        }
+      ]
+    }
+  ],
+  "variables": {},
+  "metadata": {
+    "tags": ["choice-board", "yes-no", "prototype"],
+    "level": "early-years",
+    "curriculum": "QCIA",
+    "privacyLevel": "anonymous"
+  },
+  "licences": [
+    {
+      "source": "ARASAAC",
+      "licence": "CC BY-NC-SA",
+      "attribution": "Pictograms by ARASAAC (Government of Aragon)"
+    }
+  ]
+}

@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 7 Hero Speech Sentence Builder</title>
+<style>
+  :root { --bg:#f7fbff; --ink:#102033; --panel:#ffffff; --focus:#003f8f; --accent:#0b6fdd; --repair:#7a1f1f; --shadow:0 10px 30px rgba(16,32,51,.12); --dwell-ms:1100ms; }
+  * { box-sizing:border-box; }
+  body { margin:0; min-height:100vh; min-height:100dvh; font-family:Verdana, Arial, sans-serif; background:var(--bg); color:var(--ink); display:grid; grid-template-rows:auto minmax(0,1fr) auto auto; }
+  header { padding:12px 24px 8px; text-align:center; }
+  h1 { margin:.05rem 0 .25rem; font-size:clamp(1.55rem,2.4vw,2.5rem); }
+  header p { margin:.1rem auto; max-width:1000px; font-size:clamp(.95rem,1.2vw,1.12rem); }
+  main { min-height:0; display:grid; place-items:center; padding:8px 24px 10px; }
+  .board { width:min(1180px,100%); min-height:min(56vh,540px); display:grid; grid-template-columns:repeat(4, minmax(132px,1fr)); grid-template-rows:repeat(3, minmax(132px,1fr)); gap:18px; }
+  .dwell-btn { min-width:132px; min-height:132px; }
+  .aac-button { position:relative; overflow:hidden; border:5px solid #17212b; border-radius:24px; background:var(--fill,#fff); color:var(--ink); box-shadow:var(--shadow); padding:16px 14px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.35rem; cursor:pointer; touch-action:manipulation; text-align:center; }
+  .aac-button.repair { border-style:dashed; }
+  .aac-button.evidence { border-color:#365314; }
+  .aac-button.sentence { border-color:#3730a3; }
+  .scan { position:absolute; top:8px; left:10px; width:30px; height:30px; border:2px solid #17212b; border-radius:999px; display:grid; place-items:center; font-weight:800; background:#fff; }
+  .label { font-size:clamp(1.35rem,2.8vw,2.65rem); line-height:1.05; font-weight:800; }
+  .spoken { font-size:clamp(.82rem,1.1vw,1.1rem); opacity:.86; line-height:1.25; }
+  .aac-button:focus-visible, .aac-button.is-dwelling { outline:8px solid var(--focus); outline-offset:6px; transform:translateY(-2px); }
+  .aac-button.activated { outline:10px solid #087f23; }
+  .dwell-progress { position:absolute; left:0; bottom:0; height:14px; width:0; background:linear-gradient(90deg,#0b6fdd,#22a06b); transition:none; }
+  .aac-button.is-dwelling .dwell-progress { animation:dwellFill var(--dwell-ms) linear forwards; }
+  @keyframes dwellFill { from { width:0; } to { width:100%; } }
+  .controls { display:flex; justify-content:center; gap:16px; padding:0 24px 12px; flex-wrap:wrap; }
+  .control { font-size:1.05rem; min-height:54px; padding:10px 18px; border:3px solid #17212b; border-radius:16px; background:#fff; font-weight:700; }
+  .last-message { min-width:min(720px,90vw); text-align:center; font-size:1.15rem; font-weight:700; }
+  details.teacher-notes { margin:0 auto 12px; width:min(1120px,calc(100% - 32px)); background:#fff; border:2px solid #17212b; border-radius:16px; padding:10px 16px; }
+  details.teacher-notes summary { font-weight:800; cursor:pointer; padding:8px; }
+  footer { font-size:.86rem; padding:8px 16px 14px; text-align:center; }
+  @media (max-width:760px) { body { display:block; } .board { grid-template-columns:1fr; grid-template-rows:none; } .aac-button { min-height:132px; } }
+  @media (prefers-reduced-motion:reduce) { .aac-button { transition:none; } }
+  @media (forced-colors:active) { .aac-button,.control { border:4px solid ButtonText; background:Canvas; color:ButtonText; forced-color-adjust:auto; } .aac-button:focus-visible,.aac-button.is-dwelling { outline:6px solid Highlight; } .dwell-progress { background:Highlight; } }
+  @media print { body { display:block; background:#fff; } header, main, footer { padding:8mm; } .board { display:grid; grid-template-columns:repeat(4,1fr); gap:5mm; min-height:auto; } .aac-button { min-height:34mm; box-shadow:none; break-inside:avoid; border:2.5pt solid #000; } .controls,.dwell-progress { display:none !important; } details.teacher-notes { page-break-before:always; } .spoken { color:#000; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Year 7 Hero Speech Sentence Builder</h1>
+  <p>A sentence-builder board for a Year 7 English hero speech that supports opinion, evidence, because statements, rehearsal and repair language.</p>
+  <p>Access: touch, keyboard, mouse, eye-gaze-dwell. Scan/order note: left-to-right sentence-building order.</p>
+</header>
+<main>
+  <section class="board" aria-label="AAC communication board">
+      <button class="aac-button dwell-btn sentence" style="--fill:#FFFFFF" aria-label="My hero is...: My hero is" data-speak="My hero is" data-label="My hero is...">
+        <span class="scan" aria-hidden="true">1</span>
+        <span class="label">My hero is...</span>
+        <span class="spoken">My hero is</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+      <button class="aac-button dwell-btn sentence" style="--fill:#FFFFFF" aria-label="I think...: I think" data-speak="I think" data-label="I think...">
+        <span class="scan" aria-hidden="true">2</span>
+        <span class="label">I think...</span>
+        <span class="spoken">I think</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+      <button class="aac-button dwell-btn sentence" style="--fill:#FFFFFF" aria-label="because: because" data-speak="because" data-label="because">
+        <span class="scan" aria-hidden="true">3</span>
+        <span class="label">because</span>
+        <span class="spoken">because</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+      <button class="aac-button dwell-btn evidence" style="--fill:#FFFFFF" aria-label="For example...: For example" data-speak="For example" data-label="For example...">
+        <span class="scan" aria-hidden="true">4</span>
+        <span class="label">For example...</span>
+        <span class="spoken">For example</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+      <button class="aac-button dwell-btn fringe" style="--fill:#FFFFFF" aria-label="brave: brave" data-speak="brave" data-label="brave">
+        <span class="scan" aria-hidden="true">5</span>
+        <span class="label">brave</span>
+        <span class="spoken">brave</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+      <button class="aac-button dwell-btn fringe" style="--fill:#FFFFFF" aria-label="kind: kind" data-speak="kind" data-label="kind">
+        <span class="scan" aria-hidden="true">6</span>
+        <span class="label">kind</span>
+        <span class="spoken">kind</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+      <button class="aac-button dwell-btn fringe" style="--fill:#FFFFFF" aria-label="helps others: helps others" data-speak="helps others" data-label="helps others">
+        <span class="scan" aria-hidden="true">7</span>
+        <span class="label">helps others</span>
+        <span class="spoken">helps others</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+      <button class="aac-button dwell-btn fringe" style="--fill:#FFFFFF" aria-label="faces danger: faces danger" data-speak="faces danger" data-label="faces danger">
+        <span class="scan" aria-hidden="true">8</span>
+        <span class="label">faces danger</span>
+        <span class="spoken">faces danger</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+      <button class="aac-button dwell-btn sentence" style="--fill:#FFFFFF" aria-label="Rehearse: I want to rehearse that sentence" data-speak="I want to rehearse that sentence" data-label="Rehearse">
+        <span class="scan" aria-hidden="true">9</span>
+        <span class="label">Rehearse</span>
+        <span class="spoken">I want to rehearse that sentence</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" aria-label="Say it again: Please say it again" data-speak="Please say it again" data-label="Say it again">
+        <span class="scan" aria-hidden="true">10</span>
+        <span class="label">Say it again</span>
+        <span class="spoken">Please say it again</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" aria-label="Change my idea: I want to change my idea" data-speak="I want to change my idea" data-label="Change my idea">
+        <span class="scan" aria-hidden="true">11</span>
+        <span class="label">Change my idea</span>
+        <span class="spoken">I want to change my idea</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" aria-label="Help please: Help please" data-speak="Help please" data-label="Help please">
+        <span class="scan" aria-hidden="true">12</span>
+        <span class="label">Help please</span>
+        <span class="spoken">Help please</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+  </section>
+</main>
+<section class="controls" aria-label="Speech and status controls">
+  <button class="control" id="stopSpeech" type="button" aria-label="Stop speech">Stop speech</button>
+  <div class="last-message" id="lastMessage" role="status" aria-live="polite">Ready</div>
+</section>
+<details class="teacher-notes">
+  <summary>Teacher notes, customisation, and QA</summary>
+  <p><strong>Modelling:</strong> Model a complete sentence chain: My hero is... I think... because... For example.... Accept partial selections as valid drafting or rehearsal.</p>
+  <p><strong>Curriculum:</strong> Supports Year 7 English speaking/listening by giving access to opinion, reasoning and evidence language for a short hero speech.</p>
+  <p><strong>Customisation:</strong> Replace adjectives and example prompts with the class text, film, novel or local hero being studied.</p>
+  <p><strong>Repair:</strong> Keep Say it again, Change my idea and Help please available so the student can repair the sentence-building task.</p>
+  <p><strong>Use:</strong> Use for planning, rehearsal or supported oral presentation. Do not treat the board as the student&#x27;s full expressive system.</p>
+  <p><strong>Caveat:</strong> Draft classroom support only. Review with the teaching/SLP/OT team and test with the actual student, access method, device and school environment before relying on it.</p>
+</details>
+<footer>
+  Source of truth: <code>year7-hero-speech-sentence-builder.ir.json</code>. Privacy: anonymous, no student data. Symbol strategy: ARASAAC search terms with text fallback; HTML uses text-only placeholders.
+</footer>
+<script>
+class DwellManager {
+  constructor(options) {
+    this.dwellMs = options.dwellMs;
+    this.buttons = Array.from(options.buttons);
+    this.lastMessage = options.lastMessage;
+    this.stopSpeech = options.stopSpeech;
+    this.dwellTimer = null;
+    this.current = null;
+    this.cooldown = new WeakSet();
+  }
+  speak(text) {
+    try {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-AU';
+        window.speechSynthesis.speak(utterance);
+      }
+    } catch (error) { console.warn('Speech unavailable', error); }
+  }
+  clearDwell(button) {
+    if (this.dwellTimer) clearTimeout(this.dwellTimer);
+    this.dwellTimer = null;
+    if (button) button.classList.remove('is-dwelling');
+    this.current = null;
+  }
+  activate(button) {
+    this.clearDwell(button);
+    const text = button.dataset.speak || button.textContent.trim();
+    this.lastMessage.textContent = 'Selected: ' + text;
+    this.speak(text);
+    button.classList.add('activated');
+    setTimeout(() => button.classList.remove('activated'), 650);
+    this.cooldown.add(button);
+  }
+  startDwell(button) {
+    if (this.cooldown.has(button)) return;
+    this.clearDwell(this.current);
+    this.current = button;
+    button.classList.add('is-dwelling');
+    this.dwellTimer = setTimeout(() => this.activate(button), this.dwellMs);
+  }
+  bind() {
+    this.buttons.forEach(button => {
+      button.addEventListener('pointerenter', () => this.startDwell(button));
+      button.addEventListener('pointerleave', () => { this.cooldown.delete(button); this.clearDwell(button); });
+      button.addEventListener('focus', () => { this.lastMessage.textContent = 'Focus: ' + (button.dataset.label || button.textContent.trim()); });
+      button.addEventListener('blur', () => { this.cooldown.delete(button); this.clearDwell(button); });
+      button.addEventListener('click', event => { if (event.detail !== 0) this.activate(button); });
+      button.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.activate(button); }
+        if (event.key === 'Escape') this.clearDwell(button);
+      });
+    });
+    this.stopSpeech.addEventListener('click', () => {
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      this.lastMessage.textContent = 'Speech stopped';
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        this.clearDwell(this.current);
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      }
+    });
+  }
+}
+const dwellManager = new DwellManager({
+  dwellMs: 1100,
+  buttons: document.querySelectorAll('.aac-button'),
+  lastMessage: document.getElementById('lastMessage'),
+  stopSpeech: document.getElementById('stopSpeech')
+});
+dwellManager.bind();
+</script>
+</body>
+</html>
