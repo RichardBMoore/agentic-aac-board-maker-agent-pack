@@ -152,22 +152,7 @@ Hermes can generate:
 - Codex implementation brief with file paths and acceptance tests.
 - Gemini UI/UX pass brief with concrete layout/accessibility goals.
 - Final Hermes QA checklist.
-
-### School AI governance and risk documents
-
-Use this pattern when Richard asks for school-facing AI proposal, local LLM, Corella/EQ alignment, ICT governance, privacy, safety, or leadership risk-management wording.
-
-Default framing:
-- Be conservative and defensible: do not argue “AI is safe”; argue that a narrow pilot has documented controls, decision gates, and pause/stop triggers.
-- Position Corella as the default broad EQ-aligned GenAI pathway, with any local LLM as a narrow complement for coding/STEM/accessibility/resource-production use cases.
-- Prefer teacher-only, time-limited, local-only pilots before any student access.
-- Make student access a separate later approval gate covering age suitability, supervision, parent/carer communication if required, assessment integrity, accessibility, monitoring, and incident response.
-- Explicitly prohibit personal information, OneSchool data, NCCD notes, behaviour/medical/disability/case-management records, parent emails, sensitive student data, and PROTECTED+ material.
-- Include a governance pack: approval minute, risk assessment, acceptable-use rules, technical configuration record, model/version/licence register, privacy/records decision, incident checklist, evaluation plan, and stop/continue date.
-- Include Director/leadership protection language: approval is for a controlled pilot only, conditional on controls holding; if controls fail or EQ/regional ICT requests review, the pilot pauses.
-- Include technical baselines where relevant: no public internet exposure, no external AI APIs unless separately approved, authentication for multi-user access, no shared admin account, telemetry disabled where practical, patch/update cadence, and minimal retention by default.
-- Evidence of value should be low-risk: aggregate use cases, synthetic/de-identified examples, staff feedback, issues encountered, patch dates, and review decisions — not identifiable student examples.
-
+  
 ### School/professional folder audits and cleanup
 
 When Richard asks to organise, clean up, audit, index, deduplicate, review, or rename school-resource folders, professional evidence folders, university/application dossiers, or education-work folders:
