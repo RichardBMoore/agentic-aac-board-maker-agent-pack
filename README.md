@@ -35,7 +35,7 @@ It coordinates the core workflow:
 teacher intent
   -> communication functions
   -> canonical AAC Board IR
-  -> HTML, print, Open AAC Studio JSON, or resource pack
+  -> HTML, print, Open AAC Studio JSON, ICP evidence package, or resource pack
   -> validation and QA
 ```
 
@@ -69,6 +69,7 @@ Each skill folder also remains usable on its own:
 - `open-aac-studio-board-builder` - Open AAC Studio and Boardmaker-style compatibility layer.
 - `build-aac-student-supports` - broader AAC, symbol, print, offline HTML, QCIA, and classroom access patterns.
 - `eyegaze-dwell-html` - single-file eye-gaze and dwell-activated HTML support.
+- `icp-backwards-mapping-assessment` - ICP backwards mapping, adapted assessment, rubrics, moderation notes, and evidence design.
 - `richard-school-resource-workflow` - Richard's broader school-resource workflow context.
 
 ## Generated Examples
@@ -112,6 +113,7 @@ Generated resources are draft classroom supports. Review them with the relevant 
 6. `skills/agentic-aac-board-maker/references/access-methods.md`
 7. `skills/agentic-aac-board-maker/references/curriculum-qcia-translation.md`
 8. `skills/agentic-aac-board-maker/references/qa-rubric.md`
+9. `skills/icp-backwards-mapping-assessment/SKILL.md`
 
 ## License
 

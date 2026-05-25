@@ -105,13 +105,8 @@ def main() -> int:
 
     if "class DwellManager" not in text:
         failures.append("DwellManager class not found.")
-    has_dwell_progress = (
-        "conic-gradient" in text
-        or ("stroke-dashoffset" in text and ("dwellCircle" in text or "dwell-fg" in text))
-        or ("progress" in text and "dwell" in text.lower())
-    )
-    if not has_dwell_progress:
-        failures.append("No visible dwell progress indicator found (e.g. conic-gradient or SVG stroke-dashoffset).")
+    if "conic-gradient" not in text:
+        failures.append("No conic-gradient dwell progress found.")
     if "pointerenter" not in text and "mouseenter" not in text:
         failures.append("No pointerenter or mouseenter dwell start handler found.")
     if "pointerleave" not in text and "mouseleave" not in text:
@@ -122,7 +117,7 @@ def main() -> int:
         warnings.append("Speech synthesis is used but no cancel/stop path was detected.")
     if "aria-live" not in text:
         warnings.append("No aria-live status region found.")
-    if not re.search(r"@media\s*\(\s*forced-colors\s*:\s*active\s*\)", text):
+    if "@media (forced-colors: active)" not in text:
         warnings.append("No Windows forced-colors support found.")
 
     css = "\n".join(re.findall(r"<style[^>]*>(.*?)</style>", text, flags=re.DOTALL | re.IGNORECASE))

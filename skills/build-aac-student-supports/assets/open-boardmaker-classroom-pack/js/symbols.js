@@ -36,7 +36,7 @@
       label: resultLabel(item),
       imageUrl: global.BoardmakerData.arasaacImageUrl(item._id),
       source: "ARASAAC",
-      licence: "CC BY-NC-SA",
+      licence: "CC BY-NC-SA 3.0",
       attribution: "Pictograms by ARASAAC (Government of Aragon)"
     };
   }
@@ -168,7 +168,7 @@
             imageUrl: url,
             label: item.label || "",
             source: item.source || "ARASAAC",
-            licence: item.licence || "CC BY-NC-SA",
+            licence: item.licence || "CC BY-NC-SA 3.0",
             cachedAt: new Date().toISOString()
           }).then(function () {
             return Object.assign({}, item, {
@@ -230,7 +230,7 @@
           label: "ARASAAC " + id,
           imageUrl: imageUrl(id),
           source: "ARASAAC",
-          licence: "CC BY-NC-SA",
+          licence: "CC BY-NC-SA 3.0",
           attribution: "Pictograms by ARASAAC (Government of Aragon)"
         }).then(function (result) {
           if (result.cachedUrl) cached += 1;

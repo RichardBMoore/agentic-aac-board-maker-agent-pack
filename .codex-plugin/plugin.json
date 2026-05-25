@@ -1,7 +1,7 @@
 {
   "name": "agentic-aac-board-maker",
-  "version": "0.1.0",
-  "description": "Generate evidence-informed, accessible AAC boards and classroom communication resources from teacher intent.",
+  "version": "0.2.0",
+  "description": "Generate evidence-informed, accessible AAC boards, classroom communication resources, eye-gaze tools, and ICP assessment supports from teacher intent.",
   "author": {
     "name": "Richard Moore"
   },
@@ -13,23 +13,26 @@
     "eye-gaze",
     "switch-scanning",
     "qcia",
+    "icp",
+    "curriculum",
     "offline-html"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Agentic AAC Board Maker",
-    "shortDescription": "Generate accessible AAC classroom resources",
-    "longDescription": "Turns teacher intent into draft AAC boards, visual supports, printable resources, Open AAC Studio JSON, and offline HTML tools with communication rights, access method, curriculum/QCIA translation, privacy, and QA built in.",
+    "shortDescription": "Generate accessible AAC and ICP classroom resources",
+    "longDescription": "Turns teacher intent into draft AAC boards, visual supports, printable resources, Open AAC Studio JSON, offline HTML tools, and ICP evidence packages with communication rights, access method, curriculum/QCIA translation, privacy, and QA built in.",
     "developerName": "Richard Moore",
     "category": "Education",
     "capabilities": [
       "Write",
-      "Local Files"
+      "Local Files",
+      "Education"
     ],
     "defaultPrompt": [
       "Make an eye-gaze AAC board for this lesson.",
       "Create a QCIA community access board.",
-      "Review this AAC board against the QA rubric."
+      "Draft an ICP backwards map and rubric."
     ],
     "brandColor": "#0057B8"
   }

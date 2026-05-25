@@ -154,7 +154,7 @@
       licences: [
         {
           source: "ARASAAC",
-          licence: "CC BY-NC-SA",
+          licence: "CC BY-NC-SA 3.0",
           attribution: "Pictograms by ARASAAC (Government of Aragon)"
         }
       ]

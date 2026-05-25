@@ -1,0 +1,4 @@
+interface:
+  display_name: "ICP Assessment Adaptation"
+  short_description: "Adapt ICP tasks into defensible evidence"
+  default_prompt: "Use $icp-backwards-mapping-assessment to adapt a mainstream task into a defensible ICP evidence package."

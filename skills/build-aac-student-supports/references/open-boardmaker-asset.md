@@ -1,10 +1,8 @@
-# Bundled Open Boardmaker / Open AAC Studio Asset
+# Bundled Open Boardmaker Asset
 
 The skill includes a reusable classroom editor/player prototype at:
 
 `assets/open-boardmaker-classroom-pack/`
-
-Richard's newer working copy may live outside the skill as `Open-AAC-Studio-Working/`. Treat that as the forward direction when available: same local-first Boardmaker-style editor/player foundation, plus AI-assisted board generation, Australian Curriculum v9 starters, update banner handling, AI provider configuration, and improved classroom/offline workflows.
 
 Use it when the user wants a Boardmaker-style local classroom tool, starter templates, offline symbol preparation, printable boards, a player mode, or a concrete codebase to adapt.
 

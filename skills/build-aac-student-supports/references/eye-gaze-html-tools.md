@@ -56,8 +56,7 @@ Start with these values and expose them as constants or data attributes:
 
 | Context | Time |
 | --- | --- |
-| Unknown or first-pass generated board | 1000 to 1200 ms |
-| Known classroom tool | 800 to 1200 ms |
+| Default classroom tool | 800 to 1200 ms |
 | Accidental activation risk | 1000 to 1500 ms |
 | Confident gaze user | 600 to 800 ms |
 | Confirmation step | 600 ms |
@@ -158,5 +157,5 @@ document.querySelectorAll('button').forEach((btn) => {
 When expanding a user request into an implementation brief, preserve these constraints:
 
 ```text
-Build a single-file HTML resource for a student using eye gaze on a PRC-Saltillo Accent 1000/1400 or similar Windows AAC device. It will open in Microsoft Edge from file:/// with no internet. Eye gaze behaves like a mouse cursor, so interaction must be hover/dwell based with a 1000 to 1200 ms starting dwell time for an unknown/first-pass user, or 800 ms when the student/device context is known and appropriate. Include no external dependencies. Make all student controls at least 120 x 120 px, use visible dwell progress, cancel dwell on pointer leave, support Tab plus Enter/Space, include ARIA labels, use Web Speech API with en-AU where speech is needed, use Australian spelling, and target WCAG AAA contrast for text. The activity is: [describe activity].
+Build a single-file HTML resource for a student using eye gaze on a PRC-Saltillo Accent 1000/1400 or similar Windows AAC device. It will open in Microsoft Edge from file:/// with no internet. Eye gaze behaves like a mouse cursor, so interaction must be hover/dwell based with an 800 ms starting dwell time. Include no external dependencies. Make all student controls at least 120 x 120 px, use visible dwell progress, cancel dwell on pointer leave, support Tab plus Enter/Space, include ARIA labels, use Web Speech API with en-AU where speech is needed, use Australian spelling, and target WCAG AAA contrast for text. The activity is: [describe activity].
 ```
