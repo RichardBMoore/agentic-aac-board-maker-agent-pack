@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.2.0",
+  "schemaVersion": "0.3.0",
   "format": "agentic-aac-board-ir",
   "app": "Agentic AAC Board Maker",
   "id": "year7-hero-speech-sentence-builder",
@@ -405,7 +405,8 @@
     "customisation": "Replace adjectives and example prompts with the class text, film, novel or local hero being studied.",
     "repair": "Keep Say it again, Change my idea and Help please available so the student can repair the sentence-building task.",
     "use": "Use for planning, rehearsal or supported oral presentation. Do not treat the board as the student's full expressive system.",
-    "modeling": "Model a complete sentence chain: My hero is... I think... because... For example.... Accept partial selections as valid drafting or rehearsal."
+    "modeling": "Model a complete sentence chain: My hero is... I think... because... For example.... Accept partial selections as valid drafting or rehearsal.",
+    "evidence": "sentence starter selection; because/example selection; rehearsal request; repair or help request"
   },
   "symbolStrategy": {
     "defaultSource": "ARASAAC search terms",
@@ -443,5 +444,52 @@
       "licence": "CC BY-NC-SA",
       "attribution": "Pictograms by ARASAAC (Government of Aragon) if ARASAAC symbols are later inserted; these HTML drafts use text placeholders only."
     }
-  ]
+  ],
+  "sett": {
+    "student": "Secondary student can participate through AAC sentence starters, reasons, examples, rehearsal, and repair without needing speech or handwriting as the only route.",
+    "environment": "English classroom or rehearsal setting with teacher/peer modelling, keyboard/touch/mouse/gaze access, and intermittent internet.",
+    "task": "Build and rehearse a short hero speech using opinion, because language, and examples.",
+    "tools": "Sentence-builder grid, spoken labels, text fallback, large targets, and stable repair buttons."
+  },
+  "udl": {
+    "engagement": [
+      "Meaningful choice",
+      "safe repair route",
+      "wait time and partner response"
+    ],
+    "representation": [
+      "short text labels",
+      "spoken output",
+      "symbol/search-term or text fallback"
+    ],
+    "actionExpression": [
+      "touch",
+      "keyboard",
+      "mouse",
+      "eye-gaze-dwell"
+    ]
+  },
+  "differentiation": {
+    "content": "Keep Year 7 English opinion/evidence demand while reducing speech and memory load.",
+    "process": "Model key vocabulary, provide wait time, allow rehearsal/repetition, and accept multimodal communication.",
+    "product": "Accept a selected sentence chain, rehearsal, teacher observation, or supported oral presentation evidence.",
+    "environment": "Use a calm, predictable, local-first layout with teacher controls separate from student choices.",
+    "support": "Teaching, SLP, OT, family, and student/team review should personalise vocabulary and access before reliance."
+  },
+  "participationBarriers": [
+    {
+      "barrier": "Original speech task assumes spontaneous spoken sentences and fast verbal rehearsal.",
+      "support": "Provide sentence stems, because/example buttons, rehearsal language, and repair options."
+    }
+  ],
+  "evidencePlan": {
+    "observable": [
+      "sentence starter selection",
+      "because/example selection",
+      "rehearsal request",
+      "repair or help request"
+    ],
+    "notJudgement": "Prompting or access method should contextualise the speech evidence, not replace judgement about English content.",
+    "export": "Use anonymous teacher notes, print/portfolio evidence, or local CSV/report only when needed. Do not include diagnoses, behaviour details, family details, or school IDs."
+  }
 }

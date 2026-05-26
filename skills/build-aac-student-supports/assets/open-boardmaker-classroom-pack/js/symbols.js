@@ -5,6 +5,8 @@
   var DB_NAME = "open-boardmaker-symbol-cache";
   var DB_VERSION = 1;
   var SYMBOL_STORE = "symbols";
+  var ARASAAC_LICENCE = "CC BY-NC-SA";
+  var ARASAAC_ATTRIBUTION = "Pictograms by ARASAAC (Government of Aragon); confirm exact source licence wording for publication.";
 
   function getCache() {
     try {
@@ -36,8 +38,8 @@
       label: resultLabel(item),
       imageUrl: global.BoardmakerData.arasaacImageUrl(item._id),
       source: "ARASAAC",
-      licence: "CC BY-NC-SA 3.0",
-      attribution: "Pictograms by ARASAAC (Government of Aragon)"
+      licence: ARASAAC_LICENCE,
+      attribution: ARASAAC_ATTRIBUTION
     };
   }
 
@@ -168,7 +170,8 @@
             imageUrl: url,
             label: item.label || "",
             source: item.source || "ARASAAC",
-            licence: item.licence || "CC BY-NC-SA 3.0",
+            licence: item.licence || ARASAAC_LICENCE,
+            attribution: item.attribution || ARASAAC_ATTRIBUTION,
             cachedAt: new Date().toISOString()
           }).then(function () {
             return Object.assign({}, item, {
@@ -230,8 +233,8 @@
           label: "ARASAAC " + id,
           imageUrl: imageUrl(id),
           source: "ARASAAC",
-          licence: "CC BY-NC-SA 3.0",
-          attribution: "Pictograms by ARASAAC (Government of Aragon)"
+          licence: ARASAAC_LICENCE,
+          attribution: ARASAAC_ATTRIBUTION
         }).then(function (result) {
           if (result.cachedUrl) cached += 1;
           else failed += 1;

@@ -4,6 +4,8 @@ This file gives the agent a practical evidence-informed foundation. It is not a 
 
 ## Core Sources Consulted
 
+Last checked: 2026-05-26. These are grounding sources for classroom resource design, not clinical, legal, or licensing certainty. Verify exact device, legal, school-policy, and licence details again before high-stakes use or public distribution.
+
 - ASHA Practice Portal: Augmentative and Alternative Communication (AAC) — AAC supplements or compensates for speech/language production/comprehension and supports expression of thoughts, wants, needs, feelings, and ideas. https://www.asha.org/practice-portal/professional-issues/augmentative-and-alternative-communication/
 - National Joint Committee / ASHA Communication Bill of Rights, 3rd edition — people have a fundamental right to communicate across life settings, including rights to dignity, meaningful communication, direct address, response, participation, social interaction, information, refusal, preference/opinion expression, meaningful choices, supports, and functioning AAC/AT. https://www.asha.org/njc/communication-bill-of-rights/
 - TIES Center / University of Minnesota: core words, aided language modeling, and literacy — core + fringe vocabulary and aided language modeling support communicative competence and literacy participation for students with significant communication needs. https://publications.ici.umn.edu/ties/communicative-competence-tips/connecting-core-words-aided-language-modeling-and-literacy
@@ -13,6 +15,14 @@ This file gives the agent a practical evidence-informed foundation. It is not a 
 - Indiana Resource Center for Autism: visual schedules and choice boards — visual schedules/choice boards are often receptive supports and should not be mistaken for a full expressive AAC system. https://iidc.indiana.edu/irca/articles/visual-schedules-and-choice-boards-avoid-misinterpretation-of-their-primary-functions.html
 - CAST UDL Guidelines — design multiple means of engagement, representation, and action/expression; learners need flexible ways to communicate and show learning. https://udlguidelines.cast.org/
 - Tobii Dynavox access methods — common AAC access methods include touch, eye gaze, mouse dwell, and scanning. https://www.tobiidynavox.com/pages/access-methods-for-aac
+- ISAAC Communication Access — communication access includes being understood, preferred methods, time/opportunity to communicate, accessible information, and support from trusted people where needed. https://isaac-online.org/english/communication-access/
+- Project Core — classroom AAC should include high-frequency core vocabulary and aided language input across authentic routines. https://www.project-core.com/
+- SETT Framework, Joy Zabala — decisions should account for Student, Environment, Task, and Tools rather than choosing tools in isolation. https://www.joyzabala.com/
+- Australian Curriculum Student Diversity — students with disability may need adjustments to access, participate, and demonstrate learning. https://www.australiancurriculum.edu.au/resources/student-diversity/students-with-disability/
+- QCAA QCIA — evidence should show participation and achievement in planned learning, without confusing access support with curriculum judgement. https://www.qcaa.qld.edu.au/senior/certificates-and-qualifications/qcia
+- Disability Standards for Education 2005 — reasonable adjustment and consultation obligations shape access planning in Australian education contexts. https://www.education.gov.au/disability-standards-education-2005
+- WCAG 2.2 — target size, pointer cancellation, keyboard, focus, contrast, and reduced-motion principles are baseline web accessibility constraints, while AAC and gaze targets usually need much larger dimensions. https://www.w3.org/TR/WCAG22/
+- ARASAAC terms — preserve exact attribution and non-commercial/share-alike licence details when using ARASAAC pictograms or derived materials. https://arasaac.org/terms-of-use
 
 ## Design Commitments Derived From The Evidence
 
@@ -75,6 +85,18 @@ Touch, keyboard, eye gaze/dwell, switch scanning, partner-assisted scanning, and
 
 Agent implication: never generate layout purely from desired vocabulary count. First decide whether the target number of buttons is compatible with the access method.
 
+### 8. Differentiation must be explicit
+
+Differentiation is not a softer target. A strong board states how access load is reduced while the learning or participation intent remains visible.
+
+Agent implication: new resource packs should include `sett`, `udl`, `differentiation`, `participationBarriers`, and `evidencePlan` in the IR. These notes should avoid diagnoses and private identifiers.
+
+### 9. Evidence is not the same as access support
+
+Logs, dwell selections, partner prompts, and support levels can contextualise evidence. They should not be treated as proof that the student did or did not understand the curriculum construct.
+
+Agent implication: record only the minimum needed: activity, prompt/page, selected label/response, access method/support context if relevant, timestamp, and teacher note.
+
 ## Practical Evidence-Informed Rules
 
 - Prefer communication opportunities over behaviour-control boards.
@@ -84,3 +106,6 @@ Agent implication: never generate layout purely from desired vocabulary count. F
 - Keep output editable; teams need to personalise vocabulary.
 - Treat AAC as multimodal: speech, gesture, symbols, text, photos, partner-assisted strategies, switches, eye gaze, and keyboard can all coexist.
 - The generated board is a classroom support, not the student's only or emergency communication system.
+- Use SETT to keep access decisions grounded in the student, environment, task, and tools.
+- Use UDL to provide multiple ways to engage, understand, and express learning.
+- Make the evidence route explicit without converting motor/access support into grading.

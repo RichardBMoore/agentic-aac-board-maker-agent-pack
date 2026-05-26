@@ -7,6 +7,8 @@
   var ACTIVITY_LIBRARY_KEY = "open-boardmaker.activityLibrary";
   var STUDENT_PROFILES_KEY = "open-boardmaker.studentProfiles";
   var ACTIVE_STUDENT_KEY = "open-boardmaker.activeStudent";
+  var ARASAAC_LICENCE = "CC BY-NC-SA";
+  var ARASAAC_ATTRIBUTION = "Pictograms by ARASAAC (Government of Aragon); confirm exact source licence wording for publication.";
 
   function nowIso() {
     return new Date().toISOString();
@@ -18,6 +20,55 @@
 
   function clone(value) {
     return JSON.parse(JSON.stringify(value));
+  }
+
+  function safeString(value, fallback, maxLength) {
+    var text = String(value == null ? fallback || "" : value)
+      .replace(/[\u0000-\u001f\u007f]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (!text) text = fallback || "";
+    if (maxLength && text.length > maxLength) text = text.slice(0, maxLength).trim();
+    return text;
+  }
+
+  function safeId(value, prefix) {
+    var raw = safeString(value, "", 80).toLowerCase();
+    var slug = raw.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+    return slug || uid(prefix || "id");
+  }
+
+  function safeNumber(value, fallback, min, max) {
+    var number = Number(value);
+    if (!Number.isFinite(number)) number = fallback;
+    return Math.min(max, Math.max(min, number));
+  }
+
+  function safeInteger(value, fallback, min, max) {
+    return Math.round(safeNumber(value, fallback, min, max));
+  }
+
+  function safeBoolean(value, fallback) {
+    return typeof value === "boolean" ? value : Boolean(fallback);
+  }
+
+  function safeColour(value, fallback) {
+    var text = safeString(value, fallback, 32);
+    if (/^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(text)) return text;
+    if (/^(black|white|yellow|blue|green|red|transparent)$/i.test(text)) return text.toLowerCase();
+    return fallback;
+  }
+
+  function safeChoice(value, allowed, fallback) {
+    var text = safeString(value, fallback, 40);
+    return allowed.indexOf(text) >= 0 ? text : fallback;
+  }
+
+  function safeUrl(value, fallback) {
+    var text = safeString(value, fallback || "", 500);
+    if (!text) return "";
+    if (/^(https?:|data:image\/|blob:)/i.test(text)) return text;
+    return fallback || "";
   }
 
   function arasaacImageUrl(id) {
@@ -38,6 +89,74 @@
     };
   }
 
+  function normaliseButtonStyle(style, index) {
+    var source = style || {};
+    var defaults = defaultButtonStyle(index || 0);
+    return {
+      borderColour: safeColour(source.borderColour, defaults.borderColour),
+      borderWidth: safeInteger(source.borderWidth, defaults.borderWidth, 1, 10),
+      borderStyle: safeChoice(source.borderStyle, ["solid", "dashed", "dotted", "double"], defaults.borderStyle),
+      shape: safeChoice(source.shape, ["rounded-rect", "rect", "circle"], defaults.shape),
+      fillColour: safeColour(source.fillColour, defaults.fillColour),
+      gradientColour: source.gradientColour ? safeColour(source.gradientColour, defaults.fillColour) : null,
+      gradientType: safeChoice(source.gradientType, ["none", "linear", "radial"], defaults.gradientType)
+    };
+  }
+
+  function normaliseFont(font) {
+    var source = font || {};
+    return {
+      family: safeChoice(source.family, ["Verdana", "Arial", "Helvetica", "Tahoma", "Trebuchet MS"], "Verdana"),
+      size: safeInteger(source.size, 18, 12, 44),
+      bold: safeBoolean(source.bold, true),
+      italic: safeBoolean(source.italic, false),
+      colour: safeColour(source.colour, "#000000"),
+      align: safeChoice(source.align, ["left", "centre", "center", "right"], "centre")
+    };
+  }
+
+  function normalisePosition(position) {
+    var source = position || {};
+    return {
+      x: safeNumber(source.x, 0, 0, 100),
+      y: safeNumber(source.y, 0, 0, 100),
+      width: safeNumber(source.width, 25, 1, 100),
+      height: safeNumber(source.height, 25, 1, 100)
+    };
+  }
+
+  function normaliseAction(action) {
+    var source = action && typeof action === "object" ? action : { type: safeString(action, "speak-label", 40) };
+    var type = safeChoice(source.type, [
+      "speak-label",
+      "speak-text",
+      "log-attempt",
+      "next-page",
+      "previous-page",
+      "navigate-page",
+      "mark-correct",
+      "mark-incorrect",
+      "set-variable",
+      "increment-variable",
+      "conditional",
+      "play-audio",
+      "open-url",
+      "animate",
+      "stay"
+    ], "speak-label");
+    var result = Object.assign({}, source, {
+      id: safeId(source.id, "action"),
+      type: type
+    });
+    if (result.text) result.text = safeString(result.text, "", 240);
+    if (result.pageId) result.pageId = safeId(result.pageId, "page");
+    if (result.name) result.name = safeString(result.name, "", 80);
+    if (result.url) result.url = safeUrl(result.url, "");
+    if (result.src) result.src = safeUrl(result.src, "");
+    if (result.animation) result.animation = safeChoice(result.animation, ["pulse", "pop", "shake"], "pulse");
+    return result;
+  }
+
   function makeAction(type, extra) {
     var action = Object.assign({ id: uid("action"), type: type }, extra || {});
     return action;
@@ -45,30 +164,26 @@
 
   function makeButton(config, index) {
     var source = config || {};
-    var symbolId = source.symbolId || null;
-    var label = source.label || "Button";
+    var symbolId = source.symbolId ? safeString(source.symbolId, "", 80) : null;
+    var label = safeString(source.label, "Button", 80);
     return {
-      id: source.id || uid("btn"),
-      type: source.type || "standard",
+      id: source.id ? safeId(source.id, "btn") : uid("btn"),
+      type: safeChoice(source.type, ["standard", "symbolate"], "standard"),
       label: label,
       symbolId: symbolId,
-      symbolSrc: source.symbolSrc || (symbolId ? arasaacImageUrl(symbolId) : ""),
-      symbolLayout: source.symbolLayout || "label-bottom",
+      symbolSrc: safeUrl(source.symbolSrc, symbolId ? arasaacImageUrl(symbolId) : ""),
+      symbolLayout: safeChoice(source.symbolLayout, ["label-bottom", "label-top", "symbol-only", "label-only", "symbolate"], "label-bottom"),
       symbolateSegments: Array.isArray(source.symbolateSegments) ? source.symbolateSegments : [],
-      position: source.position || { x: 0, y: 0, width: 25, height: 25 },
-      style: Object.assign(defaultButtonStyle(index || 0), source.style || {}),
-      font: Object.assign({
-        family: "Verdana",
-        size: 18,
-        bold: true,
-        italic: false,
-        colour: "#000000",
-        align: "centre"
-      }, source.font || {}),
-      state: source.state || "selectable",
-      audioCue: source.audioCue || label,
-      result: source.result || "selected",
-      actions: source.actions || [makeAction("speak-label"), makeAction("log-attempt")]
+      position: normalisePosition(source.position),
+      style: normaliseButtonStyle(source.style, index || 0),
+      font: normaliseFont(source.font),
+      state: safeChoice(source.state, ["selectable", "disabled", "hidden"], "selectable"),
+      role: safeString(source.role, "", 40),
+      function: safeString(source.function, "", 40),
+      searchTerm: safeString(source.searchTerm, label.toLowerCase(), 80),
+      audioCue: safeString(source.audioCue, label, 120),
+      result: safeChoice(source.result, ["selected", "correct", "incorrect"], "selected"),
+      actions: Array.isArray(source.actions) && source.actions.length ? source.actions.map(normaliseAction) : [makeAction("speak-label"), makeAction("log-attempt")]
     };
   }
 
@@ -154,8 +269,8 @@
       licences: [
         {
           source: "ARASAAC",
-          licence: "CC BY-NC-SA 3.0",
-          attribution: "Pictograms by ARASAAC (Government of Aragon)"
+          licence: ARASAAC_LICENCE,
+          attribution: ARASAAC_ATTRIBUTION
         }
       ]
     };
@@ -177,36 +292,53 @@
   function normaliseActivity(input) {
     var activity = input && typeof input === "object" ? clone(input) : defaultActivity();
     activity.schemaVersion = activity.schemaVersion || SCHEMA_VERSION;
-    activity.app = activity.app || "Open Boardmaker";
-    activity.id = activity.id || uid("activity");
-    activity.name = activity.name || "Untitled Activity";
-    activity.type = activity.type || "interactive";
+    activity.app = safeString(activity.app, "Open Boardmaker", 80);
+    activity.id = activity.id ? safeId(activity.id, "activity") : uid("activity");
+    activity.name = safeString(activity.name, "Untitled Activity", 120);
+    activity.type = safeChoice(activity.type, ["interactive", "print"], "interactive");
     activity.created = activity.created || nowIso();
     activity.modified = nowIso();
     activity.settings = Object.assign(defaultActivity().settings, activity.settings || {});
+    activity.settings.dwellTimeMs = safeInteger(activity.settings.dwellTimeMs, 1200, 500, 3000);
+    activity.settings.scanSpeedMs = safeInteger(activity.settings.scanSpeedMs, 1400, 600, 3000);
+    activity.settings.scanPattern = safeChoice(activity.settings.scanPattern, ["linear", "row-column"], "linear");
+    activity.settings.speakLabels = safeBoolean(activity.settings.speakLabels, true);
+    activity.settings.showLabels = safeBoolean(activity.settings.showLabels, true);
+    activity.settings.fontColour = safeColour(activity.settings.fontColour, "#000000");
+    activity.settings.backgroundColour = safeColour(activity.settings.backgroundColour, "#ffffff");
     activity.accessibility = Object.assign(defaultActivity().accessibility, activity.accessibility || {});
+    activity.accessibility.minimumTargetSizePx = safeInteger(activity.accessibility.minimumTargetSizePx, 96, 44, 240);
+    activity.accessibility.dwellSafe = safeBoolean(activity.accessibility.dwellSafe, true);
+    activity.accessibility.audioCues = safeBoolean(activity.accessibility.audioCues, true);
     activity.metadata = Object.assign({ tags: [], level: "", curriculum: "", privacyLevel: "anonymous" }, activity.metadata || {});
-    activity.licences = activity.licences || defaultActivity().licences;
+    activity.metadata.privacyLevel = safeChoice(activity.metadata.privacyLevel, ["anonymous", "local-profile", "sensitive-approved"], "anonymous");
+    activity.licences = Array.isArray(activity.licences) && activity.licences.length ? activity.licences.map(function (licence) {
+      return {
+        source: safeString(licence.source, "ARASAAC", 80),
+        licence: safeString(licence.licence, ARASAAC_LICENCE, 80),
+        attribution: safeString(licence.attribution || licence.note, ARASAAC_ATTRIBUTION, 220)
+      };
+    }) : defaultActivity().licences;
     activity.pages = Array.isArray(activity.pages) && activity.pages.length ? activity.pages : defaultActivity().pages;
     activity.pages = activity.pages.map(function (page, pageIndex) {
-      var rows = Number(page.gridRows || 2);
-      var columns = Number(page.gridColumns || 2);
+      var rows = safeInteger(page.gridRows, 2, 1, 8);
+      var columns = safeInteger(page.gridColumns, 2, 1, 8);
       var buttons = Array.isArray(page.buttons) ? page.buttons : [];
       return {
-        id: page.id || uid("page"),
-        name: page.name || "Page " + (pageIndex + 1),
-        layout: page.layout || "grid",
+        id: page.id ? safeId(page.id, "page") : uid("page"),
+        name: safeString(page.name, "Page " + (pageIndex + 1), 100),
+        layout: safeChoice(page.layout, ["grid"], "grid"),
         gridColumns: columns,
         gridRows: rows,
-        margin: Number(page.margin || 10),
-        backgroundColour: page.backgroundColour || "#ffffff",
-        backgroundImage: page.backgroundImage || null,
+        margin: safeInteger(page.margin, 10, 0, 40),
+        backgroundColour: safeColour(page.backgroundColour, "#ffffff"),
+        backgroundImage: safeUrl(page.backgroundImage, "") || null,
         buttons: buttons.map(function (button, buttonIndex) {
           var normalised = makeButton(button, buttonIndex);
           if (normalised.symbolId && !normalised.symbolSrc) {
             normalised.symbolSrc = arasaacImageUrl(normalised.symbolId);
           }
-          normalised.actions = normalised.actions && normalised.actions.length ? normalised.actions : [makeAction("speak-label"), makeAction("log-attempt")];
+          normalised.actions = normalised.actions && normalised.actions.length ? normalised.actions.map(normaliseAction) : [makeAction("speak-label"), makeAction("log-attempt")];
           return normalised;
         })
       };

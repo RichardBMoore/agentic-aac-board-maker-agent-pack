@@ -9,11 +9,25 @@ import subprocess
 import sys
 import tempfile
 import ast
+from html.parser import HTMLParser
 from pathlib import Path
+from urllib.parse import urlparse
 
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / "skills"
+
+
+class ElementCollector(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.elements: list[tuple[str, dict[str, str]]] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        self.elements.append((tag.lower(), {name.lower(): value or "" for name, value in attrs}))
+
+    def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        self.handle_starttag(tag, attrs)
 
 
 def ok(message: str) -> None:
@@ -129,6 +143,13 @@ def run_command(args: list[str]) -> bool:
     return result.returncode == 0
 
 
+def is_external(value: str) -> bool:
+    if not value or value.startswith(("#", "data:", "blob:", "about:")):
+        return False
+    parsed = urlparse(value)
+    return parsed.scheme in {"http", "https"} or value.startswith("//")
+
+
 def check_ir_pipeline() -> bool:
     ir = SKILLS / "agentic-aac-board-maker" / "templates" / "board-json-skeleton.json"
     validator = SKILLS / "agentic-aac-board-maker" / "scripts" / "validate_board_ir.py"
@@ -233,6 +254,80 @@ def check_generated_resource_fixtures() -> bool:
     return success
 
 
+def check_generated_html_accessibility() -> bool:
+    """Run static access/offline checks against generated HTML fixtures."""
+    success = True
+    html_files = sorted((ROOT / "generated").glob("*/*.html"))
+    if not html_files:
+        warn("generated/ contains no HTML fixtures; skipping HTML accessibility checks")
+        return True
+
+    for html_file in html_files:
+        rel = html_file.relative_to(ROOT)
+        text = html_file.read_text(encoding="utf-8")
+        lower = text.lower()
+        collector = ElementCollector()
+        collector.feed(text)
+
+        elements = collector.elements
+        html_attrs = next((attrs for tag, attrs in elements if tag == "html"), {})
+        buttons = [attrs for tag, attrs in elements if tag == "button"]
+        external_assets = [
+            f"{tag}[{attr}]={attrs[attr]}"
+            for tag, attrs in elements
+            for attr in ("src", "href", "poster")
+            if is_external(attrs.get(attr, ""))
+        ]
+
+        local_ok = True
+        if html_attrs.get("lang") != "en-AU":
+            fail(f"{rel} should declare <html lang=\"en-AU\">")
+            local_ok = False
+        if "name=\"viewport\"" not in lower and "name='viewport'" not in lower:
+            fail(f"{rel} missing viewport meta")
+            local_ok = False
+        if not buttons:
+            fail(f"{rel} has no semantic button elements")
+            local_ok = False
+        missing_labels = [attrs for attrs in buttons if not attrs.get("aria-label") and not attrs.get("aria-labelledby")]
+        if missing_labels:
+            fail(f"{rel} has {len(missing_labels)} button(s) without aria-label/aria-labelledby")
+            local_ok = False
+        if "keydown" not in text or "Enter" not in text:
+            fail(f"{rel} missing obvious keyboard activation handling")
+            local_ok = False
+        if "aria-live" not in text and "role=\"status\"" not in lower and "role='status'" not in lower:
+            fail(f"{rel} missing aria-live/status feedback")
+            local_ok = False
+        if "ARASAAC" not in text:
+            fail(f"{rel} missing ARASAAC/text-fallback attribution note")
+            local_ok = False
+        if "@media print" not in text:
+            fail(f"{rel} missing print stylesheet")
+            local_ok = False
+        if external_assets:
+            fail(f"{rel} has external assets: {', '.join(external_assets[:5])}")
+            local_ok = False
+        if "dwell" in lower:
+            if "pointerenter" not in text and "mouseenter" not in text:
+                fail(f"{rel} mentions dwell but has no pointer/mouse enter handler")
+                local_ok = False
+            if "pointerleave" not in text and "mouseleave" not in text and "blur" not in text:
+                fail(f"{rel} mentions dwell but has no cancellation handler")
+                local_ok = False
+            if "min-width:120" not in lower and "min-width: 120" not in lower and "min-width:132" not in lower and "min-width: 132" not in lower and "min-width:150" not in lower and "min-width: 150" not in lower:
+                fail(f"{rel} dwell target min-width is not statically visible")
+                local_ok = False
+            if "min-height:120" not in lower and "min-height: 120" not in lower and "min-height:132" not in lower and "min-height: 132" not in lower and "min-height:150" not in lower and "min-height: 150" not in lower:
+                fail(f"{rel} dwell target min-height is not statically visible")
+                local_ok = False
+
+        if local_ok:
+            ok(f"{rel} static HTML accessibility/offline checks")
+        success = local_ok and success
+    return success
+
+
 def check_reference_paths() -> bool:
     """Check common backticked local paths in markdown files."""
     success = True
@@ -278,6 +373,7 @@ def main() -> int:
         check_json_files,
         check_ir_pipeline,
         check_generated_resource_fixtures,
+        check_generated_html_accessibility,
         check_eye_gaze_template,
         check_reference_paths,
     ]

@@ -6,11 +6,15 @@ The AAC Board IR is the canonical structure an agent should create before render
 
 The IR prevents a common failure mode: turning a lesson topic into a pretty noun grid. It makes the agent state the student's communication purpose, access method, button roles, repair options, symbol strategy, and evidence route before visual output.
 
+## Current Version
+
+`schemaVersion: "0.3.0"` is backward-compatible with `0.2.0`. Existing `0.2.0` boards still validate, but new generated boards should include SETT, UDL, differentiation, participation-barrier, and evidence-plan metadata so the board design remains more than a layout.
+
 ## Minimal IR
 
 ```json
 {
-  "schemaVersion": "0.2.0",
+  "schemaVersion": "0.3.0",
   "format": "agentic-aac-board-ir",
   "id": "activity-slug",
   "title": "Board Title",
@@ -57,6 +61,35 @@ The IR prevents a common failure mode: turning a lesson topic into a pretty noun
     "evidence": "Teacher can observe selections, repair attempts, comments, and participation.",
     "customisation": "Replace labels/search terms with local vocabulary."
   },
+  "sett": {
+    "student": "Strengths, preferences, communication opportunities, and access needs without diagnoses or private identifiers.",
+    "environment": "Classroom/device/network/partner conditions.",
+    "task": "Learning or participation demand and communication moves needed.",
+    "tools": "AAC, print, dwell, switch, symbol, partner, and fallback supports."
+  },
+  "udl": {
+    "engagement": ["Meaningful choice", "safe repair/rest route"],
+    "representation": ["Text labels", "symbols/photos", "spoken output"],
+    "actionExpression": ["AAC selection", "keyboard", "partner-observed response"]
+  },
+  "differentiation": {
+    "content": "Preserve the key learning intent while reducing access load.",
+    "process": "Model, wait, repeat, rehearse, and accept multimodal responses.",
+    "product": "Accept selection, constructed sentence, print evidence, export, or teacher observation as appropriate.",
+    "environment": "Calm, predictable, local-first student mode.",
+    "support": "Team review and vocabulary personalisation before use."
+  },
+  "participationBarriers": [
+    {
+      "barrier": "Original task assumes speech, handwriting, fine motor control, or fast response.",
+      "support": "Offer large AAC targets, repair vocabulary, wait time, and partner modelling."
+    }
+  ],
+  "evidencePlan": {
+    "observable": ["selection", "repair attempt", "comment", "participation"],
+    "notJudgement": "Access method and support level are context, not curriculum judgement.",
+    "export": "Use anonymous local notes, print, CSV, or portfolio summary only when needed."
+  },
   "privacy": {
     "level": "anonymous",
     "containsSensitiveData": false
@@ -83,6 +116,8 @@ The IR prevents a common failure mode: turning a lesson topic into a pretty noun
 - `partner-assisted-print`
 - `print-only`
 - `keyboard`
+- `mixed-access`
+- `partner-assisted-scanning`
 
 ### Button Roles
 
@@ -161,6 +196,18 @@ Preserve:
 - attribution;
 - black-and-white readability.
 
+## Powerhouse Metadata
+
+These fields are optional for legacy compatibility, but expected for new resource packs:
+
+- `sett`: explicit Student, Environment, Task, Tools design notes without diagnoses or sensitive identifiers.
+- `udl`: engagement, representation, and action/expression supports.
+- `differentiation`: content, process, product, environment, and support decisions.
+- `participationBarriers`: barriers created by the original task and the access supports that remove or reduce them.
+- `evidencePlan`: what can be observed/exported, and what must not be treated as curriculum judgement.
+
+Renderers should preserve these fields in metadata even when the target app does not natively understand them.
+
 ## Validation Rules
 
 An IR should fail validation if:
@@ -170,6 +217,9 @@ An IR should fail validation if:
 - a button lacks `id`, `label`, `role`, `function`, or `spokenText`;
 - access profile and grid density conflict;
 - no repair/help/refusal/finished route exists when the board has more than two content buttons;
+- the board appears to be a noun/content grid with no agency function;
+- the board is answer-only/quiz-only without uncertainty, repair, explanation, or reflection;
 - privacy level is not declared;
 - attribution is missing when symbols/search terms are used.
 
+The validator should warn, not fail, when `0.3.0` powerhouse metadata is thin. Warnings are still work to do before claiming a resource is differentiated or curriculum-strong.

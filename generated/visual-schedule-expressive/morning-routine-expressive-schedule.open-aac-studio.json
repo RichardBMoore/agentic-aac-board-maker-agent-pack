@@ -4,8 +4,8 @@
   "id": "morning-routine-expressive-schedule",
   "name": "Morning Routine Expressive Visual Schedule",
   "type": "interactive",
-  "created": "2026-05-16T04:24:15.789427Z",
-  "modified": "2026-05-16T04:24:15.789427Z",
+  "created": "2026-05-26T10:53:45.150070Z",
+  "modified": "2026-05-26T10:53:45.150070Z",
   "settings": {
     "orientation": "landscape",
     "width": 1024,
@@ -53,6 +53,7 @@
           "label": "Arrive",
           "role": "fringe",
           "function": "sequence",
+          "spokenText": "Arrive",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "arrive school",
@@ -102,6 +103,7 @@
           "label": "Bag away",
           "role": "fringe",
           "function": "sequence",
+          "spokenText": "Bag away",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "school bag",
@@ -151,6 +153,7 @@
           "label": "Morning job",
           "role": "fringe",
           "function": "sequence",
+          "spokenText": "Morning job",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "morning work",
@@ -200,6 +203,7 @@
           "label": "Group time",
           "role": "fringe",
           "function": "sequence",
+          "spokenText": "Group time",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "group time",
@@ -249,6 +253,7 @@
           "label": "What next?",
           "role": "question",
           "function": "ask",
+          "spokenText": "What is next?",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "what next",
@@ -298,6 +303,7 @@
           "label": "Wait",
           "role": "repair",
           "function": "regulate-rest",
+          "spokenText": "I need to wait",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "wait",
@@ -347,6 +353,7 @@
           "label": "Help please",
           "role": "repair",
           "function": "repair",
+          "spokenText": "Help please",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "help",
@@ -396,6 +403,7 @@
           "label": "Change",
           "role": "repair",
           "function": "repair",
+          "spokenText": "I need a change",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "change",
@@ -445,6 +453,7 @@
           "label": "Finished",
           "role": "repair",
           "function": "refuse",
+          "spokenText": "I am finished",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "finished",
@@ -521,7 +530,77 @@
     "curriculum": "Classroom participation and routine access: sequencing, transitions, requesting support and regulating participation.",
     "privacyLevel": "anonymous",
     "generatedFrom": "agentic-aac-board-ir",
-    "sourceIrSchemaVersion": "0.2.0"
+    "sourceIrSchemaVersion": "0.3.0",
+    "accessProfile": "mixed-access",
+    "communicationFunctions": [
+      "sequence",
+      "request",
+      "repair",
+      "comment",
+      "refuse",
+      "regulate-rest"
+    ],
+    "ir": {
+      "accessProfile": "mixed-access",
+      "purpose": "A visual schedule that shows morning routine order while preserving expressive options for waiting, help, change, finished and student comments.",
+      "audience": {
+        "ageBand": "school-age",
+        "tone": "calm, routine-focused"
+      },
+      "sett": {
+        "student": "Student can understand the morning sequence and express wait, help, change, finished, or a question about what comes next.",
+        "environment": "Morning routine context with predictable order, real classroom photos if approved, and teacher modelling.",
+        "task": "Sequence the routine while preserving expressive communication and transition repair options.",
+        "tools": "Schedule-plus-expression grid, spoken labels, text fallback, stable repair buttons, and print-ready layout."
+      },
+      "udl": {
+        "engagement": [
+          "Meaningful choice",
+          "safe repair route",
+          "wait time and partner response"
+        ],
+        "representation": [
+          "short text labels",
+          "spoken output",
+          "symbol/search-term or text fallback"
+        ],
+        "actionExpression": [
+          "touch",
+          "keyboard",
+          "mouse",
+          "eye-gaze-dwell"
+        ]
+      },
+      "differentiation": {
+        "content": "Keep routine sequence visible while adding expressive agency.",
+        "process": "Model key vocabulary, provide wait time, allow rehearsal/repetition, and accept multimodal communication.",
+        "product": "Accept observed schedule use, expressive selection, print notes, or anonymous portfolio summary.",
+        "environment": "Use a calm, predictable, local-first layout with teacher controls separate from student choices.",
+        "support": "Teaching, SLP, OT, family, and student/team review should personalise vocabulary and access before reliance."
+      },
+      "participationBarriers": [
+        {
+          "barrier": "Visual schedules can become receptive-only compliance tools.",
+          "support": "Add expressive options for wait, help, change, finished, and asking what comes next."
+        }
+      ],
+      "evidencePlan": {
+        "observable": [
+          "sequence selection",
+          "what next question",
+          "wait/help/change request",
+          "finished message"
+        ],
+        "notJudgement": "Prompted routine use is participation/access evidence, not a standalone judgement of independence.",
+        "export": "Use anonymous teacher notes, print/portfolio evidence, or local CSV/report only when needed. Do not include diagnoses, behaviour details, family details, or school IDs."
+      },
+      "symbolStrategy": {
+        "defaultSource": "ARASAAC search terms",
+        "textFallback": true,
+        "customMediaPolicy": "teacher-owned local media only unless explicitly approved",
+        "notes": "Routine search terms can be swapped for classroom photos where staff own the image and privacy is managed."
+      }
+    }
   },
   "licences": [
     {

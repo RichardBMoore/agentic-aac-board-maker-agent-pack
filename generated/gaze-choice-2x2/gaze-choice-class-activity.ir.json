@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.2.0",
+  "schemaVersion": "0.3.0",
   "format": "agentic-aac-board-ir",
   "app": "Agentic AAC Board Maker",
   "id": "gaze-choice-class-activity",
@@ -315,5 +315,52 @@
       "licence": "CC BY-NC-SA",
       "attribution": "Pictograms by ARASAAC (Government of Aragon) if ARASAAC symbols are later inserted; this HTML draft uses text/emoji placeholders only."
     }
-  ]
+  ],
+  "sett": {
+    "student": "Student uses eye gaze/dwell, keyboard, touch, or partner interpretation to choose an activity and repair the choice if needed.",
+    "environment": "Classroom device or AAC setup with large targets, reduced visual clutter, and no dependency on live internet during use.",
+    "task": "Choose a class activity while keeping Help and Different available.",
+    "tools": "Two-by-three gaze-safe board, 1000 ms dwell, pointer-leave cancellation, spoken labels, and text/emoji fallback."
+  },
+  "udl": {
+    "engagement": [
+      "Meaningful choice",
+      "safe repair route",
+      "wait time and partner response"
+    ],
+    "representation": [
+      "short text labels",
+      "spoken output",
+      "symbol/search-term or text fallback"
+    ],
+    "actionExpression": [
+      "eye-gaze-dwell",
+      "mouse",
+      "keyboard",
+      "touch"
+    ]
+  },
+  "differentiation": {
+    "content": "Keep authentic activity choice while protecting gaze access and repair.",
+    "process": "Model key vocabulary, provide wait time, allow rehearsal/repetition, and accept multimodal communication.",
+    "product": "Accept selected activity, repair use, or teacher observation of access fit.",
+    "environment": "Use a calm, predictable, local-first layout with teacher controls separate from student choices.",
+    "support": "Teaching, SLP, OT, family, and student/team review should personalise vocabulary and access before reliance."
+  },
+  "participationBarriers": [
+    {
+      "barrier": "Activity choice can become adult-controlled or too visually dense for gaze access.",
+      "support": "Use six large targets, stable repair vocabulary, clear dwell progress, and keyboard fallback."
+    }
+  ],
+  "evidencePlan": {
+    "observable": [
+      "activity choice",
+      "help request",
+      "different/repair selection",
+      "successful dwell cancellation or reselection"
+    ],
+    "notJudgement": "Dwell timing and accidental cancellation reflect access tuning, not preference certainty.",
+    "export": "Use anonymous teacher notes, print/portfolio evidence, or local CSV/report only when needed. Do not include diagnoses, behaviour details, family details, or school IDs."
+  }
 }

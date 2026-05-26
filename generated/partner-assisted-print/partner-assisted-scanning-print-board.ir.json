@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.2.0",
+  "schemaVersion": "0.3.0",
   "format": "agentic-aac-board-ir",
   "app": "Agentic AAC Board Maker",
   "id": "partner-assisted-scanning-print-board",
@@ -328,7 +328,8 @@
     "wait_confirm": "Pause long enough for the student to respond. If unsure, repeat the scan or offer Yes/No confirmation without rushing.",
     "print": "Print in black and white if needed. Strong borders, large labels and numbered order are included for readability.",
     "attribution": "If adding symbols, record the symbol source and licence. Text-only printing is usable without symbols.",
-    "modeling": "Model the scan process with another adult first: say each numbered option slowly, wait, observe the agreed signal, and confirm the selected message before acting."
+    "modeling": "Model the scan process with another adult first: say each numbered option slowly, wait, observe the agreed signal, and confirm the selected message before acting.",
+    "evidence": "agreed signal; confirmed choice; repair request; refusal; more time request"
   },
   "symbolStrategy": {
     "defaultSource": "ARASAAC search terms",
@@ -366,5 +367,54 @@
       "licence": "CC BY-NC-SA",
       "attribution": "Pictograms by ARASAAC (Government of Aragon) if ARASAAC symbols are later inserted; these HTML drafts use text placeholders only."
     }
-  ]
+  ],
+  "sett": {
+    "student": "Student can communicate with partner-assisted scanning through an agreed signal, confirmation, repair, refusal, and choice messages.",
+    "environment": "Low-tech print board used by a trained partner with clear wait time, predictable scan order, and minimal visual clutter.",
+    "task": "Make or repair a choice when direct digital selection is not the best access route.",
+    "tools": "Printable numbered grid, partner script, large labels, strong borders, and confirmation language."
+  },
+  "udl": {
+    "engagement": [
+      "Meaningful choice",
+      "safe repair route",
+      "wait time and partner response"
+    ],
+    "representation": [
+      "short text labels",
+      "spoken output",
+      "symbol/search-term or text fallback"
+    ],
+    "actionExpression": [
+      "partner-assisted-scanning",
+      "print",
+      "touch",
+      "keyboard",
+      "mouse"
+    ]
+  },
+  "differentiation": {
+    "content": "Keep communication choice-making available without requiring direct touch or speech.",
+    "process": "Model key vocabulary, provide wait time, allow rehearsal/repetition, and accept multimodal communication.",
+    "product": "Accept partner-confirmed selections and teacher observation notes.",
+    "environment": "Use a calm, predictable, local-first layout with teacher controls separate from student choices.",
+    "support": "Teaching, SLP, OT, family, and student/team review should personalise vocabulary and access before reliance."
+  },
+  "participationBarriers": [
+    {
+      "barrier": "Direct pointing or speech may not be available and partner scanning can become rushed or inconsistent.",
+      "support": "Use numbered scan order, wait/confirm script, repair options, and repeated scans when uncertain."
+    }
+  ],
+  "evidencePlan": {
+    "observable": [
+      "agreed signal",
+      "confirmed choice",
+      "repair request",
+      "refusal",
+      "more time request"
+    ],
+    "notJudgement": "Partner interpretation and scan repetitions are access context, not evidence of lower understanding.",
+    "export": "Use anonymous teacher notes, print/portfolio evidence, or local CSV/report only when needed. Do not include diagnoses, behaviour details, family details, or school IDs."
+  }
 }

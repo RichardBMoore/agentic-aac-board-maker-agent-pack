@@ -35,6 +35,8 @@ Checks:
 - [ ] Cognitive demand identified.
 - [ ] AAC moves match that demand.
 - [ ] Evidence/teacher observation route exists when needed.
+- [ ] SETT/UDL/differentiation notes show how access barriers were reduced without erasing learning intent.
+- [ ] EvidencePlan states what can be observed/exported and what must not be treated as curriculum judgement.
 
 ## 4. Access Method Fit
 

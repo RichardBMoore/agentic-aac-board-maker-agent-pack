@@ -107,13 +107,14 @@ Generated resources are draft classroom supports. Review them with the relevant 
 
 1. `skills/agentic-aac-board-maker/SKILL.md`
 2. `skills/agentic-aac-board-maker/references/evidence-base.md`
-3. `skills/agentic-aac-board-maker/references/agent-workflow.md`
-4. `skills/agentic-aac-board-maker/references/aac-board-ir.md`
-5. `skills/agentic-aac-board-maker/references/board-grammar.md`
-6. `skills/agentic-aac-board-maker/references/access-methods.md`
-7. `skills/agentic-aac-board-maker/references/curriculum-qcia-translation.md`
-8. `skills/agentic-aac-board-maker/references/qa-rubric.md`
-9. `skills/icp-backwards-mapping-assessment/SKILL.md`
+3. `skills/agentic-aac-board-maker/references/research-map.md`
+4. `skills/agentic-aac-board-maker/references/agent-workflow.md`
+5. `skills/agentic-aac-board-maker/references/aac-board-ir.md`
+6. `skills/agentic-aac-board-maker/references/board-grammar.md`
+7. `skills/agentic-aac-board-maker/references/access-methods.md`
+8. `skills/agentic-aac-board-maker/references/curriculum-qcia-translation.md`
+9. `skills/agentic-aac-board-maker/references/qa-rubric.md`
+10. `skills/icp-backwards-mapping-assessment/SKILL.md`
 
 ## License
 

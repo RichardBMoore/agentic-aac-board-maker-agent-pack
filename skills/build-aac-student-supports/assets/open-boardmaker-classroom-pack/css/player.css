@@ -618,6 +618,24 @@ input[type="range"] {
   80% { transform: translateX(4px); }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .activity-button:focus-visible,
+  .activity-button.is-dwelling,
+  .activity-button.is-scan-current,
+  .activity-button.is-scan-row-current {
+    transform: none !important;
+  }
+}
+
 @media (max-width: 980px) {
   .player-shell {
     grid-template-columns: 1fr;

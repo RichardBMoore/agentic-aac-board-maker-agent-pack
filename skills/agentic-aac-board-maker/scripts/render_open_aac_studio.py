@@ -74,12 +74,13 @@ def render_button(button: dict[str, Any], index: int, rows: int, columns: int) -
     button_id = slug(text(button.get("id")) or label, f"btn-{index + 1}")
     spoken = text(button.get("spokenText")) or text(button.get("speakText")) or text(button.get("audioCue")) or label
     symbol_layout = text(button.get("symbolLayout")) or "label-bottom"
-    return {
+    rendered = {
         "id": button_id,
         "type": text(button.get("type")) or "standard",
         "label": label,
         "role": text(button.get("role")),
         "function": text(button.get("function")),
+        "spokenText": spoken,
         "symbolId": button.get("symbolId"),
         "symbolSrc": text(button.get("symbolSrc")),
         "searchTerm": text(button.get("searchTerm")) or label.lower(),
@@ -108,6 +109,24 @@ def render_button(button: dict[str, Any], index: int, rows: int, columns: int) -
         "result": text(button.get("result")) or "selected",
         "actions": action_list(button),
     }
+    for field in ("evidenceTag", "udl", "differentiation", "communicationPartnerCue"):
+        if button.get(field):
+            rendered[field] = button.get(field)
+    return rendered
+
+
+def preserved_ir_metadata(ir: dict[str, Any], access_profile: str) -> dict[str, Any]:
+    """Keep IR 0.3 design metadata available without changing the app schema."""
+    preserved: dict[str, Any] = {
+        "accessProfile": access_profile,
+        "purpose": text(ir.get("purpose")),
+        "audience": as_dict(ir.get("audience")),
+    }
+    for field in ("sett", "udl", "differentiation", "participationBarriers", "evidencePlan", "symbolStrategy"):
+        value = ir.get(field)
+        if value:
+            preserved[field] = value
+    return preserved
 
 
 def render(ir: dict[str, Any]) -> dict[str, Any]:
@@ -198,6 +217,9 @@ def render(ir: dict[str, Any]) -> dict[str, Any]:
             "privacyLevel": text(privacy.get("level")) or text(metadata.get("privacyLevel")) or "anonymous",
             "generatedFrom": "agentic-aac-board-ir",
             "sourceIrSchemaVersion": text(ir.get("schemaVersion")),
+            "accessProfile": profile,
+            "communicationFunctions": as_list(ir.get("communicationFunctions")),
+            "ir": preserved_ir_metadata(ir, profile),
         },
         "licences": licences,
     }
