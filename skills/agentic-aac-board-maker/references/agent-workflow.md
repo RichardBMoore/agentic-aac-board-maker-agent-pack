@@ -24,6 +24,7 @@ Extract or infer:
 - **Output:** HTML, JSON, printable board, resource pack, prompt/template.
 - **Constraints:** offline, Microsoft Edge, EQ network, PRC-Saltillo, no internet, print-only, symbol source.
 - **Age/dignity:** age band and tone.
+- **SETT/UDL/differentiation:** student strengths/access preferences without diagnoses, environment constraints, task demand, tool/support choices, and action/expression options.
 
 Ask only if missing data changes the product. Otherwise proceed with explicit assumptions.
 
@@ -38,8 +39,9 @@ Produce an internal plan before file generation:
 5. Topic/fringe vocabulary.
 6. Access settings.
 7. Symbol/search strategy.
-8. Curriculum/evidence strategy.
-9. QA risks.
+8. SETT/UDL/differentiation strategy.
+9. Curriculum/evidence strategy.
+10. QA risks.
 
 For complex tasks, briefly share this plan with Richard before coding unless he asked to just build.
 
@@ -49,7 +51,7 @@ Create a canonical AAC Board IR even if final output is HTML or print. See `aac-
 
 ```json
 {
-  "schemaVersion": "0.2.0",
+  "schemaVersion": "0.3.0",
   "format": "agentic-aac-board-ir",
   "title": "",
   "purpose": "",
@@ -62,7 +64,7 @@ Create a canonical AAC Board IR even if final output is HTML or print. See `aac-
     {
       "name": "",
       "pattern": "",
-      "grid": "3x3",
+      "grid": { "rows": 3, "columns": 3 },
       "buttons": [
         {
           "label": "",
@@ -75,10 +77,15 @@ Create a canonical AAC Board IR even if final output is HTML or print. See `aac-
       ]
     }
   ]
+  "sett": {},
+  "udl": {},
+  "differentiation": {},
+  "participationBarriers": [],
+  "evidencePlan": {}
 }
 ```
 
-This prevents the agent from jumping straight to pretty but weak boards. Renderers should preserve the IR's roles, functions, access assumptions, privacy note, attribution, and teacher notes.
+This prevents the agent from jumping straight to pretty but weak boards. Renderers should preserve the IR's roles, functions, access assumptions, privacy note, attribution, teacher notes, SETT, UDL, differentiation, participation-barrier, and evidence-plan metadata.
 
 ## Phase 4 — Output Generation
 
@@ -113,6 +120,7 @@ Minimum checks:
 - Are there no external dependencies if offline/single-file was required?
 - Is symbol attribution present?
 - Are privacy and filenames safe?
+- Does the IR include a differentiation/evidence route for any curriculum or QCIA task?
 
 ## Phase 6 — Delivery
 

@@ -4,8 +4,8 @@
   "id": "qcia-community-shops",
   "name": "QCIA Community Access: Going to the Shops",
   "type": "interactive",
-  "created": "2026-05-16T04:24:15.758598Z",
-  "modified": "2026-05-16T04:24:15.758598Z",
+  "created": "2026-05-26T10:53:45.098166Z",
+  "modified": "2026-05-26T10:53:45.098166Z",
   "settings": {
     "orientation": "landscape",
     "width": 1024,
@@ -53,6 +53,7 @@
           "label": "Hello",
           "role": "core",
           "function": "initiate",
+          "spokenText": "Hello",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "hello greeting",
@@ -102,6 +103,7 @@
           "label": "I want to buy this",
           "role": "fringe",
           "function": "request",
+          "spokenText": "I want to buy this",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "buy item",
@@ -151,6 +153,7 @@
           "label": "Pay now",
           "role": "fringe",
           "function": "request",
+          "spokenText": "I am ready to pay",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "pay money",
@@ -200,6 +203,7 @@
           "label": "Where is it?",
           "role": "question",
           "function": "ask",
+          "spokenText": "Where is it?",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "where question",
@@ -249,6 +253,7 @@
           "label": "I choose this",
           "role": "fringe",
           "function": "choose",
+          "spokenText": "I choose this one",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "choose",
@@ -298,6 +303,7 @@
           "label": "Too expensive",
           "role": "comment",
           "function": "comment",
+          "spokenText": "That is too expensive",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "expensive",
@@ -347,6 +353,7 @@
           "label": "Help please",
           "role": "repair",
           "function": "repair",
+          "spokenText": "Help please",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "help",
@@ -396,6 +403,7 @@
           "label": "Stop / wait",
           "role": "repair",
           "function": "refuse",
+          "spokenText": "Stop, please wait",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "stop wait",
@@ -445,6 +453,7 @@
           "label": "Finished",
           "role": "repair",
           "function": "regulate-rest",
+          "spokenText": "I am finished",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "finished",
@@ -522,7 +531,79 @@
     "curriculum": "QCIA community, communication, personal and living skills: participating safely in a shopping/community access routine.",
     "privacyLevel": "anonymous",
     "generatedFrom": "agentic-aac-board-ir",
-    "sourceIrSchemaVersion": "0.2.0"
+    "sourceIrSchemaVersion": "0.3.0",
+    "accessProfile": "mixed-access",
+    "communicationFunctions": [
+      "initiate",
+      "request",
+      "choose",
+      "ask",
+      "repair",
+      "refuse",
+      "reflect"
+    ],
+    "ir": {
+      "accessProfile": "mixed-access",
+      "purpose": "A community access AAC board that supports practical shopping communication, safety/help language, and teacher evidence notes for QCIA-style participation.",
+      "audience": {
+        "ageBand": "secondary",
+        "tone": "age-respectful, practical"
+      },
+      "sett": {
+        "student": "Student can use AAC to participate in shopping role-play or community access through greetings, requesting, asking, refusing, and help-seeking.",
+        "environment": "Classroom role-play, school enterprise, or supervised community context with adult safety support and local-first device use.",
+        "task": "Communicate during a familiar shopping routine while staying able to ask for help, wait, or finish.",
+        "tools": "Nine-button board, stable help/stop/finished options, spoken labels, text fallback, and teacher evidence notes."
+      },
+      "udl": {
+        "engagement": [
+          "Meaningful choice",
+          "safe repair route",
+          "wait time and partner response"
+        ],
+        "representation": [
+          "short text labels",
+          "spoken output",
+          "symbol/search-term or text fallback"
+        ],
+        "actionExpression": [
+          "touch",
+          "keyboard",
+          "mouse",
+          "eye-gaze-dwell"
+        ]
+      },
+      "differentiation": {
+        "content": "Preserve functional community participation while reducing speech and environmental access barriers.",
+        "process": "Model key vocabulary, provide wait time, allow rehearsal/repetition, and accept multimodal communication.",
+        "product": "Accept observed AAC selections, role-play evidence, photo/portfolio notes, or anonymous session summary.",
+        "environment": "Use a calm, predictable, local-first layout with teacher controls separate from student choices.",
+        "support": "Teaching, SLP, OT, family, and student/team review should personalise vocabulary and access before reliance."
+      },
+      "participationBarriers": [
+        {
+          "barrier": "Community routines assume speech, fast responses, money handling, and environmental noise.",
+          "support": "Provide prepared functional phrases, help/safety language, wait time, and adult modelling."
+        }
+      ],
+      "evidencePlan": {
+        "observable": [
+          "greeting",
+          "request to buy",
+          "question",
+          "choice",
+          "help or stop/wait message"
+        ],
+        "notJudgement": "Adult safety support and access prompts are recorded as context, not as reduced QCIA achievement.",
+        "export": "Use anonymous teacher notes, print/portfolio evidence, or local CSV/report only when needed. Do not include diagnoses, behaviour details, family details, or school IDs."
+      },
+      "symbolStrategy": {
+        "defaultSource": "ARASAAC search terms",
+        "textFallback": true,
+        "customMediaPolicy": "teacher-owned local media only unless explicitly approved",
+        "notes": "Search terms are practical community/shop terms; local photos of familiar shops may be inserted by staff if owned/approved."
+      }
+    }
   },
   "licences": [
     {

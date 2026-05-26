@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.2.0",
+  "schemaVersion": "0.3.0",
   "format": "agentic-aac-board-ir",
   "app": "Agentic AAC Board Maker",
   "id": "secondary-needs-repair-board",
@@ -406,7 +406,8 @@
     "privacy": "Do not log sensitive health, behaviour or family details in the file. Use separate approved school processes for confidential notes.",
     "repair": "Honour repair messages such as Not that, Different, Say it another way and Wait before repeating demands.",
     "use": "Use as a support for needs and communication repair, not as a behaviour-control board or replacement AAC system.",
-    "modeling": "Model the board neutrally during calm moments. Treat selections as communication, not behaviour compliance."
+    "modeling": "Model the board neutrally during calm moments. Treat selections as communication, not behaviour compliance.",
+    "evidence": "support request; privacy request; repair message; refusal; question or disagreement"
   },
   "symbolStrategy": {
     "defaultSource": "ARASAAC search terms",
@@ -445,5 +446,53 @@
       "licence": "CC BY-NC-SA",
       "attribution": "Pictograms by ARASAAC (Government of Aragon) if ARASAAC symbols are later inserted; these HTML drafts use text placeholders only."
     }
-  ]
+  ],
+  "sett": {
+    "student": "Secondary student can express needs, request privacy/support, refuse, disagree, ask, and repair communication in age-respectful language.",
+    "environment": "Secondary classroom or support setting where private needs must not be exposed through public logs or childish wording.",
+    "task": "Support self-advocacy, communication repair, and access regulation without behaviour-control framing.",
+    "tools": "Large repair/needs board, neutral spoken labels, text fallback, privacy-safe notes, and stable repair options."
+  },
+  "udl": {
+    "engagement": [
+      "Meaningful choice",
+      "safe repair route",
+      "wait time and partner response"
+    ],
+    "representation": [
+      "short text labels",
+      "spoken output",
+      "symbol/search-term or text fallback"
+    ],
+    "actionExpression": [
+      "touch",
+      "keyboard",
+      "mouse",
+      "eye-gaze-dwell"
+    ]
+  },
+  "differentiation": {
+    "content": "Maintain student dignity and self-advocacy instead of simplifying to compliance language.",
+    "process": "Model key vocabulary, provide wait time, allow rehearsal/repetition, and accept multimodal communication.",
+    "product": "Accept observed communication attempts and local team notes outside the public resource file.",
+    "environment": "Use a calm, predictable, local-first layout with teacher controls separate from student choices.",
+    "support": "Teaching, SLP, OT, family, and student/team review should personalise vocabulary and access before reliance."
+  },
+  "participationBarriers": [
+    {
+      "barrier": "Original interaction may be interpreted as behaviour rather than communication.",
+      "support": "Provide direct messages for break, privacy, disagreement, help, wait, different, and finished."
+    }
+  ],
+  "evidencePlan": {
+    "observable": [
+      "support request",
+      "privacy request",
+      "repair message",
+      "refusal",
+      "question or disagreement"
+    ],
+    "notJudgement": "Needs/repair selections are communication and wellbeing context, not behaviour scoring.",
+    "export": "Use anonymous teacher notes, print/portfolio evidence, or local CSV/report only when needed. Do not include diagnoses, behaviour details, family details, or school IDs."
+  }
 }

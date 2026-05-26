@@ -4,8 +4,8 @@
   "id": "year7-hero-speech-sentence-builder",
   "name": "Year 7 Hero Speech Sentence Builder",
   "type": "interactive",
-  "created": "2026-05-16T04:24:15.699800Z",
-  "modified": "2026-05-16T04:24:15.699800Z",
+  "created": "2026-05-26T10:53:44.945724Z",
+  "modified": "2026-05-26T10:53:44.945724Z",
   "settings": {
     "orientation": "landscape",
     "width": 1024,
@@ -53,6 +53,7 @@
           "label": "My hero is...",
           "role": "sentence",
           "function": "comment",
+          "spokenText": "My hero is",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "hero",
@@ -102,6 +103,7 @@
           "label": "I think...",
           "role": "sentence",
           "function": "comment",
+          "spokenText": "I think",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "opinion",
@@ -151,6 +153,7 @@
           "label": "because",
           "role": "sentence",
           "function": "explain",
+          "spokenText": "because",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "because",
@@ -200,6 +203,7 @@
           "label": "For example...",
           "role": "evidence",
           "function": "explain",
+          "spokenText": "For example",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "example",
@@ -249,6 +253,7 @@
           "label": "brave",
           "role": "fringe",
           "function": "comment",
+          "spokenText": "brave",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "brave",
@@ -298,6 +303,7 @@
           "label": "kind",
           "role": "fringe",
           "function": "comment",
+          "spokenText": "kind",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "kind",
@@ -347,6 +353,7 @@
           "label": "helps others",
           "role": "fringe",
           "function": "comment",
+          "spokenText": "helps others",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "helping others",
@@ -396,6 +403,7 @@
           "label": "faces danger",
           "role": "fringe",
           "function": "comment",
+          "spokenText": "faces danger",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "danger",
@@ -445,6 +453,7 @@
           "label": "Rehearse",
           "role": "sentence",
           "function": "reflect",
+          "spokenText": "I want to rehearse that sentence",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "practice speak",
@@ -494,6 +503,7 @@
           "label": "Say it again",
           "role": "repair",
           "function": "repair",
+          "spokenText": "Please say it again",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "repeat",
@@ -543,6 +553,7 @@
           "label": "Change my idea",
           "role": "repair",
           "function": "repair",
+          "spokenText": "I want to change my idea",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "change",
@@ -592,6 +603,7 @@
           "label": "Help please",
           "role": "repair",
           "function": "request",
+          "spokenText": "Help please",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "help",
@@ -644,7 +656,8 @@
     "customisation": "Replace adjectives and example prompts with the class text, film, novel or local hero being studied.",
     "repair": "Keep Say it again, Change my idea and Help please available so the student can repair the sentence-building task.",
     "use": "Use for planning, rehearsal or supported oral presentation. Do not treat the board as the student's full expressive system.",
-    "modeling": "Model a complete sentence chain: My hero is... I think... because... For example.... Accept partial selections as valid drafting or rehearsal."
+    "modeling": "Model a complete sentence chain: My hero is... I think... because... For example.... Accept partial selections as valid drafting or rehearsal.",
+    "evidence": "sentence starter selection; because/example selection; rehearsal request; repair or help request"
   },
   "communicationFunctions": [
     "comment",
@@ -667,7 +680,76 @@
     "curriculum": "Australian Curriculum English Year 7: expressing a viewpoint, developing spoken texts, using reasons/examples, rehearsing presentation language.",
     "privacyLevel": "anonymous",
     "generatedFrom": "agentic-aac-board-ir",
-    "sourceIrSchemaVersion": "0.2.0"
+    "sourceIrSchemaVersion": "0.3.0",
+    "accessProfile": "mixed-access",
+    "communicationFunctions": [
+      "comment",
+      "explain",
+      "reflect",
+      "repair",
+      "request"
+    ],
+    "ir": {
+      "accessProfile": "mixed-access",
+      "purpose": "A sentence-builder board for a Year 7 English hero speech that supports opinion, evidence, because statements, rehearsal and repair language.",
+      "audience": {
+        "ageBand": "year-7",
+        "tone": "secondary, curriculum-facing"
+      },
+      "sett": {
+        "student": "Secondary student can participate through AAC sentence starters, reasons, examples, rehearsal, and repair without needing speech or handwriting as the only route.",
+        "environment": "English classroom or rehearsal setting with teacher/peer modelling, keyboard/touch/mouse/gaze access, and intermittent internet.",
+        "task": "Build and rehearse a short hero speech using opinion, because language, and examples.",
+        "tools": "Sentence-builder grid, spoken labels, text fallback, large targets, and stable repair buttons."
+      },
+      "udl": {
+        "engagement": [
+          "Meaningful choice",
+          "safe repair route",
+          "wait time and partner response"
+        ],
+        "representation": [
+          "short text labels",
+          "spoken output",
+          "symbol/search-term or text fallback"
+        ],
+        "actionExpression": [
+          "touch",
+          "keyboard",
+          "mouse",
+          "eye-gaze-dwell"
+        ]
+      },
+      "differentiation": {
+        "content": "Keep Year 7 English opinion/evidence demand while reducing speech and memory load.",
+        "process": "Model key vocabulary, provide wait time, allow rehearsal/repetition, and accept multimodal communication.",
+        "product": "Accept a selected sentence chain, rehearsal, teacher observation, or supported oral presentation evidence.",
+        "environment": "Use a calm, predictable, local-first layout with teacher controls separate from student choices.",
+        "support": "Teaching, SLP, OT, family, and student/team review should personalise vocabulary and access before reliance."
+      },
+      "participationBarriers": [
+        {
+          "barrier": "Original speech task assumes spontaneous spoken sentences and fast verbal rehearsal.",
+          "support": "Provide sentence stems, because/example buttons, rehearsal language, and repair options."
+        }
+      ],
+      "evidencePlan": {
+        "observable": [
+          "sentence starter selection",
+          "because/example selection",
+          "rehearsal request",
+          "repair or help request"
+        ],
+        "notJudgement": "Prompting or access method should contextualise the speech evidence, not replace judgement about English content.",
+        "export": "Use anonymous teacher notes, print/portfolio evidence, or local CSV/report only when needed. Do not include diagnoses, behaviour details, family details, or school IDs."
+      },
+      "symbolStrategy": {
+        "defaultSource": "ARASAAC search terms",
+        "textFallback": true,
+        "customMediaPolicy": "teacher-owned local media only unless explicitly approved",
+        "notes": "Search terms prioritise abstract curriculum language; teacher modelling and text labels are more important than decorative symbols."
+      }
+    }
   },
   "licences": [
     {

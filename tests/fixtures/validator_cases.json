@@ -1,0 +1,268 @@
+{
+  "valid_0_3": {
+    "schemaVersion": "0.3.0",
+    "format": "agentic-aac-board-ir",
+    "id": "valid-powerhouse-board",
+    "title": "Valid Powerhouse Board",
+    "purpose": "The student can choose, comment, ask for help, and repair a classroom response.",
+    "audience": {
+      "ageBand": "secondary",
+      "tone": "age-respectful"
+    },
+    "access": {
+      "intended": ["touch", "keyboard", "eye-gaze-dwell"],
+      "profile": "eye-gaze-dwell",
+      "minimumTargetSizePx": 140,
+      "dwellTimeMs": 1200,
+      "switchScanning": false,
+      "scanPattern": "linear"
+    },
+    "communicationFunctions": ["choose", "comment", "ask", "repair"],
+    "pages": [
+      {
+        "id": "page-main",
+        "name": "Main",
+        "pattern": "choice-board",
+        "grid": { "rows": 2, "columns": 3 },
+        "buttons": [
+          { "id": "btn-i-think", "label": "I think", "role": "core", "function": "comment", "spokenText": "I think", "searchTerm": "think" },
+          { "id": "btn-choice-a", "label": "Choice A", "role": "fringe", "function": "choose", "spokenText": "Choice A", "searchTerm": "choice" },
+          { "id": "btn-because", "label": "because", "role": "sentence", "function": "explain", "spokenText": "because", "searchTerm": "because" },
+          { "id": "btn-help", "label": "Help", "role": "repair", "function": "repair", "spokenText": "Help please", "searchTerm": "help" },
+          { "id": "btn-different", "label": "Different", "role": "repair", "function": "repair", "spokenText": "Different please", "searchTerm": "different" }
+        ]
+      }
+    ],
+    "sett": {
+      "student": "Strengths, access preferences, and communication opportunities only.",
+      "environment": "Local classroom, shared laptop, intermittent internet.",
+      "task": "Participate in a shared lesson choice and explain thinking.",
+      "tools": "Large buttons, TTS, keyboard fallback, text fallback."
+    },
+    "udl": {
+      "engagement": ["choice", "repair"],
+      "representation": ["symbols", "spoken labels"],
+      "actionExpression": ["AAC selection", "keyboard"]
+    },
+    "differentiation": {
+      "content": "Same concept, reduced access load.",
+      "process": "Model, wait, accept multimodal responses.",
+      "product": "Selection, comment, and teacher observation.",
+      "environment": "Low-distraction student mode.",
+      "support": "Team review before use."
+    },
+    "participationBarriers": [
+      { "barrier": "Original task assumes speech.", "support": "Offer AAC response paths." }
+    ],
+    "evidencePlan": {
+      "observable": ["choice", "comment", "repair"],
+      "notJudgement": "Access support is context, not grading.",
+      "export": "Anonymous teacher note."
+    },
+    "teacherNotes": {
+      "modeling": "Model choices, wait, and respond.",
+      "evidence": "Observe choice, comment, and repair.",
+      "customisation": "Replace Choice A with local vocabulary."
+    },
+    "symbolStrategy": {
+      "defaultSource": "ARASAAC search terms",
+      "textFallback": true
+    },
+    "privacy": {
+      "level": "anonymous",
+      "containsSensitiveData": false
+    },
+    "attribution": [
+      {
+        "source": "ARASAAC",
+        "licence": "CC BY-NC-SA",
+        "note": "Confirm exact current licence wording before publication."
+      }
+    ]
+  },
+  "legacy_0_2": {
+    "schemaVersion": "0.2.0",
+    "format": "agentic-aac-board-ir",
+    "id": "legacy-board",
+    "title": "Legacy Board",
+    "purpose": "The student can choose and ask for help.",
+    "access": {
+      "intended": ["touch", "keyboard"],
+      "profile": "direct-selection",
+      "minimumTargetSizePx": 96
+    },
+    "communicationFunctions": ["choose", "repair"],
+    "pages": [
+      {
+        "id": "page-main",
+        "name": "Main",
+        "grid": { "rows": 2, "columns": 2 },
+        "buttons": [
+          { "id": "btn-one", "label": "One", "role": "fringe", "function": "choose", "spokenText": "One", "searchTerm": "one" },
+          { "id": "btn-two", "label": "Two", "role": "fringe", "function": "choose", "spokenText": "Two", "searchTerm": "two" },
+          { "id": "btn-help", "label": "Help", "role": "repair", "function": "repair", "spokenText": "Help", "searchTerm": "help" }
+        ]
+      }
+    ],
+    "teacherNotes": {
+      "modeling": "Model the choice and Help.",
+      "evidence": "Observe choice and help request."
+    },
+    "symbolStrategy": {
+      "defaultSource": "ARASAAC search terms",
+      "textFallback": true
+    },
+    "privacy": {
+      "level": "anonymous",
+      "containsSensitiveData": false
+    },
+    "attribution": [
+      { "source": "ARASAAC", "licence": "CC BY-NC-SA" }
+    ]
+  },
+  "noun_grid": {
+    "schemaVersion": "0.3.0",
+    "format": "agentic-aac-board-ir",
+    "id": "fruit-grid",
+    "title": "Fruit Grid",
+    "purpose": "A list of topic nouns.",
+    "access": {
+      "intended": ["touch"],
+      "profile": "direct-selection",
+      "minimumTargetSizePx": 96
+    },
+    "communicationFunctions": ["choose"],
+    "pages": [
+      {
+        "id": "page-main",
+        "name": "Main",
+        "grid": { "rows": 2, "columns": 2 },
+        "buttons": [
+          { "id": "btn-apple", "label": "Apple", "role": "fringe", "function": "choose", "spokenText": "Apple" },
+          { "id": "btn-pear", "label": "Pear", "role": "fringe", "function": "choose", "spokenText": "Pear" },
+          { "id": "btn-plum", "label": "Plum", "role": "fringe", "function": "choose", "spokenText": "Plum" },
+          { "id": "btn-cake", "label": "Cake", "role": "fringe", "function": "choose", "spokenText": "Cake" }
+        ]
+      }
+    ],
+    "privacy": { "level": "anonymous" }
+  },
+  "quiz_only": {
+    "schemaVersion": "0.3.0",
+    "format": "agentic-aac-board-ir",
+    "id": "quiz-only-board",
+    "title": "Quiz Only Board",
+    "purpose": "Answer a quiz question.",
+    "access": {
+      "intended": ["touch"],
+      "profile": "direct-selection",
+      "minimumTargetSizePx": 96
+    },
+    "communicationFunctions": ["answer"],
+    "pages": [
+      {
+        "id": "page-main",
+        "name": "Main",
+        "grid": { "rows": 2, "columns": 3 },
+        "buttons": [
+          { "id": "btn-a", "label": "A", "role": "fringe", "function": "answer", "spokenText": "A" },
+          { "id": "btn-b", "label": "B", "role": "fringe", "function": "answer", "spokenText": "B" },
+          { "id": "btn-c", "label": "C", "role": "fringe", "function": "answer", "spokenText": "C" },
+          { "id": "btn-d", "label": "D", "role": "fringe", "function": "answer", "spokenText": "D" },
+          { "id": "btn-help", "label": "Help", "role": "repair", "function": "repair", "spokenText": "Help" }
+        ]
+      }
+    ],
+    "teacherNotes": { "modeling": "Model Help." },
+    "privacy": { "level": "anonymous" }
+  },
+  "missing_privacy": {
+    "schemaVersion": "0.3.0",
+    "format": "agentic-aac-board-ir",
+    "id": "missing-privacy-board",
+    "title": "Missing Privacy Board",
+    "purpose": "The student can choose and repair.",
+    "access": {
+      "intended": ["touch"],
+      "profile": "direct-selection",
+      "minimumTargetSizePx": 96
+    },
+    "communicationFunctions": ["choose", "repair"],
+    "pages": [
+      {
+        "id": "page-main",
+        "name": "Main",
+        "grid": { "rows": 2, "columns": 2 },
+        "buttons": [
+          { "id": "btn-one", "label": "One", "role": "fringe", "function": "choose", "spokenText": "One" },
+          { "id": "btn-two", "label": "Two", "role": "fringe", "function": "choose", "spokenText": "Two" },
+          { "id": "btn-help", "label": "Help", "role": "repair", "function": "repair", "spokenText": "Help" }
+        ]
+      }
+    ],
+    "teacherNotes": { "modeling": "Model Help." }
+  },
+  "over_dense_gaze": {
+    "schemaVersion": "0.3.0",
+    "format": "agentic-aac-board-ir",
+    "id": "dense-gaze-board",
+    "title": "Dense Gaze Board",
+    "purpose": "An untested dense gaze board.",
+    "access": {
+      "intended": ["eye-gaze-dwell"],
+      "profile": "eye-gaze-dwell",
+      "minimumTargetSizePx": 120,
+      "dwellTimeMs": 1200
+    },
+    "communicationFunctions": ["choose", "repair"],
+    "pages": [
+      {
+        "id": "page-main",
+        "name": "Main",
+        "grid": { "rows": 4, "columns": 4 },
+        "buttons": [
+          { "id": "btn-1", "label": "One", "role": "fringe", "function": "choose", "spokenText": "One" },
+          { "id": "btn-2", "label": "Two", "role": "fringe", "function": "choose", "spokenText": "Two" },
+          { "id": "btn-3", "label": "Three", "role": "fringe", "function": "choose", "spokenText": "Three" },
+          { "id": "btn-4", "label": "Four", "role": "fringe", "function": "choose", "spokenText": "Four" },
+          { "id": "btn-5", "label": "Five", "role": "fringe", "function": "choose", "spokenText": "Five" },
+          { "id": "btn-6", "label": "Six", "role": "fringe", "function": "choose", "spokenText": "Six" },
+          { "id": "btn-7", "label": "Seven", "role": "fringe", "function": "choose", "spokenText": "Seven" },
+          { "id": "btn-8", "label": "Eight", "role": "fringe", "function": "choose", "spokenText": "Eight" },
+          { "id": "btn-9", "label": "Nine", "role": "fringe", "function": "choose", "spokenText": "Nine" },
+          { "id": "btn-10", "label": "Ten", "role": "fringe", "function": "choose", "spokenText": "Ten" },
+          { "id": "btn-help", "label": "Help", "role": "repair", "function": "repair", "spokenText": "Help" }
+        ]
+      }
+    ],
+    "teacherNotes": { "modeling": "Model Help." },
+    "privacy": { "level": "anonymous" }
+  },
+  "missing_repair": {
+    "schemaVersion": "0.3.0",
+    "format": "agentic-aac-board-ir",
+    "id": "missing-repair-board",
+    "title": "Missing Repair Board",
+    "purpose": "The student can choose from content.",
+    "access": {
+      "intended": ["touch"],
+      "profile": "direct-selection",
+      "minimumTargetSizePx": 96
+    },
+    "communicationFunctions": ["choose", "comment"],
+    "pages": [
+      {
+        "id": "page-main",
+        "name": "Main",
+        "grid": { "rows": 2, "columns": 2 },
+        "buttons": [
+          { "id": "btn-one", "label": "One", "role": "fringe", "function": "choose", "spokenText": "One" },
+          { "id": "btn-two", "label": "Two", "role": "fringe", "function": "choose", "spokenText": "Two" },
+          { "id": "btn-three", "label": "Three", "role": "fringe", "function": "comment", "spokenText": "Three" }
+        ]
+      }
+    ],
+    "teacherNotes": { "modeling": "Model choices." },
+    "privacy": { "level": "anonymous" }
+  }
+}

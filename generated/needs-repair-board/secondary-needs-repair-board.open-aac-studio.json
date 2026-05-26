@@ -4,8 +4,8 @@
   "id": "secondary-needs-repair-board",
   "name": "Secondary Needs and Communication Repair Board",
   "type": "interactive",
-  "created": "2026-05-16T04:24:15.729611Z",
-  "modified": "2026-05-16T04:24:15.729611Z",
+  "created": "2026-05-26T10:53:45.007782Z",
+  "modified": "2026-05-26T10:53:45.007782Z",
   "settings": {
     "orientation": "landscape",
     "width": 1024,
@@ -53,6 +53,7 @@
           "label": "I need a break",
           "role": "repair",
           "function": "regulate-rest",
+          "spokenText": "I need a break",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "break",
@@ -102,6 +103,7 @@
           "label": "Too loud",
           "role": "comment",
           "function": "comment",
+          "spokenText": "It is too loud",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "too loud",
@@ -151,6 +153,7 @@
           "label": "I feel unwell",
           "role": "core",
           "function": "request",
+          "spokenText": "I feel unwell",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "unwell",
@@ -200,6 +203,7 @@
           "label": "I need privacy",
           "role": "core",
           "function": "request",
+          "spokenText": "I need privacy",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "privacy",
@@ -249,6 +253,7 @@
           "label": "Help please",
           "role": "repair",
           "function": "repair",
+          "spokenText": "Help please",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "help",
@@ -298,6 +303,7 @@
           "label": "Say it another way",
           "role": "repair",
           "function": "repair",
+          "spokenText": "Please say it another way",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "clarify",
@@ -347,6 +353,7 @@
           "label": "Not that",
           "role": "repair",
           "function": "refuse",
+          "spokenText": "Not that",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "not that",
@@ -396,6 +403,7 @@
           "label": "Wait",
           "role": "repair",
           "function": "regulate-rest",
+          "spokenText": "Please wait",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "wait",
@@ -445,6 +453,7 @@
           "label": "I disagree",
           "role": "comment",
           "function": "comment",
+          "spokenText": "I disagree",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "disagree",
@@ -494,6 +503,7 @@
           "label": "Can I choose?",
           "role": "question",
           "function": "ask",
+          "spokenText": "Can I choose?",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "choose question",
@@ -543,6 +553,7 @@
           "label": "Different",
           "role": "repair",
           "function": "repair",
+          "spokenText": "I need something different",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "different",
@@ -592,6 +603,7 @@
           "label": "Finished",
           "role": "repair",
           "function": "refuse",
+          "spokenText": "I am finished",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "finished",
@@ -644,7 +656,8 @@
     "privacy": "Do not log sensitive health, behaviour or family details in the file. Use separate approved school processes for confidential notes.",
     "repair": "Honour repair messages such as Not that, Different, Say it another way and Wait before repeating demands.",
     "use": "Use as a support for needs and communication repair, not as a behaviour-control board or replacement AAC system.",
-    "modeling": "Model the board neutrally during calm moments. Treat selections as communication, not behaviour compliance."
+    "modeling": "Model the board neutrally during calm moments. Treat selections as communication, not behaviour compliance.",
+    "evidence": "support request; privacy request; repair message; refusal; question or disagreement"
   },
   "communicationFunctions": [
     "request",
@@ -669,7 +682,78 @@
     "curriculum": "Access to participation and self-advocacy: requesting support, regulating access and repairing communication.",
     "privacyLevel": "anonymous",
     "generatedFrom": "agentic-aac-board-ir",
-    "sourceIrSchemaVersion": "0.2.0"
+    "sourceIrSchemaVersion": "0.3.0",
+    "accessProfile": "mixed-access",
+    "communicationFunctions": [
+      "request",
+      "repair",
+      "refuse",
+      "comment",
+      "regulate-rest",
+      "ask"
+    ],
+    "ir": {
+      "accessProfile": "mixed-access",
+      "purpose": "An age-respectful needs and repair board that lets a secondary student request support, privacy, clarification, a break, different choices or communication repair without behaviour-control framing.",
+      "audience": {
+        "ageBand": "secondary",
+        "tone": "age-respectful, non-infantilising"
+      },
+      "sett": {
+        "student": "Secondary student can express needs, request privacy/support, refuse, disagree, ask, and repair communication in age-respectful language.",
+        "environment": "Secondary classroom or support setting where private needs must not be exposed through public logs or childish wording.",
+        "task": "Support self-advocacy, communication repair, and access regulation without behaviour-control framing.",
+        "tools": "Large repair/needs board, neutral spoken labels, text fallback, privacy-safe notes, and stable repair options."
+      },
+      "udl": {
+        "engagement": [
+          "Meaningful choice",
+          "safe repair route",
+          "wait time and partner response"
+        ],
+        "representation": [
+          "short text labels",
+          "spoken output",
+          "symbol/search-term or text fallback"
+        ],
+        "actionExpression": [
+          "touch",
+          "keyboard",
+          "mouse",
+          "eye-gaze-dwell"
+        ]
+      },
+      "differentiation": {
+        "content": "Maintain student dignity and self-advocacy instead of simplifying to compliance language.",
+        "process": "Model key vocabulary, provide wait time, allow rehearsal/repetition, and accept multimodal communication.",
+        "product": "Accept observed communication attempts and local team notes outside the public resource file.",
+        "environment": "Use a calm, predictable, local-first layout with teacher controls separate from student choices.",
+        "support": "Teaching, SLP, OT, family, and student/team review should personalise vocabulary and access before reliance."
+      },
+      "participationBarriers": [
+        {
+          "barrier": "Original interaction may be interpreted as behaviour rather than communication.",
+          "support": "Provide direct messages for break, privacy, disagreement, help, wait, different, and finished."
+        }
+      ],
+      "evidencePlan": {
+        "observable": [
+          "support request",
+          "privacy request",
+          "repair message",
+          "refusal",
+          "question or disagreement"
+        ],
+        "notJudgement": "Needs/repair selections are communication and wellbeing context, not behaviour scoring.",
+        "export": "Use anonymous teacher notes, print/portfolio evidence, or local CSV/report only when needed. Do not include diagnoses, behaviour details, family details, or school IDs."
+      },
+      "symbolStrategy": {
+        "defaultSource": "ARASAAC search terms",
+        "textFallback": true,
+        "customMediaPolicy": "teacher-owned local media only unless explicitly approved",
+        "notes": "Use simple, respectful symbols or text. Avoid infantilising cartoons for secondary students unless the student prefers them."
+      }
+    }
   },
   "licences": [
     {

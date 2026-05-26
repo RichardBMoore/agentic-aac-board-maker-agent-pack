@@ -92,6 +92,10 @@
         if (closestButton(event.target)) cancelDwell();
       }, true);
 
+      container.addEventListener("focusout", function (event) {
+        if (closestButton(event.target)) cancelDwell();
+      }, true);
+
       container.addEventListener("keydown", function (event) {
         if (config.shouldHandleKeyboard && !config.shouldHandleKeyboard(event)) return;
         var button = closestButton(event.target);
@@ -107,6 +111,11 @@
           event.preventDefault();
           activate(button, "keyboard");
         }
+      });
+
+      global.addEventListener("blur", cancelDwell);
+      document.addEventListener("visibilitychange", function () {
+        if (document.visibilityState !== "visible") cancelDwell();
       });
     }
 

@@ -4,8 +4,8 @@
   "id": "gaze-choice-class-activity",
   "name": "Choose a Class Activity",
   "type": "interactive",
-  "created": "2026-05-15T12:20:47.813093Z",
-  "modified": "2026-05-15T12:20:47.813093Z",
+  "created": "2026-05-26T10:53:44.976725Z",
+  "modified": "2026-05-26T10:53:44.976725Z",
   "settings": {
     "orientation": "landscape",
     "width": 1024,
@@ -53,6 +53,7 @@
           "label": "Read",
           "role": "fringe",
           "function": "choose",
+          "spokenText": "Read",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "reading book",
@@ -102,6 +103,7 @@
           "label": "Art",
           "role": "fringe",
           "function": "choose",
+          "spokenText": "Art",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "painting",
@@ -151,6 +153,7 @@
           "label": "Game",
           "role": "fringe",
           "function": "choose",
+          "spokenText": "Game",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "board game",
@@ -200,6 +203,7 @@
           "label": "Music",
           "role": "fringe",
           "function": "choose",
+          "spokenText": "Music",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "music",
@@ -249,6 +253,7 @@
           "label": "Help",
           "role": "repair",
           "function": "repair",
+          "spokenText": "Help please",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "help",
@@ -298,6 +303,7 @@
           "label": "Different",
           "role": "repair",
           "function": "repair",
+          "spokenText": "I want something different",
           "symbolId": null,
           "symbolSrc": "",
           "searchTerm": "different",
@@ -373,7 +379,77 @@
     "curriculum": "Classroom participation and communication access: making choices, requesting help, and repairing communication during shared class activities.",
     "privacyLevel": "anonymous",
     "generatedFrom": "agentic-aac-board-ir",
-    "sourceIrSchemaVersion": "0.2.0"
+    "sourceIrSchemaVersion": "0.3.0",
+    "accessProfile": "eye-gaze-dwell",
+    "communicationFunctions": [
+      "initiate",
+      "request",
+      "choose",
+      "repair",
+      "refuse",
+      "comment"
+    ],
+    "ir": {
+      "accessProfile": "eye-gaze-dwell",
+      "purpose": "An eye-gaze/dwell-safe AAC choice board that lets a student choose, request help, or repair the choice when selecting a class activity.",
+      "audience": {
+        "ageBand": "school-age",
+        "tone": "age-respectful"
+      },
+      "sett": {
+        "student": "Student uses eye gaze/dwell, keyboard, touch, or partner interpretation to choose an activity and repair the choice if needed.",
+        "environment": "Classroom device or AAC setup with large targets, reduced visual clutter, and no dependency on live internet during use.",
+        "task": "Choose a class activity while keeping Help and Different available.",
+        "tools": "Two-by-three gaze-safe board, 1000 ms dwell, pointer-leave cancellation, spoken labels, and text/emoji fallback."
+      },
+      "udl": {
+        "engagement": [
+          "Meaningful choice",
+          "safe repair route",
+          "wait time and partner response"
+        ],
+        "representation": [
+          "short text labels",
+          "spoken output",
+          "symbol/search-term or text fallback"
+        ],
+        "actionExpression": [
+          "eye-gaze-dwell",
+          "mouse",
+          "keyboard",
+          "touch"
+        ]
+      },
+      "differentiation": {
+        "content": "Keep authentic activity choice while protecting gaze access and repair.",
+        "process": "Model key vocabulary, provide wait time, allow rehearsal/repetition, and accept multimodal communication.",
+        "product": "Accept selected activity, repair use, or teacher observation of access fit.",
+        "environment": "Use a calm, predictable, local-first layout with teacher controls separate from student choices.",
+        "support": "Teaching, SLP, OT, family, and student/team review should personalise vocabulary and access before reliance."
+      },
+      "participationBarriers": [
+        {
+          "barrier": "Activity choice can become adult-controlled or too visually dense for gaze access.",
+          "support": "Use six large targets, stable repair vocabulary, clear dwell progress, and keyboard fallback."
+        }
+      ],
+      "evidencePlan": {
+        "observable": [
+          "activity choice",
+          "help request",
+          "different/repair selection",
+          "successful dwell cancellation or reselection"
+        ],
+        "notJudgement": "Dwell timing and accidental cancellation reflect access tuning, not preference certainty.",
+        "export": "Use anonymous teacher notes, print/portfolio evidence, or local CSV/report only when needed. Do not include diagnoses, behaviour details, family details, or school IDs."
+      },
+      "symbolStrategy": {
+        "defaultSource": "ARASAAC search terms",
+        "textFallback": true,
+        "customMediaPolicy": "teacher-owned local media only unless explicitly approved",
+        "notes": "This proof of concept uses text labels and emoji-style inline icons in HTML, with ARASAAC search terms recorded for later symbol replacement."
+      }
+    }
   },
   "licences": [
     {

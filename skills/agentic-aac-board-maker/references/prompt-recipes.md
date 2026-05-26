@@ -14,6 +14,7 @@ Requirements:
 - Blend core and fringe vocabulary.
 - Include repair/escape language where appropriate.
 - Match density/layout to access method: <access>.
+- Include SETT, UDL, differentiation, participation-barrier, and evidence-plan notes in the IR.
 - Use Australian English and age-respectful labels.
 - Use ARASAAC search terms or text fallback; do not use proprietary symbols.
 - Return <output type>.
@@ -31,6 +32,7 @@ Check:
 5. Does it preserve the curriculum/QCIA intent?
 6. Does it avoid private/sensitive data?
 7. Does it have attribution and offline/text fallback?
+8. Does it state SETT, UDL/action-expression, differentiation, participation barriers, and evidence route?
 List required fixes before final output.
 ```
 
@@ -63,6 +65,7 @@ Convert this curriculum task into an AAC participation board:
 Do not simply make a quiz unless the task requires it.
 Identify the cognitive demand and translate it into communication moves such as choose, compare, explain, because, opinion, question, reflect.
 Preserve learning intent while reducing access load.
+Include SETT, UDL, differentiation, participation barriers, and an evidencePlan that separates access support from curriculum judgement.
 Return <output type>.
 ```
 
@@ -74,7 +77,20 @@ Create a QCIA-aligned AAC board for this goal/context:
 
 Focus on practical observable communication: choose, request help, sequence, indicate safety, express preference, reflect.
 Include teacher evidence notes and student agency options.
+State the observable evidence route without recording diagnoses, behaviour details, or unnecessary student identifiers.
 Return <output type>.
+```
+
+## SETT/UDL Differentiation Prompt
+
+```text
+For this AAC board/resource, add IR 0.3.0 support metadata:
+- SETT: student strengths/access preferences without diagnoses, environment constraints, task demand, tools/supports.
+- UDL: engagement, representation, action/expression.
+- Differentiation: content, process, product, environment, support.
+- Participation barriers: original barriers and the support that reduces each one.
+- Evidence plan: observable communication/participation, what not to judge, and privacy-safe export route.
+Keep notes concise, practical, and free of sensitive identifiers.
 ```
 
 ## Symbol Strategy Prompt

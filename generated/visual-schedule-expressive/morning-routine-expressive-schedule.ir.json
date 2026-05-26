@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.2.0",
+  "schemaVersion": "0.3.0",
   "format": "agentic-aac-board-ir",
   "app": "Agentic AAC Board Maker",
   "id": "morning-routine-expressive-schedule",
@@ -363,5 +363,52 @@
       "licence": "CC BY-NC-SA",
       "attribution": "Pictograms by ARASAAC (Government of Aragon) if ARASAAC symbols are later inserted; these HTML drafts use text placeholders only."
     }
-  ]
+  ],
+  "sett": {
+    "student": "Student can understand the morning sequence and express wait, help, change, finished, or a question about what comes next.",
+    "environment": "Morning routine context with predictable order, real classroom photos if approved, and teacher modelling.",
+    "task": "Sequence the routine while preserving expressive communication and transition repair options.",
+    "tools": "Schedule-plus-expression grid, spoken labels, text fallback, stable repair buttons, and print-ready layout."
+  },
+  "udl": {
+    "engagement": [
+      "Meaningful choice",
+      "safe repair route",
+      "wait time and partner response"
+    ],
+    "representation": [
+      "short text labels",
+      "spoken output",
+      "symbol/search-term or text fallback"
+    ],
+    "actionExpression": [
+      "touch",
+      "keyboard",
+      "mouse",
+      "eye-gaze-dwell"
+    ]
+  },
+  "differentiation": {
+    "content": "Keep routine sequence visible while adding expressive agency.",
+    "process": "Model key vocabulary, provide wait time, allow rehearsal/repetition, and accept multimodal communication.",
+    "product": "Accept observed schedule use, expressive selection, print notes, or anonymous portfolio summary.",
+    "environment": "Use a calm, predictable, local-first layout with teacher controls separate from student choices.",
+    "support": "Teaching, SLP, OT, family, and student/team review should personalise vocabulary and access before reliance."
+  },
+  "participationBarriers": [
+    {
+      "barrier": "Visual schedules can become receptive-only compliance tools.",
+      "support": "Add expressive options for wait, help, change, finished, and asking what comes next."
+    }
+  ],
+  "evidencePlan": {
+    "observable": [
+      "sequence selection",
+      "what next question",
+      "wait/help/change request",
+      "finished message"
+    ],
+    "notJudgement": "Prompted routine use is participation/access evidence, not a standalone judgement of independence.",
+    "export": "Use anonymous teacher notes, print/portfolio evidence, or local CSV/report only when needed. Do not include diagnoses, behaviour details, family details, or school IDs."
+  }
 }

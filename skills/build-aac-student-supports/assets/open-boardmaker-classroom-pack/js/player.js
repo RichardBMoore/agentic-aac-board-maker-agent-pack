@@ -537,8 +537,21 @@
   }
 
   function exportReport() {
+    if (!confirmPrivacyExport("session report")) return;
     var filename = Data.filenameFromName(state.activity.name + "-" + studentLabel() + "-session-report", "txt");
     FileIO.downloadText(sessionReportText(), filename, "text/plain");
+  }
+
+  function confirmPrivacyExport(kind) {
+    var rows = sessionRows();
+    var hasProfileData = rows.some(function (row) {
+      return row.studentName || row.studentId;
+    }) || (state.student && !state.student.anonymous);
+    var detail = hasProfileData ? " It may include local profile names or student-specific session rows." : " It includes anonymous session rows.";
+    if (global.confirm && !global.confirm("Export " + kind + " from this device?" + detail + " Check privacy before sharing.")) {
+      return false;
+    }
+    return true;
   }
 
   function toggleFullScreen() {
@@ -735,6 +748,7 @@
       state.scanner.select("switch");
     });
     els.exportCsv.addEventListener("click", function () {
+      if (!confirmPrivacyExport("CSV log")) return;
       FileIO.downloadCsv(sessionRows(), state.activity.name);
     });
     els.exportReport.addEventListener("click", exportReport);

@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.2.0",
+  "schemaVersion": "0.3.0",
   "format": "agentic-aac-board-ir",
   "app": "Agentic AAC Board Maker",
   "id": "activity-slug",
@@ -73,6 +73,35 @@
     "modeling": "Model key words while speaking; wait; respond to all communication; accept multimodal responses.",
     "evidence": "Teacher can observe selections, repair attempts, comments, and participation in the shared task.",
     "customisation": "Replace labels/search terms with local vocabulary as needed."
+  },
+  "sett": {
+    "student": "Describe strengths, preferred modalities, access needs, and communication opportunities without diagnoses or sensitive identifiers.",
+    "environment": "Describe classroom/device/network/partner conditions that affect access.",
+    "task": "Describe the learning or participation task and the communication moves needed.",
+    "tools": "Describe AAC, print, dwell, switch, symbols, partner supports, and fallback options."
+  },
+  "udl": {
+    "engagement": ["Offer meaningful choice and a safe repair/rest route."],
+    "representation": ["Use short text labels with symbol/photo placeholders and spoken feedback."],
+    "actionExpression": ["Allow touch, keyboard, partner interpretation, and AAC selection as valid response routes."]
+  },
+  "differentiation": {
+    "content": "Preserve the key learning intent while reducing access load.",
+    "process": "Support modelling, wait time, repeated practice, and multimodal responses.",
+    "product": "Accept selections, partner-observed communication, print evidence, or exported logs as appropriate.",
+    "environment": "Keep student mode calm, predictable, local-first, and offline-aware.",
+    "support": "Teacher/SLP/OT/family team reviews and personalises vocabulary before use."
+  },
+  "participationBarriers": [
+    {
+      "barrier": "The student may not be able to access the original task through speech, handwriting, or small controls.",
+      "support": "Provide large semantic buttons, keyboard fallback, repair vocabulary, and partner modelling."
+    }
+  ],
+  "evidencePlan": {
+    "observable": ["selection", "repair attempt", "comment", "participation in shared task"],
+    "notJudgement": "Access method and prompt level are recorded as context, not as curriculum judgement.",
+    "export": "Use anonymous local notes, CSV, print, or portfolio summary only when needed."
   },
   "symbolStrategy": {
     "defaultSource": "ARASAAC search terms",

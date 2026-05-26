@@ -13,6 +13,7 @@ Must include:
 - safe `id` and human-readable `title`;
 - `purpose`, `audience`, `access`, and `communicationFunctions`;
 - pages/buttons with `role`, `function`, `spokenText`, and `searchTerm`;
+- IR 0.3.0 powerhouse metadata: `sett`, `udl`, `differentiation`, `participationBarriers`, and `evidencePlan`;
 - symbol strategy;
 - teacher notes;
 - privacy declaration;
@@ -67,7 +68,7 @@ Must include:
 - metadata/privacy;
 - licences/attribution.
 
-Use `../../open-aac-studio-board-builder/references/open-aac-studio-schema.md` for app-specific fields. Preserve IR roles/functions as extra button fields or metadata where possible.
+Use `../../open-aac-studio-board-builder/references/open-aac-studio-schema.md` for app-specific fields. Preserve IR roles/functions as extra button fields and preserve SETT/UDL/differentiation/evidence metadata under renderer metadata where possible.
 
 Renderer helper:
 
@@ -116,6 +117,7 @@ README should include:
 - how to customise;
 - which file is the source IR;
 - privacy note;
+- SETT/UDL/differentiation/evidence summary for curriculum or QCIA resources;
 - real-device testing note.
 
 ## Contract E — Agent Prompt/Skill Update

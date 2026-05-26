@@ -33,6 +33,7 @@ This skill turns AAC board-making into an agent workflow. It must keep student c
 Read these files based on task type:
 
 - `references/evidence-base.md` — AAC/UDL/visual-support principles that must shape generation.
+- `references/research-map.md` — source map and 2026-05-26 practice grounding for AAC, access, differentiation, and evidence.
 - `references/canonical-architecture.md` — plugin/standalone skill architecture and ownership boundaries.
 - `references/aac-board-ir.md` — canonical AAC Board IR used before rendering any output.
 - `references/anti-patterns.md` — weak board patterns to detect and repair before delivery.
@@ -59,7 +60,7 @@ If building an eye-gaze/dwell HTML file, also load `eyegaze-dwell-html`. If modi
 1. **Clarify only if needed.** If the request has enough context, proceed with sensible defaults. Ask only when missing information changes the output materially: access method, board purpose, output format, or privacy-sensitive details.
 2. **Identify the communication goal.** Convert the teacher task into communication functions: initiate, choose, request, refuse, repair, comment, question, sequence, explain, reflect.
 3. **Select a board pattern.** Choose from yes/no, choice board, first-then, visual schedule, core/fringe board, quiz/comprehension, sentence builder, story/book reader, needs/repair, or curriculum participation board.
-4. **Create the canonical AAC Board IR before visuals.** Define pages, button roles, stable positions, navigation, repair/escape options, access constraints, symbol strategy, privacy, attribution, and evidence/logging needs.
+4. **Create the canonical AAC Board IR before visuals.** Define pages, button roles, stable positions, navigation, repair/escape options, access constraints, symbol strategy, privacy, attribution, SETT/UDL/differentiation, participation barriers, and evidence/logging needs.
 5. **Render the resource.** Produce the requested output directly from the IR: single-file HTML, Open AAC Studio-compatible JSON, printable Markdown/HTML, or a resource pack. Do not require the user to use the prototype app unless they ask.
 6. **Validate and run QA.** Parse/check the IR or output where practical, then check communication quality, access method, privacy, symbol licensing, print/offline behaviour, and curriculum strength.
 7. **Return usable files and honest caveats.** Include where the file was saved, what it supports, what needs real-device/team testing, and what can be customised.
@@ -107,6 +108,7 @@ When Richard asks for a build, give a short plan, then build unless he clearly a
 - No attribution for symbols.
 - No way for the teacher to adapt vocabulary after generation.
 - Multiple schemas drifting apart instead of rendering from the canonical IR.
+- Missing SETT/UDL/differentiation/evidence metadata while claiming the resource is differentiated.
 - Noun-grid, quiz-only, compliance-first, or adult-voice boards that look polished but reduce student agency.
 
 ## Maintenance Note

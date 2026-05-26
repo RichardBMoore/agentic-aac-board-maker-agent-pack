@@ -44,6 +44,35 @@ ALLOWED_FUNCTIONS = {
     "regulate-rest",
 }
 
+ALLOWED_ACCESS_PROFILES = {
+    "direct-selection",
+    "eye-gaze-dwell",
+    "mouse-dwell",
+    "single-switch",
+    "two-switch",
+    "partner-assisted-print",
+    "partner-assisted-scanning",
+    "print-only",
+    "keyboard",
+    "mixed-access",
+    "unspecified",
+}
+
+AGENCY_FUNCTIONS = {
+    "initiate",
+    "request",
+    "refuse",
+    "comment",
+    "ask",
+    "repair",
+    "reflect",
+    "socialise",
+    "regulate-rest",
+}
+
+CONTENT_ONLY_FUNCTIONS = {"answer", "choose", "sequence"}
+CONTENT_ONLY_ROLES = {"fringe", "evidence"}
+
 REPAIR_LABELS = {
     "help",
     "stop",
@@ -57,6 +86,14 @@ REPAIR_LABELS = {
     "wait",
     "break",
     "show me",
+}
+
+RECOMMENDED_POWERHOUSE_FIELDS = {
+    "sett",
+    "udl",
+    "differentiation",
+    "participationBarriers",
+    "evidencePlan",
 }
 
 SENSITIVE_ID_HINTS = {
@@ -130,6 +167,46 @@ def content_button_count(pages: list[Any]) -> int:
     return total
 
 
+def content_buttons(pages: list[Any]) -> list[dict[str, Any]]:
+    result: list[dict[str, Any]] = []
+    for raw_page in pages:
+        page = as_dict(raw_page)
+        for raw_button in as_list(page.get("buttons")):
+            button = as_dict(raw_button)
+            role = text(button.get("role"))
+            if role not in {"repair", "navigation", "teacher"}:
+                result.append(button)
+    return result
+
+
+def has_button_agency(pages: list[Any]) -> bool:
+    for raw_page in pages:
+        page = as_dict(raw_page)
+        for raw_button in as_list(page.get("buttons")):
+            button = as_dict(raw_button)
+            if text(button.get("function")) in AGENCY_FUNCTIONS:
+                return True
+            if text(button.get("role")) in {"core", "repair", "comment", "question", "sentence"}:
+                return True
+    return False
+
+
+def has_evidence_route(data: dict[str, Any], pages: list[Any]) -> bool:
+    if as_dict(data.get("evidencePlan")):
+        return True
+    teacher_notes = as_dict(data.get("teacherNotes"))
+    if text(teacher_notes.get("evidence")):
+        return True
+    for button in content_buttons(pages):
+        if text(button.get("role")) == "evidence" or text(button.get("function")) in {"explain", "reflect"}:
+            return True
+    return False
+
+
+def has_differentiation_metadata(data: dict[str, Any]) -> bool:
+    return any(data.get(field) for field in ("sett", "udl", "differentiation", "participationBarriers"))
+
+
 def uses_symbol_strategy(data: dict[str, Any]) -> bool:
     if data.get("symbolStrategy"):
         return True
@@ -153,24 +230,14 @@ def validate(data: dict[str, Any]) -> tuple[list[str], list[str]]:
         if not data.get(field):
             failures.append(f"Missing required top-level field: {field}")
 
+    schema_version = text(data.get("schemaVersion"))
     communication_functions = as_list(data.get("communicationFunctions"))
     for value in communication_functions:
         function = text(value)
         if function and function not in ALLOWED_FUNCTIONS:
             failures.append(f"Unknown top-level communication function '{function}'.")
     if communication_functions:
-        agency_functions = {
-            "initiate",
-            "request",
-            "refuse",
-            "comment",
-            "ask",
-            "repair",
-            "reflect",
-            "socialise",
-            "regulate-rest",
-        }
-        if not any(text(value) in agency_functions for value in communication_functions):
+        if not any(text(value) in AGENCY_FUNCTIONS for value in communication_functions):
             warnings.append("communicationFunctions does not include an obvious agency/social/repair function.")
 
     title = text(data.get("title")) or text(data.get("name"))
@@ -185,6 +252,8 @@ def validate(data: dict[str, Any]) -> tuple[list[str], list[str]]:
 
     access = as_dict(data.get("access"))
     profile = text(access.get("profile")) or text(data.get("accessMethod")) or "unspecified"
+    if profile not in ALLOWED_ACCESS_PROFILES:
+        warnings.append(f"Unknown access profile '{profile}'.")
     intended = as_list(access.get("intended")) or as_list(as_dict(data.get("accessibility")).get("intendedAccess"))
     if not intended:
         warnings.append("No explicit intended access list found.")
@@ -201,6 +270,7 @@ def validate(data: dict[str, Any]) -> tuple[list[str], list[str]]:
         failures.append("pages must be a non-empty array.")
 
     max_buttons_per_page = 0
+    max_content_buttons_per_page = 0
     for page_index, raw_page in enumerate(pages, start=1):
         page = as_dict(raw_page)
         page_label = text(page.get("id")) or text(page.get("name")) or f"page {page_index}"
@@ -213,6 +283,12 @@ def validate(data: dict[str, Any]) -> tuple[list[str], list[str]]:
         if rows and columns and len(buttons) > rows * columns:
             failures.append(f"{page_label}: has more buttons than declared grid cells.")
         max_buttons_per_page = max(max_buttons_per_page, len(buttons))
+        page_content_buttons = [
+            as_dict(raw_button)
+            for raw_button in buttons
+            if text(as_dict(raw_button).get("role")) not in {"repair", "navigation", "teacher"}
+        ]
+        max_content_buttons_per_page = max(max_content_buttons_per_page, len(page_content_buttons))
 
         for button_index, raw_button in enumerate(buttons, start=1):
             button = as_dict(raw_button)
@@ -247,8 +323,18 @@ def validate(data: dict[str, Any]) -> tuple[list[str], list[str]]:
     if profile in {"single-switch", "two-switch"} and max_buttons_per_page > 9:
         warnings.append("Switch-scanning board has more than 9 buttons on a page; confirm scan fatigue and pattern.")
 
-    if content_button_count(pages) > 2 and not has_repair_route(pages):
+    total_content_buttons = content_button_count(pages)
+    if total_content_buttons > 2 and not has_repair_route(pages):
         failures.append("Board has more than two content buttons but no repair/refusal/finished route.")
+    if total_content_buttons >= 4:
+        content = content_buttons(pages)
+        content_functions = {text(button.get("function")) for button in content if text(button.get("function"))}
+        content_roles = {text(button.get("role")) for button in content if text(button.get("role"))}
+        top_level_functions = {text(value) for value in communication_functions}
+        if content_functions <= CONTENT_ONLY_FUNCTIONS and content_roles <= CONTENT_ONLY_ROLES and not top_level_functions.intersection(AGENCY_FUNCTIONS):
+            failures.append("Board appears to be a noun/content grid with no communication agency function.")
+        if content_functions <= {"answer"} or (top_level_functions <= {"answer", "choose"} and max_content_buttons_per_page >= 3 and not has_button_agency(pages)):
+            failures.append("Board appears quiz-only or answer-only; add repair, explanation, uncertainty, or student agency.")
 
     privacy = as_dict(data.get("privacy"))
     privacy_level = text(privacy.get("level")) or text(as_dict(data.get("metadata")).get("privacyLevel"))
@@ -266,6 +352,14 @@ def validate(data: dict[str, Any]) -> tuple[list[str], list[str]]:
         warnings.append("Missing teacherNotes.")
     elif not text(teacher_notes.get("modeling")):
         warnings.append("teacherNotes should include a modeling note.")
+    if schema_version.startswith("0.3"):
+        missing_powerhouse = sorted(field for field in RECOMMENDED_POWERHOUSE_FIELDS if not data.get(field))
+        if missing_powerhouse:
+            warnings.append("IR 0.3.0 is missing recommended powerhouse fields: " + ", ".join(missing_powerhouse))
+    if not has_differentiation_metadata(data):
+        warnings.append("Differentiation/UDL/SETT metadata is thin; add supports when the task is more than a tiny board.")
+    if not has_evidence_route(data, pages):
+        warnings.append("Evidence route is thin; add evidencePlan or teacherNotes.evidence when curriculum/QCIA evidence matters.")
 
     return failures, warnings
 

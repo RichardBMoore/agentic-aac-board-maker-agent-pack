@@ -1,8 +1,8 @@
 # Source Notes
 
-Last checked: 2026-05-11.
+Last checked: 2026-05-26.
 
-Use these notes as grounding, not as a substitute for current specialist advice. If the user asks for current legal, clinical, device, or licensing certainty, verify again from primary sources.
+Use these notes as grounding, not as a substitute for current specialist advice. If the user asks for current legal, clinical, device, school-policy, or licensing certainty, verify again from primary sources.
 
 ## AAC Practice
 
@@ -15,6 +15,19 @@ Use these notes as grounding, not as a substitute for current specialist advice.
 
 - ISAAC frames communication access around understanding, being understood, preferred communication methods, time and opportunity to communicate, accessible information, and support from a trusted person when needed.
 - Source: https://isaac-online.org/english/communication-access/
+
+## Differentiation, UDL, And SETT
+
+- CAST UDL frames design around multiple means of engagement, representation, and action/expression. For AAC boards, this means the student should have more than one way to participate and show learning.
+- The SETT Framework keeps assistive technology decisions grounded in Student, Environment, Task, and Tools rather than picking software first.
+- Australian Curriculum student diversity guidance and the Disability Standards for Education support reasonable adjustments so students can access, participate, and demonstrate learning.
+- QCAA QCIA evidence should show participation and achievement in planned learning while keeping access supports visible as context rather than curriculum judgement.
+- Sources:
+  - https://udlguidelines.cast.org/
+  - https://www.joyzabala.com/
+  - https://www.australiancurriculum.edu.au/resources/student-diversity/students-with-disability/
+  - https://www.education.gov.au/disability-standards-education-2005
+  - https://www.qcaa.qld.edu.au/senior/certificates-and-qualifications/qcia
 
 ## Web Accessibility
 

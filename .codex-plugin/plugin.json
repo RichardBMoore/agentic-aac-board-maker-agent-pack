@@ -1,7 +1,7 @@
 {
   "name": "agentic-aac-board-maker",
-  "version": "0.2.0",
-  "description": "Generate evidence-informed, accessible AAC boards, classroom communication resources, eye-gaze tools, and ICP assessment supports from teacher intent.",
+  "version": "0.3.0",
+  "description": "Generate evidence-informed, accessible AAC boards, differentiated classroom communication resources, eye-gaze tools, and ICP assessment supports from teacher intent.",
   "author": {
     "name": "Richard Moore"
   },
@@ -20,8 +20,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Agentic AAC Board Maker",
-    "shortDescription": "Generate accessible AAC and ICP classroom resources",
-    "longDescription": "Turns teacher intent into draft AAC boards, visual supports, printable resources, Open AAC Studio JSON, offline HTML tools, and ICP evidence packages with communication rights, access method, curriculum/QCIA translation, privacy, and QA built in.",
+    "shortDescription": "Generate differentiated AAC and ICP classroom resources",
+    "longDescription": "Turns teacher intent into draft AAC boards, visual supports, printable resources, Open AAC Studio JSON, offline HTML tools, and ICP evidence packages with communication rights, SETT notes, UDL supports, differentiation, access method, curriculum/QCIA translation, privacy, and QA built in.",
     "developerName": "Richard Moore",
     "category": "Education",
     "capabilities": [

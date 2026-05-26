@@ -85,7 +85,7 @@ A board is only finished when it is:
    - Keep activity data separate from editor/player code.
    - Default `privacyLevel` to `anonymous`.
    - Include ARASAAC attribution if ARASAAC symbols/search terms are used.
-   - Preserve IR roles/functions as fields or metadata so the communication design is not lost in app-specific JSON.
+   - Preserve IR roles/functions and IR 0.3.0 SETT/UDL/differentiation/evidence metadata so the communication design is not lost in app-specific JSON.
 
 5. **Add symbols safely**
    - Use ARASAAC IDs when known; otherwise include `searchTerm` or leave symbol blank with a text fallback.
