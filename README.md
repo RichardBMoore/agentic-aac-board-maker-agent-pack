@@ -17,8 +17,6 @@ agentic-aac-board-maker-agent-pack/
   .codex-plugin/             Codex plugin manifest
   .github/workflows/         GitHub validation workflow
   generated/                 Proof-of-concept boards and regression fixtures
-  presentations/             Overview presentation for school workflow discussion
-  prompts/                   Copy/paste prompts for agent review and build tests
   scripts/                   Repository validation script
   skills/                    Skill folders exposed by the plugin
 ```
