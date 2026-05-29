@@ -78,10 +78,12 @@ Included proof-of-concept examples:
 
 - `gaze-choice-2x2` - simple eye-gaze choice board.
 - `qcia-community-shops` - QCIA community access board.
-- `curriculum-sentence-builder` - Year 7 hero speech sentence builder.
+- `curriculum-sentence-builder` - Year 7 hero speech sentence builder; a two-page board with a sentence/message bar and Speak/Undo/Start-again controls.
 - `visual-schedule-expressive` - visual schedule with expressive options.
-- `needs-repair-board` - respectful needs and repair board.
+- `needs-repair-board` - respectful needs and repair board; two gaze-safe pages with Help on each.
 - `partner-assisted-print` - printable partner-assisted scanning board.
+
+The `curriculum-sentence-builder` and `needs-repair-board` examples also demonstrate multi-page `navigation` buttons (`next-page`/`previous-page` actions), so the regression fixtures cover navigation as well as single-page boards.
 
 ## Non-Negotiables
 

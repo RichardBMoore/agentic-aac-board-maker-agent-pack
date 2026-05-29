@@ -4,29 +4,37 @@ Fixture: `curriculum-sentence-builder`
 
 ## Purpose
 
-A sentence-builder board for a Year 7 English hero speech that supports opinion, evidence, because statements, rehearsal and repair language.
+A two-page sentence-builder board for a Year 7 English hero speech. The student adds words to a sentence bar, speaks the whole sentence, and uses opinion, reason, evidence, and repair language to rehearse a short spoken text.
+
+## How it works
+
+Word buttons append to the sentence bar at the top of the screen and speak the single word for feedback. **Speak sentence** reads the whole bar aloud, **Undo** removes the last word, and **Start again** clears it. Page 1 holds sentence starters and connectives; Page 2 holds describing words. Navigation buttons move between the two nine-target pages so the layout stays gaze- and switch-friendly.
 
 ## Notes
 
 ### Modelling
 
-Model a complete sentence chain: My hero is... I think... because... For example.... Accept partial selections as valid drafting or rehearsal.
+Model a complete sentence chain across both pages: My hero is … brave … because … helps others, then press Speak sentence. Accept partial sentences as valid drafting or rehearsal.
 
 ### Curriculum
 
-Supports Year 7 English speaking/listening by giving access to opinion, reasoning and evidence language for a short hero speech.
+Supports Year 7 English speaking/listening by giving access to opinion, reasoning and evidence language for a short hero speech, and by letting the student assemble and rehearse a whole sentence rather than single words.
 
 ### Customisation
 
-Replace adjectives and example prompts with the class text, film, novel or local hero being studied.
+Replace the describing words and add the hero's name (as a word button or spoken after "My hero is") to match the class text, film, novel or local hero being studied.
 
 ### Repair
 
-Keep Say it again, Change my idea and Help please available so the student can repair the sentence-building task.
+Keep Undo, Start again and Help please available so the student can fix or restart the sentence without losing agency.
 
 ### Use
 
 Use for planning, rehearsal or supported oral presentation. Do not treat the board as the student's full expressive system.
+
+## Evidence
+
+Observe the sentence built in the message bar, opinion/because/example selection, speak-sentence use, and repair (undo, start again) or help requests. Prompting, navigation support, or access method should contextualise the speech evidence, not replace judgement about English content.
 
 ## Privacy and caveat
 

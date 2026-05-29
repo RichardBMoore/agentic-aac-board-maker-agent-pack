@@ -9,17 +9,20 @@ User asks: “Make a Year 7 English hero speech AAC board for an eye-gaze user.�
 Agent should infer:
 
 - Pattern: curriculum participation + sentence builder.
-- Access: eye gaze/dwell; 3x3 max per page.
-- Functions: choose hero, describe, express opinion, explain with because, ask for help, rehearse/finish.
+- Access: eye gaze/dwell; 3x3 max per page, so use multiple pages instead of one dense grid.
+- Functions: choose hero, describe, express opinion, explain with because, ask for help, rehearse/speak, repair.
 - Output: single-file HTML unless user requests JSON.
 
-Likely pages:
+A real sentence builder must actually build a sentence: include a message bar that accumulates selected words plus Speak sentence, Undo, and Start again controls. Speaking each word in isolation is not enough.
 
-1. Starter page: My hero is, I think, because, important, brave, helps people, Help, Different, Finished.
-2. Facts page: born, lives, works, achieved, challenge, community, first, next, back.
-3. Speech control page: speak sentence, clear, record note/export if implemented, help, finished.
+Likely pages (each 3x3, with Help and Speak sentence on every page):
 
-Do not produce only a quiz about heroes.
+1. Sentence starters page: My hero is, I think, because, For example, and also, plus a navigation button to the describing-words page, Speak sentence, Undo, Help.
+2. Describing words page: brave, kind, helps others, faces danger, never gives up, plus a navigation button back, Speak sentence, Start again, Help.
+
+Use `navigation` buttons with `next-page`/`previous-page` actions so a gaze or switch user never faces more than nine targets at once. The shipped reference build lives in the repository's `generated/curriculum-sentence-builder/` folder.
+
+Do not produce only a quiz about heroes, and do not collapse the sentence builder into a single grid of words with no way to assemble or speak a sentence.
 
 ## Example 2 — QCIA Community Access Board
 

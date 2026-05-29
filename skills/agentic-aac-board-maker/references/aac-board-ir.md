@@ -160,6 +160,7 @@ Use these as validation defaults:
 - `single-switch`: 2x2 or 3x3 first; larger grids need row-column scanning and a clear reason.
 - `partner-assisted-print`: keep scan order explicit and include partner script.
 - `direct-selection`: 3x3 default; 4x4 acceptable for confident direct selectors.
+- Intended-access gaze: if `eye-gaze-dwell` or `mouse-dwell` appears in `access.intended` under any profile (including `mixed-access`), the same nine-target default applies. Prefer multiple calm pages with `navigation` buttons over one dense grid. The validator warns when such a board has a page over nine targets without `denseGazeTested`.
 
 ## Renderer Mapping
 
@@ -196,6 +197,33 @@ Preserve:
 - attribution;
 - black-and-white readability.
 
+## Multi-Page Navigation And Message Bar
+
+Boards with more than one page should make navigation explicit instead of relying on a single dense grid.
+
+- Use `navigation`-role buttons with `function: "navigate"`.
+- Encode page moves as dict actions: `{ "type": "next-page", "targetPageId": "page-id" }`, `{ "type": "previous-page", "targetPageId": "page-id" }`, or `{ "type": "navigate-page", "targetPageId": "page-id" }`. The Open AAC Studio renderer preserves these actions.
+- Keep a repair/help route reachable on every page, not only the first.
+- An optional top-level `navigation` object can record the page model and intent, for example `{ "model": "two-page sentence builder", "pages": ["page-one", "page-two"], "notes": "…" }`.
+
+Sentence builders should actually assemble a sentence, not speak isolated words. Use an optional top-level `messageBar` object plus message action types:
+
+```json
+"messageBar": {
+  "enabled": true,
+  "placeholder": "Build your sentence here.",
+  "speakControl": true,
+  "clearControl": true,
+  "undoControl": true
+}
+```
+
+- Word buttons add to the bar with `{ "type": "add-to-message", "text": "word" }` (also speak the single word for feedback).
+- A Speak control reads the whole bar with `{ "type": "speak-message" }`.
+- Undo and clear use `{ "type": "remove-last-word" }` and `{ "type": "clear-message" }`.
+
+`messageBar` and `navigation` are optional design metadata: the validator ignores them and the single-file HTML renderer is responsible for the live behaviour. See `generated/curriculum-sentence-builder/` for a worked two-page example.
+
 ## Powerhouse Metadata
 
 These fields are optional for legacy compatibility, but expected for new resource packs:
@@ -222,4 +250,4 @@ An IR should fail validation if:
 - privacy level is not declared;
 - attribution is missing when symbols/search terms are used.
 
-The validator should warn, not fail, when `0.3.0` powerhouse metadata is thin. Warnings are still work to do before claiming a resource is differentiated or curriculum-strong.
+The validator should warn, not fail, when `0.3.0` powerhouse metadata is thin. It also warns when `eye-gaze-dwell`/`mouse-dwell` is an intended access method (even under `mixed-access`) but a page exceeds nine targets without `denseGazeTested`. Warnings are still work to do before claiming a resource is differentiated, curriculum-strong, or genuinely usable by the stated access method.
