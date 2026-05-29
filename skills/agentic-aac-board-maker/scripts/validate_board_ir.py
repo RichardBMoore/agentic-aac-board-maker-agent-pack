@@ -314,8 +314,15 @@ def validate(data: dict[str, Any]) -> tuple[list[str], list[str]]:
                 failures.append(f"{button_label}: teacher button appears in a student-facing page.")
 
     dense_gaze_tested = bool(access.get("denseGazeTested") or data.get("denseGazeTested"))
+    intended_access = {text(value).lower() for value in intended}
+    gaze_in_intended = bool({"eye-gaze-dwell", "mouse-dwell"} & intended_access)
     if profile in {"eye-gaze-dwell", "mouse-dwell"} and max_buttons_per_page > 9 and not dense_gaze_tested:
         failures.append("Eye-gaze/mouse-dwell profile has more than 9 buttons on a page without denseGazeTested=true.")
+    elif gaze_in_intended and max_buttons_per_page > 9 and not dense_gaze_tested:
+        warnings.append(
+            "Eye-gaze/mouse-dwell is listed in intended access but a page has more than 9 buttons; "
+            "split into calmer pages, enlarge targets, or set denseGazeTested=true once dense gaze access is tested."
+        )
     if profile in {"eye-gaze-dwell", "mouse-dwell"} and minimum_target_px is not None and minimum_target_px < 120:
         failures.append("Eye-gaze/mouse-dwell profile should use minimumTargetSizePx >= 120.")
     if profile == "direct-selection" and minimum_target_px is not None and minimum_target_px < 44:

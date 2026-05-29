@@ -264,5 +264,46 @@
     ],
     "teacherNotes": { "modeling": "Model choices." },
     "privacy": { "level": "anonymous" }
+  },
+  "mixed_gaze_dense": {
+    "schemaVersion": "0.3.0",
+    "format": "agentic-aac-board-ir",
+    "id": "mixed-gaze-dense-board",
+    "title": "Mixed Access Dense Board",
+    "purpose": "The student can request, comment, ask, and repair across a single dense page.",
+    "access": {
+      "intended": ["touch", "keyboard", "mouse", "eye-gaze-dwell"],
+      "profile": "mixed-access",
+      "minimumTargetSizePx": 132,
+      "dwellTimeMs": 1100
+    },
+    "communicationFunctions": ["request", "comment", "ask", "repair", "refuse", "regulate-rest"],
+    "pages": [
+      {
+        "id": "page-main",
+        "name": "Main",
+        "grid": { "rows": 3, "columns": 4 },
+        "buttons": [
+          { "id": "btn-help", "label": "Help", "role": "repair", "function": "repair", "spokenText": "Help please" },
+          { "id": "btn-break", "label": "Break", "role": "repair", "function": "regulate-rest", "spokenText": "I need a break" },
+          { "id": "btn-toilet", "label": "Toilet", "role": "core", "function": "request", "spokenText": "Toilet please" },
+          { "id": "btn-drink", "label": "Drink", "role": "core", "function": "request", "spokenText": "I want a drink" },
+          { "id": "btn-more", "label": "More", "role": "core", "function": "request", "spokenText": "More please" },
+          { "id": "btn-stop", "label": "Stop", "role": "repair", "function": "refuse", "spokenText": "Stop" },
+          { "id": "btn-wait", "label": "Wait", "role": "repair", "function": "regulate-rest", "spokenText": "Please wait" },
+          { "id": "btn-yes", "label": "Yes", "role": "core", "function": "answer", "spokenText": "Yes" },
+          { "id": "btn-no", "label": "No", "role": "core", "function": "refuse", "spokenText": "No" },
+          { "id": "btn-like", "label": "I like this", "role": "comment", "function": "comment", "spokenText": "I like this" },
+          { "id": "btn-dislike", "label": "I do not like this", "role": "comment", "function": "comment", "spokenText": "I do not like this" },
+          { "id": "btn-show", "label": "Show me", "role": "question", "function": "ask", "spokenText": "Can you show me?" }
+        ]
+      }
+    ],
+    "teacherNotes": { "modeling": "Model needs and repair messages neutrally." },
+    "symbolStrategy": { "defaultSource": "ARASAAC search terms", "textFallback": true },
+    "privacy": { "level": "anonymous", "containsSensitiveData": false },
+    "attribution": [
+      { "source": "ARASAAC", "licence": "CC BY-NC-SA" }
+    ]
   }
 }

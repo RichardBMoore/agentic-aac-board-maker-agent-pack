@@ -6,7 +6,7 @@
   "title": "Secondary Needs and Communication Repair Board",
   "name": "Secondary Needs and Communication Repair Board",
   "type": "interactive",
-  "purpose": "An age-respectful needs and repair board that lets a secondary student request support, privacy, clarification, a break, different choices or communication repair without behaviour-control framing.",
+  "purpose": "An age-respectful two-page needs and communication repair board that lets a secondary student request support, privacy, clarification, a break, different choices or communication repair without behaviour-control framing. Help stays on every page and no page exceeds nine targets.",
   "sourcePrompt": "Make a respectful needs and communication repair board for a secondary student.",
   "fixtureId": "needs-repair-board",
   "audience": {
@@ -26,7 +26,7 @@
     "switchScanning": false,
     "scanSpeedMs": 1400,
     "scanPattern": "linear",
-    "scanOrder": "left-to-right, top-to-bottom"
+    "scanOrder": "left-to-right, top-to-bottom, then navigation"
   },
   "settings": {
     "orientation": "landscape",
@@ -48,7 +48,7 @@
     ],
     "minimumTargetSizePx": 132,
     "dwellSafe": true,
-    "scanOrder": "left-to-right, top-to-bottom",
+    "scanOrder": "left-to-right, top-to-bottom, then navigation",
     "audioCues": true
   },
   "communicationFunctions": [
@@ -57,23 +57,56 @@
     "refuse",
     "comment",
     "regulate-rest",
-    "ask"
+    "ask",
+    "navigate"
   ],
+  "navigation": {
+    "model": "two-page needs and repair board",
+    "pages": ["page-needs", "page-repair"],
+    "notes": "Page 1 carries urgent needs and regulation; page 2 carries communication repair and self-advocacy. Help please appears on both pages so support is never more than one selection away, and neither page exceeds nine gaze targets."
+  },
   "pages": [
     {
-      "id": "page-main",
-      "name": "Main",
+      "id": "page-needs",
+      "name": "I need",
       "pattern": "needs-repair-board",
       "layout": "grid",
       "grid": {
         "rows": 3,
-        "columns": 4
+        "columns": 3
       },
       "gridRows": 3,
-      "gridColumns": 4,
+      "gridColumns": 3,
       "margin": 18,
       "backgroundColour": "#f7fbff",
       "buttons": [
+        {
+          "id": "btn-help-needs",
+          "label": "Help please",
+          "role": "repair",
+          "function": "repair",
+          "searchTerm": "help",
+          "spokenText": "Help please",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "Help please",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-help-needs-speak",
+              "type": "speak-text",
+              "text": "Help please"
+            },
+            {
+              "id": "act-btn-help-needs-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
         {
           "id": "btn-break",
           "label": "I need a break",
@@ -102,28 +135,28 @@
           ]
         },
         {
-          "id": "btn-quiet",
-          "label": "Too loud",
-          "role": "comment",
-          "function": "comment",
-          "searchTerm": "too loud",
-          "spokenText": "It is too loud",
+          "id": "btn-wait",
+          "label": "Wait",
+          "role": "repair",
+          "function": "regulate-rest",
+          "searchTerm": "wait",
+          "spokenText": "Please wait",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "It is too loud",
+          "audioCue": "Please wait",
           "result": "selected",
           "style": {
             "fillColour": "#FFFFFF"
           },
           "actions": [
             {
-              "id": "act-btn-quiet-speak",
+              "id": "act-btn-wait-speak",
               "type": "speak-text",
-              "text": "It is too loud"
+              "text": "Please wait"
             },
             {
-              "id": "act-btn-quiet-log",
+              "id": "act-btn-wait-log",
               "type": "log-attempt"
             }
           ]
@@ -183,7 +216,100 @@
           ]
         },
         {
-          "id": "btn-help",
+          "id": "btn-quiet",
+          "label": "Too loud",
+          "role": "comment",
+          "function": "comment",
+          "searchTerm": "too loud",
+          "spokenText": "It is too loud",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "It is too loud",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-quiet-speak",
+              "type": "speak-text",
+              "text": "It is too loud"
+            },
+            {
+              "id": "act-btn-quiet-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-finished",
+          "label": "Finished",
+          "role": "repair",
+          "function": "refuse",
+          "searchTerm": "finished",
+          "spokenText": "I am finished",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "I am finished",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-finished-speak",
+              "type": "speak-text",
+              "text": "I am finished"
+            },
+            {
+              "id": "act-btn-finished-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-to-repair",
+          "label": "Sort it out ▶",
+          "role": "navigation",
+          "function": "navigate",
+          "searchTerm": "next page repair self advocacy",
+          "spokenText": "Go to repair and choices",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "Go to repair and choices",
+          "result": "navigated",
+          "style": {
+            "fillColour": "#ECECF4"
+          },
+          "actions": [
+            {
+              "id": "act-btn-to-repair-next",
+              "type": "next-page",
+              "targetPageId": "page-repair"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "page-repair",
+      "name": "Sort it out",
+      "pattern": "needs-repair-board",
+      "layout": "grid",
+      "grid": {
+        "rows": 3,
+        "columns": 3
+      },
+      "gridRows": 3,
+      "gridColumns": 3,
+      "margin": 18,
+      "backgroundColour": "#f7fbff",
+      "buttons": [
+        {
+          "id": "btn-help-repair",
           "label": "Help please",
           "role": "repair",
           "function": "repair",
@@ -199,12 +325,12 @@
           },
           "actions": [
             {
-              "id": "act-btn-help-speak",
+              "id": "act-btn-help-repair-speak",
               "type": "speak-text",
               "text": "Help please"
             },
             {
-              "id": "act-btn-help-log",
+              "id": "act-btn-help-repair-log",
               "type": "log-attempt"
             }
           ]
@@ -264,28 +390,28 @@
           ]
         },
         {
-          "id": "btn-wait",
-          "label": "Wait",
+          "id": "btn-different",
+          "label": "Different",
           "role": "repair",
-          "function": "regulate-rest",
-          "searchTerm": "wait",
-          "spokenText": "Please wait",
+          "function": "repair",
+          "searchTerm": "different",
+          "spokenText": "I need something different",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "Please wait",
+          "audioCue": "I need something different",
           "result": "selected",
           "style": {
             "fillColour": "#FFFFFF"
           },
           "actions": [
             {
-              "id": "act-btn-wait-speak",
+              "id": "act-btn-different-speak",
               "type": "speak-text",
-              "text": "Please wait"
+              "text": "I need something different"
             },
             {
-              "id": "act-btn-wait-log",
+              "id": "act-btn-different-log",
               "type": "log-attempt"
             }
           ]
@@ -345,56 +471,25 @@
           ]
         },
         {
-          "id": "btn-different",
-          "label": "Different",
-          "role": "repair",
-          "function": "repair",
-          "searchTerm": "different",
-          "spokenText": "I need something different",
+          "id": "btn-to-needs",
+          "label": "◀ My needs",
+          "role": "navigation",
+          "function": "navigate",
+          "searchTerm": "back previous page needs",
+          "spokenText": "Go back to my needs",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "I need something different",
-          "result": "selected",
+          "audioCue": "Go back to my needs",
+          "result": "navigated",
           "style": {
-            "fillColour": "#FFFFFF"
+            "fillColour": "#ECECF4"
           },
           "actions": [
             {
-              "id": "act-btn-different-speak",
-              "type": "speak-text",
-              "text": "I need something different"
-            },
-            {
-              "id": "act-btn-different-log",
-              "type": "log-attempt"
-            }
-          ]
-        },
-        {
-          "id": "btn-finished",
-          "label": "Finished",
-          "role": "repair",
-          "function": "refuse",
-          "searchTerm": "finished",
-          "spokenText": "I am finished",
-          "symbolId": null,
-          "symbolSrc": "",
-          "symbolLayout": "label-bottom",
-          "audioCue": "I am finished",
-          "result": "selected",
-          "style": {
-            "fillColour": "#FFFFFF"
-          },
-          "actions": [
-            {
-              "id": "act-btn-finished-speak",
-              "type": "speak-text",
-              "text": "I am finished"
-            },
-            {
-              "id": "act-btn-finished-log",
-              "type": "log-attempt"
+              "id": "act-btn-to-needs-prev",
+              "type": "previous-page",
+              "targetPageId": "page-needs"
             }
           ]
         }
@@ -405,8 +500,9 @@
     "age_respectful": "Language is plain and secondary-appropriate. Avoid childish praise, token language or public commentary about private needs.",
     "privacy": "Do not log sensitive health, behaviour or family details in the file. Use separate approved school processes for confidential notes.",
     "repair": "Honour repair messages such as Not that, Different, Say it another way and Wait before repeating demands.",
+    "navigation": "Page 1 is urgent needs and regulation; page 2 is repair and self-advocacy. Help please is on both pages so support is always one selection away.",
     "use": "Use as a support for needs and communication repair, not as a behaviour-control board or replacement AAC system.",
-    "modeling": "Model the board neutrally during calm moments. Treat selections as communication, not behaviour compliance.",
+    "modeling": "Model the board neutrally during calm moments, including how to move between the two pages. Treat selections as communication, not behaviour compliance.",
     "evidence": "support request; privacy request; repair message; refusal; question or disagreement"
   },
   "symbolStrategy": {
@@ -428,7 +524,8 @@
       "needs",
       "repair",
       "secondary",
-      "privacy-safe"
+      "privacy-safe",
+      "multi-page"
     ],
     "curriculum": "Access to participation and self-advocacy: requesting support, regulating access and repairing communication.",
     "privacyLevel": "anonymous"
@@ -448,10 +545,10 @@
     }
   ],
   "sett": {
-    "student": "Secondary student can express needs, request privacy/support, refuse, disagree, ask, and repair communication in age-respectful language.",
+    "student": "Secondary student can express needs, request privacy/support, refuse, disagree, ask, and repair communication in age-respectful language across two calm pages.",
     "environment": "Secondary classroom or support setting where private needs must not be exposed through public logs or childish wording.",
     "task": "Support self-advocacy, communication repair, and access regulation without behaviour-control framing.",
-    "tools": "Large repair/needs board, neutral spoken labels, text fallback, privacy-safe notes, and stable repair options."
+    "tools": "Two-page needs/repair board with no more than nine targets per page, Help on every page, neutral spoken labels, text fallback, privacy-safe notes, and stable repair options."
   },
   "udl": {
     "engagement": [
@@ -475,13 +572,13 @@
     "content": "Maintain student dignity and self-advocacy instead of simplifying to compliance language.",
     "process": "Model key vocabulary, provide wait time, allow rehearsal/repetition, and accept multimodal communication.",
     "product": "Accept observed communication attempts and local team notes outside the public resource file.",
-    "environment": "Use a calm, predictable, local-first layout with teacher controls separate from student choices.",
+    "environment": "Use a calm, predictable, local-first layout with no more than nine targets per page and teacher controls separate from student choices.",
     "support": "Teaching, SLP, OT, family, and student/team review should personalise vocabulary and access before reliance."
   },
   "participationBarriers": [
     {
-      "barrier": "Original interaction may be interpreted as behaviour rather than communication.",
-      "support": "Provide direct messages for break, privacy, disagreement, help, wait, different, and finished."
+      "barrier": "Original interaction may be interpreted as behaviour rather than communication, and twelve messages on one screen are too dense for a gaze or switch user.",
+      "support": "Provide direct messages for break, privacy, disagreement, help, wait, different, and finished across two gaze-safe pages with Help on each."
     }
   ],
   "evidencePlan": {

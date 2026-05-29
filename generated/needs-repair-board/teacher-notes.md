@@ -4,13 +4,17 @@ Fixture: `needs-repair-board`
 
 ## Purpose
 
-An age-respectful needs and repair board that lets a secondary student request support, privacy, clarification, a break, different choices or communication repair without behaviour-control framing.
+An age-respectful two-page needs and repair board that lets a secondary student request support, privacy, clarification, a break, different choices or communication repair without behaviour-control framing.
+
+## Layout
+
+Page 1 (I need) carries urgent needs and regulation; page 2 (Sort it out) carries communication repair and self-advocacy. Help please is on both pages and neither page exceeds nine gaze targets, so the board stays usable for eye-gaze and switch access without losing any of the twelve messages.
 
 ## Notes
 
 ### Modelling
 
-Model the board neutrally during calm moments. Treat selections as communication, not behaviour compliance.
+Model the board neutrally during calm moments, including how to move between the two pages. Treat selections as communication, not behaviour compliance.
 
 ### Age Respectful
 

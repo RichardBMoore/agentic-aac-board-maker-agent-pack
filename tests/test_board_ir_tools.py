@@ -41,6 +41,12 @@ class BoardIrValidationTests(unittest.TestCase):
         joined = "\n".join(failures)
         self.assertIn(expected, joined)
 
+    def assertWarnsWith(self, name: str, expected: str) -> tuple[list[str], list[str]]:
+        failures, warnings = validator.validate(self.cases[name])
+        joined = "\n".join(warnings)
+        self.assertIn(expected, joined)
+        return failures, warnings
+
     def test_valid_0_3_passes(self) -> None:
         self.assertValid("valid_0_3")
 
@@ -58,6 +64,12 @@ class BoardIrValidationTests(unittest.TestCase):
 
     def test_over_dense_gaze_fails(self) -> None:
         self.assertFailsWith("over_dense_gaze", "more than 9 buttons")
+
+    def test_mixed_access_dense_gaze_warns_without_failing(self) -> None:
+        failures, _warnings = self.assertWarnsWith(
+            "mixed_gaze_dense", "listed in intended access but a page has more than 9 buttons"
+        )
+        self.assertEqual([], failures)
 
     def test_missing_repair_route_fails(self) -> None:
         self.assertFailsWith("missing_repair", "no repair/refusal/finished route")

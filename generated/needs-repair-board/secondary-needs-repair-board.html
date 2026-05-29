@@ -7,127 +7,170 @@
 <style>
   :root { --bg:#f7fbff; --ink:#102033; --panel:#ffffff; --focus:#003f8f; --accent:#0b6fdd; --repair:#7a1f1f; --shadow:0 10px 30px rgba(16,32,51,.12); --dwell-ms:1100ms; }
   * { box-sizing:border-box; }
-  body { margin:0; min-height:100vh; min-height:100dvh; font-family:Verdana, Arial, sans-serif; background:var(--bg); color:var(--ink); display:grid; grid-template-rows:auto minmax(0,1fr) auto auto; }
-  header { padding:12px 24px 8px; text-align:center; }
-  h1 { margin:.05rem 0 .25rem; font-size:clamp(1.55rem,2.4vw,2.5rem); }
-  header p { margin:.1rem auto; max-width:1000px; font-size:clamp(.95rem,1.2vw,1.12rem); }
-  main { min-height:0; display:grid; place-items:center; padding:8px 24px 10px; }
-  .board { width:min(1180px,100%); min-height:min(56vh,540px); display:grid; grid-template-columns:repeat(4, minmax(132px,1fr)); grid-template-rows:repeat(3, minmax(132px,1fr)); gap:18px; }
+  body { margin:0; min-height:100vh; min-height:100dvh; font-family:Verdana, Arial, sans-serif; background:var(--bg); color:var(--ink); display:grid; grid-template-rows:auto auto minmax(0,1fr) auto auto; }
+  header { padding:12px 24px 4px; text-align:center; }
+  h1 { margin:.05rem 0 .2rem; font-size:clamp(1.4rem,2.2vw,2.25rem); }
+  header p { margin:.1rem auto; max-width:1000px; font-size:clamp(.9rem,1.1vw,1.05rem); }
+  .page-indicator { margin:4px auto 0; text-align:center; font-weight:700; font-size:1rem; }
+  main { min-height:0; display:grid; place-items:center; padding:6px 24px 8px; }
+  .page-heading { display:none; }
+  .board { width:min(1180px,100%); min-height:min(52vh,520px); display:grid; grid-template-columns:repeat(3, minmax(132px,1fr)); grid-auto-rows:minmax(132px,1fr); gap:16px; }
   .dwell-btn { min-width:132px; min-height:132px; }
-  .aac-button { position:relative; overflow:hidden; border:5px solid #17212b; border-radius:24px; background:var(--fill,#fff); color:var(--ink); box-shadow:var(--shadow); padding:16px 14px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.35rem; cursor:pointer; touch-action:manipulation; text-align:center; }
-  .aac-button.repair { border-style:dashed; }
-  .aac-button.evidence { border-color:#365314; }
-  .aac-button.sentence { border-color:#3730a3; }
-  .scan { position:absolute; top:8px; left:10px; width:30px; height:30px; border:2px solid #17212b; border-radius:999px; display:grid; place-items:center; font-weight:800; background:#fff; }
-  .label { font-size:clamp(1.35rem,2.8vw,2.65rem); line-height:1.05; font-weight:800; }
-  .spoken { font-size:clamp(.82rem,1.1vw,1.1rem); opacity:.86; line-height:1.25; }
+  .aac-button { position:relative; overflow:hidden; border:5px solid #17212b; border-radius:24px; background:var(--fill,#fff); color:var(--ink); box-shadow:var(--shadow); padding:14px 12px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.3rem; cursor:pointer; touch-action:manipulation; text-align:center; }
+  .aac-button.repair { border-style:dashed; border-color:#7a1f1f; }
+  .aac-button.comment { border-color:#365314; }
+  .aac-button.question { border-color:#3730a3; }
+  .aac-button.navigation { border-color:#334155; border-style:double; border-width:7px; }
+  .scan { position:absolute; top:8px; left:10px; width:30px; height:30px; border:2px solid #17212b; border-radius:999px; display:grid; place-items:center; font-weight:800; background:#fff; font-size:.95rem; }
+  .label { font-size:clamp(1.2rem,2.4vw,2.2rem); line-height:1.05; font-weight:800; }
+  .spoken { font-size:clamp(.78rem,1vw,1.02rem); opacity:.86; line-height:1.25; }
   .aac-button:focus-visible, .aac-button.is-dwelling { outline:8px solid var(--focus); outline-offset:6px; transform:translateY(-2px); }
   .aac-button.activated { outline:10px solid #087f23; }
   .dwell-progress { position:absolute; left:0; bottom:0; height:14px; width:0; background:linear-gradient(90deg,#0b6fdd,#22a06b); transition:none; }
   .aac-button.is-dwelling .dwell-progress { animation:dwellFill var(--dwell-ms) linear forwards; }
   @keyframes dwellFill { from { width:0; } to { width:100%; } }
-  .controls { display:flex; justify-content:center; gap:16px; padding:0 24px 12px; flex-wrap:wrap; }
-  .control { font-size:1.05rem; min-height:54px; padding:10px 18px; border:3px solid #17212b; border-radius:16px; background:#fff; font-weight:700; }
-  .last-message { min-width:min(720px,90vw); text-align:center; font-size:1.15rem; font-weight:700; }
+  .controls { display:flex; justify-content:center; align-items:center; gap:14px; padding:0 24px 10px; flex-wrap:wrap; }
+  .control { font-size:1.02rem; min-height:54px; padding:10px 18px; border:3px solid #17212b; border-radius:16px; background:#fff; font-weight:700; cursor:pointer; }
+  .status { min-width:min(540px,80vw); text-align:center; font-size:1.05rem; font-weight:700; }
   details.teacher-notes { margin:0 auto 12px; width:min(1120px,calc(100% - 32px)); background:#fff; border:2px solid #17212b; border-radius:16px; padding:10px 16px; }
   details.teacher-notes summary { font-weight:800; cursor:pointer; padding:8px; }
-  footer { font-size:.86rem; padding:8px 16px 14px; text-align:center; }
-  @media (max-width:760px) { body { display:block; } .board { grid-template-columns:1fr; grid-template-rows:none; } .aac-button { min-height:132px; } }
-  @media (prefers-reduced-motion:reduce) { .aac-button { transition:none; } }
+  footer { font-size:.84rem; padding:6px 16px 14px; text-align:center; }
+  @media (max-width:760px) { body { display:block; } .board { grid-template-columns:1fr; } .aac-button { min-height:132px; } }
+  @media (prefers-reduced-motion:reduce) { .aac-button { transition:none; } .aac-button.is-dwelling .dwell-progress { animation:none; width:100%; } }
   @media (forced-colors:active) { .aac-button,.control { border:4px solid ButtonText; background:Canvas; color:ButtonText; forced-color-adjust:auto; } .aac-button:focus-visible,.aac-button.is-dwelling { outline:6px solid Highlight; } .dwell-progress { background:Highlight; } }
-  @media print { body { display:block; background:#fff; } header, main, footer { padding:8mm; } .board { display:grid; grid-template-columns:repeat(4,1fr); gap:5mm; min-height:auto; } .aac-button { min-height:34mm; box-shadow:none; break-inside:avoid; border:2.5pt solid #000; } .controls,.dwell-progress { display:none !important; } details.teacher-notes { page-break-before:always; } .spoken { color:#000; } }
+  @media print {
+    body { display:block; background:#fff; }
+    header, main, footer { padding:8mm; }
+    .page-indicator { display:none; }
+    section.page[hidden] { display:block !important; }
+    .page-heading { display:block; font-size:14pt; margin:0 0 4mm; }
+    section.page { page-break-inside:avoid; margin-bottom:8mm; }
+    .board { display:grid; grid-template-columns:repeat(3,1fr); gap:5mm; min-height:auto; }
+    .aac-button { min-height:30mm; box-shadow:none; break-inside:avoid; border:2.5pt solid #000; }
+    .controls,.dwell-progress { display:none !important; }
+    details.teacher-notes { page-break-before:always; }
+    .spoken { color:#000; }
+  }
 </style>
 </head>
 <body>
 <header>
   <h1>Secondary Needs and Communication Repair Board</h1>
-  <p>An age-respectful needs and repair board that lets a secondary student request support, privacy, clarification, a break, different choices or communication repair without behaviour-control framing.</p>
-  <p>Access: touch, keyboard, mouse, eye-gaze-dwell. Scan/order note: left-to-right, top-to-bottom.</p>
+  <p>Say what you need or repair the conversation. Two calm pages: my needs, and sorting it out.</p>
+  <p>Access: touch, keyboard, mouse, eye-gaze-dwell. Nine targets per page. Help please is on both pages.</p>
 </header>
+<p class="page-indicator" id="pageIndicator">Page 1 of 2: I need</p>
 <main>
-  <section class="board" aria-label="AAC communication board">
-      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" aria-label="I need a break: I need a break" data-speak="I need a break" data-label="I need a break">
+  <section class="page" id="page-needs" aria-label="I need">
+    <h2 class="page-heading">Page 1 — I need</h2>
+    <div class="board" aria-label="My needs board">
+      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" data-action="speak" data-speak="Help please" data-label="Help please" aria-label="Say: Help please">
         <span class="scan" aria-hidden="true">1</span>
-        <span class="label">I need a break</span>
-        <span class="spoken">I need a break</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-      <button class="aac-button dwell-btn comment" style="--fill:#FFFFFF" aria-label="Too loud: It is too loud" data-speak="It is too loud" data-label="Too loud">
-        <span class="scan" aria-hidden="true">2</span>
-        <span class="label">Too loud</span>
-        <span class="spoken">It is too loud</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-      <button class="aac-button dwell-btn core" style="--fill:#FFFFFF" aria-label="I feel unwell: I feel unwell" data-speak="I feel unwell" data-label="I feel unwell">
-        <span class="scan" aria-hidden="true">3</span>
-        <span class="label">I feel unwell</span>
-        <span class="spoken">I feel unwell</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-      <button class="aac-button dwell-btn core" style="--fill:#FFFFFF" aria-label="I need privacy: I need privacy" data-speak="I need privacy" data-label="I need privacy">
-        <span class="scan" aria-hidden="true">4</span>
-        <span class="label">I need privacy</span>
-        <span class="spoken">I need privacy</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" aria-label="Help please: Help please" data-speak="Help please" data-label="Help please">
-        <span class="scan" aria-hidden="true">5</span>
         <span class="label">Help please</span>
         <span class="spoken">Help please</span>
         <span class="dwell-progress" aria-hidden="true"></span>
       </button>
-      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" aria-label="Say it another way: Please say it another way" data-speak="Please say it another way" data-label="Say it another way">
-        <span class="scan" aria-hidden="true">6</span>
-        <span class="label">Say it another way</span>
-        <span class="spoken">Please say it another way</span>
+      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" data-action="speak" data-speak="I need a break" data-label="I need a break" aria-label="Say: I need a break">
+        <span class="scan" aria-hidden="true">2</span>
+        <span class="label">I need a break</span>
+        <span class="spoken">I need a break</span>
         <span class="dwell-progress" aria-hidden="true"></span>
       </button>
-      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" aria-label="Not that: Not that" data-speak="Not that" data-label="Not that">
-        <span class="scan" aria-hidden="true">7</span>
-        <span class="label">Not that</span>
-        <span class="spoken">Not that</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" aria-label="Wait: Please wait" data-speak="Please wait" data-label="Wait">
-        <span class="scan" aria-hidden="true">8</span>
+      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" data-action="speak" data-speak="Please wait" data-label="Wait" aria-label="Say: Please wait">
+        <span class="scan" aria-hidden="true">3</span>
         <span class="label">Wait</span>
         <span class="spoken">Please wait</span>
         <span class="dwell-progress" aria-hidden="true"></span>
       </button>
-      <button class="aac-button dwell-btn comment" style="--fill:#FFFFFF" aria-label="I disagree: I disagree" data-speak="I disagree" data-label="I disagree">
-        <span class="scan" aria-hidden="true">9</span>
-        <span class="label">I disagree</span>
-        <span class="spoken">I disagree</span>
+      <button class="aac-button dwell-btn" style="--fill:#FFFFFF" data-action="speak" data-speak="I feel unwell" data-label="I feel unwell" aria-label="Say: I feel unwell">
+        <span class="scan" aria-hidden="true">4</span>
+        <span class="label">I feel unwell</span>
+        <span class="spoken">I feel unwell</span>
         <span class="dwell-progress" aria-hidden="true"></span>
       </button>
-      <button class="aac-button dwell-btn question" style="--fill:#FFFFFF" aria-label="Can I choose?: Can I choose?" data-speak="Can I choose?" data-label="Can I choose?">
-        <span class="scan" aria-hidden="true">10</span>
-        <span class="label">Can I choose?</span>
-        <span class="spoken">Can I choose?</span>
+      <button class="aac-button dwell-btn" style="--fill:#FFFFFF" data-action="speak" data-speak="I need privacy" data-label="I need privacy" aria-label="Say: I need privacy">
+        <span class="scan" aria-hidden="true">5</span>
+        <span class="label">I need privacy</span>
+        <span class="spoken">I need privacy</span>
         <span class="dwell-progress" aria-hidden="true"></span>
       </button>
-      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" aria-label="Different: I need something different" data-speak="I need something different" data-label="Different">
-        <span class="scan" aria-hidden="true">11</span>
-        <span class="label">Different</span>
-        <span class="spoken">I need something different</span>
+      <button class="aac-button dwell-btn comment" style="--fill:#FFFFFF" data-action="speak" data-speak="It is too loud" data-label="Too loud" aria-label="Say: It is too loud">
+        <span class="scan" aria-hidden="true">6</span>
+        <span class="label">Too loud</span>
+        <span class="spoken">It is too loud</span>
         <span class="dwell-progress" aria-hidden="true"></span>
       </button>
-      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" aria-label="Finished: I am finished" data-speak="I am finished" data-label="Finished">
-        <span class="scan" aria-hidden="true">12</span>
+      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" data-action="speak" data-speak="I am finished" data-label="Finished" aria-label="Say: I am finished">
+        <span class="scan" aria-hidden="true">7</span>
         <span class="label">Finished</span>
         <span class="spoken">I am finished</span>
         <span class="dwell-progress" aria-hidden="true"></span>
       </button>
+      <button class="aac-button dwell-btn navigation" style="--fill:#ECECF4" data-action="nav" data-target="page-repair" data-speak="Go to repair and choices" data-label="Sort it out page" aria-label="Go to the sort it out page">
+        <span class="scan" aria-hidden="true">8</span>
+        <span class="label">Sort it out ▶</span>
+        <span class="spoken">Next page</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+    </div>
+  </section>
+  <section class="page" id="page-repair" hidden aria-label="Sort it out">
+    <h2 class="page-heading">Page 2 — Sort it out</h2>
+    <div class="board" aria-label="Sort it out board">
+      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" data-action="speak" data-speak="Help please" data-label="Help please" aria-label="Say: Help please">
+        <span class="scan" aria-hidden="true">1</span>
+        <span class="label">Help please</span>
+        <span class="spoken">Help please</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" data-action="speak" data-speak="Please say it another way" data-label="Say it another way" aria-label="Say: Please say it another way">
+        <span class="scan" aria-hidden="true">2</span>
+        <span class="label">Say it another way</span>
+        <span class="spoken">Please say it another way</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" data-action="speak" data-speak="Not that" data-label="Not that" aria-label="Say: Not that">
+        <span class="scan" aria-hidden="true">3</span>
+        <span class="label">Not that</span>
+        <span class="spoken">Not that</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" data-action="speak" data-speak="I need something different" data-label="Different" aria-label="Say: I need something different">
+        <span class="scan" aria-hidden="true">4</span>
+        <span class="label">Different</span>
+        <span class="spoken">I need something different</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+      <button class="aac-button dwell-btn comment" style="--fill:#FFFFFF" data-action="speak" data-speak="I disagree" data-label="I disagree" aria-label="Say: I disagree">
+        <span class="scan" aria-hidden="true">5</span>
+        <span class="label">I disagree</span>
+        <span class="spoken">I disagree</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+      <button class="aac-button dwell-btn question" style="--fill:#FFFFFF" data-action="speak" data-speak="Can I choose?" data-label="Can I choose?" aria-label="Say: Can I choose?">
+        <span class="scan" aria-hidden="true">6</span>
+        <span class="label">Can I choose?</span>
+        <span class="spoken">Can I choose?</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+      <button class="aac-button dwell-btn navigation" style="--fill:#ECECF4" data-action="nav" data-target="page-needs" data-speak="Go back to my needs" data-label="My needs page" aria-label="Go back to the my needs page">
+        <span class="scan" aria-hidden="true">7</span>
+        <span class="label">◀ My needs</span>
+        <span class="spoken">Back</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+    </div>
   </section>
 </main>
 <section class="controls" aria-label="Speech and status controls">
   <button class="control" id="stopSpeech" type="button" aria-label="Stop speech">Stop speech</button>
-  <div class="last-message" id="lastMessage" role="status" aria-live="polite">Ready</div>
+  <div class="status" id="status" role="status" aria-live="polite">Ready</div>
 </section>
 <details class="teacher-notes">
   <summary>Teacher notes, customisation, and QA</summary>
-  <p><strong>Modelling:</strong> Model the board neutrally during calm moments. Treat selections as communication, not behaviour compliance.</p>
-  <p><strong>Age Respectful:</strong> Language is plain and secondary-appropriate. Avoid childish praise, token language or public commentary about private needs.</p>
+  <p><strong>How it works:</strong> Each button speaks a message immediately. Page 1 holds urgent needs and regulation; page 2 holds communication repair and self-advocacy. The navigation buttons move between the two nine-target pages, and Help please is on both pages.</p>
+  <p><strong>Modelling:</strong> Model the board neutrally during calm moments, including how to move between the two pages. Treat selections as communication, not behaviour compliance.</p>
+  <p><strong>Age-respectful:</strong> Language is plain and secondary-appropriate. Avoid childish praise, token language or public commentary about private needs.</p>
   <p><strong>Privacy:</strong> Do not log sensitive health, behaviour or family details in the file. Use separate approved school processes for confidential notes.</p>
   <p><strong>Repair:</strong> Honour repair messages such as Not that, Different, Say it another way and Wait before repeating demands.</p>
   <p><strong>Use:</strong> Use as a support for needs and communication repair, not as a behaviour-control board or replacement AAC system.</p>
@@ -137,11 +180,14 @@
   Source of truth: <code>secondary-needs-repair-board.ir.json</code>. Privacy: anonymous, no student data. Symbol strategy: ARASAAC search terms with text fallback; HTML uses text-only placeholders.
 </footer>
 <script>
-class DwellManager {
+class PageBoard {
   constructor(options) {
     this.dwellMs = options.dwellMs;
     this.buttons = Array.from(options.buttons);
-    this.lastMessage = options.lastMessage;
+    this.pages = Array.from(options.pages);
+    this.pageOrder = this.pages.map(page => page.id);
+    this.pageIndicator = options.pageIndicator;
+    this.statusEl = options.statusEl;
     this.stopSpeech = options.stopSpeech;
     this.dwellTimer = null;
     this.current = null;
@@ -157,6 +203,19 @@ class DwellManager {
       }
     } catch (error) { console.warn('Speech unavailable', error); }
   }
+  status(message) { this.statusEl.textContent = message; }
+  showPage(id) {
+    this.clearDwell(this.current);
+    this.pages.forEach(page => { page.hidden = (page.id !== id); });
+    const active = document.getElementById(id);
+    if (!active) return;
+    const index = this.pageOrder.indexOf(id);
+    const name = active.getAttribute('aria-label');
+    this.pageIndicator.textContent = 'Page ' + (index + 1) + ' of ' + this.pageOrder.length + ': ' + name;
+    this.status('On the ' + name + ' page.');
+    const first = active.querySelector('.aac-button');
+    if (first) first.focus();
+  }
   clearDwell(button) {
     if (this.dwellTimer) clearTimeout(this.dwellTimer);
     this.dwellTimer = null;
@@ -165,9 +224,15 @@ class DwellManager {
   }
   activate(button) {
     this.clearDwell(button);
-    const text = button.dataset.speak || button.textContent.trim();
-    this.lastMessage.textContent = 'Selected: ' + text;
-    this.speak(text);
+    const action = button.dataset.action || 'speak';
+    if (action === 'nav') {
+      this.speak(button.dataset.speak || '');
+      this.showPage(button.dataset.target);
+    } else {
+      const text = button.dataset.speak || button.dataset.label || button.textContent.trim();
+      this.status('Selected: ' + text);
+      this.speak(text);
+    }
     button.classList.add('activated');
     setTimeout(() => button.classList.remove('activated'), 650);
     this.cooldown.add(button);
@@ -183,7 +248,7 @@ class DwellManager {
     this.buttons.forEach(button => {
       button.addEventListener('pointerenter', () => this.startDwell(button));
       button.addEventListener('pointerleave', () => { this.cooldown.delete(button); this.clearDwell(button); });
-      button.addEventListener('focus', () => { this.lastMessage.textContent = 'Focus: ' + (button.dataset.label || button.textContent.trim()); });
+      button.addEventListener('focus', () => { this.status('Focus: ' + (button.dataset.label || button.textContent.trim())); });
       button.addEventListener('blur', () => { this.cooldown.delete(button); this.clearDwell(button); });
       button.addEventListener('click', event => { if (event.detail !== 0) this.activate(button); });
       button.addEventListener('keydown', event => {
@@ -193,7 +258,7 @@ class DwellManager {
     });
     this.stopSpeech.addEventListener('click', () => {
       if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-      this.lastMessage.textContent = 'Speech stopped';
+      this.status('Speech stopped');
     });
     document.addEventListener('keydown', event => {
       if (event.key === 'Escape') {
@@ -203,13 +268,15 @@ class DwellManager {
     });
   }
 }
-const dwellManager = new DwellManager({
+const pageBoard = new PageBoard({
   dwellMs: 1100,
   buttons: document.querySelectorAll('.aac-button'),
-  lastMessage: document.getElementById('lastMessage'),
+  pages: document.querySelectorAll('.page'),
+  pageIndicator: document.getElementById('pageIndicator'),
+  statusEl: document.getElementById('status'),
   stopSpeech: document.getElementById('stopSpeech')
 });
-dwellManager.bind();
+pageBoard.bind();
 </script>
 </body>
 </html>

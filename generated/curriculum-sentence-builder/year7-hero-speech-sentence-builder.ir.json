@@ -6,7 +6,7 @@
   "title": "Year 7 Hero Speech Sentence Builder",
   "name": "Year 7 Hero Speech Sentence Builder",
   "type": "interactive",
-  "purpose": "A sentence-builder board for a Year 7 English hero speech that supports opinion, evidence, because statements, rehearsal and repair language.",
+  "purpose": "A two-page sentence-builder board for a Year 7 English hero speech. The student adds words to a sentence bar, speaks the whole sentence, and uses opinion, reason, evidence, and repair language to rehearse a short spoken text.",
   "sourcePrompt": "Make a Year 7 English hero speech sentence-builder board.",
   "fixtureId": "curriculum-sentence-builder",
   "audience": {
@@ -26,7 +26,7 @@
     "switchScanning": false,
     "scanSpeedMs": 1400,
     "scanPattern": "linear",
-    "scanOrder": "left-to-right sentence-building order"
+    "scanOrder": "left-to-right sentence-building order, then navigation and controls"
   },
   "settings": {
     "orientation": "landscape",
@@ -48,7 +48,7 @@
     ],
     "minimumTargetSizePx": 132,
     "dwellSafe": true,
-    "scanOrder": "left-to-right sentence-building order",
+    "scanOrder": "left-to-right sentence-building order, then navigation and controls",
     "audioCues": true
   },
   "communicationFunctions": [
@@ -56,26 +56,39 @@
     "explain",
     "reflect",
     "repair",
-    "request"
+    "navigate"
   ],
+  "messageBar": {
+    "enabled": true,
+    "placeholder": "Build your sentence here.",
+    "speakControl": true,
+    "clearControl": true,
+    "undoControl": true,
+    "notes": "Word buttons append to the sentence bar and speak the single word for feedback. Speak sentence reads the whole bar. Undo removes the last word. Start again clears the bar."
+  },
+  "navigation": {
+    "model": "two-page sentence builder",
+    "pages": ["page-starters", "page-describe"],
+    "notes": "Each page keeps Speak sentence, Help, and a navigation button so a gaze or switch user never needs more than nine targets on screen."
+  },
   "pages": [
     {
-      "id": "page-main",
-      "name": "Main",
+      "id": "page-starters",
+      "name": "Sentence starters",
       "pattern": "sentence-builder",
       "layout": "grid",
       "grid": {
         "rows": 3,
-        "columns": 4
+        "columns": 3
       },
       "gridRows": 3,
-      "gridColumns": 4,
+      "gridColumns": 3,
       "margin": 18,
       "backgroundColour": "#f7fbff",
       "buttons": [
         {
           "id": "btn-my-hero",
-          "label": "My hero is...",
+          "label": "My hero is…",
           "role": "sentence",
           "function": "comment",
           "searchTerm": "hero",
@@ -84,11 +97,16 @@
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
           "audioCue": "My hero is",
-          "result": "selected",
+          "result": "added-to-sentence",
           "style": {
-            "fillColour": "#FFFFFF"
+            "fillColour": "#E8F0FF"
           },
           "actions": [
+            {
+              "id": "act-btn-my-hero-add",
+              "type": "add-to-message",
+              "text": "My hero is"
+            },
             {
               "id": "act-btn-my-hero-speak",
               "type": "speak-text",
@@ -102,20 +120,25 @@
         },
         {
           "id": "btn-i-think",
-          "label": "I think...",
+          "label": "I think…",
           "role": "sentence",
           "function": "comment",
-          "searchTerm": "opinion",
+          "searchTerm": "opinion think",
           "spokenText": "I think",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
           "audioCue": "I think",
-          "result": "selected",
+          "result": "added-to-sentence",
           "style": {
-            "fillColour": "#FFFFFF"
+            "fillColour": "#E8F0FF"
           },
           "actions": [
+            {
+              "id": "act-btn-i-think-add",
+              "type": "add-to-message",
+              "text": "I think"
+            },
             {
               "id": "act-btn-i-think-speak",
               "type": "speak-text",
@@ -132,17 +155,22 @@
           "label": "because",
           "role": "sentence",
           "function": "explain",
-          "searchTerm": "because",
+          "searchTerm": "because reason",
           "spokenText": "because",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
           "audioCue": "because",
-          "result": "selected",
+          "result": "added-to-sentence",
           "style": {
-            "fillColour": "#FFFFFF"
+            "fillColour": "#E8F0FF"
           },
           "actions": [
+            {
+              "id": "act-btn-because-add",
+              "type": "add-to-message",
+              "text": "because"
+            },
             {
               "id": "act-btn-because-speak",
               "type": "speak-text",
@@ -156,20 +184,25 @@
         },
         {
           "id": "btn-example",
-          "label": "For example...",
+          "label": "For example…",
           "role": "evidence",
           "function": "explain",
-          "searchTerm": "example",
+          "searchTerm": "example evidence",
           "spokenText": "For example",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
           "audioCue": "For example",
-          "result": "selected",
+          "result": "added-to-sentence",
           "style": {
-            "fillColour": "#FFFFFF"
+            "fillColour": "#EAF6E8"
           },
           "actions": [
+            {
+              "id": "act-btn-example-add",
+              "type": "add-to-message",
+              "text": "For example"
+            },
             {
               "id": "act-btn-example-speak",
               "type": "speak-text",
@@ -182,6 +215,152 @@
           ]
         },
         {
+          "id": "btn-and-also",
+          "label": "and also",
+          "role": "sentence",
+          "function": "comment",
+          "searchTerm": "and also conjunction",
+          "spokenText": "and also",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "and also",
+          "result": "added-to-sentence",
+          "style": {
+            "fillColour": "#E8F0FF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-and-also-add",
+              "type": "add-to-message",
+              "text": "and also"
+            },
+            {
+              "id": "act-btn-and-also-speak",
+              "type": "speak-text",
+              "text": "and also"
+            },
+            {
+              "id": "act-btn-and-also-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-to-describe",
+          "label": "Describing words ▶",
+          "role": "navigation",
+          "function": "navigate",
+          "searchTerm": "next page describing words",
+          "spokenText": "Go to describing words",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "Go to describing words",
+          "result": "navigated",
+          "style": {
+            "fillColour": "#ECECF4"
+          },
+          "actions": [
+            {
+              "id": "act-btn-to-describe-next",
+              "type": "next-page",
+              "targetPageId": "page-describe"
+            }
+          ]
+        },
+        {
+          "id": "btn-speak-sentence-1",
+          "label": "🔊 Speak sentence",
+          "role": "sentence",
+          "function": "reflect",
+          "searchTerm": "speak read sentence aloud",
+          "spokenText": "Speak my sentence",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "Speak my sentence",
+          "result": "spoke-sentence",
+          "style": {
+            "fillColour": "#DDEBFF"
+          },
+          "actions": [
+            {
+              "id": "act-btn-speak-sentence-1-speak",
+              "type": "speak-message"
+            },
+            {
+              "id": "act-btn-speak-sentence-1-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-undo-1",
+          "label": "⌫ Undo",
+          "role": "repair",
+          "function": "repair",
+          "searchTerm": "undo backspace remove word",
+          "spokenText": "Undo the last word",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "Undo the last word",
+          "result": "removed-last-word",
+          "style": {
+            "fillColour": "#FFE6E6"
+          },
+          "actions": [
+            {
+              "id": "act-btn-undo-1-remove",
+              "type": "remove-last-word"
+            }
+          ]
+        },
+        {
+          "id": "btn-help-1",
+          "label": "Help please",
+          "role": "repair",
+          "function": "repair",
+          "searchTerm": "help",
+          "spokenText": "Help please",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "Help please",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFE6E6"
+          },
+          "actions": [
+            {
+              "id": "act-btn-help-1-speak",
+              "type": "speak-text",
+              "text": "Help please"
+            },
+            {
+              "id": "act-btn-help-1-log",
+              "type": "log-attempt"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "page-describe",
+      "name": "Describing words",
+      "pattern": "sentence-builder",
+      "layout": "grid",
+      "grid": {
+        "rows": 3,
+        "columns": 3
+      },
+      "gridRows": 3,
+      "gridColumns": 3,
+      "margin": 18,
+      "backgroundColour": "#f7fbff",
+      "buttons": [
+        {
           "id": "btn-brave",
           "label": "brave",
           "role": "fringe",
@@ -192,11 +371,16 @@
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
           "audioCue": "brave",
-          "result": "selected",
+          "result": "added-to-sentence",
           "style": {
-            "fillColour": "#FFFFFF"
+            "fillColour": "#FFF3D6"
           },
           "actions": [
+            {
+              "id": "act-btn-brave-add",
+              "type": "add-to-message",
+              "text": "brave"
+            },
             {
               "id": "act-btn-brave-speak",
               "type": "speak-text",
@@ -219,11 +403,16 @@
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
           "audioCue": "kind",
-          "result": "selected",
+          "result": "added-to-sentence",
           "style": {
-            "fillColour": "#FFFFFF"
+            "fillColour": "#FFF3D6"
           },
           "actions": [
+            {
+              "id": "act-btn-kind-add",
+              "type": "add-to-message",
+              "text": "kind"
+            },
             {
               "id": "act-btn-kind-speak",
               "type": "speak-text",
@@ -236,7 +425,7 @@
           ]
         },
         {
-          "id": "btn-help-others",
+          "id": "btn-helps-others",
           "label": "helps others",
           "role": "fringe",
           "function": "comment",
@@ -246,18 +435,23 @@
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
           "audioCue": "helps others",
-          "result": "selected",
+          "result": "added-to-sentence",
           "style": {
-            "fillColour": "#FFFFFF"
+            "fillColour": "#FFF3D6"
           },
           "actions": [
             {
-              "id": "act-btn-help-others-speak",
+              "id": "act-btn-helps-others-add",
+              "type": "add-to-message",
+              "text": "helps others"
+            },
+            {
+              "id": "act-btn-helps-others-speak",
               "type": "speak-text",
               "text": "helps others"
             },
             {
-              "id": "act-btn-help-others-log",
+              "id": "act-btn-helps-others-log",
               "type": "log-attempt"
             }
           ]
@@ -267,17 +461,22 @@
           "label": "faces danger",
           "role": "fringe",
           "function": "comment",
-          "searchTerm": "danger",
+          "searchTerm": "danger courage",
           "spokenText": "faces danger",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
           "audioCue": "faces danger",
-          "result": "selected",
+          "result": "added-to-sentence",
           "style": {
-            "fillColour": "#FFFFFF"
+            "fillColour": "#FFF3D6"
           },
           "actions": [
+            {
+              "id": "act-btn-faces-danger-add",
+              "type": "add-to-message",
+              "text": "faces danger"
+            },
             {
               "id": "act-btn-faces-danger-speak",
               "type": "speak-text",
@@ -290,91 +489,118 @@
           ]
         },
         {
-          "id": "btn-rehearse",
-          "label": "Rehearse",
+          "id": "btn-never-gives-up",
+          "label": "never gives up",
+          "role": "fringe",
+          "function": "comment",
+          "searchTerm": "perseverance determined",
+          "spokenText": "never gives up",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "never gives up",
+          "result": "added-to-sentence",
+          "style": {
+            "fillColour": "#FFF3D6"
+          },
+          "actions": [
+            {
+              "id": "act-btn-never-gives-up-add",
+              "type": "add-to-message",
+              "text": "never gives up"
+            },
+            {
+              "id": "act-btn-never-gives-up-speak",
+              "type": "speak-text",
+              "text": "never gives up"
+            },
+            {
+              "id": "act-btn-never-gives-up-log",
+              "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-to-starters",
+          "label": "◀ Sentence starters",
+          "role": "navigation",
+          "function": "navigate",
+          "searchTerm": "back previous page starters",
+          "spokenText": "Go back to sentence starters",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "Go back to sentence starters",
+          "result": "navigated",
+          "style": {
+            "fillColour": "#ECECF4"
+          },
+          "actions": [
+            {
+              "id": "act-btn-to-starters-prev",
+              "type": "previous-page",
+              "targetPageId": "page-starters"
+            }
+          ]
+        },
+        {
+          "id": "btn-speak-sentence-2",
+          "label": "🔊 Speak sentence",
           "role": "sentence",
           "function": "reflect",
-          "searchTerm": "practice speak",
-          "spokenText": "I want to rehearse that sentence",
+          "searchTerm": "speak read sentence aloud",
+          "spokenText": "Speak my sentence",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "I want to rehearse that sentence",
-          "result": "selected",
+          "audioCue": "Speak my sentence",
+          "result": "spoke-sentence",
           "style": {
-            "fillColour": "#FFFFFF"
+            "fillColour": "#DDEBFF"
           },
           "actions": [
             {
-              "id": "act-btn-rehearse-speak",
-              "type": "speak-text",
-              "text": "I want to rehearse that sentence"
+              "id": "act-btn-speak-sentence-2-speak",
+              "type": "speak-message"
             },
             {
-              "id": "act-btn-rehearse-log",
+              "id": "act-btn-speak-sentence-2-log",
               "type": "log-attempt"
             }
           ]
         },
         {
-          "id": "btn-say-again",
-          "label": "Say it again",
+          "id": "btn-start-again",
+          "label": "Start again",
           "role": "repair",
           "function": "repair",
-          "searchTerm": "repeat",
-          "spokenText": "Please say it again",
+          "searchTerm": "clear start again change idea",
+          "spokenText": "I want to start again",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "Please say it again",
-          "result": "selected",
+          "audioCue": "I want to start again",
+          "result": "cleared-sentence",
           "style": {
-            "fillColour": "#FFFFFF"
+            "fillColour": "#FFE6E6"
           },
           "actions": [
             {
-              "id": "act-btn-say-again-speak",
-              "type": "speak-text",
-              "text": "Please say it again"
+              "id": "act-btn-start-again-clear",
+              "type": "clear-message"
             },
             {
-              "id": "act-btn-say-again-log",
-              "type": "log-attempt"
+              "id": "act-btn-start-again-speak",
+              "type": "speak-text",
+              "text": "I want to start again"
             }
           ]
         },
         {
-          "id": "btn-change",
-          "label": "Change my idea",
-          "role": "repair",
-          "function": "repair",
-          "searchTerm": "change",
-          "spokenText": "I want to change my idea",
-          "symbolId": null,
-          "symbolSrc": "",
-          "symbolLayout": "label-bottom",
-          "audioCue": "I want to change my idea",
-          "result": "selected",
-          "style": {
-            "fillColour": "#FFFFFF"
-          },
-          "actions": [
-            {
-              "id": "act-btn-change-speak",
-              "type": "speak-text",
-              "text": "I want to change my idea"
-            },
-            {
-              "id": "act-btn-change-log",
-              "type": "log-attempt"
-            }
-          ]
-        },
-        {
-          "id": "btn-help",
+          "id": "btn-help-2",
           "label": "Help please",
           "role": "repair",
-          "function": "request",
+          "function": "repair",
           "searchTerm": "help",
           "spokenText": "Help please",
           "symbolId": null,
@@ -383,16 +609,16 @@
           "audioCue": "Help please",
           "result": "selected",
           "style": {
-            "fillColour": "#FFFFFF"
+            "fillColour": "#FFE6E6"
           },
           "actions": [
             {
-              "id": "act-btn-help-speak",
+              "id": "act-btn-help-2-speak",
               "type": "speak-text",
               "text": "Help please"
             },
             {
-              "id": "act-btn-help-log",
+              "id": "act-btn-help-2-log",
               "type": "log-attempt"
             }
           ]
@@ -401,18 +627,18 @@
     }
   ],
   "teacherNotes": {
-    "curriculum": "Supports Year 7 English speaking/listening by giving access to opinion, reasoning and evidence language for a short hero speech.",
-    "customisation": "Replace adjectives and example prompts with the class text, film, novel or local hero being studied.",
-    "repair": "Keep Say it again, Change my idea and Help please available so the student can repair the sentence-building task.",
-    "use": "Use for planning, rehearsal or supported oral presentation. Do not treat the board as the student's full expressive system.",
-    "modeling": "Model a complete sentence chain: My hero is... I think... because... For example.... Accept partial selections as valid drafting or rehearsal.",
-    "evidence": "sentence starter selection; because/example selection; rehearsal request; repair or help request"
+    "curriculum": "Supports Year 7 English speaking/listening by giving access to opinion, reasoning and evidence language for a short hero speech, and by letting the student assemble and rehearse a whole sentence rather than single words.",
+    "customisation": "Replace the describing words and the hero name with the class text, film, novel or local hero being studied. Add the hero's name as a word button or let the student say it after 'My hero is'.",
+    "repair": "Keep Undo, Start again and Help please available so the student can fix or restart the sentence without losing agency.",
+    "use": "Use for planning, rehearsal or supported oral presentation. The student builds a sentence on one page, crosses to the describing-words page, then speaks the whole sentence. Do not treat the board as the student's full expressive system.",
+    "modeling": "Model a complete sentence chain across both pages: My hero is … brave … because … helps others, then press Speak sentence. Accept partial sentences as valid drafting or rehearsal.",
+    "evidence": "sentence built in the message bar; opinion/because/example selection; speak-sentence use; repair (undo, start again) or help request"
   },
   "symbolStrategy": {
     "defaultSource": "ARASAAC search terms",
     "textFallback": true,
     "customMediaPolicy": "teacher-owned local media only unless explicitly approved",
-    "notes": "Search terms prioritise abstract curriculum language; teacher modelling and text labels are more important than decorative symbols."
+    "notes": "Search terms prioritise abstract curriculum language; teacher modelling, the sentence bar, and clear text labels matter more than decorative symbols."
   },
   "privacy": {
     "level": "anonymous",
@@ -426,7 +652,9 @@
       "curriculum-sentence-builder",
       "english",
       "year-7",
-      "sentence-builder"
+      "sentence-builder",
+      "multi-page",
+      "message-bar"
     ],
     "curriculum": "Australian Curriculum English Year 7: expressing a viewpoint, developing spoken texts, using reasons/examples, rehearsing presentation language.",
     "privacyLevel": "anonymous"
@@ -446,10 +674,10 @@
     }
   ],
   "sett": {
-    "student": "Secondary student can participate through AAC sentence starters, reasons, examples, rehearsal, and repair without needing speech or handwriting as the only route.",
+    "student": "Secondary student can participate through AAC sentence starters, reasons, examples, describing words, and a spoken sentence without needing speech or handwriting as the only route.",
     "environment": "English classroom or rehearsal setting with teacher/peer modelling, keyboard/touch/mouse/gaze access, and intermittent internet.",
-    "task": "Build and rehearse a short hero speech using opinion, because language, and examples.",
-    "tools": "Sentence-builder grid, spoken labels, text fallback, large targets, and stable repair buttons."
+    "task": "Build, edit, and rehearse a short hero speech using opinion, because language, examples, and describing words across two calm pages.",
+    "tools": "Two-page sentence-builder grid (nine targets per page), a sentence/message bar, Speak sentence, Undo and Start again controls, spoken labels, text fallback, large targets, and stable repair buttons."
   },
   "udl": {
     "engagement": [
@@ -460,6 +688,7 @@
     "representation": [
       "short text labels",
       "spoken output",
+      "running sentence in the message bar",
       "symbol/search-term or text fallback"
     ],
     "actionExpression": [
@@ -470,26 +699,26 @@
     ]
   },
   "differentiation": {
-    "content": "Keep Year 7 English opinion/evidence demand while reducing speech and memory load.",
-    "process": "Model key vocabulary, provide wait time, allow rehearsal/repetition, and accept multimodal communication.",
-    "product": "Accept a selected sentence chain, rehearsal, teacher observation, or supported oral presentation evidence.",
-    "environment": "Use a calm, predictable, local-first layout with teacher controls separate from student choices.",
+    "content": "Keep Year 7 English opinion/evidence demand while reducing speech and memory load and making sentence construction visible.",
+    "process": "Model key vocabulary, provide wait time, allow rehearsal/repetition, accept partial sentences, and accept multimodal communication.",
+    "product": "Accept a built and spoken sentence, a partial sentence chain, rehearsal, teacher observation, or supported oral presentation evidence.",
+    "environment": "Use a calm, predictable, local-first layout with no more than nine targets per page and teacher controls separate from student choices.",
     "support": "Teaching, SLP, OT, family, and student/team review should personalise vocabulary and access before reliance."
   },
   "participationBarriers": [
     {
-      "barrier": "Original speech task assumes spontaneous spoken sentences and fast verbal rehearsal.",
-      "support": "Provide sentence stems, because/example buttons, rehearsal language, and repair options."
+      "barrier": "Original speech task assumes spontaneous spoken sentences, fast verbal rehearsal, and holding a whole sentence in memory.",
+      "support": "Provide sentence stems, because/example buttons, describing words, a visible sentence bar, speak-whole-sentence, and repair options across two gaze-safe pages."
     }
   ],
   "evidencePlan": {
     "observable": [
-      "sentence starter selection",
-      "because/example selection",
-      "rehearsal request",
+      "sentence built in the message bar",
+      "opinion/because/example selection",
+      "speak-sentence use",
       "repair or help request"
     ],
-    "notJudgement": "Prompting or access method should contextualise the speech evidence, not replace judgement about English content.",
+    "notJudgement": "Prompting, navigation support, or access method should contextualise the speech evidence, not replace judgement about English content.",
     "export": "Use anonymous teacher notes, print/portfolio evidence, or local CSV/report only when needed. Do not include diagnoses, behaviour details, family details, or school IDs."
   }
 }
