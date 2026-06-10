@@ -13,3 +13,4 @@ I can build this. Quick details so I make the right board:
 ```
 
 If the user does not answer, proceed with safe defaults and state assumptions.
+- Rough age band or year level (so vocabulary and tone stay age-respectful)? If unanswered, secondary-appropriate phrasing is the default.

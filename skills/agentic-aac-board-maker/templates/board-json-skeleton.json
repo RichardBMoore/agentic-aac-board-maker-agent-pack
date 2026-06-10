@@ -12,7 +12,10 @@
     "tone": "age-respectful"
   },
   "access": {
-    "intended": ["touch", "keyboard"],
+    "intended": [
+      "touch",
+      "keyboard"
+    ],
     "profile": "direct-selection",
     "minimumTargetSizePx": 96,
     "dwellTimeMs": null,
@@ -32,13 +35,18 @@
     "scanPattern": "linear"
   },
   "accessibility": {
-    "intendedAccess": ["touch", "keyboard"],
+    "intendedAccess": [
+      "touch",
+      "keyboard"
+    ],
     "minimumTargetSizePx": 96,
     "dwellSafe": false,
     "scanOrder": "dom-order",
     "audioCues": true
   },
-  "communicationFunctions": ["choose", "repair", "comment"],
+  "communicationFunctions": [
+    "repair"
+  ],
   "pages": [
     {
       "id": "page-main",
@@ -60,10 +68,21 @@
           "symbolLayout": "label-bottom",
           "audioCue": "Help",
           "result": "selected",
-          "position": { "x": 0, "y": 0, "width": 33.3333, "height": 33.3333 },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 33.3333,
+            "height": 33.3333
+          },
           "actions": [
-            { "id": "act-help-speak", "type": "speak-label" },
-            { "id": "act-help-log", "type": "log-attempt" }
+            {
+              "id": "act-help-speak",
+              "type": "speak-label"
+            },
+            {
+              "id": "act-help-log",
+              "type": "log-attempt"
+            }
           ]
         }
       ]
@@ -81,9 +100,15 @@
     "tools": "Describe AAC, print, dwell, switch, symbols, partner supports, and fallback options."
   },
   "udl": {
-    "engagement": ["Offer meaningful choice and a safe repair/rest route."],
-    "representation": ["Use short text labels with symbol/photo placeholders and spoken feedback."],
-    "actionExpression": ["Allow touch, keyboard, partner interpretation, and AAC selection as valid response routes."]
+    "engagement": [
+      "Offer meaningful choice and a safe repair/rest route."
+    ],
+    "representation": [
+      "Use short text labels with symbol/photo placeholders and spoken feedback."
+    ],
+    "actionExpression": [
+      "Allow touch, keyboard, partner interpretation, and AAC selection as valid response routes."
+    ]
   },
   "differentiation": {
     "content": "Preserve the key learning intent while reducing access load.",
@@ -99,7 +124,12 @@
     }
   ],
   "evidencePlan": {
-    "observable": ["selection", "repair attempt", "comment", "participation in shared task"],
+    "observable": [
+      "selection",
+      "repair attempt",
+      "comment",
+      "participation in shared task"
+    ],
     "notJudgement": "Access method and prompt level are recorded as context, not as curriculum judgement.",
     "export": "Use anonymous local notes, CSV, print, or portfolio summary only when needed."
   },
@@ -113,7 +143,10 @@
     "containsSensitiveData": false
   },
   "metadata": {
-    "tags": ["aac", "agent-generated"],
+    "tags": [
+      "aac",
+      "agent-generated"
+    ],
     "curriculum": "",
     "privacyLevel": "anonymous"
   },
@@ -121,7 +154,7 @@
     {
       "source": "ARASAAC",
       "licence": "CC BY-NC-SA",
-      "attribution": "Pictograms by ARASAAC (Government of Aragon)"
+      "attribution": "The pictographic symbols used are the property of the Government of Aragon and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distributes them under Creative Commons License BY-NC-SA"
     }
   ]
 }

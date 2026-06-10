@@ -172,7 +172,7 @@
 
   function setEditorTitle(name) {
     var safe = String(name || "").trim() || "Activity";
-    document.title = safe + " - Open Boardmaker Editor";
+    document.title = safe + " - Open AAC Studio Editor";
   }
 
   function setRangeText(slider, output) {

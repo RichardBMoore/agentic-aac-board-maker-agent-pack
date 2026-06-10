@@ -1,0 +1,170 @@
+{
+  "format": "open-board-0.1",
+  "id": "page-main",
+  "locale": "en",
+  "name": "Main",
+  "buttons": [
+    {
+      "id": "btn-arrive",
+      "label": "Arrive",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-arrive-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "fringe",
+      "ext_aac_function": "sequence"
+    },
+    {
+      "id": "btn-bag",
+      "label": "Bag away",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-bag-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "fringe",
+      "ext_aac_function": "sequence"
+    },
+    {
+      "id": "btn-morning",
+      "label": "Morning job",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-morning-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "fringe",
+      "ext_aac_function": "sequence"
+    },
+    {
+      "id": "btn-group",
+      "label": "Group time",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-group-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "fringe",
+      "ext_aac_function": "sequence"
+    },
+    {
+      "id": "btn-next",
+      "label": "What next?",
+      "vocalization": "What is next?",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-next-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "question",
+      "ext_aac_function": "ask"
+    },
+    {
+      "id": "btn-wait",
+      "label": "Wait",
+      "vocalization": "I need to wait",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-wait-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "repair",
+      "ext_aac_function": "regulate-rest"
+    },
+    {
+      "id": "btn-help",
+      "label": "Help please",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-help-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "repair",
+      "ext_aac_function": "repair"
+    },
+    {
+      "id": "btn-change",
+      "label": "Change",
+      "vocalization": "I need a change",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-change-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "repair",
+      "ext_aac_function": "repair"
+    },
+    {
+      "id": "btn-finished",
+      "label": "Finished",
+      "vocalization": "I am finished",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-finished-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "repair",
+      "ext_aac_function": "refuse"
+    }
+  ],
+  "grid": {
+    "rows": 3,
+    "columns": 3,
+    "order": [
+      [
+        "btn-arrive",
+        "btn-bag",
+        "btn-morning"
+      ],
+      [
+        "btn-group",
+        "btn-next",
+        "btn-wait"
+      ],
+      [
+        "btn-help",
+        "btn-change",
+        "btn-finished"
+      ]
+    ]
+  },
+  "images": [],
+  "sounds": [],
+  "license": {
+    "type": "CC BY-NC-SA",
+    "copyright_notice_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+    "source_url": "https://arasaac.org",
+    "author_name": "Sergio Palao / Government of Aragon (ARASAAC)",
+    "author_url": "https://arasaac.org"
+  },
+  "ext_aac_source": {
+    "generatedFrom": "agentic-aac-board-ir",
+    "irId": "morning-routine-expressive-schedule",
+    "irSchemaVersion": "0.3.0"
+  },
+  "ext_aac_access": {
+    "profile": "mixed-access",
+    "dwellTimeMs": 1100,
+    "minimumTargetSizePx": 132
+  },
+  "description_html": "A visual schedule that shows morning routine order while preserving expressive options for waiting, help, change, finished and student comments."
+}

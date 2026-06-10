@@ -19,7 +19,7 @@ Generated from the first proof-of-concept fixture: `gaze-choice-2x2` / “Make a
 
 ## Communication purpose
 
-The board lets a student choose a class activity and use repair language rather than being trapped in only adult-offered choices. Communication functions include choose, initiate/request, repair, refuse, and comment.
+The board lets a student choose a class activity and use repair language rather than being trapped in only adult-offered choices. Communication functions realised by the six buttons: choose and repair.
 
 ## Teacher note
 

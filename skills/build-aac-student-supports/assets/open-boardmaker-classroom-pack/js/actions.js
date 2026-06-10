@@ -35,6 +35,14 @@
     return { type: "stay" };
   }
 
+  // Message-bar accumulator for sentence-builder style boards
+  // (add-to-message / speak-message / remove-last-word / clear-message).
+  var messageWords = [];
+
+  function resetMessage() {
+    messageWords = [];
+  }
+
   function runActions(button, context) {
     var ctx = context || {};
     var activity = ctx.activity;
@@ -44,6 +52,7 @@
     var result = actionResult(button);
     var didSpeak = false;
     var didLog = false;
+    var didMessage = false;
 
     function runOne(action) {
       if (action.type === "speak-label" && settings.speakLabels !== false) {
@@ -55,7 +64,7 @@
         didSpeak = true;
       }
       if (action.type === "navigate-page" && ctx.goToPage) {
-        ctx.goToPage(action.pageId);
+        ctx.goToPage(action.targetPageId || action.pageId);
       }
       if (action.type === "next-page" && ctx.nextPage) {
         ctx.nextPage();
@@ -92,6 +101,26 @@
         ctx.logAttempt(button, result);
         didLog = true;
       }
+      if (action.type === "add-to-message") {
+        messageWords.push(action.text || button.spokenText || button.label || "");
+        if (ctx.setMessage) ctx.setMessage(messageWords.join(" "));
+        didMessage = true;
+      }
+      if (action.type === "speak-message") {
+        global.BoardmakerTts.speak(messageWords.join(" "));
+        didSpeak = true;
+        didMessage = true;
+      }
+      if (action.type === "remove-last-word") {
+        messageWords.pop();
+        if (ctx.setMessage) ctx.setMessage(messageWords.join(" "));
+        didMessage = true;
+      }
+      if (action.type === "clear-message") {
+        messageWords = [];
+        if (ctx.setMessage) ctx.setMessage("");
+        didMessage = true;
+      }
     }
 
     actions.forEach(runOne);
@@ -105,7 +134,7 @@
     if (ctx.flashButton) {
       ctx.flashButton(button.id, result);
     }
-    if (ctx.setMessage) {
+    if (ctx.setMessage && !didMessage && messageWords.length === 0) {
       ctx.setMessage(button.label || "");
     }
     return result;
@@ -113,6 +142,7 @@
 
   global.BoardmakerActions = {
     runActions: runActions,
-    actionResult: actionResult
+    actionResult: actionResult,
+    resetMessage: resetMessage
   };
 })(window);

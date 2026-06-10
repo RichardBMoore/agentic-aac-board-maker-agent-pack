@@ -53,6 +53,7 @@ Create a canonical AAC Board IR even if final output is HTML or print. See `aac-
 {
   "schemaVersion": "0.3.0",
   "format": "agentic-aac-board-ir",
+  "id": "kebab-case-board-id",
   "title": "",
   "purpose": "",
   "access": {
@@ -68,15 +69,16 @@ Create a canonical AAC Board IR even if final output is HTML or print. See `aac-
       "buttons": [
         {
           "label": "",
-          "role": "core|fringe|repair|navigation|evidence|teacher",
-          "function": "request|refuse|comment|question|answer|sequence|explain|reflect|repair|navigate",
+          "role": "core|fringe|repair|navigation|comment|question|sentence|evidence|teacher",
+          "function": "initiate|request|refuse|choose|comment|ask|answer|sequence|explain|repair|reflect|socialise|navigate|regulate-rest",
           "searchTerm": "",
           "spokenText": "",
           "actions": []
         }
       ]
     }
-  ]
+  ],
+  "privacy": { "level": "anonymous" },
   "sett": {},
   "udl": {},
   "differentiation": {},

@@ -7,6 +7,10 @@ description: "Richard's school-resource workflow for accessible, curriculum-stro
 
 Use this skill whenever Richard asks for help with school resources, accessible HTML tools, ICP/QCIA assessments, AAC/eye-gaze resources, adaptive gaming, AI-assisted resource production, or cautious organisation/auditing of school-resource folders containing student/evidence materials.
 
+## Privacy note
+
+This skill carries Richard's personal workflow context, including local paths and personal document categories. Exclude or generalise this skill folder before sharing the pack beyond Richard's own machines.
+
 ## Working stance
 
 - Be practical, honest, and balanced — not sycophantic.

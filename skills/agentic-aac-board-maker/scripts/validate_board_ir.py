@@ -207,6 +207,30 @@ def has_differentiation_metadata(data: dict[str, Any]) -> bool:
     return any(data.get(field) for field in ("sett", "udl", "differentiation", "participationBarriers"))
 
 
+NAVIGATION_ACTION_TYPES = {"navigate-page", "next-page", "previous-page"}
+
+
+def button_actions(button: dict[str, Any]) -> list[Any]:
+    return as_list(button.get("actions"))
+
+
+def navigation_target(action: Any) -> str:
+    if isinstance(action, dict):
+        return text(action.get("targetPageId")) or text(action.get("pageId"))
+    return ""
+
+
+def realised_button_functions(pages: list[Any]) -> set[str]:
+    realised: set[str] = set()
+    for raw_page in pages:
+        page = as_dict(raw_page)
+        for raw_button in as_list(page.get("buttons")):
+            function = text(as_dict(raw_button).get("function"))
+            if function:
+                realised.add(function)
+    return realised
+
+
 def uses_symbol_strategy(data: dict[str, Any]) -> bool:
     if data.get("symbolStrategy"):
         return True
@@ -258,7 +282,9 @@ def validate(data: dict[str, Any]) -> tuple[list[str], list[str]]:
     if not intended:
         warnings.append("No explicit intended access list found.")
 
-    minimum_target = access.get("minimumTargetSizePx") or as_dict(data.get("accessibility")).get("minimumTargetSizePx")
+    minimum_target = access.get("minimumTargetSizePx")
+    if minimum_target is None:
+        minimum_target = as_dict(data.get("accessibility")).get("minimumTargetSizePx")
     try:
         minimum_target_px = int(minimum_target) if minimum_target is not None else None
     except (TypeError, ValueError):
@@ -269,11 +295,20 @@ def validate(data: dict[str, Any]) -> tuple[list[str], list[str]]:
     if not pages:
         failures.append("pages must be a non-empty array.")
 
+    page_ids = {text(as_dict(raw_page).get("id")) for raw_page in pages if text(as_dict(raw_page).get("id"))}
+
     max_buttons_per_page = 0
     max_content_buttons_per_page = 0
+    seen_page_ids: set[str] = set()
+    seen_button_ids: set[str] = set()
     for page_index, raw_page in enumerate(pages, start=1):
         page = as_dict(raw_page)
         page_label = text(page.get("id")) or text(page.get("name")) or f"page {page_index}"
+        page_id = text(page.get("id"))
+        if page_id:
+            if page_id in seen_page_ids:
+                failures.append(f"Duplicate page id '{page_id}'.")
+            seen_page_ids.add(page_id)
         buttons = as_list(page.get("buttons"))
         rows, columns = grid_size(page)
         if rows <= 0 or columns <= 0:
@@ -293,8 +328,13 @@ def validate(data: dict[str, Any]) -> tuple[list[str], list[str]]:
         for button_index, raw_button in enumerate(buttons, start=1):
             button = as_dict(raw_button)
             button_label = text(button.get("id")) or f"{page_label} button {button_index}"
-            if not text(button.get("id")):
+            button_id = text(button.get("id"))
+            if not button_id:
                 failures.append(f"{button_label}: missing id.")
+            else:
+                if button_id in seen_button_ids:
+                    failures.append(f"Duplicate button id '{button_id}' (button ids must be unique across the whole board).")
+                seen_button_ids.add(button_id)
             if not text(button.get("label")):
                 failures.append(f"{button_label}: missing label.")
             if not button_spoken_text(button):
@@ -313,7 +353,31 @@ def validate(data: dict[str, Any]) -> tuple[list[str], list[str]]:
             if role == "teacher" and not page.get("teacherOnly"):
                 failures.append(f"{button_label}: teacher button appears in a student-facing page.")
 
-    dense_gaze_tested = bool(access.get("denseGazeTested") or data.get("denseGazeTested"))
+            has_navigation_action = False
+            for action in button_actions(button):
+                action_type = text(action.get("type")) if isinstance(action, dict) else text(action)
+                if action_type not in NAVIGATION_ACTION_TYPES:
+                    continue
+                has_navigation_action = True
+                if action_type == "navigate-page":
+                    target = navigation_target(action)
+                    if not target:
+                        failures.append(f"{button_label}: navigate-page action has no targetPageId.")
+                    elif page_ids and target not in page_ids:
+                        failures.append(f"{button_label}: navigate-page targets unknown page '{target}'.")
+            if (role == "navigation" or function == "navigate") and not has_navigation_action:
+                warnings.append(
+                    f"{button_label}: navigation button has no navigate-page/next-page/previous-page action; "
+                    "the renderer will fall back to speak-only behaviour."
+                )
+
+    dense_gaze_raw = access.get("denseGazeTested", data.get("denseGazeTested"))
+    dense_gaze_tested = dense_gaze_raw is True
+    if dense_gaze_raw is not None and not isinstance(dense_gaze_raw, bool):
+        warnings.append(
+            f"denseGazeTested is {dense_gaze_raw!r}; it must be boolean true to lift the gaze density limit, "
+            "so it is being treated as untested."
+        )
     intended_access = {text(value).lower() for value in intended}
     gaze_in_intended = bool({"eye-gaze-dwell", "mouse-dwell"} & intended_access)
     if profile in {"eye-gaze-dwell", "mouse-dwell"} and max_buttons_per_page > 9 and not dense_gaze_tested:
@@ -323,8 +387,14 @@ def validate(data: dict[str, Any]) -> tuple[list[str], list[str]]:
             "Eye-gaze/mouse-dwell is listed in intended access but a page has more than 9 buttons; "
             "split into calmer pages, enlarge targets, or set denseGazeTested=true once dense gaze access is tested."
         )
-    if profile in {"eye-gaze-dwell", "mouse-dwell"} and minimum_target_px is not None and minimum_target_px < 120:
-        failures.append("Eye-gaze/mouse-dwell profile should use minimumTargetSizePx >= 120.")
+    if profile in {"eye-gaze-dwell", "mouse-dwell"}:
+        if minimum_target_px is None:
+            failures.append(
+                "Eye-gaze/mouse-dwell profile must declare a numeric minimumTargetSizePx of at least 120 "
+                "(prefer 200+ per gaze-interface research)."
+            )
+        elif minimum_target_px < 120:
+            failures.append("Eye-gaze/mouse-dwell profile should use minimumTargetSizePx >= 120.")
     if profile == "direct-selection" and minimum_target_px is not None and minimum_target_px < 44:
         failures.append("Direct-selection profile should not use minimumTargetSizePx below 44.")
     if profile in {"single-switch", "two-switch"} and max_buttons_per_page > 9:
@@ -342,6 +412,40 @@ def validate(data: dict[str, Any]) -> tuple[list[str], list[str]]:
             failures.append("Board appears to be a noun/content grid with no communication agency function.")
         if content_functions <= {"answer"} or (top_level_functions <= {"answer", "choose"} and max_content_buttons_per_page >= 3 and not has_button_agency(pages)):
             failures.append("Board appears quiz-only or answer-only; add repair, explanation, uncertainty, or student agency.")
+
+    declared_functions = {text(value) for value in communication_functions if text(value)}
+    realised_functions = realised_button_functions(pages)
+    if declared_functions and realised_functions:
+        unrealised = sorted(declared_functions - realised_functions)
+        undeclared = sorted(realised_functions - declared_functions)
+        if unrealised:
+            warnings.append(
+                "communicationFunctions declares functions no button realises: " + ", ".join(unrealised) + "."
+            )
+        if undeclared:
+            warnings.append(
+                "Buttons realise functions missing from communicationFunctions: " + ", ".join(undeclared) + "."
+            )
+
+    all_action_types: set[str] = set()
+    for raw_page in pages:
+        for raw_button in as_list(as_dict(raw_page).get("buttons")):
+            for action in button_actions(as_dict(raw_button)):
+                action_type = text(action.get("type")) if isinstance(action, dict) else text(action)
+                if action_type:
+                    all_action_types.add(action_type)
+    message_bar = as_dict(data.get("messageBar"))
+    message_actions = {"add-to-message", "speak-message", "remove-last-word", "clear-message"}
+    if message_bar:
+        if "add-to-message" not in all_action_types:
+            warnings.append("messageBar is declared but no button has an add-to-message action.")
+        if "speak-message" not in all_action_types:
+            warnings.append("messageBar is declared but no button has a speak-message action.")
+    elif all_action_types & message_actions:
+        warnings.append(
+            "Buttons use message-bar actions (" + ", ".join(sorted(all_action_types & message_actions)) +
+            ") but no top-level messageBar object is declared."
+        )
 
     privacy = as_dict(data.get("privacy"))
     privacy_level = text(privacy.get("level")) or text(as_dict(data.get("metadata")).get("privacyLevel"))

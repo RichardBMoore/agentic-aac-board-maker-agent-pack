@@ -1,4 +1,7 @@
-# Open Boardmaker Prototype
+# Open AAC Studio Prototype
+
+> Naming note: the user-facing name is "Open AAC Studio" (renamed from "Open Boardmaker" to avoid the Tobii Dynavox trademark). Internal identifiers - the folder name, `BoardmakerData` globals, `open-boardmaker.*` localStorage keys, and service-worker cache names - keep the historical name so existing saved boards still load.
+
 
 Static, offline-friendly AAC board maker and player built from `boardmaker-clone-spec.md`.
 

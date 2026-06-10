@@ -78,6 +78,14 @@ Include concise notes:
 - how to customise labels/symbols;
 - real-device/team testing caveat.
 
+## Speech, Feedback, And Motion
+
+- Message bar / spoken-feedback area uses `aria-live="polite"`.
+- Include a one-time "Sound check" control: Edge/Chromium block `speechSynthesis` until the page has user activation, and hover-only eye-gaze input never grants it. Handle the utterance `error` event with a visible status message.
+- Every button's `aria-label` must contain its visible label text (WCAG 2.5.3 Label in Name).
+- Respect `prefers-reduced-motion`: keep the dwell progress indicator visible but replace the animated sweep with a static fill.
+- Sticky headers or score bars must not cover the focused control (WCAG 2.4.11 Focus Not Obscured).
+
 ## Verification Snippet
 
 When possible, verify in browser/console:

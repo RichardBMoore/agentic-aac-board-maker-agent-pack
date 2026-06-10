@@ -10,26 +10,73 @@
       "tone": "age-respectful"
     },
     "access": {
-      "intended": ["touch", "keyboard", "eye-gaze-dwell"],
+      "intended": [
+        "touch",
+        "keyboard",
+        "eye-gaze-dwell"
+      ],
       "profile": "eye-gaze-dwell",
       "minimumTargetSizePx": 140,
       "dwellTimeMs": 1200,
       "switchScanning": false,
       "scanPattern": "linear"
     },
-    "communicationFunctions": ["choose", "comment", "ask", "repair"],
+    "communicationFunctions": [
+      "choose",
+      "comment",
+      "explain",
+      "repair"
+    ],
     "pages": [
       {
         "id": "page-main",
         "name": "Main",
         "pattern": "choice-board",
-        "grid": { "rows": 2, "columns": 3 },
+        "grid": {
+          "rows": 2,
+          "columns": 3
+        },
         "buttons": [
-          { "id": "btn-i-think", "label": "I think", "role": "core", "function": "comment", "spokenText": "I think", "searchTerm": "think" },
-          { "id": "btn-choice-a", "label": "Choice A", "role": "fringe", "function": "choose", "spokenText": "Choice A", "searchTerm": "choice" },
-          { "id": "btn-because", "label": "because", "role": "sentence", "function": "explain", "spokenText": "because", "searchTerm": "because" },
-          { "id": "btn-help", "label": "Help", "role": "repair", "function": "repair", "spokenText": "Help please", "searchTerm": "help" },
-          { "id": "btn-different", "label": "Different", "role": "repair", "function": "repair", "spokenText": "Different please", "searchTerm": "different" }
+          {
+            "id": "btn-i-think",
+            "label": "I think",
+            "role": "core",
+            "function": "comment",
+            "spokenText": "I think",
+            "searchTerm": "think"
+          },
+          {
+            "id": "btn-choice-a",
+            "label": "Choice A",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Choice A",
+            "searchTerm": "choice"
+          },
+          {
+            "id": "btn-because",
+            "label": "because",
+            "role": "sentence",
+            "function": "explain",
+            "spokenText": "because",
+            "searchTerm": "because"
+          },
+          {
+            "id": "btn-help",
+            "label": "Help",
+            "role": "repair",
+            "function": "repair",
+            "spokenText": "Help please",
+            "searchTerm": "help"
+          },
+          {
+            "id": "btn-different",
+            "label": "Different",
+            "role": "repair",
+            "function": "repair",
+            "spokenText": "Different please",
+            "searchTerm": "different"
+          }
         ]
       }
     ],
@@ -40,9 +87,18 @@
       "tools": "Large buttons, TTS, keyboard fallback, text fallback."
     },
     "udl": {
-      "engagement": ["choice", "repair"],
-      "representation": ["symbols", "spoken labels"],
-      "actionExpression": ["AAC selection", "keyboard"]
+      "engagement": [
+        "choice",
+        "repair"
+      ],
+      "representation": [
+        "symbols",
+        "spoken labels"
+      ],
+      "actionExpression": [
+        "AAC selection",
+        "keyboard"
+      ]
     },
     "differentiation": {
       "content": "Same concept, reduced access load.",
@@ -52,10 +108,17 @@
       "support": "Team review before use."
     },
     "participationBarriers": [
-      { "barrier": "Original task assumes speech.", "support": "Offer AAC response paths." }
+      {
+        "barrier": "Original task assumes speech.",
+        "support": "Offer AAC response paths."
+      }
     ],
     "evidencePlan": {
-      "observable": ["choice", "comment", "repair"],
+      "observable": [
+        "choice",
+        "comment",
+        "repair"
+      ],
       "notJudgement": "Access support is context, not grading.",
       "export": "Anonymous teacher note."
     },
@@ -87,20 +150,50 @@
     "title": "Legacy Board",
     "purpose": "The student can choose and ask for help.",
     "access": {
-      "intended": ["touch", "keyboard"],
+      "intended": [
+        "touch",
+        "keyboard"
+      ],
       "profile": "direct-selection",
       "minimumTargetSizePx": 96
     },
-    "communicationFunctions": ["choose", "repair"],
+    "communicationFunctions": [
+      "choose",
+      "repair"
+    ],
     "pages": [
       {
         "id": "page-main",
         "name": "Main",
-        "grid": { "rows": 2, "columns": 2 },
+        "grid": {
+          "rows": 2,
+          "columns": 2
+        },
         "buttons": [
-          { "id": "btn-one", "label": "One", "role": "fringe", "function": "choose", "spokenText": "One", "searchTerm": "one" },
-          { "id": "btn-two", "label": "Two", "role": "fringe", "function": "choose", "spokenText": "Two", "searchTerm": "two" },
-          { "id": "btn-help", "label": "Help", "role": "repair", "function": "repair", "spokenText": "Help", "searchTerm": "help" }
+          {
+            "id": "btn-one",
+            "label": "One",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "One",
+            "searchTerm": "one"
+          },
+          {
+            "id": "btn-two",
+            "label": "Two",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Two",
+            "searchTerm": "two"
+          },
+          {
+            "id": "btn-help",
+            "label": "Help",
+            "role": "repair",
+            "function": "repair",
+            "spokenText": "Help",
+            "searchTerm": "help"
+          }
         ]
       }
     ],
@@ -117,7 +210,10 @@
       "containsSensitiveData": false
     },
     "attribution": [
-      { "source": "ARASAAC", "licence": "CC BY-NC-SA" }
+      {
+        "source": "ARASAAC",
+        "licence": "CC BY-NC-SA"
+      }
     ]
   },
   "noun_grid": {
@@ -127,25 +223,58 @@
     "title": "Fruit Grid",
     "purpose": "A list of topic nouns.",
     "access": {
-      "intended": ["touch"],
+      "intended": [
+        "touch"
+      ],
       "profile": "direct-selection",
       "minimumTargetSizePx": 96
     },
-    "communicationFunctions": ["choose"],
+    "communicationFunctions": [
+      "choose"
+    ],
     "pages": [
       {
         "id": "page-main",
         "name": "Main",
-        "grid": { "rows": 2, "columns": 2 },
+        "grid": {
+          "rows": 2,
+          "columns": 2
+        },
         "buttons": [
-          { "id": "btn-apple", "label": "Apple", "role": "fringe", "function": "choose", "spokenText": "Apple" },
-          { "id": "btn-pear", "label": "Pear", "role": "fringe", "function": "choose", "spokenText": "Pear" },
-          { "id": "btn-plum", "label": "Plum", "role": "fringe", "function": "choose", "spokenText": "Plum" },
-          { "id": "btn-cake", "label": "Cake", "role": "fringe", "function": "choose", "spokenText": "Cake" }
+          {
+            "id": "btn-apple",
+            "label": "Apple",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Apple"
+          },
+          {
+            "id": "btn-pear",
+            "label": "Pear",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Pear"
+          },
+          {
+            "id": "btn-plum",
+            "label": "Plum",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Plum"
+          },
+          {
+            "id": "btn-cake",
+            "label": "Cake",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Cake"
+          }
         ]
       }
     ],
-    "privacy": { "level": "anonymous" }
+    "privacy": {
+      "level": "anonymous"
+    }
   },
   "quiz_only": {
     "schemaVersion": "0.3.0",
@@ -154,27 +283,68 @@
     "title": "Quiz Only Board",
     "purpose": "Answer a quiz question.",
     "access": {
-      "intended": ["touch"],
+      "intended": [
+        "touch"
+      ],
       "profile": "direct-selection",
       "minimumTargetSizePx": 96
     },
-    "communicationFunctions": ["answer"],
+    "communicationFunctions": [
+      "answer"
+    ],
     "pages": [
       {
         "id": "page-main",
         "name": "Main",
-        "grid": { "rows": 2, "columns": 3 },
+        "grid": {
+          "rows": 2,
+          "columns": 3
+        },
         "buttons": [
-          { "id": "btn-a", "label": "A", "role": "fringe", "function": "answer", "spokenText": "A" },
-          { "id": "btn-b", "label": "B", "role": "fringe", "function": "answer", "spokenText": "B" },
-          { "id": "btn-c", "label": "C", "role": "fringe", "function": "answer", "spokenText": "C" },
-          { "id": "btn-d", "label": "D", "role": "fringe", "function": "answer", "spokenText": "D" },
-          { "id": "btn-help", "label": "Help", "role": "repair", "function": "repair", "spokenText": "Help" }
+          {
+            "id": "btn-a",
+            "label": "A",
+            "role": "fringe",
+            "function": "answer",
+            "spokenText": "A"
+          },
+          {
+            "id": "btn-b",
+            "label": "B",
+            "role": "fringe",
+            "function": "answer",
+            "spokenText": "B"
+          },
+          {
+            "id": "btn-c",
+            "label": "C",
+            "role": "fringe",
+            "function": "answer",
+            "spokenText": "C"
+          },
+          {
+            "id": "btn-d",
+            "label": "D",
+            "role": "fringe",
+            "function": "answer",
+            "spokenText": "D"
+          },
+          {
+            "id": "btn-help",
+            "label": "Help",
+            "role": "repair",
+            "function": "repair",
+            "spokenText": "Help"
+          }
         ]
       }
     ],
-    "teacherNotes": { "modeling": "Model Help." },
-    "privacy": { "level": "anonymous" }
+    "teacherNotes": {
+      "modeling": "Model Help."
+    },
+    "privacy": {
+      "level": "anonymous"
+    }
   },
   "missing_privacy": {
     "schemaVersion": "0.3.0",
@@ -183,24 +353,52 @@
     "title": "Missing Privacy Board",
     "purpose": "The student can choose and repair.",
     "access": {
-      "intended": ["touch"],
+      "intended": [
+        "touch"
+      ],
       "profile": "direct-selection",
       "minimumTargetSizePx": 96
     },
-    "communicationFunctions": ["choose", "repair"],
+    "communicationFunctions": [
+      "choose",
+      "repair"
+    ],
     "pages": [
       {
         "id": "page-main",
         "name": "Main",
-        "grid": { "rows": 2, "columns": 2 },
+        "grid": {
+          "rows": 2,
+          "columns": 2
+        },
         "buttons": [
-          { "id": "btn-one", "label": "One", "role": "fringe", "function": "choose", "spokenText": "One" },
-          { "id": "btn-two", "label": "Two", "role": "fringe", "function": "choose", "spokenText": "Two" },
-          { "id": "btn-help", "label": "Help", "role": "repair", "function": "repair", "spokenText": "Help" }
+          {
+            "id": "btn-one",
+            "label": "One",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "One"
+          },
+          {
+            "id": "btn-two",
+            "label": "Two",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Two"
+          },
+          {
+            "id": "btn-help",
+            "label": "Help",
+            "role": "repair",
+            "function": "repair",
+            "spokenText": "Help"
+          }
         ]
       }
     ],
-    "teacherNotes": { "modeling": "Model Help." }
+    "teacherNotes": {
+      "modeling": "Model Help."
+    }
   },
   "over_dense_gaze": {
     "schemaVersion": "0.3.0",
@@ -209,34 +407,112 @@
     "title": "Dense Gaze Board",
     "purpose": "An untested dense gaze board.",
     "access": {
-      "intended": ["eye-gaze-dwell"],
+      "intended": [
+        "eye-gaze-dwell"
+      ],
       "profile": "eye-gaze-dwell",
       "minimumTargetSizePx": 120,
       "dwellTimeMs": 1200
     },
-    "communicationFunctions": ["choose", "repair"],
+    "communicationFunctions": [
+      "choose",
+      "repair"
+    ],
     "pages": [
       {
         "id": "page-main",
         "name": "Main",
-        "grid": { "rows": 4, "columns": 4 },
+        "grid": {
+          "rows": 4,
+          "columns": 4
+        },
         "buttons": [
-          { "id": "btn-1", "label": "One", "role": "fringe", "function": "choose", "spokenText": "One" },
-          { "id": "btn-2", "label": "Two", "role": "fringe", "function": "choose", "spokenText": "Two" },
-          { "id": "btn-3", "label": "Three", "role": "fringe", "function": "choose", "spokenText": "Three" },
-          { "id": "btn-4", "label": "Four", "role": "fringe", "function": "choose", "spokenText": "Four" },
-          { "id": "btn-5", "label": "Five", "role": "fringe", "function": "choose", "spokenText": "Five" },
-          { "id": "btn-6", "label": "Six", "role": "fringe", "function": "choose", "spokenText": "Six" },
-          { "id": "btn-7", "label": "Seven", "role": "fringe", "function": "choose", "spokenText": "Seven" },
-          { "id": "btn-8", "label": "Eight", "role": "fringe", "function": "choose", "spokenText": "Eight" },
-          { "id": "btn-9", "label": "Nine", "role": "fringe", "function": "choose", "spokenText": "Nine" },
-          { "id": "btn-10", "label": "Ten", "role": "fringe", "function": "choose", "spokenText": "Ten" },
-          { "id": "btn-help", "label": "Help", "role": "repair", "function": "repair", "spokenText": "Help" }
+          {
+            "id": "btn-1",
+            "label": "One",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "One"
+          },
+          {
+            "id": "btn-2",
+            "label": "Two",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Two"
+          },
+          {
+            "id": "btn-3",
+            "label": "Three",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Three"
+          },
+          {
+            "id": "btn-4",
+            "label": "Four",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Four"
+          },
+          {
+            "id": "btn-5",
+            "label": "Five",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Five"
+          },
+          {
+            "id": "btn-6",
+            "label": "Six",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Six"
+          },
+          {
+            "id": "btn-7",
+            "label": "Seven",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Seven"
+          },
+          {
+            "id": "btn-8",
+            "label": "Eight",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Eight"
+          },
+          {
+            "id": "btn-9",
+            "label": "Nine",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Nine"
+          },
+          {
+            "id": "btn-10",
+            "label": "Ten",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Ten"
+          },
+          {
+            "id": "btn-help",
+            "label": "Help",
+            "role": "repair",
+            "function": "repair",
+            "spokenText": "Help"
+          }
         ]
       }
     ],
-    "teacherNotes": { "modeling": "Model Help." },
-    "privacy": { "level": "anonymous" }
+    "teacherNotes": {
+      "modeling": "Model Help."
+    },
+    "privacy": {
+      "level": "anonymous"
+    }
   },
   "missing_repair": {
     "schemaVersion": "0.3.0",
@@ -245,25 +521,55 @@
     "title": "Missing Repair Board",
     "purpose": "The student can choose from content.",
     "access": {
-      "intended": ["touch"],
+      "intended": [
+        "touch"
+      ],
       "profile": "direct-selection",
       "minimumTargetSizePx": 96
     },
-    "communicationFunctions": ["choose", "comment"],
+    "communicationFunctions": [
+      "choose",
+      "comment"
+    ],
     "pages": [
       {
         "id": "page-main",
         "name": "Main",
-        "grid": { "rows": 2, "columns": 2 },
+        "grid": {
+          "rows": 2,
+          "columns": 2
+        },
         "buttons": [
-          { "id": "btn-one", "label": "One", "role": "fringe", "function": "choose", "spokenText": "One" },
-          { "id": "btn-two", "label": "Two", "role": "fringe", "function": "choose", "spokenText": "Two" },
-          { "id": "btn-three", "label": "Three", "role": "fringe", "function": "comment", "spokenText": "Three" }
+          {
+            "id": "btn-one",
+            "label": "One",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "One"
+          },
+          {
+            "id": "btn-two",
+            "label": "Two",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Two"
+          },
+          {
+            "id": "btn-three",
+            "label": "Three",
+            "role": "fringe",
+            "function": "comment",
+            "spokenText": "Three"
+          }
         ]
       }
     ],
-    "teacherNotes": { "modeling": "Model choices." },
-    "privacy": { "level": "anonymous" }
+    "teacherNotes": {
+      "modeling": "Model choices."
+    },
+    "privacy": {
+      "level": "anonymous"
+    }
   },
   "mixed_gaze_dense": {
     "schemaVersion": "0.3.0",
@@ -272,38 +578,1398 @@
     "title": "Mixed Access Dense Board",
     "purpose": "The student can request, comment, ask, and repair across a single dense page.",
     "access": {
-      "intended": ["touch", "keyboard", "mouse", "eye-gaze-dwell"],
+      "intended": [
+        "touch",
+        "keyboard",
+        "mouse",
+        "eye-gaze-dwell"
+      ],
       "profile": "mixed-access",
       "minimumTargetSizePx": 132,
       "dwellTimeMs": 1100
     },
-    "communicationFunctions": ["request", "comment", "ask", "repair", "refuse", "regulate-rest"],
+    "communicationFunctions": [
+      "request",
+      "comment",
+      "ask",
+      "repair",
+      "refuse",
+      "regulate-rest"
+    ],
     "pages": [
       {
         "id": "page-main",
         "name": "Main",
-        "grid": { "rows": 3, "columns": 4 },
+        "grid": {
+          "rows": 3,
+          "columns": 4
+        },
         "buttons": [
-          { "id": "btn-help", "label": "Help", "role": "repair", "function": "repair", "spokenText": "Help please" },
-          { "id": "btn-break", "label": "Break", "role": "repair", "function": "regulate-rest", "spokenText": "I need a break" },
-          { "id": "btn-toilet", "label": "Toilet", "role": "core", "function": "request", "spokenText": "Toilet please" },
-          { "id": "btn-drink", "label": "Drink", "role": "core", "function": "request", "spokenText": "I want a drink" },
-          { "id": "btn-more", "label": "More", "role": "core", "function": "request", "spokenText": "More please" },
-          { "id": "btn-stop", "label": "Stop", "role": "repair", "function": "refuse", "spokenText": "Stop" },
-          { "id": "btn-wait", "label": "Wait", "role": "repair", "function": "regulate-rest", "spokenText": "Please wait" },
-          { "id": "btn-yes", "label": "Yes", "role": "core", "function": "answer", "spokenText": "Yes" },
-          { "id": "btn-no", "label": "No", "role": "core", "function": "refuse", "spokenText": "No" },
-          { "id": "btn-like", "label": "I like this", "role": "comment", "function": "comment", "spokenText": "I like this" },
-          { "id": "btn-dislike", "label": "I do not like this", "role": "comment", "function": "comment", "spokenText": "I do not like this" },
-          { "id": "btn-show", "label": "Show me", "role": "question", "function": "ask", "spokenText": "Can you show me?" }
+          {
+            "id": "btn-help",
+            "label": "Help",
+            "role": "repair",
+            "function": "repair",
+            "spokenText": "Help please"
+          },
+          {
+            "id": "btn-break",
+            "label": "Break",
+            "role": "repair",
+            "function": "regulate-rest",
+            "spokenText": "I need a break"
+          },
+          {
+            "id": "btn-toilet",
+            "label": "Toilet",
+            "role": "core",
+            "function": "request",
+            "spokenText": "Toilet please"
+          },
+          {
+            "id": "btn-drink",
+            "label": "Drink",
+            "role": "core",
+            "function": "request",
+            "spokenText": "I want a drink"
+          },
+          {
+            "id": "btn-more",
+            "label": "More",
+            "role": "core",
+            "function": "request",
+            "spokenText": "More please"
+          },
+          {
+            "id": "btn-stop",
+            "label": "Stop",
+            "role": "repair",
+            "function": "refuse",
+            "spokenText": "Stop"
+          },
+          {
+            "id": "btn-wait",
+            "label": "Wait",
+            "role": "repair",
+            "function": "regulate-rest",
+            "spokenText": "Please wait"
+          },
+          {
+            "id": "btn-yes",
+            "label": "Yes",
+            "role": "core",
+            "function": "answer",
+            "spokenText": "Yes"
+          },
+          {
+            "id": "btn-no",
+            "label": "No",
+            "role": "core",
+            "function": "refuse",
+            "spokenText": "No"
+          },
+          {
+            "id": "btn-like",
+            "label": "I like this",
+            "role": "comment",
+            "function": "comment",
+            "spokenText": "I like this"
+          },
+          {
+            "id": "btn-dislike",
+            "label": "I do not like this",
+            "role": "comment",
+            "function": "comment",
+            "spokenText": "I do not like this"
+          },
+          {
+            "id": "btn-show",
+            "label": "Show me",
+            "role": "question",
+            "function": "ask",
+            "spokenText": "Can you show me?"
+          }
         ]
       }
     ],
-    "teacherNotes": { "modeling": "Model needs and repair messages neutrally." },
-    "symbolStrategy": { "defaultSource": "ARASAAC search terms", "textFallback": true },
-    "privacy": { "level": "anonymous", "containsSensitiveData": false },
+    "teacherNotes": {
+      "modeling": "Model needs and repair messages neutrally."
+    },
+    "symbolStrategy": {
+      "defaultSource": "ARASAAC search terms",
+      "textFallback": true
+    },
+    "privacy": {
+      "level": "anonymous",
+      "containsSensitiveData": false
+    },
     "attribution": [
-      { "source": "ARASAAC", "licence": "CC BY-NC-SA" }
+      {
+        "source": "ARASAAC",
+        "licence": "CC BY-NC-SA"
+      }
+    ]
+  },
+  "dense_gaze_string_false": {
+    "schemaVersion": "0.3.0",
+    "format": "agentic-aac-board-ir",
+    "id": "dense-gaze-board",
+    "title": "Dense Gaze Board",
+    "purpose": "An untested dense gaze board.",
+    "access": {
+      "intended": [
+        "eye-gaze-dwell"
+      ],
+      "profile": "eye-gaze-dwell",
+      "minimumTargetSizePx": 120,
+      "dwellTimeMs": 1200,
+      "denseGazeTested": "false"
+    },
+    "communicationFunctions": [
+      "choose",
+      "repair"
+    ],
+    "pages": [
+      {
+        "id": "page-main",
+        "name": "Main",
+        "grid": {
+          "rows": 4,
+          "columns": 4
+        },
+        "buttons": [
+          {
+            "id": "btn-1",
+            "label": "One",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "One"
+          },
+          {
+            "id": "btn-2",
+            "label": "Two",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Two"
+          },
+          {
+            "id": "btn-3",
+            "label": "Three",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Three"
+          },
+          {
+            "id": "btn-4",
+            "label": "Four",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Four"
+          },
+          {
+            "id": "btn-5",
+            "label": "Five",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Five"
+          },
+          {
+            "id": "btn-6",
+            "label": "Six",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Six"
+          },
+          {
+            "id": "btn-7",
+            "label": "Seven",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Seven"
+          },
+          {
+            "id": "btn-8",
+            "label": "Eight",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Eight"
+          },
+          {
+            "id": "btn-9",
+            "label": "Nine",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Nine"
+          },
+          {
+            "id": "btn-10",
+            "label": "Ten",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Ten"
+          },
+          {
+            "id": "btn-help",
+            "label": "Help",
+            "role": "repair",
+            "function": "repair",
+            "spokenText": "Help"
+          }
+        ]
+      }
+    ],
+    "teacherNotes": {
+      "modeling": "Model Help."
+    },
+    "privacy": {
+      "level": "anonymous"
+    }
+  },
+  "duplicate_button_ids": {
+    "schemaVersion": "0.3.0",
+    "format": "agentic-aac-board-ir",
+    "id": "duplicate-button-board",
+    "title": "Valid Powerhouse Board",
+    "purpose": "The student can choose, comment, ask for help, and repair a classroom response.",
+    "audience": {
+      "ageBand": "secondary",
+      "tone": "age-respectful"
+    },
+    "access": {
+      "intended": [
+        "touch",
+        "keyboard",
+        "eye-gaze-dwell"
+      ],
+      "profile": "eye-gaze-dwell",
+      "minimumTargetSizePx": 140,
+      "dwellTimeMs": 1200,
+      "switchScanning": false,
+      "scanPattern": "linear"
+    },
+    "communicationFunctions": [
+      "choose",
+      "comment",
+      "explain",
+      "repair"
+    ],
+    "pages": [
+      {
+        "id": "page-main",
+        "name": "Main",
+        "pattern": "choice-board",
+        "grid": {
+          "rows": 2,
+          "columns": 3
+        },
+        "buttons": [
+          {
+            "id": "btn-i-think",
+            "label": "I think",
+            "role": "core",
+            "function": "comment",
+            "spokenText": "I think",
+            "searchTerm": "think"
+          },
+          {
+            "id": "btn-i-think",
+            "label": "Choice A",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Choice A",
+            "searchTerm": "choice"
+          },
+          {
+            "id": "btn-because",
+            "label": "because",
+            "role": "sentence",
+            "function": "explain",
+            "spokenText": "because",
+            "searchTerm": "because"
+          },
+          {
+            "id": "btn-help",
+            "label": "Help",
+            "role": "repair",
+            "function": "repair",
+            "spokenText": "Help please",
+            "searchTerm": "help"
+          },
+          {
+            "id": "btn-different",
+            "label": "Different",
+            "role": "repair",
+            "function": "repair",
+            "spokenText": "Different please",
+            "searchTerm": "different"
+          }
+        ]
+      }
+    ],
+    "sett": {
+      "student": "Strengths, access preferences, and communication opportunities only.",
+      "environment": "Local classroom, shared laptop, intermittent internet.",
+      "task": "Participate in a shared lesson choice and explain thinking.",
+      "tools": "Large buttons, TTS, keyboard fallback, text fallback."
+    },
+    "udl": {
+      "engagement": [
+        "choice",
+        "repair"
+      ],
+      "representation": [
+        "symbols",
+        "spoken labels"
+      ],
+      "actionExpression": [
+        "AAC selection",
+        "keyboard"
+      ]
+    },
+    "differentiation": {
+      "content": "Same concept, reduced access load.",
+      "process": "Model, wait, accept multimodal responses.",
+      "product": "Selection, comment, and teacher observation.",
+      "environment": "Low-distraction student mode.",
+      "support": "Team review before use."
+    },
+    "participationBarriers": [
+      {
+        "barrier": "Original task assumes speech.",
+        "support": "Offer AAC response paths."
+      }
+    ],
+    "evidencePlan": {
+      "observable": [
+        "choice",
+        "comment",
+        "repair"
+      ],
+      "notJudgement": "Access support is context, not grading.",
+      "export": "Anonymous teacher note."
+    },
+    "teacherNotes": {
+      "modeling": "Model choices, wait, and respond.",
+      "evidence": "Observe choice, comment, and repair.",
+      "customisation": "Replace Choice A with local vocabulary."
+    },
+    "symbolStrategy": {
+      "defaultSource": "ARASAAC search terms",
+      "textFallback": true
+    },
+    "privacy": {
+      "level": "anonymous",
+      "containsSensitiveData": false
+    },
+    "attribution": [
+      {
+        "source": "ARASAAC",
+        "licence": "CC BY-NC-SA",
+        "note": "Confirm exact current licence wording before publication."
+      }
+    ]
+  },
+  "duplicate_page_ids": {
+    "schemaVersion": "0.3.0",
+    "format": "agentic-aac-board-ir",
+    "id": "duplicate-page-board",
+    "title": "Valid Powerhouse Board",
+    "purpose": "The student can choose, comment, ask for help, and repair a classroom response.",
+    "audience": {
+      "ageBand": "secondary",
+      "tone": "age-respectful"
+    },
+    "access": {
+      "intended": [
+        "touch",
+        "keyboard",
+        "eye-gaze-dwell"
+      ],
+      "profile": "eye-gaze-dwell",
+      "minimumTargetSizePx": 140,
+      "dwellTimeMs": 1200,
+      "switchScanning": false,
+      "scanPattern": "linear"
+    },
+    "communicationFunctions": [
+      "choose",
+      "comment",
+      "explain",
+      "repair"
+    ],
+    "pages": [
+      {
+        "id": "page-main",
+        "name": "Main",
+        "pattern": "choice-board",
+        "grid": {
+          "rows": 2,
+          "columns": 3
+        },
+        "buttons": [
+          {
+            "id": "btn-i-think",
+            "label": "I think",
+            "role": "core",
+            "function": "comment",
+            "spokenText": "I think",
+            "searchTerm": "think"
+          },
+          {
+            "id": "btn-choice-a",
+            "label": "Choice A",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Choice A",
+            "searchTerm": "choice"
+          },
+          {
+            "id": "btn-because",
+            "label": "because",
+            "role": "sentence",
+            "function": "explain",
+            "spokenText": "because",
+            "searchTerm": "because"
+          },
+          {
+            "id": "btn-help",
+            "label": "Help",
+            "role": "repair",
+            "function": "repair",
+            "spokenText": "Help please",
+            "searchTerm": "help"
+          },
+          {
+            "id": "btn-different",
+            "label": "Different",
+            "role": "repair",
+            "function": "repair",
+            "spokenText": "Different please",
+            "searchTerm": "different"
+          }
+        ]
+      },
+      {
+        "id": "page-main",
+        "name": "Main",
+        "pattern": "choice-board",
+        "grid": {
+          "rows": 2,
+          "columns": 3
+        },
+        "buttons": [
+          {
+            "id": "btn-i-think-2",
+            "label": "I think",
+            "role": "core",
+            "function": "comment",
+            "spokenText": "I think",
+            "searchTerm": "think"
+          },
+          {
+            "id": "btn-choice-a-2",
+            "label": "Choice A",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Choice A",
+            "searchTerm": "choice"
+          },
+          {
+            "id": "btn-because-2",
+            "label": "because",
+            "role": "sentence",
+            "function": "explain",
+            "spokenText": "because",
+            "searchTerm": "because"
+          },
+          {
+            "id": "btn-help-2",
+            "label": "Help",
+            "role": "repair",
+            "function": "repair",
+            "spokenText": "Help please",
+            "searchTerm": "help"
+          },
+          {
+            "id": "btn-different-2",
+            "label": "Different",
+            "role": "repair",
+            "function": "repair",
+            "spokenText": "Different please",
+            "searchTerm": "different"
+          }
+        ]
+      }
+    ],
+    "sett": {
+      "student": "Strengths, access preferences, and communication opportunities only.",
+      "environment": "Local classroom, shared laptop, intermittent internet.",
+      "task": "Participate in a shared lesson choice and explain thinking.",
+      "tools": "Large buttons, TTS, keyboard fallback, text fallback."
+    },
+    "udl": {
+      "engagement": [
+        "choice",
+        "repair"
+      ],
+      "representation": [
+        "symbols",
+        "spoken labels"
+      ],
+      "actionExpression": [
+        "AAC selection",
+        "keyboard"
+      ]
+    },
+    "differentiation": {
+      "content": "Same concept, reduced access load.",
+      "process": "Model, wait, accept multimodal responses.",
+      "product": "Selection, comment, and teacher observation.",
+      "environment": "Low-distraction student mode.",
+      "support": "Team review before use."
+    },
+    "participationBarriers": [
+      {
+        "barrier": "Original task assumes speech.",
+        "support": "Offer AAC response paths."
+      }
+    ],
+    "evidencePlan": {
+      "observable": [
+        "choice",
+        "comment",
+        "repair"
+      ],
+      "notJudgement": "Access support is context, not grading.",
+      "export": "Anonymous teacher note."
+    },
+    "teacherNotes": {
+      "modeling": "Model choices, wait, and respond.",
+      "evidence": "Observe choice, comment, and repair.",
+      "customisation": "Replace Choice A with local vocabulary."
+    },
+    "symbolStrategy": {
+      "defaultSource": "ARASAAC search terms",
+      "textFallback": true
+    },
+    "privacy": {
+      "level": "anonymous",
+      "containsSensitiveData": false
+    },
+    "attribution": [
+      {
+        "source": "ARASAAC",
+        "licence": "CC BY-NC-SA",
+        "note": "Confirm exact current licence wording before publication."
+      }
+    ]
+  },
+  "dangling_navigation": {
+    "schemaVersion": "0.3.0",
+    "format": "agentic-aac-board-ir",
+    "id": "dangling-navigation-board",
+    "title": "Valid Powerhouse Board",
+    "purpose": "The student can choose, comment, ask for help, and repair a classroom response.",
+    "audience": {
+      "ageBand": "secondary",
+      "tone": "age-respectful"
+    },
+    "access": {
+      "intended": [
+        "touch",
+        "keyboard",
+        "eye-gaze-dwell"
+      ],
+      "profile": "eye-gaze-dwell",
+      "minimumTargetSizePx": 140,
+      "dwellTimeMs": 1200,
+      "switchScanning": false,
+      "scanPattern": "linear"
+    },
+    "communicationFunctions": [
+      "choose",
+      "comment",
+      "repair",
+      "navigate"
+    ],
+    "pages": [
+      {
+        "id": "page-main",
+        "name": "Main",
+        "pattern": "choice-board",
+        "grid": {
+          "rows": 2,
+          "columns": 3
+        },
+        "buttons": [
+          {
+            "id": "btn-i-think",
+            "label": "I think",
+            "role": "core",
+            "function": "comment",
+            "spokenText": "I think",
+            "searchTerm": "think"
+          },
+          {
+            "id": "btn-choice-a",
+            "label": "Choice A",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Choice A",
+            "searchTerm": "choice"
+          },
+          {
+            "id": "btn-next",
+            "label": "Next page",
+            "role": "navigation",
+            "function": "navigate",
+            "spokenText": "Next page",
+            "actions": [
+              {
+                "id": "act-btn-next-nav",
+                "type": "navigate-page",
+                "targetPageId": "page-does-not-exist"
+              }
+            ]
+          },
+          {
+            "id": "btn-help",
+            "label": "Help",
+            "role": "repair",
+            "function": "repair",
+            "spokenText": "Help please",
+            "searchTerm": "help"
+          },
+          {
+            "id": "btn-different",
+            "label": "Different",
+            "role": "repair",
+            "function": "repair",
+            "spokenText": "Different please",
+            "searchTerm": "different"
+          }
+        ]
+      }
+    ],
+    "sett": {
+      "student": "Strengths, access preferences, and communication opportunities only.",
+      "environment": "Local classroom, shared laptop, intermittent internet.",
+      "task": "Participate in a shared lesson choice and explain thinking.",
+      "tools": "Large buttons, TTS, keyboard fallback, text fallback."
+    },
+    "udl": {
+      "engagement": [
+        "choice",
+        "repair"
+      ],
+      "representation": [
+        "symbols",
+        "spoken labels"
+      ],
+      "actionExpression": [
+        "AAC selection",
+        "keyboard"
+      ]
+    },
+    "differentiation": {
+      "content": "Same concept, reduced access load.",
+      "process": "Model, wait, accept multimodal responses.",
+      "product": "Selection, comment, and teacher observation.",
+      "environment": "Low-distraction student mode.",
+      "support": "Team review before use."
+    },
+    "participationBarriers": [
+      {
+        "barrier": "Original task assumes speech.",
+        "support": "Offer AAC response paths."
+      }
+    ],
+    "evidencePlan": {
+      "observable": [
+        "choice",
+        "comment",
+        "repair"
+      ],
+      "notJudgement": "Access support is context, not grading.",
+      "export": "Anonymous teacher note."
+    },
+    "teacherNotes": {
+      "modeling": "Model choices, wait, and respond.",
+      "evidence": "Observe choice, comment, and repair.",
+      "customisation": "Replace Choice A with local vocabulary."
+    },
+    "symbolStrategy": {
+      "defaultSource": "ARASAAC search terms",
+      "textFallback": true
+    },
+    "privacy": {
+      "level": "anonymous",
+      "containsSensitiveData": false
+    },
+    "attribution": [
+      {
+        "source": "ARASAAC",
+        "licence": "CC BY-NC-SA",
+        "note": "Confirm exact current licence wording before publication."
+      }
+    ]
+  },
+  "gaze_missing_min_target": {
+    "schemaVersion": "0.3.0",
+    "format": "agentic-aac-board-ir",
+    "id": "gaze-missing-min-target-board",
+    "title": "Valid Powerhouse Board",
+    "purpose": "The student can choose, comment, ask for help, and repair a classroom response.",
+    "audience": {
+      "ageBand": "secondary",
+      "tone": "age-respectful"
+    },
+    "access": {
+      "intended": [
+        "touch",
+        "keyboard",
+        "eye-gaze-dwell"
+      ],
+      "profile": "eye-gaze-dwell",
+      "dwellTimeMs": 1200,
+      "switchScanning": false,
+      "scanPattern": "linear"
+    },
+    "communicationFunctions": [
+      "choose",
+      "comment",
+      "explain",
+      "repair"
+    ],
+    "pages": [
+      {
+        "id": "page-main",
+        "name": "Main",
+        "pattern": "choice-board",
+        "grid": {
+          "rows": 2,
+          "columns": 3
+        },
+        "buttons": [
+          {
+            "id": "btn-i-think",
+            "label": "I think",
+            "role": "core",
+            "function": "comment",
+            "spokenText": "I think",
+            "searchTerm": "think"
+          },
+          {
+            "id": "btn-choice-a",
+            "label": "Choice A",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Choice A",
+            "searchTerm": "choice"
+          },
+          {
+            "id": "btn-because",
+            "label": "because",
+            "role": "sentence",
+            "function": "explain",
+            "spokenText": "because",
+            "searchTerm": "because"
+          },
+          {
+            "id": "btn-help",
+            "label": "Help",
+            "role": "repair",
+            "function": "repair",
+            "spokenText": "Help please",
+            "searchTerm": "help"
+          },
+          {
+            "id": "btn-different",
+            "label": "Different",
+            "role": "repair",
+            "function": "repair",
+            "spokenText": "Different please",
+            "searchTerm": "different"
+          }
+        ]
+      }
+    ],
+    "sett": {
+      "student": "Strengths, access preferences, and communication opportunities only.",
+      "environment": "Local classroom, shared laptop, intermittent internet.",
+      "task": "Participate in a shared lesson choice and explain thinking.",
+      "tools": "Large buttons, TTS, keyboard fallback, text fallback."
+    },
+    "udl": {
+      "engagement": [
+        "choice",
+        "repair"
+      ],
+      "representation": [
+        "symbols",
+        "spoken labels"
+      ],
+      "actionExpression": [
+        "AAC selection",
+        "keyboard"
+      ]
+    },
+    "differentiation": {
+      "content": "Same concept, reduced access load.",
+      "process": "Model, wait, accept multimodal responses.",
+      "product": "Selection, comment, and teacher observation.",
+      "environment": "Low-distraction student mode.",
+      "support": "Team review before use."
+    },
+    "participationBarriers": [
+      {
+        "barrier": "Original task assumes speech.",
+        "support": "Offer AAC response paths."
+      }
+    ],
+    "evidencePlan": {
+      "observable": [
+        "choice",
+        "comment",
+        "repair"
+      ],
+      "notJudgement": "Access support is context, not grading.",
+      "export": "Anonymous teacher note."
+    },
+    "teacherNotes": {
+      "modeling": "Model choices, wait, and respond.",
+      "evidence": "Observe choice, comment, and repair.",
+      "customisation": "Replace Choice A with local vocabulary."
+    },
+    "symbolStrategy": {
+      "defaultSource": "ARASAAC search terms",
+      "textFallback": true
+    },
+    "privacy": {
+      "level": "anonymous",
+      "containsSensitiveData": false
+    },
+    "attribution": [
+      {
+        "source": "ARASAAC",
+        "licence": "CC BY-NC-SA",
+        "note": "Confirm exact current licence wording before publication."
+      }
+    ]
+  },
+  "gaze_zero_min_target": {
+    "schemaVersion": "0.3.0",
+    "format": "agentic-aac-board-ir",
+    "id": "gaze-zero-min-target-board",
+    "title": "Valid Powerhouse Board",
+    "purpose": "The student can choose, comment, ask for help, and repair a classroom response.",
+    "audience": {
+      "ageBand": "secondary",
+      "tone": "age-respectful"
+    },
+    "access": {
+      "intended": [
+        "touch",
+        "keyboard",
+        "eye-gaze-dwell"
+      ],
+      "profile": "eye-gaze-dwell",
+      "minimumTargetSizePx": 0,
+      "dwellTimeMs": 1200,
+      "switchScanning": false,
+      "scanPattern": "linear"
+    },
+    "communicationFunctions": [
+      "choose",
+      "comment",
+      "explain",
+      "repair"
+    ],
+    "pages": [
+      {
+        "id": "page-main",
+        "name": "Main",
+        "pattern": "choice-board",
+        "grid": {
+          "rows": 2,
+          "columns": 3
+        },
+        "buttons": [
+          {
+            "id": "btn-i-think",
+            "label": "I think",
+            "role": "core",
+            "function": "comment",
+            "spokenText": "I think",
+            "searchTerm": "think"
+          },
+          {
+            "id": "btn-choice-a",
+            "label": "Choice A",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Choice A",
+            "searchTerm": "choice"
+          },
+          {
+            "id": "btn-because",
+            "label": "because",
+            "role": "sentence",
+            "function": "explain",
+            "spokenText": "because",
+            "searchTerm": "because"
+          },
+          {
+            "id": "btn-help",
+            "label": "Help",
+            "role": "repair",
+            "function": "repair",
+            "spokenText": "Help please",
+            "searchTerm": "help"
+          },
+          {
+            "id": "btn-different",
+            "label": "Different",
+            "role": "repair",
+            "function": "repair",
+            "spokenText": "Different please",
+            "searchTerm": "different"
+          }
+        ]
+      }
+    ],
+    "sett": {
+      "student": "Strengths, access preferences, and communication opportunities only.",
+      "environment": "Local classroom, shared laptop, intermittent internet.",
+      "task": "Participate in a shared lesson choice and explain thinking.",
+      "tools": "Large buttons, TTS, keyboard fallback, text fallback."
+    },
+    "udl": {
+      "engagement": [
+        "choice",
+        "repair"
+      ],
+      "representation": [
+        "symbols",
+        "spoken labels"
+      ],
+      "actionExpression": [
+        "AAC selection",
+        "keyboard"
+      ]
+    },
+    "differentiation": {
+      "content": "Same concept, reduced access load.",
+      "process": "Model, wait, accept multimodal responses.",
+      "product": "Selection, comment, and teacher observation.",
+      "environment": "Low-distraction student mode.",
+      "support": "Team review before use."
+    },
+    "participationBarriers": [
+      {
+        "barrier": "Original task assumes speech.",
+        "support": "Offer AAC response paths."
+      }
+    ],
+    "evidencePlan": {
+      "observable": [
+        "choice",
+        "comment",
+        "repair"
+      ],
+      "notJudgement": "Access support is context, not grading.",
+      "export": "Anonymous teacher note."
+    },
+    "teacherNotes": {
+      "modeling": "Model choices, wait, and respond.",
+      "evidence": "Observe choice, comment, and repair.",
+      "customisation": "Replace Choice A with local vocabulary."
+    },
+    "symbolStrategy": {
+      "defaultSource": "ARASAAC search terms",
+      "textFallback": true
+    },
+    "privacy": {
+      "level": "anonymous",
+      "containsSensitiveData": false
+    },
+    "attribution": [
+      {
+        "source": "ARASAAC",
+        "licence": "CC BY-NC-SA",
+        "note": "Confirm exact current licence wording before publication."
+      }
+    ]
+  },
+  "styled_buttons": {
+    "schemaVersion": "0.3.0",
+    "format": "agentic-aac-board-ir",
+    "id": "styled-button-board",
+    "title": "Valid Powerhouse Board",
+    "purpose": "The student can choose, comment, ask for help, and repair a classroom response.",
+    "audience": {
+      "ageBand": "secondary",
+      "tone": "age-respectful"
+    },
+    "access": {
+      "intended": [
+        "touch",
+        "keyboard",
+        "eye-gaze-dwell"
+      ],
+      "profile": "eye-gaze-dwell",
+      "minimumTargetSizePx": 140,
+      "dwellTimeMs": 1200,
+      "switchScanning": false,
+      "scanPattern": "linear"
+    },
+    "communicationFunctions": [
+      "choose",
+      "comment",
+      "explain",
+      "repair"
+    ],
+    "pages": [
+      {
+        "id": "page-main",
+        "name": "Main",
+        "pattern": "choice-board",
+        "grid": {
+          "rows": 2,
+          "columns": 3
+        },
+        "buttons": [
+          {
+            "id": "btn-i-think",
+            "label": "I think",
+            "role": "core",
+            "function": "comment",
+            "spokenText": "I think",
+            "searchTerm": "think",
+            "style": {
+              "fillColour": "#FFE6E6"
+            },
+            "audioCue": "thinking"
+          },
+          {
+            "id": "btn-choice-a",
+            "label": "Choice A",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Choice A",
+            "searchTerm": "choice"
+          },
+          {
+            "id": "btn-because",
+            "label": "because",
+            "role": "sentence",
+            "function": "explain",
+            "spokenText": "because",
+            "searchTerm": "because"
+          },
+          {
+            "id": "btn-help",
+            "label": "Help",
+            "role": "repair",
+            "function": "repair",
+            "spokenText": "Help please",
+            "searchTerm": "help"
+          },
+          {
+            "id": "btn-different",
+            "label": "Different",
+            "role": "repair",
+            "function": "repair",
+            "spokenText": "Different please",
+            "searchTerm": "different"
+          }
+        ]
+      }
+    ],
+    "sett": {
+      "student": "Strengths, access preferences, and communication opportunities only.",
+      "environment": "Local classroom, shared laptop, intermittent internet.",
+      "task": "Participate in a shared lesson choice and explain thinking.",
+      "tools": "Large buttons, TTS, keyboard fallback, text fallback."
+    },
+    "udl": {
+      "engagement": [
+        "choice",
+        "repair"
+      ],
+      "representation": [
+        "symbols",
+        "spoken labels"
+      ],
+      "actionExpression": [
+        "AAC selection",
+        "keyboard"
+      ]
+    },
+    "differentiation": {
+      "content": "Same concept, reduced access load.",
+      "process": "Model, wait, accept multimodal responses.",
+      "product": "Selection, comment, and teacher observation.",
+      "environment": "Low-distraction student mode.",
+      "support": "Team review before use."
+    },
+    "participationBarriers": [
+      {
+        "barrier": "Original task assumes speech.",
+        "support": "Offer AAC response paths."
+      }
+    ],
+    "evidencePlan": {
+      "observable": [
+        "choice",
+        "comment",
+        "repair"
+      ],
+      "notJudgement": "Access support is context, not grading.",
+      "export": "Anonymous teacher note."
+    },
+    "teacherNotes": {
+      "modeling": "Model choices, wait, and respond.",
+      "evidence": "Observe choice, comment, and repair.",
+      "customisation": "Replace Choice A with local vocabulary."
+    },
+    "symbolStrategy": {
+      "defaultSource": "ARASAAC search terms",
+      "textFallback": true
+    },
+    "privacy": {
+      "level": "anonymous",
+      "containsSensitiveData": false
+    },
+    "attribution": [
+      {
+        "source": "ARASAAC",
+        "licence": "CC BY-NC-SA",
+        "note": "Confirm exact current licence wording before publication."
+      }
+    ]
+  },
+  "multi_page_navigation": {
+    "schemaVersion": "0.3.0",
+    "format": "agentic-aac-board-ir",
+    "id": "multi-page-nav-board",
+    "title": "Valid Powerhouse Board",
+    "purpose": "The student can choose, comment, ask for help, and repair a classroom response.",
+    "audience": {
+      "ageBand": "secondary",
+      "tone": "age-respectful"
+    },
+    "access": {
+      "intended": [
+        "touch",
+        "keyboard",
+        "eye-gaze-dwell"
+      ],
+      "profile": "eye-gaze-dwell",
+      "minimumTargetSizePx": 140,
+      "dwellTimeMs": 1200,
+      "switchScanning": false,
+      "scanPattern": "linear"
+    },
+    "communicationFunctions": [
+      "choose",
+      "comment",
+      "explain",
+      "repair",
+      "navigate"
+    ],
+    "pages": [
+      {
+        "id": "page-main",
+        "name": "Main",
+        "pattern": "choice-board",
+        "grid": {
+          "rows": 2,
+          "columns": 3
+        },
+        "buttons": [
+          {
+            "id": "btn-i-think",
+            "label": "I think",
+            "role": "core",
+            "function": "comment",
+            "spokenText": "I think",
+            "searchTerm": "think"
+          },
+          {
+            "id": "btn-choice-a",
+            "label": "Choice A",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Choice A",
+            "searchTerm": "choice"
+          },
+          {
+            "id": "btn-because",
+            "label": "because",
+            "role": "sentence",
+            "function": "explain",
+            "spokenText": "because",
+            "searchTerm": "because"
+          },
+          {
+            "id": "btn-help",
+            "label": "Help",
+            "role": "repair",
+            "function": "repair",
+            "spokenText": "Help please",
+            "searchTerm": "help"
+          },
+          {
+            "id": "btn-different",
+            "label": "Different",
+            "role": "repair",
+            "function": "repair",
+            "spokenText": "Different please",
+            "searchTerm": "different"
+          },
+          {
+            "id": "btn-go-two",
+            "label": "More words",
+            "role": "navigation",
+            "function": "navigate",
+            "spokenText": "More words",
+            "actions": [
+              {
+                "id": "act-btn-go-two",
+                "type": "navigate-page",
+                "targetPageId": "page-two"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "page-two",
+        "name": "Two",
+        "pattern": "choice-board",
+        "grid": {
+          "rows": 2,
+          "columns": 3
+        },
+        "buttons": [
+          {
+            "id": "btn-i-think-2",
+            "label": "I think",
+            "role": "core",
+            "function": "comment",
+            "spokenText": "I think",
+            "searchTerm": "think"
+          },
+          {
+            "id": "btn-choice-a-2",
+            "label": "Choice A",
+            "role": "fringe",
+            "function": "choose",
+            "spokenText": "Choice A",
+            "searchTerm": "choice"
+          },
+          {
+            "id": "btn-because-2",
+            "label": "because",
+            "role": "sentence",
+            "function": "explain",
+            "spokenText": "because",
+            "searchTerm": "because"
+          },
+          {
+            "id": "btn-help-2",
+            "label": "Help",
+            "role": "repair",
+            "function": "repair",
+            "spokenText": "Help please",
+            "searchTerm": "help"
+          },
+          {
+            "id": "btn-different-2",
+            "label": "Different",
+            "role": "repair",
+            "function": "repair",
+            "spokenText": "Different please",
+            "searchTerm": "different"
+          },
+          {
+            "id": "btn-go-main",
+            "label": "Back",
+            "role": "navigation",
+            "function": "navigate",
+            "spokenText": "Back",
+            "actions": [
+              {
+                "id": "act-btn-go-main",
+                "type": "previous-page"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "sett": {
+      "student": "Strengths, access preferences, and communication opportunities only.",
+      "environment": "Local classroom, shared laptop, intermittent internet.",
+      "task": "Participate in a shared lesson choice and explain thinking.",
+      "tools": "Large buttons, TTS, keyboard fallback, text fallback."
+    },
+    "udl": {
+      "engagement": [
+        "choice",
+        "repair"
+      ],
+      "representation": [
+        "symbols",
+        "spoken labels"
+      ],
+      "actionExpression": [
+        "AAC selection",
+        "keyboard"
+      ]
+    },
+    "differentiation": {
+      "content": "Same concept, reduced access load.",
+      "process": "Model, wait, accept multimodal responses.",
+      "product": "Selection, comment, and teacher observation.",
+      "environment": "Low-distraction student mode.",
+      "support": "Team review before use."
+    },
+    "participationBarriers": [
+      {
+        "barrier": "Original task assumes speech.",
+        "support": "Offer AAC response paths."
+      }
+    ],
+    "evidencePlan": {
+      "observable": [
+        "choice",
+        "comment",
+        "repair"
+      ],
+      "notJudgement": "Access support is context, not grading.",
+      "export": "Anonymous teacher note."
+    },
+    "teacherNotes": {
+      "modeling": "Model choices, wait, and respond.",
+      "evidence": "Observe choice, comment, and repair.",
+      "customisation": "Replace Choice A with local vocabulary."
+    },
+    "symbolStrategy": {
+      "defaultSource": "ARASAAC search terms",
+      "textFallback": true
+    },
+    "privacy": {
+      "level": "anonymous",
+      "containsSensitiveData": false
+    },
+    "attribution": [
+      {
+        "source": "ARASAAC",
+        "licence": "CC BY-NC-SA",
+        "note": "Confirm exact current licence wording before publication."
+      }
     ]
   }
 }

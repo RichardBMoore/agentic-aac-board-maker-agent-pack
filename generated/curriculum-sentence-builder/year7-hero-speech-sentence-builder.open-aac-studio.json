@@ -4,8 +4,8 @@
   "id": "year7-hero-speech-sentence-builder",
   "name": "Year 7 Hero Speech Sentence Builder",
   "type": "interactive",
-  "created": "2026-05-29T02:20:53.133160Z",
-  "modified": "2026-05-29T02:20:53.133160Z",
+  "created": "2026-06-10T11:43:14.676684Z",
+  "modified": "2026-06-10T11:43:14.676684Z",
   "settings": {
     "orientation": "landscape",
     "width": 1024,
@@ -70,7 +70,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#E8F0FF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -125,7 +125,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#E8F0FF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -180,7 +180,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#E8F0FF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -235,7 +235,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#EAF6E8",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -290,7 +290,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#E8F0FF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -345,7 +345,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#ECECF4",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -391,7 +391,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#DDEBFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -440,7 +440,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFE6E6",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -485,7 +485,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFE6E6",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -548,7 +548,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFF3D6",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -603,7 +603,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFF3D6",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -658,7 +658,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFF3D6",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -691,15 +691,15 @@
           ]
         },
         {
-          "id": "btn-faces-danger",
+          "id": "btn-never-gives-up",
           "type": "standard",
-          "label": "faces danger",
+          "label": "never gives up",
           "role": "fringe",
           "function": "comment",
-          "spokenText": "faces danger",
+          "spokenText": "never gives up",
           "symbolId": null,
           "symbolSrc": "",
-          "searchTerm": "danger courage",
+          "searchTerm": "perseverance determined",
           "symbolLayout": "label-bottom",
           "symbolateSegments": [],
           "position": {
@@ -713,62 +713,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
-            "gradientColour": null,
-            "gradientType": "none"
-          },
-          "font": {
-            "family": "Verdana",
-            "size": 18,
-            "bold": true,
-            "italic": false,
-            "colour": "#000000",
-            "align": "centre"
-          },
-          "state": "selectable",
-          "audioCue": "faces danger",
-          "result": "added-to-sentence",
-          "actions": [
-            {
-              "id": "act-btn-faces-danger-add",
-              "type": "add-to-message",
-              "text": "faces danger"
-            },
-            {
-              "id": "act-btn-faces-danger-speak",
-              "type": "speak-text",
-              "text": "faces danger"
-            },
-            {
-              "id": "act-btn-faces-danger-log",
-              "type": "log-attempt"
-            }
-          ]
-        },
-        {
-          "id": "btn-never-gives-up",
-          "type": "standard",
-          "label": "never gives up",
-          "role": "fringe",
-          "function": "comment",
-          "spokenText": "never gives up",
-          "symbolId": null,
-          "symbolSrc": "",
-          "searchTerm": "perseverance determined",
-          "symbolLayout": "label-bottom",
-          "symbolateSegments": [],
-          "position": {
-            "x": 33.3333,
-            "y": 33.3333,
-            "width": 33.3333,
-            "height": 33.3333
-          },
-          "style": {
-            "borderColour": "#17212b",
-            "borderWidth": 3,
-            "borderStyle": "solid",
-            "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFF3D6",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -813,7 +758,7 @@
           "symbolLayout": "label-bottom",
           "symbolateSegments": [],
           "position": {
-            "x": 66.6667,
+            "x": 33.3333,
             "y": 33.3333,
             "width": 33.3333,
             "height": 33.3333
@@ -823,7 +768,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#ECECF4",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -859,8 +804,8 @@
           "symbolLayout": "label-bottom",
           "symbolateSegments": [],
           "position": {
-            "x": 0.0,
-            "y": 66.6667,
+            "x": 66.6667,
+            "y": 33.3333,
             "width": 33.3333,
             "height": 33.3333
           },
@@ -869,7 +814,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#DDEBFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -896,6 +841,51 @@
           ]
         },
         {
+          "id": "btn-undo-2",
+          "type": "standard",
+          "label": "⌫ Undo",
+          "role": "repair",
+          "function": "repair",
+          "spokenText": "Undo the last word",
+          "symbolId": null,
+          "symbolSrc": "",
+          "searchTerm": "undo backspace remove word",
+          "symbolLayout": "label-bottom",
+          "symbolateSegments": [],
+          "position": {
+            "x": 0.0,
+            "y": 66.6667,
+            "width": 33.3333,
+            "height": 33.3333
+          },
+          "style": {
+            "borderColour": "#17212b",
+            "borderWidth": 3,
+            "borderStyle": "solid",
+            "shape": "rounded-rect",
+            "fillColour": "#FFE6E6",
+            "gradientColour": null,
+            "gradientType": "none"
+          },
+          "font": {
+            "family": "Verdana",
+            "size": 18,
+            "bold": true,
+            "italic": false,
+            "colour": "#000000",
+            "align": "centre"
+          },
+          "state": "selectable",
+          "audioCue": "Undo the last word",
+          "result": "removed-last-word",
+          "actions": [
+            {
+              "id": "act-btn-undo-2-remove",
+              "type": "remove-last-word"
+            }
+          ]
+        },
+        {
           "id": "btn-start-again",
           "type": "standard",
           "label": "Start again",
@@ -918,7 +908,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFE6E6",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -968,7 +958,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFE6E6",
             "gradientColour": null,
             "gradientType": "none"
           },

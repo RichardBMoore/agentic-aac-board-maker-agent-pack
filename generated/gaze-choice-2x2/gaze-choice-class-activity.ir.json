@@ -50,12 +50,8 @@
     "audioCues": true
   },
   "communicationFunctions": [
-    "initiate",
-    "request",
     "choose",
-    "repair",
-    "refuse",
-    "comment"
+    "repair"
   ],
   "pages": [
     {
@@ -306,7 +302,8 @@
     {
       "source": "ARASAAC",
       "licence": "CC BY-NC-SA",
-      "note": "Symbol search terms are provided for ARASAAC replacement; confirm exact current licence wording when publishing beyond local classroom use."
+      "note": "Symbol search terms are provided for ARASAAC replacement; confirm exact current licence wording when publishing beyond local classroom use.",
+      "attribution": "The pictographic symbols used are the property of the Government of Aragon and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distributes them under Creative Commons License BY-NC-SA."
     }
   ],
   "licences": [

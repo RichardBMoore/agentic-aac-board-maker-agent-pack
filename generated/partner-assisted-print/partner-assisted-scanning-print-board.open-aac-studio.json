@@ -4,8 +4,8 @@
   "id": "partner-assisted-scanning-print-board",
   "name": "Partner-Assisted Scanning Print Board",
   "type": "interactive",
-  "created": "2026-05-26T10:53:45.040170Z",
-  "modified": "2026-05-26T10:53:45.040170Z",
+  "created": "2026-06-10T11:43:14.955226Z",
+  "modified": "2026-06-10T11:43:14.955226Z",
   "settings": {
     "orientation": "landscape",
     "width": 1024,
@@ -71,7 +71,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -121,7 +121,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -171,7 +171,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -221,7 +221,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -271,7 +271,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -321,7 +321,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -371,7 +371,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -421,7 +421,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -471,7 +471,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -512,12 +512,11 @@
     "evidence": "agreed signal; confirmed choice; repair request; refusal; more time request"
   },
   "communicationFunctions": [
-    "request",
-    "refuse",
+    "answer",
     "choose",
-    "repair",
+    "refuse",
     "regulate-rest",
-    "answer"
+    "repair"
   ],
   "metadata": {
     "tags": [
@@ -536,12 +535,11 @@
     "sourceIrSchemaVersion": "0.3.0",
     "accessProfile": "partner-assisted-scanning",
     "communicationFunctions": [
-      "request",
-      "refuse",
+      "answer",
       "choose",
-      "repair",
+      "refuse",
       "regulate-rest",
-      "answer"
+      "repair"
     ],
     "ir": {
       "accessProfile": "partner-assisted-scanning",

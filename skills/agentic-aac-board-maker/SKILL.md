@@ -58,7 +58,7 @@ If building an eye-gaze/dwell HTML file, also load `eyegaze-dwell-html`. If modi
 ## Default Agent Workflow
 
 1. **Clarify only if needed.** If the request has enough context, proceed with sensible defaults. Ask only when missing information changes the output materially: access method, board purpose, output format, or privacy-sensitive details.
-2. **Identify the communication goal.** Convert the teacher task into communication functions: initiate, choose, request, refuse, repair, comment, question, sequence, explain, reflect.
+2. **Identify the communication goal.** Convert the teacher task into communication functions: initiate, choose, request, refuse, repair, comment, ask, sequence, explain, reflect.
 3. **Select a board pattern.** Choose from yes/no, choice board, first-then, visual schedule, core/fringe board, quiz/comprehension, sentence builder, story/book reader, needs/repair, or curriculum participation board.
 4. **Create the canonical AAC Board IR before visuals.** Define pages, button roles, stable positions, navigation, repair/escape options, access constraints, symbol strategy, privacy, attribution, SETT/UDL/differentiation, participation barriers, and evidence/logging needs.
 5. **Render the resource.** Produce the requested output directly from the IR: single-file HTML, Open AAC Studio-compatible JSON, printable Markdown/HTML, or a resource pack. Do not require the user to use the prototype app unless they ask.

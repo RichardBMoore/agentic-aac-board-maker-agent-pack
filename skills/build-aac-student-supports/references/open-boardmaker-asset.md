@@ -1,4 +1,4 @@
-# Bundled Open Boardmaker Asset
+# Bundled Open AAC Studio Asset
 
 The skill includes a reusable classroom editor/player prototype at:
 

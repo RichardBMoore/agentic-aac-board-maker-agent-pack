@@ -1,6 +1,6 @@
 ---
 name: eyegaze-dwell-html
-description: Build accessible, single-file HTML tools for students who use eye gaze and dwell selection on PRC-Saltillo Accent AAC devices (1000/1400) running Windows with Microsoft Edge on the Education Queensland network. Use this skill whenever building ANY student resource that needs to work with eye gaze, dwell activation, AAC devices, or for QCIA/Inclusion students with complex access needs. Also trigger for requests involving dwell buttons, gaze-activated choices, AAC choice boards, accessible quiz tools, story readers, or worksheets for non-verbal students. Apply even if the request just mentions "accessible HTML", "eye gaze", "dwell", "AAC", "QCIA student", or "Accent device".
+description: Build accessible, single-file HTML tools for students who use eye gaze and dwell selection on PRC-Saltillo Accent AAC devices (1000/1400) running Windows with Microsoft Edge on the Education Queensland network. Use this skill whenever building ANY student resource that needs to work with eye gaze, dwell activation, AAC devices, or for QCIA/Inclusion students with complex access needs. Also trigger for requests involving dwell buttons, gaze-activated choices, AAC choice boards, accessible quiz tools, story readers, or worksheets for non-speaking students. Apply even if the request just mentions "accessible HTML", "eye gaze", "dwell", "AAC", "QCIA student", or "Accent device".
 ---
 
 # Eye Gaze & Dwell-Activated HTML Tools
@@ -28,12 +28,16 @@ description: Build accessible, single-file HTML tools for students who use eye g
 
 | Context | Recommended Time |
 |---|---|
-| Default classroom tool | **800ms** |
+| Starting range | **800–1200ms** |
+| Default classroom tool | **800ms** — the PRC-Saltillo NuVoice factory default for Accent eye tracking |
+| Untested student | 1200ms — the renderer/skeleton conservative default |
 | Student prone to accidental activation | 1000–1500ms |
-| Confident/experienced gaze user | 600ms |
-| Never go below | 500ms (Midas Touch risk) |
-| Never go above | 1500ms (fatigue) |
+| Confident, experienced gaze user | Below 800ms — only for these users |
 | Confirmation step (second dwell) | 600ms |
+
+- The 800ms default matches the NuVoice factory setting for Accent eye tracking: https://documentation.prc-saltillo.com/docs/calibrate-and-set-up-eye-tracking-in-nuvoice-1
+- **Outside 500–1500ms, treat the value as a team/SLP decision rather than a generator default.** Slower emerging gaze users (~2s) and fast expert users (<500ms) both genuinely exist — but those settings belong to the student's team, not to a generated tool.
+- **Where practical, expose dwell time as a teacher-adjustable runtime control** (e.g. an 800/1000/1200/1500ms settings strip). 2025 adaptive-dwell evidence supports tuning dwell at runtime: https://www.tandfonline.com/doi/full/10.1080/07370024.2025.2497236
 
 **Midas Touch problem:** Student looks at a button to read it → accidentally activates it. Fix with adequate dwell time + visual progress feedback + generous button spacing.
 
@@ -46,15 +50,16 @@ description: Build accessible, single-file HTML tools for students who use eye g
 | WCAG AA minimum (2.5.8) | 24×24px | Far too small for gaze |
 | WCAG AAA (2.5.5) | 44×44px | Still too small |
 | **Gaze minimum** | **120×120px** | Absolute floor |
-| **Gaze ideal** | **150–200px+** | Full-cell layouts preferred |
+| **Gaze ideal** | **200px+** | Prefer 200px+ per research on gaze-controlled interfaces (~2.6–3.0 degrees visual angle); full-cell layouts preferred |
 | Button gap | 20px minimum | Prevents adjacent activation |
 | Text contrast (AAA) | 7:1 | Target for all gaze tools |
-| Focus indicator contrast | 3:1 | WCAG 2.4.13 |
+| Focus indicator contrast | 3:1 | SC 1.4.11 Non-text Contrast (AA); note SC 2.4.13 Focus Appearance is Level AAA |
 | Min font size (buttons) | 1.4rem | ~22px |
 
 **Key WCAG criteria for gaze:**
-- `2.5.2` Pointer Cancellation — leaving button MUST cancel dwell
-- `2.4.7/2.4.13` Focus Visible — dwell ring IS the focus indicator
+- `2.5.2` Pointer Cancellation (A) — leaving button MUST cancel dwell
+- `2.4.7` Focus Visible (AA) and `2.4.13` Focus Appearance (AAA) — dwell ring IS the focus indicator; its 3:1 contrast floor comes from `1.4.11` Non-text Contrast (AA)
+- `2.5.7` Dragging Movements (AA) — never require drag-and-drop; every interaction must work as single dwell selections
 - `2.1.1` Keyboard — always include keyboard fallback (Tab + Enter)
 
 ---
@@ -78,7 +83,10 @@ description: Build accessible, single-file HTML tools for students who use eye g
 <button class="dwell-btn" data-dwell-time="800"
         aria-label="Describe option here" tabindex="0">
   <div class="btn-content">
-    <img class="btn-symbol" src="" alt="symbol description" aria-hidden="true">
+    <!-- The button's aria-label carries the accessible name, so the symbol is
+         decorative: alt="" with aria-hidden="true". Omit the <img> entirely when
+         no symbol is embedded (or use a real data-URI placeholder) — src="" is invalid. -->
+    <img class="btn-symbol" src="data:image/png;base64,..." alt="" aria-hidden="true">
     <span class="btn-label">Label Text</span>
   </div>
   <div class="dwell-ring" aria-hidden="true"></div>
@@ -149,81 +157,115 @@ description: Build accessible, single-file HTML tools for students who use eye g
 
 ## 6. DwellManager Class (paste into every tool)
 
+Use pointer events when available, with mouse events as fallback — gaze drives the Windows mouse cursor. This matches the safe version in `../build-aac-student-supports/references/templates.md`.
+
 ```javascript
 class DwellManager {
   constructor(options = {}) {
     this.defaultDwellTime = options.dwellTime || 800;
-    this.tickInterval = 16;
+    // cooldownTime doubles as a brief post-dwell click-suppression window:
+    // it stops a dwell activation plus a physical click on the same button
+    // from double-activating it.
+    this.cooldownTime = options.cooldownTime || 450;
+    this.onActivate = options.onActivate || null;
+    // Audio cues are OPT-IN (default off) — some students find tones aversive.
+    this.audioCues = options.audioCues || false;
+    this.dwellOnFocus = options.dwellOnFocus || false;
     this.activeButton = null;
     this.animationTimer = null;
-    this.dwellStart = null;
-    this.onActivate = options.onActivate || null;
+    this.dwellStart = 0;
     this.cooldownActive = false;
-    this.cooldownTime = options.cooldownTime || 400;
+    this.boundButtons = new WeakSet();   // attach() never double-binds a button
+    this.exitRequired = new WeakSet();   // gaze must leave a button before it re-arms
     this.audioContext = null;
   }
 
   attach(buttons, callback) {
-    this.onActivate = callback || this.onActivate;
-    buttons.forEach(button => {
-      button.addEventListener('mouseenter', (e) => this.handleEnter(e.currentTarget));
-      button.addEventListener('pointerenter', (e) => this.handleEnter(e.currentTarget));
-      button.addEventListener('mouseleave', (e) => this.handleLeave(e.currentTarget));
-      button.addEventListener('pointerleave', (e) => this.handleLeave(e.currentTarget));
-      button.addEventListener('click', (e) => this.handleClick(e.currentTarget));
-      button.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.activate(e.currentTarget); }
+    if (callback) this.onActivate = callback;
+    Array.from(buttons).forEach((button) => {
+      if (this.boundButtons.has(button)) return;
+      this.boundButtons.add(button);
+
+      const enterEvent = window.PointerEvent ? 'pointerenter' : 'mouseenter';
+      const leaveEvent = window.PointerEvent ? 'pointerleave' : 'mouseleave';
+      button.addEventListener(enterEvent, () => this.handleEnter(button));
+      button.addEventListener(leaveEvent, () => this.handleLeave(button));
+
+      if (this.dwellOnFocus) {
+        button.addEventListener('focus', () => this.handleEnter(button));
+        button.addEventListener('blur', () => this.handleLeave(button));
+      }
+
+      // Plain click listener on a native <button>: Enter/Space already fire
+      // click, so no custom Enter/Space keydown handler is needed — and
+      // synthesised assistive-technology clicks carry event.detail === 0,
+      // so do NOT guard on event.detail.
+      button.addEventListener('click', () => this.activate(button, 'click'));
+
+      // Escape cancels an in-progress dwell.
+      button.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') this.cancel(button);
       });
     });
   }
 
   handleEnter(button) {
-    if (this.activeButton || this.cooldownActive) return;
+    // No cooldownActive check here: blocking handleEnter during the
+    // post-activation cooldown silently swallows the next dwell (the gaze
+    // is already on the new button, so no re-enter event ever comes).
+    // activate() keeps the check, which is enough to stop double-firing.
+    if (button.disabled || this.activeButton || this.exitRequired.has(button)) return;
     this.activeButton = button;
     this.dwellStart = performance.now();
-    const dwellTime = parseInt(button.dataset.dwellTime) || this.defaultDwellTime;
     button.classList.add('is-dwelling');
-    this._beep(440, 0.05, 0.05);
+    this.tone(440, 0.025, 0.04);
+
+    const dwellTime = Number.parseInt(button.dataset.dwellTime, 10) || this.defaultDwellTime;
     const animate = (timestamp) => {
-      if (!this.activeButton || this.activeButton !== button) return;
-      const progress = Math.min((timestamp - this.dwellStart) / dwellTime, 1.0);
+      if (this.activeButton !== button) return;
+      const progress = Math.min((timestamp - this.dwellStart) / dwellTime, 1);
       this.updateRing(button, progress);
-      if (progress >= 1.0) { this.activate(button); }
-      else { this.animationTimer = requestAnimationFrame(animate); }
+      if (progress >= 1) this.activate(button, 'dwell');
+      else this.animationTimer = window.requestAnimationFrame(animate);
     };
-    this.animationTimer = requestAnimationFrame(animate);
+
+    this.animationTimer = window.requestAnimationFrame(animate);
   }
 
   handleLeave(button) {
-    if (this.activeButton !== button) return;
-    this.cancelDwell(button);
+    this.exitRequired.delete(button);
+    if (this.activeButton === button) this.cancel(button);
   }
 
-  handleClick(button) {
-    if (!this.cooldownActive) this.activate(button);
-  }
-
-  activate(button) {
-    if (this.animationTimer) { cancelAnimationFrame(this.animationTimer); this.animationTimer = null; }
+  activate(button, method = 'manual') {
+    if (button.disabled || this.cooldownActive) return;
+    if (this.animationTimer) window.cancelAnimationFrame(this.animationTimer);
+    this.animationTimer = null;
+    this.activeButton = null;
+    this.cooldownActive = true;
+    this.exitRequired.add(button);
     button.classList.remove('is-dwelling');
     button.classList.add('dwell-complete');
-    this._beep(660, 0.15, 0.1);
-    this.cooldownActive = true;
-    this.activeButton = null;
-    setTimeout(() => {
+    this.updateRing(button, 1);
+    this.tone(660, 0.035, 0.08);
+
+    window.setTimeout(() => {
       button.classList.remove('dwell-complete');
       this.resetRing(button);
-      if (this.onActivate) this.onActivate(button);
-      setTimeout(() => { this.cooldownActive = false; }, this.cooldownTime);
-    }, 200);
+      if (this.onActivate) this.onActivate(button, method);
+      window.setTimeout(() => {
+        this.cooldownActive = false;
+      }, this.cooldownTime);
+    }, 180);
   }
 
-  cancelDwell(button) {
-    if (this.animationTimer) { cancelAnimationFrame(this.animationTimer); this.animationTimer = null; }
+  cancel(button) {
+    if (this.animationTimer) window.cancelAnimationFrame(this.animationTimer);
+    this.animationTimer = null;
+    this.activeButton = null;
+    this.dwellStart = 0;
     button.classList.remove('is-dwelling', 'dwell-complete');
     this.resetRing(button);
-    this.activeButton = null;
-    this.dwellStart = null;
   }
 
   updateRing(button, progress) {
@@ -241,15 +283,21 @@ class DwellManager {
 
   setDwellTime(ms) { this.defaultDwellTime = ms; }
 
-  _beep(frequency, volume, duration) {
+  tone(frequency, volume, duration) {
+    if (!this.audioCues) return;
     try {
-      if (!this.audioContext) this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) return;
+      if (!this.audioContext) this.audioContext = new AudioContextClass();
       const osc = this.audioContext.createOscillator();
       const gain = this.audioContext.createGain();
-      osc.connect(gain); gain.connect(this.audioContext.destination);
-      osc.frequency.value = frequency; gain.gain.value = volume;
-      osc.start(); osc.stop(this.audioContext.currentTime + duration);
-    } catch(e) {}
+      osc.connect(gain);
+      gain.connect(this.audioContext.destination);
+      osc.frequency.value = frequency;
+      gain.gain.value = volume;
+      osc.start();
+      osc.stop(this.audioContext.currentTime + duration);
+    } catch (error) {}
   }
 }
 ```
@@ -333,19 +381,39 @@ class DwellManager {
 
 Always add a confirmation modal for quiz answers to prevent accidental wrong answers.
 
+The modal needs `role="dialog"` and `aria-modal="true"`, and exactly ONE confirm DwellManager created once at startup. Never construct a new DwellManager inside `showConfirmation()` — each call would stack another listener set on the confirm buttons, and the stale `onConfirm` closures re-fire on later confirmations (question 1's callback runs again when confirming question 2).
+
 ```javascript
-// Pattern: dwell selects → show modal → dwell Yes/No → process result
+// Pattern: dwell selects → show modal → dwell Yes/No → process result.
+// ONE manager + ONE pending callback, attached ONCE at startup.
+let pendingConfirm = null;
+let lastFocus = null;
+const confirmDwell = new DwellManager({ dwellTime: 600 });
+confirmDwell.attach(document.querySelectorAll('.confirm-btn'), (btn) => {
+  const action = pendingConfirm;
+  closeConfirmation();
+  if (btn.dataset.confirm === 'yes' && action) action();
+});
+
 function showConfirmation(label, onConfirm) {
+  pendingConfirm = onConfirm;             // overwrite, never stack
+  lastFocus = document.activeElement;
   document.getElementById('confirmLabel').textContent = label;
   document.getElementById('confirmModal').classList.add('visible');
-  
-  // Re-attach dwell to confirm buttons with shorter time
-  const confirmDwell = new DwellManager({ dwellTime: 600 });
-  confirmDwell.attach(document.querySelectorAll('.confirm-btn'), (btn) => {
-    document.getElementById('confirmModal').classList.remove('visible');
-    if (btn.dataset.confirm === 'yes') onConfirm();
-  });
+  document.querySelector('.confirm-btn[data-confirm="yes"]').focus();
 }
+
+function closeConfirmation() {
+  pendingConfirm = null;
+  document.getElementById('confirmModal').classList.remove('visible');
+  if (lastFocus) lastFocus.focus();
+}
+
+// Escape cancels; ignore background board activations while the modal is open
+// (guard your board's activate path on the modal's .visible state).
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') closeConfirmation();
+});
 ```
 
 ---

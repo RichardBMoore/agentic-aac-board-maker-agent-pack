@@ -46,7 +46,10 @@ The IR prevents a common failure mode: turning a lesson topic into a pretty noun
           "function": "repair",
           "spokenText": "Help",
           "searchTerm": "help",
-          "actions": ["speak", "log"]
+          "actions": [
+            { "type": "speak-text" },
+            { "type": "log-attempt" }
+          ]
         }
       ]
     }
@@ -104,6 +107,8 @@ The IR prevents a common failure mode: turning a lesson topic into a pretty noun
 }
 ```
 
+The string shorthands `"speak"` and `"log"` are still accepted in `actions`; the renderer translates them to `{ "type": "speak-text" }` and `{ "type": "log-attempt" }`. Prefer the dict forms in new boards.
+
 ## Controlled Values
 
 ### Access Profiles
@@ -118,6 +123,7 @@ The IR prevents a common failure mode: turning a lesson topic into a pretty noun
 - `keyboard`
 - `mixed-access`
 - `partner-assisted-scanning`
+- `unspecified`
 
 ### Button Roles
 
@@ -154,13 +160,14 @@ Avoid outputs where every button is only `answer` or `label`.
 
 ## Access-Density Rules
 
-Use these as validation defaults:
+Use these as validation defaults. Density is counted as actual buttons per page, not declared grid cells (a 4x4 grid holding 8 buttons counts as 8).
 
-- `eye-gaze-dwell`: 2x2, 2x3, or 3x3 by default; 4x4 only if the prompt says the student/team has tested dense gaze access.
-- `single-switch`: 2x2 or 3x3 first; larger grids need row-column scanning and a clear reason.
+- `eye-gaze-dwell` / `mouse-dwell` profile: 2x2, 2x3, or 3x3 by default. More than 9 buttons on a page is a validation FAILURE unless `denseGazeTested` is boolean `true` (string values like `"yes"` are treated as untested and trigger a warning).
+- `eye-gaze-dwell` / `mouse-dwell` profile: `minimumTargetSizePx` is REQUIRED and must be at least 120; prefer 200 px+ per gaze-interface research.
+- `single-switch` / `two-switch`: 2x2 or 3x3 first; larger grids need row-column scanning and a clear reason. More than 9 buttons on a page is a validator WARNING (confirm scan fatigue and pattern), not a failure.
 - `partner-assisted-print`: keep scan order explicit and include partner script.
 - `direct-selection`: 3x3 default; 4x4 acceptable for confident direct selectors.
-- Intended-access gaze: if `eye-gaze-dwell` or `mouse-dwell` appears in `access.intended` under any profile (including `mixed-access`), the same nine-target default applies. Prefer multiple calm pages with `navigation` buttons over one dense grid. The validator warns when such a board has a page over nine targets without `denseGazeTested`.
+- Intended-access gaze: if `eye-gaze-dwell` or `mouse-dwell` appears in `access.intended` under any profile (including `mixed-access`), the same nine-target default applies. Prefer multiple calm pages with `navigation` buttons over one dense grid. The validator warns when such a board has a page over nine targets without `denseGazeTested: true`.
 
 ## Renderer Mapping
 
@@ -222,7 +229,16 @@ Sentence builders should actually assemble a sentence, not speak isolated words.
 - A Speak control reads the whole bar with `{ "type": "speak-message" }`.
 - Undo and clear use `{ "type": "remove-last-word" }` and `{ "type": "clear-message" }`.
 
-`messageBar` and `navigation` are optional design metadata: the validator ignores them and the single-file HTML renderer is responsible for the live behaviour. See `generated/curriculum-sentence-builder/` for a worked two-page example.
+`messageBar` and `navigation` are optional design metadata; the single-file HTML renderer is responsible for the live behaviour. Since 0.4.0 the validator does check them structurally: `navigate-page` actions must carry a `targetPageId` naming a real page (failure), navigation-role buttons without a navigation action warn, and a declared `messageBar` without `add-to-message`/`speak-message` actions (or vice versa) warns. See `generated/curriculum-sentence-builder/` for a worked two-page example.
+
+## Validator And Renderer Rules Added In 0.4.0
+
+- Duplicate page ids and board-wide duplicate button ids are failures.
+- `denseGazeTested` must be boolean `true` to lift the 9-target gaze density limit; truthy strings are treated as untested (with a warning).
+- Eye-gaze/mouse-dwell profiles must declare a numeric `minimumTargetSizePx` of at least 120 (prefer 200+ per gaze-interface research); a missing or zero value is a failure.
+- Declared `communicationFunctions` that no button realises (and vice versa) warn, keeping board metadata honest.
+- The renderer preserves per-button `style`/`font` (merged over defaults) and a distinct `audioCue`, emits both `targetPageId` and `pageId` on `navigate-page`, accepts `"speak"`/`"log"` string action shorthands, defaults `minimumTargetSizePx` to 120 for dwell profiles, and honours `SOURCE_DATE_EPOCH` for reproducible output.
+- `scripts/render_obf.py` renders the IR to Open Board Format — `.obf` for single-page boards, `.obz` (zip with `manifest.json`) for multi-page — importable by CoughDrop, Cboard, AsTeRICS Grid, OptiKey, PiCom, and Pasco. Navigation maps to `load_board`, message-bar actions map to `:speak`/`:clear`/`:backspace`, ARASAAC `symbolId` values become per-image entries with CC BY-NC-SA license blocks, and unsupported settings travel as `ext_aac_*` attributes. Embed symbol data before offline school use.
 
 ## Powerhouse Metadata
 

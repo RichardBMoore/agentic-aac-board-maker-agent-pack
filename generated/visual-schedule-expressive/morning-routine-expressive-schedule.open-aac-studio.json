@@ -4,8 +4,8 @@
   "id": "morning-routine-expressive-schedule",
   "name": "Morning Routine Expressive Visual Schedule",
   "type": "interactive",
-  "created": "2026-05-26T10:53:45.150070Z",
-  "modified": "2026-05-26T10:53:45.150070Z",
+  "created": "2026-06-10T11:43:15.144081Z",
+  "modified": "2026-06-10T11:43:15.144081Z",
   "settings": {
     "orientation": "landscape",
     "width": 1024,
@@ -70,7 +70,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -120,7 +120,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -170,7 +170,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -220,7 +220,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -270,7 +270,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -320,7 +320,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -370,7 +370,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -420,7 +420,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -470,7 +470,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -509,12 +509,11 @@
     "modeling": "Point to schedule steps as they happen and model expressive messages, especially Wait, Help please, Change and Finished."
   },
   "communicationFunctions": [
-    "sequence",
-    "request",
-    "repair",
-    "comment",
+    "ask",
     "refuse",
-    "regulate-rest"
+    "regulate-rest",
+    "repair",
+    "sequence"
   ],
   "metadata": {
     "tags": [
@@ -533,12 +532,11 @@
     "sourceIrSchemaVersion": "0.3.0",
     "accessProfile": "mixed-access",
     "communicationFunctions": [
-      "sequence",
-      "request",
-      "repair",
-      "comment",
+      "ask",
       "refuse",
-      "regulate-rest"
+      "regulate-rest",
+      "repair",
+      "sequence"
     ],
     "ir": {
       "accessProfile": "mixed-access",

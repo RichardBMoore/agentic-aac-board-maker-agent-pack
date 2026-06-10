@@ -32,7 +32,7 @@ Rules:
 - Prefer 2x2, 2x3, 3x3; avoid dense 4x4 unless tested.
 - Target floor: 120 px; 150–200 px for small boards when screen allows.
 - Gap: 20 px where practical.
-- Dwell default: 1000–1200 ms; 1500 ms for accidental activation risk; 600–800 ms only for confident users.
+- Dwell: start 800-1200 ms (800 ms matches the PRC-Saltillo NuVoice factory default for Accent eye tracking: https://documentation.prc-saltillo.com/docs/calibrate-and-set-up-eye-tracking-in-nuvoice-1). Use 1000-1500 ms when accidental activation is a risk; below 800 ms only for confident, experienced gaze users; outside 500-1500 ms is a team/SLP decision. Expose dwell time as a teacher-adjustable control where practical. The eyegaze-dwell-html skill owns the full dwell rules.
 - Show visible dwell progress.
 - Cancel immediately on pointer leave/blur.
 - Prevent repeat firing while gaze stays on one target.

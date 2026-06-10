@@ -1,0 +1,170 @@
+{
+  "format": "open-board-0.1",
+  "id": "page-main",
+  "locale": "en",
+  "name": "Main",
+  "buttons": [
+    {
+      "id": "btn-help",
+      "label": "Help",
+      "vocalization": "Help please",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-help-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "repair",
+      "ext_aac_function": "repair"
+    },
+    {
+      "id": "btn-stop",
+      "label": "Stop",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-stop-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "repair",
+      "ext_aac_function": "refuse"
+    },
+    {
+      "id": "btn-different",
+      "label": "Different",
+      "vocalization": "Different please",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-different-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "repair",
+      "ext_aac_function": "repair"
+    },
+    {
+      "id": "btn-finished",
+      "label": "Finished",
+      "vocalization": "I am finished",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-finished-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "repair",
+      "ext_aac_function": "regulate-rest"
+    },
+    {
+      "id": "btn-choice-a",
+      "label": "Choice A",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-choice-a-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "fringe",
+      "ext_aac_function": "choose"
+    },
+    {
+      "id": "btn-choice-b",
+      "label": "Choice B",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-choice-b-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "fringe",
+      "ext_aac_function": "choose"
+    },
+    {
+      "id": "btn-yes",
+      "label": "Yes",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-yes-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "core",
+      "ext_aac_function": "answer"
+    },
+    {
+      "id": "btn-no",
+      "label": "No",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-no-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "core",
+      "ext_aac_function": "answer"
+    },
+    {
+      "id": "btn-more-time",
+      "label": "More time",
+      "vocalization": "I need more time",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-more-time-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "repair",
+      "ext_aac_function": "regulate-rest"
+    }
+  ],
+  "grid": {
+    "rows": 3,
+    "columns": 3,
+    "order": [
+      [
+        "btn-help",
+        "btn-stop",
+        "btn-different"
+      ],
+      [
+        "btn-finished",
+        "btn-choice-a",
+        "btn-choice-b"
+      ],
+      [
+        "btn-yes",
+        "btn-no",
+        "btn-more-time"
+      ]
+    ]
+  },
+  "images": [],
+  "sounds": [],
+  "license": {
+    "type": "CC BY-NC-SA",
+    "copyright_notice_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+    "source_url": "https://arasaac.org",
+    "author_name": "Sergio Palao / Government of Aragon (ARASAAC)",
+    "author_url": "https://arasaac.org"
+  },
+  "ext_aac_source": {
+    "generatedFrom": "agentic-aac-board-ir",
+    "irId": "partner-assisted-scanning-print-board",
+    "irSchemaVersion": "0.3.0"
+  },
+  "ext_aac_access": {
+    "profile": "partner-assisted-scanning",
+    "dwellTimeMs": null,
+    "minimumTargetSizePx": 132
+  },
+  "description_html": "A printable partner-assisted scanning board with clear scan order, wait/confirm script, help, stop, different, finished and choice messages."
+}

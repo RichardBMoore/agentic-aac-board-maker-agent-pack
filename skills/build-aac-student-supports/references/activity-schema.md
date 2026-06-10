@@ -82,6 +82,7 @@ Common actions:
 - `speak-label`: Speak the button label.
 - `speak-text`: Speak custom text.
 - `log-attempt`: Store a minimal session row.
+- `add-to-message`, `speak-message`, `remove-last-word`, `clear-message` — message-bar accumulator for sentence-builder boards (player support added in 0.4.1; the renderer and OBF export already map them).
 - `next-page`: Move to next page.
 - `previous-page`: Move to previous page.
 - `navigate-page`: Go to a page ID.

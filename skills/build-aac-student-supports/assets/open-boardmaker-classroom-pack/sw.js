@@ -41,6 +41,9 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+  // Only runtime-cache same-origin requests: opaque cross-origin responses
+  // (e.g. ARASAAC pictograms) cost ~7 MB of quota each in Chromium.
+  if (new URL(event.request.url).origin !== self.location.origin) return;
   event.respondWith(
     caches.match(event.request).then((cached) => {
       if (cached && event.request.cache !== "no-store") return cached;

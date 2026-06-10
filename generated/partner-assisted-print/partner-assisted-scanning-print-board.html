@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Partner-Assisted Scanning Print Board</title>
 <style>
-  :root { --bg:#f7fbff; --ink:#102033; --panel:#ffffff; --focus:#003f8f; --accent:#0b6fdd; --repair:#7a1f1f; --shadow:0 10px 30px rgba(16,32,51,.12); --dwell-ms:1200ms; }
+  :root { --bg:#f7fbff; --ink:#102033; --panel:#ffffff; --focus:#003f8f; --accent:#0b6fdd; --repair:#7a1f1f; --shadow:0 10px 30px rgba(16,32,51,.12); }
   * { box-sizing:border-box; }
   body { margin:0; min-height:100vh; min-height:100dvh; font-family:Verdana, Arial, sans-serif; background:var(--bg); color:var(--ink); display:grid; grid-template-rows:auto minmax(0,1fr) auto auto; }
   header { padding:12px 24px 8px; text-align:center; }
@@ -13,7 +13,7 @@
   header p { margin:.1rem auto; max-width:1000px; font-size:clamp(.95rem,1.2vw,1.12rem); }
   main { min-height:0; display:grid; place-items:center; padding:8px 24px 10px; }
   .board { width:min(1180px,100%); min-height:min(56vh,540px); display:grid; grid-template-columns:repeat(3, minmax(132px,1fr)); grid-template-rows:repeat(3, minmax(132px,1fr)); gap:18px; }
-  .dwell-btn { min-width:132px; min-height:132px; }
+  .board-btn { min-width:132px; min-height:132px; }
   .aac-button { position:relative; overflow:hidden; border:5px solid #17212b; border-radius:24px; background:var(--fill,#fff); color:var(--ink); box-shadow:var(--shadow); padding:16px 14px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.35rem; cursor:pointer; touch-action:manipulation; text-align:center; }
   .aac-button.repair { border-style:dashed; }
   .aac-button.evidence { border-color:#365314; }
@@ -21,11 +21,8 @@
   .scan { position:absolute; top:8px; left:10px; width:30px; height:30px; border:2px solid #17212b; border-radius:999px; display:grid; place-items:center; font-weight:800; background:#fff; }
   .label { font-size:clamp(1.35rem,2.8vw,2.65rem); line-height:1.05; font-weight:800; }
   .spoken { font-size:clamp(.82rem,1.1vw,1.1rem); opacity:.86; line-height:1.25; }
-  .aac-button:focus-visible, .aac-button.is-dwelling { outline:8px solid var(--focus); outline-offset:6px; transform:translateY(-2px); }
+  .aac-button:focus-visible { outline:8px solid var(--focus); outline-offset:6px; transform:translateY(-2px); }
   .aac-button.activated { outline:10px solid #087f23; }
-  .dwell-progress { position:absolute; left:0; bottom:0; height:14px; width:0; background:linear-gradient(90deg,#0b6fdd,#22a06b); transition:none; }
-  .aac-button.is-dwelling .dwell-progress { animation:dwellFill var(--dwell-ms) linear forwards; }
-  @keyframes dwellFill { from { width:0; } to { width:100%; } }
   .controls { display:flex; justify-content:center; gap:16px; padding:0 24px 12px; flex-wrap:wrap; }
   .control { font-size:1.05rem; min-height:54px; padding:10px 18px; border:3px solid #17212b; border-radius:16px; background:#fff; font-weight:700; }
   .last-message { min-width:min(720px,90vw); text-align:center; font-size:1.15rem; font-weight:700; }
@@ -34,8 +31,8 @@
   footer { font-size:.86rem; padding:8px 16px 14px; text-align:center; }
   @media (max-width:760px) { body { display:block; } .board { grid-template-columns:1fr; grid-template-rows:none; } .aac-button { min-height:132px; } }
   @media (prefers-reduced-motion:reduce) { .aac-button { transition:none; } }
-  @media (forced-colors:active) { .aac-button,.control { border:4px solid ButtonText; background:Canvas; color:ButtonText; forced-color-adjust:auto; } .aac-button:focus-visible,.aac-button.is-dwelling { outline:6px solid Highlight; } .dwell-progress { background:Highlight; } }
-  @media print { body { display:block; background:#fff; } header, main, footer { padding:8mm; } .board { display:grid; grid-template-columns:repeat(3,1fr); gap:5mm; min-height:auto; } .aac-button { min-height:34mm; box-shadow:none; break-inside:avoid; border:2.5pt solid #000; } .controls,.dwell-progress { display:none !important; } details.teacher-notes { page-break-before:always; } .spoken { color:#000; } }
+  @media (forced-colors:active) { .aac-button,.control { border:4px solid ButtonText; background:Canvas; color:ButtonText; forced-color-adjust:auto; } .aac-button:focus-visible { outline:6px solid Highlight; } }
+  @media print { body { display:block; background:#fff; } header, main, footer { padding:8mm; } .board { display:grid; grid-template-columns:repeat(3,1fr); gap:5mm; min-height:auto; } .aac-button { min-height:34mm; box-shadow:none; break-inside:avoid; border:2.5pt solid #000; } .controls { display:none !important; } details.teacher-notes { page-break-before:always; } .spoken { color:#000; } }
 </style>
 </head>
 <body>
@@ -46,63 +43,55 @@
 </header>
 <main>
   <section class="board" aria-label="AAC communication board">
-      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" aria-label="Help: Help please" data-speak="Help please" data-label="Help">
+      <button class="aac-button board-btn repair" style="--fill:#FFFFFF" aria-label="Help: Help please" data-speak="Help please" data-label="Help">
         <span class="scan" aria-hidden="true">1</span>
         <span class="label">Help</span>
         <span class="spoken">Help please</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
       </button>
-      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" aria-label="Stop: Stop" data-speak="Stop" data-label="Stop">
+      <button class="aac-button board-btn repair" style="--fill:#FFFFFF" aria-label="Stop: Stop" data-speak="Stop" data-label="Stop">
         <span class="scan" aria-hidden="true">2</span>
         <span class="label">Stop</span>
         <span class="spoken">Stop</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
       </button>
-      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" aria-label="Different: Different please" data-speak="Different please" data-label="Different">
+      <button class="aac-button board-btn repair" style="--fill:#FFFFFF" aria-label="Different: Different please" data-speak="Different please" data-label="Different">
         <span class="scan" aria-hidden="true">3</span>
         <span class="label">Different</span>
         <span class="spoken">Different please</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
       </button>
-      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" aria-label="Finished: I am finished" data-speak="I am finished" data-label="Finished">
+      <button class="aac-button board-btn repair" style="--fill:#FFFFFF" aria-label="Finished: I am finished" data-speak="I am finished" data-label="Finished">
         <span class="scan" aria-hidden="true">4</span>
         <span class="label">Finished</span>
         <span class="spoken">I am finished</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
       </button>
-      <button class="aac-button dwell-btn fringe" style="--fill:#FFFFFF" aria-label="Choice A: Choice A" data-speak="Choice A" data-label="Choice A">
+      <button class="aac-button board-btn fringe" style="--fill:#FFFFFF" aria-label="Choice A: Choice A" data-speak="Choice A" data-label="Choice A">
         <span class="scan" aria-hidden="true">5</span>
         <span class="label">Choice A</span>
         <span class="spoken">Choice A</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
       </button>
-      <button class="aac-button dwell-btn fringe" style="--fill:#FFFFFF" aria-label="Choice B: Choice B" data-speak="Choice B" data-label="Choice B">
+      <button class="aac-button board-btn fringe" style="--fill:#FFFFFF" aria-label="Choice B: Choice B" data-speak="Choice B" data-label="Choice B">
         <span class="scan" aria-hidden="true">6</span>
         <span class="label">Choice B</span>
         <span class="spoken">Choice B</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
       </button>
-      <button class="aac-button dwell-btn core" style="--fill:#FFFFFF" aria-label="Yes: Yes" data-speak="Yes" data-label="Yes">
+      <button class="aac-button board-btn core" style="--fill:#FFFFFF" aria-label="Yes: Yes" data-speak="Yes" data-label="Yes">
         <span class="scan" aria-hidden="true">7</span>
         <span class="label">Yes</span>
         <span class="spoken">Yes</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
       </button>
-      <button class="aac-button dwell-btn core" style="--fill:#FFFFFF" aria-label="No: No" data-speak="No" data-label="No">
+      <button class="aac-button board-btn core" style="--fill:#FFFFFF" aria-label="No: No" data-speak="No" data-label="No">
         <span class="scan" aria-hidden="true">8</span>
         <span class="label">No</span>
         <span class="spoken">No</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
       </button>
-      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" aria-label="More time: I need more time" data-speak="I need more time" data-label="More time">
+      <button class="aac-button board-btn repair" style="--fill:#FFFFFF" aria-label="More time: I need more time" data-speak="I need more time" data-label="More time">
         <span class="scan" aria-hidden="true">9</span>
         <span class="label">More time</span>
         <span class="spoken">I need more time</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
       </button>
   </section>
 </main>
 <section class="controls" aria-label="Speech and status controls">
+  <button class="control" id="soundCheck" type="button" aria-label="Sound check">🔊 Sound check</button>
   <button class="control" id="stopSpeech" type="button" aria-label="Stop speech">Stop speech</button>
   <div class="last-message" id="lastMessage" role="status" aria-live="polite">Ready</div>
 </section>
@@ -111,6 +100,7 @@
   <p><strong>Partner Script:</strong> Partner says each option slowly in numbered order, waits, watches for the agreed signal, then confirms: I saw you choose __. Is that right?</p>
   <p><strong>Scan Order:</strong> Scan left to right, top to bottom: 1 Help, 2 Stop, 3 Different, 4 Finished, 5 Choice A, 6 Choice B, 7 Yes, 8 No, 9 More time.</p>
   <p><strong>Wait Confirm:</strong> Pause long enough for the student to respond. If unsure, repeat the scan or offer Yes/No confirmation without rushing.</p>
+  <p><strong>Sound:</strong> If using the digital version aloud, press Sound check once at setup so the browser allows speech.</p>
   <p><strong>Print:</strong> Print in black and white if needed. Strong borders, large labels and numbered order are included for readability.</p>
   <p><strong>Attribution:</strong> If adding symbols, record the symbol source and licence. Text-only printing is usable without symbols.</p>
   <p><strong>Caveat:</strong> Draft classroom support only. Review with the teaching/SLP/OT team and test with the actual student, access method, device and school environment before relying on it.</p>
@@ -119,15 +109,11 @@
   Source of truth: <code>partner-assisted-scanning-print-board.ir.json</code>. Privacy: anonymous, no student data. Symbol strategy: ARASAAC search terms with text fallback; HTML uses text-only placeholders.
 </footer>
 <script>
-class DwellManager {
+class SpeakBoard {
   constructor(options) {
-    this.dwellMs = options.dwellMs;
     this.buttons = Array.from(options.buttons);
     this.lastMessage = options.lastMessage;
     this.stopSpeech = options.stopSpeech;
-    this.dwellTimer = null;
-    this.current = null;
-    this.cooldown = new WeakSet();
   }
   speak(text) {
     try {
@@ -135,63 +121,42 @@ class DwellManager {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'en-AU';
+        utterance.onerror = () => { this.lastMessage.textContent = 'Speech is blocked or unavailable. Press Sound check, then try again.'; };
         window.speechSynthesis.speak(utterance);
       }
     } catch (error) { console.warn('Speech unavailable', error); }
   }
-  clearDwell(button) {
-    if (this.dwellTimer) clearTimeout(this.dwellTimer);
-    this.dwellTimer = null;
-    if (button) button.classList.remove('is-dwelling');
-    this.current = null;
-  }
   activate(button) {
-    this.clearDwell(button);
     const text = button.dataset.speak || button.textContent.trim();
     this.lastMessage.textContent = 'Selected: ' + text;
     this.speak(text);
     button.classList.add('activated');
     setTimeout(() => button.classList.remove('activated'), 650);
-    this.cooldown.add(button);
-  }
-  startDwell(button) {
-    if (this.cooldown.has(button)) return;
-    this.clearDwell(this.current);
-    this.current = button;
-    button.classList.add('is-dwelling');
-    this.dwellTimer = setTimeout(() => this.activate(button), this.dwellMs);
   }
   bind() {
     this.buttons.forEach(button => {
-      button.addEventListener('pointerenter', () => this.startDwell(button));
-      button.addEventListener('pointerleave', () => { this.cooldown.delete(button); this.clearDwell(button); });
+      button.addEventListener('click', () => this.activate(button));
       button.addEventListener('focus', () => { this.lastMessage.textContent = 'Focus: ' + (button.dataset.label || button.textContent.trim()); });
-      button.addEventListener('blur', () => { this.cooldown.delete(button); this.clearDwell(button); });
-      button.addEventListener('click', event => { if (event.detail !== 0) this.activate(button); });
-      button.addEventListener('keydown', event => {
-        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.activate(button); }
-        if (event.key === 'Escape') this.clearDwell(button);
-      });
     });
     this.stopSpeech.addEventListener('click', () => {
       if ('speechSynthesis' in window) window.speechSynthesis.cancel();
       this.lastMessage.textContent = 'Speech stopped';
     });
     document.addEventListener('keydown', event => {
-      if (event.key === 'Escape') {
-        this.clearDwell(this.current);
-        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-      }
+      if (event.key === 'Escape' && 'speechSynthesis' in window) window.speechSynthesis.cancel();
     });
   }
 }
-const dwellManager = new DwellManager({
-  dwellMs: 1200,
+const speakBoard = new SpeakBoard({
   buttons: document.querySelectorAll('.aac-button'),
   lastMessage: document.getElementById('lastMessage'),
   stopSpeech: document.getElementById('stopSpeech')
 });
-dwellManager.bind();
+speakBoard.bind();
+document.getElementById('soundCheck').addEventListener('click', () => {
+  speakBoard.lastMessage.textContent = 'Sound is on.';
+  speakBoard.speak('Sound is on');
+});
 </script>
 </body>
 </html>

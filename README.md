@@ -1,6 +1,6 @@
 # Agentic AAC Board Maker Agent Pack
 
-Agentic AAC Board Maker is a Codex-plugin-ready skill pack for generating draft AAC boards and classroom communication resources from teacher intent.
+Agentic AAC Board Maker is a Codex- and Claude Code-ready skill pack for generating draft AAC boards and classroom communication resources from teacher intent.
 
 The project turns hidden board-making judgement into agent-readable rules: communication rights, core and fringe vocabulary, access methods, symbol strategy, curriculum/QCIA translation, privacy, offline classroom constraints, and release QA.
 
@@ -14,11 +14,13 @@ This is not "AI inside a board maker." It is a workflow for AI as the draft boar
 
 ```text
 agentic-aac-board-maker-agent-pack/
+  .claude-plugin/            Claude Code plugin manifest
   .codex-plugin/             Codex plugin manifest
   .github/workflows/         GitHub validation workflow
   generated/                 Proof-of-concept boards and regression fixtures
   scripts/                   Repository validation script
   skills/                    Skill folders exposed by the plugin
+  tests/                     Validator, renderer, and OBF unit tests
 ```
 
 The main skill is:
@@ -57,9 +59,31 @@ Render Open AAC Studio-compatible JSON from an IR file:
 python3 skills/agentic-aac-board-maker/scripts/render_open_aac_studio.py generated/qcia-community-shops/qcia-community-shops.ir.json /tmp/qcia-community-shops.open-aac-studio.json
 ```
 
-## Plugin And Standalone Use
+Export an Open Board Format board from an IR file:
 
-The repository root can act as a Codex plugin through `.codex-plugin/plugin.json`, which exposes every skill under `./skills/`.
+```sh
+python3 skills/agentic-aac-board-maker/scripts/render_obf.py generated/qcia-community-shops/qcia-community-shops.ir.json /tmp/qcia-community-shops.obf
+```
+
+Generated packs now ship `.obf`/`.obz` files importable by CoughDrop, Cboard, AsTeRICS Grid, and OptiKey.
+
+Run the unit tests:
+
+```sh
+python3 -m unittest discover -s tests
+```
+
+## Codex And Claude Code Use
+
+The repository root is the plugin folder for both supported agent hosts:
+
+- Codex reads `.codex-plugin/plugin.json`.
+- Claude Code reads `.claude-plugin/plugin.json`.
+- Both manifests expose the same shared skill folders under `./skills/`.
+
+Install or check out the whole repository folder so the manifest, skills, scripts, templates, generated examples, and tests stay together. In plugin-aware agents that namespace skills, use the pack name with the skill name, for example `$agentic-aac-board-maker:agentic-aac-board-maker` or `$agentic-aac-board-maker:eyegaze-dwell-html`.
+
+## Standalone Skill Use
 
 Each skill folder also remains usable on its own:
 

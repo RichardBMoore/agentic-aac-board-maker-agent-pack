@@ -1,0 +1,22 @@
+{
+  "name": "agentic-aac-board-maker",
+  "displayName": "Agentic AAC Board Maker",
+  "version": "0.4.1",
+  "description": "Generate evidence-informed, accessible AAC boards, differentiated classroom communication resources, eye-gaze tools, and ICP assessment supports from teacher intent.",
+  "author": {
+    "name": "Richard Moore"
+  },
+  "license": "MIT",
+  "keywords": [
+    "aac",
+    "accessibility",
+    "education",
+    "eye-gaze",
+    "switch-scanning",
+    "qcia",
+    "icp",
+    "curriculum",
+    "offline-html"
+  ],
+  "skills": "./skills/"
+}

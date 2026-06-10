@@ -4,8 +4,8 @@
   "id": "gaze-choice-class-activity",
   "name": "Choose a Class Activity",
   "type": "interactive",
-  "created": "2026-05-26T10:53:44.976725Z",
-  "modified": "2026-05-26T10:53:44.976725Z",
+  "created": "2026-06-10T11:43:14.771929Z",
+  "modified": "2026-06-10T11:43:14.771929Z",
   "settings": {
     "orientation": "landscape",
     "width": 1024,
@@ -70,7 +70,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#E8F3FF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -120,7 +120,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFF2CC",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -170,7 +170,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#E7F7E7",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -220,7 +220,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#F2E8FF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -270,7 +270,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFE6E6",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -320,7 +320,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#F4F4F4",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -359,12 +359,8 @@
     "caveat": "Draft classroom support only. Review with the teaching/SLP/OT team and test on the actual student device/access setup before relying on it."
   },
   "communicationFunctions": [
-    "initiate",
-    "request",
     "choose",
-    "repair",
-    "refuse",
-    "comment"
+    "repair"
   ],
   "metadata": {
     "tags": [
@@ -382,12 +378,8 @@
     "sourceIrSchemaVersion": "0.3.0",
     "accessProfile": "eye-gaze-dwell",
     "communicationFunctions": [
-      "initiate",
-      "request",
       "choose",
-      "repair",
-      "refuse",
-      "comment"
+      "repair"
     ],
     "ir": {
       "accessProfile": "eye-gaze-dwell",

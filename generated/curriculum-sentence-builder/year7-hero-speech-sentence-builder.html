@@ -107,7 +107,7 @@
         <span class="spoken">Next page</span>
         <span class="dwell-progress" aria-hidden="true"></span>
       </button>
-      <button class="aac-button dwell-btn sentence" style="--fill:#DDEBFF" data-action="speak-sentence" data-speak="Speak my sentence" data-label="Speak sentence" aria-label="Speak the whole sentence aloud">
+      <button class="aac-button dwell-btn sentence" style="--fill:#DDEBFF" data-action="speak-sentence" data-speak="Speak my sentence" data-label="Speak sentence" aria-label="Speak sentence aloud">
         <span class="scan" aria-hidden="true">7</span>
         <span class="label">🔊 Speak sentence</span>
         <span class="spoken">Read it aloud</span>
@@ -148,28 +148,28 @@
         <span class="spoken">helps others</span>
         <span class="dwell-progress" aria-hidden="true"></span>
       </button>
-      <button class="aac-button dwell-btn fringe" style="--fill:#FFF3D6" data-action="add" data-word="faces danger" data-speak="faces danger" data-label="faces danger" aria-label="Add to sentence: faces danger">
-        <span class="scan" aria-hidden="true">4</span>
-        <span class="label">faces danger</span>
-        <span class="spoken">faces danger</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
       <button class="aac-button dwell-btn fringe" style="--fill:#FFF3D6" data-action="add" data-word="never gives up" data-speak="never gives up" data-label="never gives up" aria-label="Add to sentence: never gives up">
-        <span class="scan" aria-hidden="true">5</span>
+        <span class="scan" aria-hidden="true">4</span>
         <span class="label">never gives up</span>
         <span class="spoken">never gives up</span>
         <span class="dwell-progress" aria-hidden="true"></span>
       </button>
       <button class="aac-button dwell-btn navigation" style="--fill:#ECECF4" data-action="nav" data-target="page-starters" data-speak="Go back to sentence starters" data-label="Sentence starters page" aria-label="Go back to the sentence starters page">
-        <span class="scan" aria-hidden="true">6</span>
+        <span class="scan" aria-hidden="true">5</span>
         <span class="label">◀ Sentence starters</span>
         <span class="spoken">Back</span>
         <span class="dwell-progress" aria-hidden="true"></span>
       </button>
-      <button class="aac-button dwell-btn sentence" style="--fill:#DDEBFF" data-action="speak-sentence" data-speak="Speak my sentence" data-label="Speak sentence" aria-label="Speak the whole sentence aloud">
-        <span class="scan" aria-hidden="true">7</span>
+      <button class="aac-button dwell-btn sentence" style="--fill:#DDEBFF" data-action="speak-sentence" data-speak="Speak my sentence" data-label="Speak sentence" aria-label="Speak sentence aloud">
+        <span class="scan" aria-hidden="true">6</span>
         <span class="label">🔊 Speak sentence</span>
         <span class="spoken">Read it aloud</span>
+        <span class="dwell-progress" aria-hidden="true"></span>
+      </button>
+      <button class="aac-button dwell-btn repair" style="--fill:#FFE6E6" data-action="undo" data-speak="Undo the last word" data-label="Undo" aria-label="Undo the last word">
+        <span class="scan" aria-hidden="true">7</span>
+        <span class="label">⌫ Undo</span>
+        <span class="spoken">Remove last word</span>
         <span class="dwell-progress" aria-hidden="true"></span>
       </button>
       <button class="aac-button dwell-btn repair" style="--fill:#FFE6E6" data-action="clear" data-speak="I want to start again" data-label="Start again" aria-label="Clear the sentence and start again">
@@ -188,7 +188,8 @@
   </section>
 </main>
 <section class="controls" aria-label="Speech and status controls">
-  <button class="control" id="stopSpeech" type="button" aria-label="Stop speech">Stop speech</button>
+  <button class="control" id="soundCheck" type="button" aria-label="Sound check">🔊 Sound check</button>
+<button class="control" id="stopSpeech" type="button" aria-label="Stop speech">Stop speech</button>
   <div class="status" id="status" role="status" aria-live="polite">Ready</div>
 </section>
 <details class="teacher-notes">
@@ -218,6 +219,7 @@ class SentenceBuilder {
     this.placeholder = this.sentenceBar.textContent.trim();
     this.words = [];
     this.dwellTimer = null;
+    this.dwellActivatedAt = new WeakMap();
     this.current = null;
     this.cooldown = new WeakSet();
   }
@@ -227,6 +229,7 @@ class SentenceBuilder {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'en-AU';
+        utterance.onerror = () => this.status('Speech is blocked or unavailable. Press Sound check, then try again.');
         window.speechSynthesis.speak(utterance);
       }
     } catch (error) { console.warn('Speech unavailable', error); }
@@ -297,12 +300,15 @@ class SentenceBuilder {
     setTimeout(() => button.classList.remove('activated'), 650);
     this.cooldown.add(button);
   }
+  recentDwellActivation(button) {
+    return performance.now() - (this.dwellActivatedAt.get(button) || -Infinity) < 800;
+  }
   startDwell(button) {
     if (this.cooldown.has(button)) return;
     this.clearDwell(this.current);
     this.current = button;
     button.classList.add('is-dwelling');
-    this.dwellTimer = setTimeout(() => this.activate(button), this.dwellMs);
+    this.dwellTimer = setTimeout(() => { this.dwellActivatedAt.set(button, performance.now()); this.activate(button); }, this.dwellMs);
   }
   bind() {
     this.buttons.forEach(button => {
@@ -310,9 +316,8 @@ class SentenceBuilder {
       button.addEventListener('pointerleave', () => { this.cooldown.delete(button); this.clearDwell(button); });
       button.addEventListener('focus', () => { this.status('Focus: ' + (button.dataset.label || button.textContent.trim())); });
       button.addEventListener('blur', () => { this.cooldown.delete(button); this.clearDwell(button); });
-      button.addEventListener('click', event => { if (event.detail !== 0) this.activate(button); });
+      button.addEventListener('click', () => { if (this.recentDwellActivation(button)) return; this.activate(button); });
       button.addEventListener('keydown', event => {
-        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.activate(button); }
         if (event.key === 'Escape') this.clearDwell(button);
       });
     });
@@ -338,6 +343,10 @@ const sentenceBuilder = new SentenceBuilder({
   stopSpeech: document.getElementById('stopSpeech')
 });
 sentenceBuilder.bind();
+document.getElementById('soundCheck').addEventListener('click', () => {
+  sentenceBuilder.status('Sound is on.');
+  sentenceBuilder.speak('Sound is on');
+});
 </script>
 </body>
 </html>

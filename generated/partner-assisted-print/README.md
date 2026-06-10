@@ -26,8 +26,6 @@ Generated from proof-of-concept fixture: `partner-assisted-print` / "Make a prin
 
 - Intended access: partner-assisted-scanning, print, touch, keyboard, mouse.
 - Minimum target size: 132 px.
-- Dwell default: 1200 ms.
-- Keyboard: Tab plus Enter/Space. Escape cancels dwell/speech.
 - Print: use the browser print command; the HTML includes a print stylesheet.
 
 ## Communication purpose

@@ -1,0 +1,171 @@
+{
+  "format": "open-board-0.1",
+  "id": "page-main",
+  "locale": "en",
+  "name": "Main",
+  "buttons": [
+    {
+      "id": "btn-hello",
+      "label": "Hello",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-hello-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "core",
+      "ext_aac_function": "initiate"
+    },
+    {
+      "id": "btn-buy",
+      "label": "I want to buy this",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-buy-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "fringe",
+      "ext_aac_function": "request"
+    },
+    {
+      "id": "btn-pay",
+      "label": "Pay now",
+      "vocalization": "I am ready to pay",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-pay-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "fringe",
+      "ext_aac_function": "request"
+    },
+    {
+      "id": "btn-where",
+      "label": "Where is it?",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-where-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "question",
+      "ext_aac_function": "ask"
+    },
+    {
+      "id": "btn-choose",
+      "label": "I choose this",
+      "vocalization": "I choose this one",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-choose-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "fringe",
+      "ext_aac_function": "choose"
+    },
+    {
+      "id": "btn-too-much",
+      "label": "Too expensive",
+      "vocalization": "That is too expensive",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-too-much-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "comment",
+      "ext_aac_function": "comment"
+    },
+    {
+      "id": "btn-help",
+      "label": "Help please",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-help-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "repair",
+      "ext_aac_function": "repair"
+    },
+    {
+      "id": "btn-stop",
+      "label": "Stop / wait",
+      "vocalization": "Stop, please wait",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-stop-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "repair",
+      "ext_aac_function": "refuse"
+    },
+    {
+      "id": "btn-finished",
+      "label": "Finished",
+      "vocalization": "I am finished",
+      "background_color": "rgb(255, 255, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-finished-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "repair",
+      "ext_aac_function": "regulate-rest"
+    }
+  ],
+  "grid": {
+    "rows": 3,
+    "columns": 3,
+    "order": [
+      [
+        "btn-hello",
+        "btn-buy",
+        "btn-pay"
+      ],
+      [
+        "btn-where",
+        "btn-choose",
+        "btn-too-much"
+      ],
+      [
+        "btn-help",
+        "btn-stop",
+        "btn-finished"
+      ]
+    ]
+  },
+  "images": [],
+  "sounds": [],
+  "license": {
+    "type": "CC BY-NC-SA",
+    "copyright_notice_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+    "source_url": "https://arasaac.org",
+    "author_name": "Sergio Palao / Government of Aragon (ARASAAC)",
+    "author_url": "https://arasaac.org"
+  },
+  "ext_aac_source": {
+    "generatedFrom": "agentic-aac-board-ir",
+    "irId": "qcia-community-shops",
+    "irSchemaVersion": "0.3.0"
+  },
+  "ext_aac_access": {
+    "profile": "mixed-access",
+    "dwellTimeMs": 1100,
+    "minimumTargetSizePx": 132
+  },
+  "description_html": "A community access AAC board that supports practical shopping communication, safety/help language, and teacher evidence notes for QCIA-style participation."
+}

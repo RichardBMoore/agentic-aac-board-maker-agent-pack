@@ -2,6 +2,6 @@ interface:
   display_name: "Open AAC Studio Board Builder"
   short_description: "Create Open AAC Studio board JSON"
   brand_color: "#00843D"
-  default_prompt: "Use $open-aac-studio-board-builder to create Open AAC Studio JSON for this board."
+  default_prompt: "Create Open AAC Studio JSON for this board."
 policy:
   allow_implicit_invocation: true

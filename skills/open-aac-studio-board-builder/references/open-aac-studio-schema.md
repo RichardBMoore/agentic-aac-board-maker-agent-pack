@@ -2,6 +2,8 @@
 
 These notes describe the practical activity JSON shape used by Richard's Open AAC Studio / Open Boardmaker prototype. The source of truth is the running app, especially `js/data.js`, `js/editor.js`, `js/player.js`, and `templates/*.json`.
 
+> "Open AAC Studio" is Richard's private prototype, not a public app, and is unrelated to the OpenAAC organisation (github.com/open-aac) that maintains the Open Board Format. This JSON loads only in the bundled classroom-pack prototype; for files other AAC apps can import (CoughDrop, Cboard, AsTeRICS Grid, OptiKey), render the IR with `render_obf.py` instead.
+
 ## Activity Object
 
 Core fields:
@@ -155,8 +157,19 @@ Common action types supported by the prototype family:
 - `conditional`
 - `play-audio`
 - `open-url`
+- `add-to-message`, `speak-message`, `remove-last-word`, `clear-message` — message-bar accumulator for sentence-builder boards (player support added in 0.4.1; the renderer passes them through and the OBF export maps them to `:speak`/`:backspace`/`:clear`)
 
 Keep actions simple in student boards. Overly clever conditional logic is harder to QA with eye gaze/switch users.
+
+## Renderer Output Fields (0.4.x)
+
+`render_open_aac_studio.py` emits everything above plus fields this doc previously omitted:
+
+- Top level: `teacherNotes`, `communicationFunctions`.
+- Page: `pattern` (the board pattern name from the IR).
+- Button: `role`, `function`, `spokenText`, and optional passthroughs `evidenceTag`, `udl`, `differentiation`, `communicationPartnerCue`. Per-button `style`/`font` from the IR are preserved, merged over the renderer defaults.
+- Metadata: `generatedFrom` ("agentic-aac-board-ir"), `sourceIrSchemaVersion`, `accessProfile`, `communicationFunctions`, and an `ir` block preserving SETT/UDL/differentiation/participation-barrier/evidence-plan/symbol-strategy design metadata.
+- Actions: when a button declares no actions the renderer's fallback emits `speak-text` (with the resolved spoken text) plus `log-attempt`, not `speak-label`. `navigate-page` actions carry BOTH `targetPageId` and `pageId` so the documented IR contract and the player agree.
 
 ## Metadata And Privacy
 

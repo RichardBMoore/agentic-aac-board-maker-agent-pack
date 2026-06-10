@@ -155,7 +155,7 @@ Use this file only when implementing a single-file dwell HTML tool. For a comple
 
 ## DwellManager
 
-Use pointer events when available. Keep mouse events as fallback because gaze drives the Windows mouse cursor. Keyboard fallback uses Enter/Space; focus dwell is optional.
+Use pointer events when available. Keep mouse events as fallback because gaze drives the Windows mouse cursor. Keyboard fallback comes free from the native button (Enter/Space fire `click`); focus dwell is optional. Never guard clicks on `event.detail` - synthesised assistive-technology clicks carry `event.detail === 0` and would be silently dropped.
 
 ```javascript
 class DwellManager {
@@ -190,21 +190,21 @@ class DwellManager {
         button.addEventListener('blur', () => this.handleLeave(button));
       }
 
-      button.addEventListener('click', (event) => {
-        if (event.detail !== 0) this.activate(button, 'click');
-      });
+      // Plain click listener on a native <button>: Enter/Space already
+      // fire click, and synthesised assistive-technology clicks carry
+      // event.detail === 0, so do NOT guard on event.detail. The
+      // cooldown check in activate() absorbs any duplicate event.
+      button.addEventListener('click', () => this.activate(button, 'click'));
 
+      // Escape cancels an in-progress dwell.
       button.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          this.activate(button, 'keyboard');
-        }
+        if (event.key === 'Escape') this.cancel(button);
       });
     });
   }
 
   handleEnter(button) {
-    if (button.disabled || this.activeButton || this.cooldownActive || this.exitRequired.has(button)) return;
+    if (button.disabled || this.activeButton || this.exitRequired.has(button)) return;
     this.activeButton = button;
     this.dwellStart = performance.now();
     button.classList.add('is-dwelling');
@@ -329,28 +329,47 @@ function stopSpeech() {
 </div>
 ```
 
+```css
+/* Required modal CSS - the snippet does not work without it. */
+.confirm-modal { position:fixed; inset:0; display:none; place-items:center; background:rgba(16,32,51,.55); z-index:50; }
+.confirm-modal.visible { display:grid; }
+.confirm-modal .confirm-card { background:#fff; border:4px solid #17212b; border-radius:20px; padding:24px; display:grid; gap:16px; justify-items:center; }
+```
+
 ```javascript
 const confirmDwell = new DwellManager({ dwellTime: 600 });
 let pendingConfirm = null;
+let lastFocus = null;
 
 confirmDwell.attach(document.querySelectorAll('.confirm-btn'), (button) => {
+  const action = pendingConfirm;           // capture before close clears it
   closeConfirmation();
-  if (button.dataset.confirm === 'yes' && pendingConfirm) pendingConfirm();
-  pendingConfirm = null;
+  if (button.dataset.confirm === 'yes' && action) action();
 });
 
 function showConfirmation(label, onConfirm) {
-  pendingConfirm = onConfirm;
+  pendingConfirm = onConfirm;              // overwrite, never stack
+  lastFocus = document.activeElement;
   document.getElementById('confirmLabel').textContent = label;
   document.getElementById('confirmModal').classList.add('visible');
   document.getElementById('confirmModal').setAttribute('aria-hidden', 'false');
+  document.querySelector('.confirm-btn[data-confirm="yes"]').focus();
   speakAU(`Choose ${label}?`);
 }
 
 function closeConfirmation() {
+  pendingConfirm = null;
   document.getElementById('confirmModal').classList.remove('visible');
   document.getElementById('confirmModal').setAttribute('aria-hidden', 'true');
+  if (lastFocus && document.contains(lastFocus)) lastFocus.focus();
+  lastFocus = null;
 }
+
+// Escape cancels; while the modal is open, guard your main board's
+// activate path with: if (modal.classList.contains('visible')) return;
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') closeConfirmation();
+});
 ```
 
 ## Layout Snippets

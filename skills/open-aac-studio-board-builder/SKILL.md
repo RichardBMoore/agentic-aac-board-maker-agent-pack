@@ -5,7 +5,7 @@ license: MIT
 metadata:
   hermes:
     tags: [aac, boardmaker, open-aac-studio, symbols, arasaac, eye-gaze, dwell, switch-scanning, qcia, australian-curriculum, offline-html, classroom]
-    related_skills: [agentic-aac-board-maker, build-aac-student-supports, eyegaze-dwell-html, classroom-access-tools, richard-school-resource-workflow]
+    related_skills: [agentic-aac-board-maker, build-aac-student-supports, eyegaze-dwell-html, icp-backwards-mapping-assessment, richard-school-resource-workflow]
 ---
 
 # Open AAC Studio Board Builder
@@ -18,9 +18,11 @@ Open AAC Studio is primarily a **research/prototype/reference artefact**: it dis
 
 The goal is not to copy Boardmaker 7's proprietary assets or PCS symbols. The goal is to distil the useful authoring pattern — fast symbol-supported educational and communication boards — into an open, local-first, classroom-ready agent workflow that can create boards quickly while preserving student voice, access, dignity, and offline reliability.
 
-The current reference prototype is usually:
+The shipped reference prototype lives inside this pack:
 
-`/Users/richardbrucemoore/Desktop/School/05-Accessibility-AAC-and-Inclusion/AAC-Tools/Open-AAC-Studio-Working/`
+`skills/build-aac-student-supports/assets/open-boardmaker-classroom-pack/`
+
+The prototype's user-facing branding is "Open AAC Studio" (historically "Open Boardmaker" — renamed to avoid the Tobii Dynavox trademark), which is why the asset folder still carries the older name.
 
 Its editor/player pattern includes grid boards, symbol search, Symbolate-style buttons, activity JSON import/export, print, a student player, dwell access, switch scanning, TTS, offline symbol caching, local library, Australian Curriculum v9 starter generation, and QCIA/goal-based board generation. Treat those features as knowledge to extract into agent workflows, not as mandatory software the user must operate.
 
@@ -96,7 +98,7 @@ A board is only finished when it is:
 6. **Set access defaults**
    - Ordinary AAC: target floor about 96 px.
    - Gaze-heavy boards: prefer 120–200 px targets and at least 20 px gaps.
-   - Dwell: start around 1000–1200 ms; use 1500 ms for accidental activation risk; avoid very fast defaults.
+   - Dwell starting range: 800–1200 ms. 800 ms matches the PRC-Saltillo NuVoice factory default for Accent eye tracking (https://documentation.prc-saltillo.com/docs/calibrate-and-set-up-eye-tracking-in-nuvoice-1). Use 1000–1500 ms when accidental activation is a risk. Below 800 ms only for confident, experienced gaze users. Outside 500–1500 ms is a team/SLP decision, not a generator default. The renderer/skeleton default of 1200 ms is the conservative default for untested students. Where practical, expose dwell time as a teacher-adjustable runtime control (2025 adaptive-dwell evidence: https://www.tandfonline.com/doi/full/10.1080/07370024.2025.2497236).
    - Switch: linear scan first; row-column for larger boards.
    - Keep DOM order, visual order, focus order, and scan order aligned.
 
@@ -117,18 +119,15 @@ Common file map:
 - `js/actions.js` — action execution: speak, log, navigation, variables, conditionals.
 - `js/symbols.js` — ARASAAC search, local/offline symbol cache, custom symbols, Symbolate helpers.
 - `js/tts.js` — speech synthesis, voice preference, stop speech.
-- `js/ai-config.js` — AI provider config, OpenAI-compatible/custom endpoint request handling.
-- `js/ai-suggest.js` — AI/fallback generation for symbols, QCIA goal boards, quiz distractors, Australian Curriculum v9 starter boards.
 - `js/file-io.js` — import/export helpers.
-- `js/sw-update.js` — update banner handling.
 - `templates/*.json` — starter activity templates.
 - `css/*.css` — editor/player/print styles.
 - `sw.js` + `manifest.webmanifest` — PWA/offline app shell.
 
-Run locally:
+Run locally (from the pack root):
 
 ```sh
-cd "/Users/richardbrucemoore/Desktop/School/05-Accessibility-AAC-and-Inclusion/AAC-Tools/Open-AAC-Studio-Working"
+cd skills/build-aac-student-supports/assets/open-boardmaker-classroom-pack
 python3 -m http.server 4173 --bind 127.0.0.1
 ```
 
@@ -215,7 +214,7 @@ Include Help, Stop/Finished, and a way to express opinion/reason if appropriate.
 
 ```text
 Create an eye-gaze/dwell-safe board.
-Maximum buttons: <N>. Dwell default: 1200ms unless specified.
+Maximum buttons: <N>. Dwell default: 1200 ms (the conservative default for untested students) unless the team specifies a value; team-set dwell normally starts in the 800–1200 ms range, with 1000–1500 ms when accidental activation is a risk, and anything outside 500–1500 ms is a team/SLP decision.
 Use large targets, minimal scrolling, predictable order, and a safe repair/cancel option.
 Return Open AAC Studio JSON and a short access QA checklist.
 ```

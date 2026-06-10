@@ -163,7 +163,8 @@
   </section>
 </main>
 <section class="controls" aria-label="Speech and status controls">
-  <button class="control" id="stopSpeech" type="button" aria-label="Stop speech">Stop speech</button>
+  <button class="control" id="soundCheck" type="button" aria-label="Sound check">🔊 Sound check</button>
+<button class="control" id="stopSpeech" type="button" aria-label="Stop speech">Stop speech</button>
   <div class="status" id="status" role="status" aria-live="polite">Ready</div>
 </section>
 <details class="teacher-notes">
@@ -190,6 +191,7 @@ class PageBoard {
     this.statusEl = options.statusEl;
     this.stopSpeech = options.stopSpeech;
     this.dwellTimer = null;
+    this.dwellActivatedAt = new WeakMap();
     this.current = null;
     this.cooldown = new WeakSet();
   }
@@ -199,6 +201,7 @@ class PageBoard {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'en-AU';
+        utterance.onerror = () => this.status('Speech is blocked or unavailable. Press Sound check, then try again.');
         window.speechSynthesis.speak(utterance);
       }
     } catch (error) { console.warn('Speech unavailable', error); }
@@ -237,12 +240,15 @@ class PageBoard {
     setTimeout(() => button.classList.remove('activated'), 650);
     this.cooldown.add(button);
   }
+  recentDwellActivation(button) {
+    return performance.now() - (this.dwellActivatedAt.get(button) || -Infinity) < 800;
+  }
   startDwell(button) {
     if (this.cooldown.has(button)) return;
     this.clearDwell(this.current);
     this.current = button;
     button.classList.add('is-dwelling');
-    this.dwellTimer = setTimeout(() => this.activate(button), this.dwellMs);
+    this.dwellTimer = setTimeout(() => { this.dwellActivatedAt.set(button, performance.now()); this.activate(button); }, this.dwellMs);
   }
   bind() {
     this.buttons.forEach(button => {
@@ -250,9 +256,8 @@ class PageBoard {
       button.addEventListener('pointerleave', () => { this.cooldown.delete(button); this.clearDwell(button); });
       button.addEventListener('focus', () => { this.status('Focus: ' + (button.dataset.label || button.textContent.trim())); });
       button.addEventListener('blur', () => { this.cooldown.delete(button); this.clearDwell(button); });
-      button.addEventListener('click', event => { if (event.detail !== 0) this.activate(button); });
+      button.addEventListener('click', () => { if (this.recentDwellActivation(button)) return; this.activate(button); });
       button.addEventListener('keydown', event => {
-        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.activate(button); }
         if (event.key === 'Escape') this.clearDwell(button);
       });
     });
@@ -277,6 +282,10 @@ const pageBoard = new PageBoard({
   stopSpeech: document.getElementById('stopSpeech')
 });
 pageBoard.bind();
+document.getElementById('soundCheck').addEventListener('click', () => {
+  pageBoard.status('Sound is on.');
+  pageBoard.speak('Sound is on');
+});
 </script>
 </body>
 </html>

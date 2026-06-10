@@ -4,8 +4,8 @@
   "id": "qcia-community-shops",
   "name": "QCIA Community Access: Going to the Shops",
   "type": "interactive",
-  "created": "2026-05-26T10:53:45.098166Z",
-  "modified": "2026-05-26T10:53:45.098166Z",
+  "created": "2026-06-10T11:43:15.048590Z",
+  "modified": "2026-06-10T11:43:15.048590Z",
   "settings": {
     "orientation": "landscape",
     "width": 1024,
@@ -70,7 +70,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -120,7 +120,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -170,7 +170,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -220,7 +220,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -270,7 +270,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -320,7 +320,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -370,7 +370,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -420,7 +420,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -470,7 +470,7 @@
             "borderWidth": 3,
             "borderStyle": "solid",
             "shape": "rounded-rect",
-            "fillColour": "#ffffff",
+            "fillColour": "#FFFFFF",
             "gradientColour": null,
             "gradientType": "none"
           },
@@ -509,13 +509,14 @@
     "modeling": "Model real community phrases before the trip and during role play: greeting, asking where something is, paying, asking for help and saying stop/wait."
   },
   "communicationFunctions": [
-    "initiate",
-    "request",
-    "choose",
     "ask",
-    "repair",
+    "choose",
+    "comment",
+    "initiate",
     "refuse",
-    "reflect"
+    "regulate-rest",
+    "repair",
+    "request"
   ],
   "metadata": {
     "tags": [
@@ -534,13 +535,14 @@
     "sourceIrSchemaVersion": "0.3.0",
     "accessProfile": "mixed-access",
     "communicationFunctions": [
-      "initiate",
-      "request",
-      "choose",
       "ask",
-      "repair",
+      "choose",
+      "comment",
+      "initiate",
       "refuse",
-      "reflect"
+      "regulate-rest",
+      "repair",
+      "request"
     ],
     "ir": {
       "accessProfile": "mixed-access",

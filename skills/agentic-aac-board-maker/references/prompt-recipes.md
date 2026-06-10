@@ -40,7 +40,7 @@ List required fixes before final output.
 
 ```text
 Generate an eye-gaze/dwell-safe AAC board for: <context>.
-Use at most <N> buttons per page. Default dwell 1200 ms.
+Use at most <N> buttons per page. Dwell: start 800-1200 ms (800 ms matches the PRC-Saltillo NuVoice factory default for Accent eye tracking); 1200 ms is the conservative default for untested students. See the eyegaze-dwell-html skill for the full dwell rules.
 Prioritise large targets, clear spacing, no scrolling in student mode, visible dwell progress, keyboard fallback, and no single-hover destructive actions.
 Include Help/Stop/Different/Finished where appropriate.
 Return a single-file HTML board plus teacher notes.

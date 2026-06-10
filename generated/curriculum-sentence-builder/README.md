@@ -29,7 +29,7 @@ This is a genuine two-page sentence builder, not a single grid of words.
 - **Sentence bar:** word buttons add to a running sentence shown at the top of the screen and speak the single word for feedback.
 - **Speak sentence:** reads the whole built sentence aloud (present on both pages).
 - **Undo / Start again:** Undo removes the last word; Start again clears the bar so the student can revise without losing agency.
-- **Two pages, nine targets each:** Page 1 is sentence starters/connectives (My hero is, I think, because, For example, and also); Page 2 is describing words (brave, kind, helps others, faces danger, never gives up). Navigation buttons cross between them, so a gaze or switch user never faces more than nine targets at once.
+- **Two pages, nine targets each:** Page 1 is sentence starters/connectives (My hero is, I think, because, For example, and also); Page 2 is describing words (brave, kind, helps others, never gives up) plus Undo, so the most recent word can be repaired on either page. Navigation buttons cross between them, so a gaze or switch user never faces more than nine targets at once.
 
 ## Access
 

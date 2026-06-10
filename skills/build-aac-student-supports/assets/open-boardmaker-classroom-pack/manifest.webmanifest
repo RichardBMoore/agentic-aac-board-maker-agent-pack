@@ -1,6 +1,6 @@
 {
-  "name": "Open Boardmaker Classroom Player",
-  "short_name": "Boardmaker",
+  "name": "Open AAC Studio Classroom Player",
+  "short_name": "AAC Studio",
   "description": "Local-first AAC board editor and classroom player.",
   "start_url": "player.html?classroom=1",
   "scope": "./",

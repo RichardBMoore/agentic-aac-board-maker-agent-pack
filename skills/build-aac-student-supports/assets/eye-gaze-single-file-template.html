@@ -388,21 +388,21 @@
             button.addEventListener('blur', () => this.handleLeave(button));
           }
 
-          button.addEventListener('click', (event) => {
-            if (event.detail !== 0) this.activate(button, 'click');
-          });
+          // Plain click listener on a native <button>: Enter/Space already
+          // fire click, and synthesised assistive-technology clicks carry
+          // event.detail === 0, so do NOT guard on event.detail. The
+          // cooldown check in activate() absorbs any duplicate event.
+          button.addEventListener('click', () => this.activate(button, 'click'));
 
+          // Escape cancels an in-progress dwell.
           button.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter' || event.key === ' ') {
-              event.preventDefault();
-              this.activate(button, 'keyboard');
-            }
+            if (event.key === 'Escape') this.cancel(button);
           });
         });
       }
 
       handleEnter(button) {
-        if (button.disabled || this.activeButton || this.cooldownActive || this.exitRequired.has(button)) return;
+        if (button.disabled || this.activeButton || this.exitRequired.has(button)) return;
         this.activeButton = button;
         this.dwellStart = performance.now();
         button.classList.add('is-dwelling');
@@ -550,24 +550,40 @@
       }
     }
 
+    let lastFocus = null;
+
     function showConfirmation(label, onConfirm) {
       pendingConfirm = onConfirm;
+      lastFocus = document.activeElement;
       confirmLabel.textContent = label;
       confirmModal.classList.add('visible');
       confirmModal.setAttribute('aria-hidden', 'false');
+      const yesButton = confirmModal.querySelector('.confirm-btn[data-confirm="yes"]');
+      if (yesButton) yesButton.focus();
       setStatus(`Confirm: ${label}`);
       speakAU(`Choose ${label}?`);
     }
 
     function closeConfirmation() {
+      pendingConfirm = null;
       confirmModal.classList.remove('visible');
       confirmModal.setAttribute('aria-hidden', 'true');
+      if (lastFocus && document.contains(lastFocus)) lastFocus.focus();
+      lastFocus = null;
     }
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && confirmModal.classList.contains('visible')) {
+        closeConfirmation();
+        setStatus('Cancelled.');
+      }
+    });
 
     renderActivity();
 
     const mainDwell = new DwellManager({ dwellTime: ACTIVITY.dwellTime });
     mainDwell.attach(document.querySelectorAll('.dwell-btn:not(.confirm-btn)'), (button) => {
+      if (confirmModal.classList.contains('visible')) return;
       if (button.dataset.action === 'stop-speech') {
         stopSpeech();
         setStatus('Speech stopped.');
@@ -578,10 +594,10 @@
 
     const confirmDwell = new DwellManager({ dwellTime: 600 });
     confirmDwell.attach(document.querySelectorAll('.confirm-btn'), (button) => {
+      const action = pendingConfirm;
       closeConfirmation();
-      if (button.dataset.confirm === 'yes' && pendingConfirm) pendingConfirm();
+      if (button.dataset.confirm === 'yes' && action) action();
       if (button.dataset.confirm === 'no') setStatus('Cancelled.');
-      pendingConfirm = null;
     });
 
     window.checkEyeGazeTargets = function checkEyeGazeTargets() {

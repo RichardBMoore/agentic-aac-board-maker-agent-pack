@@ -118,7 +118,7 @@
   function setActivityTitle(name) {
     var safe = String(name || "").trim() || "Activity";
     els.title.textContent = safe;
-    document.title = safe + " - Open Boardmaker Player";
+    document.title = safe + " - Open AAC Studio Player";
   }
 
   function setRangeText(slider, output, unit) {
@@ -509,7 +509,7 @@
     var scored = correct + incorrect;
     var accuracy = scored ? Math.round((correct / scored) * 100) + "%" : "Not scored";
     var lines = [
-      "Open Boardmaker Session Report",
+      "Open AAC Studio Session Report",
       "",
       "Activity: " + state.activity.name,
       "Student: " + studentLabel(),
@@ -764,6 +764,9 @@
       state.activity = Data.saveCurrentActivity(json);
       state.switchEnabled = Boolean(state.activity.settings.switchScanning);
       state.pageIndex = 0;
+      if (window.BoardmakerActions && window.BoardmakerActions.resetMessage) {
+        window.BoardmakerActions.resetMessage();
+      }
       render();
       setMessage("");
     }, function () {
@@ -788,6 +791,9 @@
   }
 
   function init() {
+    if (window.BoardmakerActions && window.BoardmakerActions.resetMessage) {
+      window.BoardmakerActions.resetMessage();
+    }
     els = {
       title: document.getElementById("activity-title"),
       status: document.getElementById("player-status"),

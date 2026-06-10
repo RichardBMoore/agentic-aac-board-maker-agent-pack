@@ -68,7 +68,10 @@
   },
   "navigation": {
     "model": "two-page sentence builder",
-    "pages": ["page-starters", "page-describe"],
+    "pages": [
+      "page-starters",
+      "page-describe"
+    ],
     "notes": "Each page keeps Speak sentence, Help, and a navigation button so a gaze or switch user never needs more than nine targets on screen."
   },
   "pages": [
@@ -457,38 +460,6 @@
           ]
         },
         {
-          "id": "btn-faces-danger",
-          "label": "faces danger",
-          "role": "fringe",
-          "function": "comment",
-          "searchTerm": "danger courage",
-          "spokenText": "faces danger",
-          "symbolId": null,
-          "symbolSrc": "",
-          "symbolLayout": "label-bottom",
-          "audioCue": "faces danger",
-          "result": "added-to-sentence",
-          "style": {
-            "fillColour": "#FFF3D6"
-          },
-          "actions": [
-            {
-              "id": "act-btn-faces-danger-add",
-              "type": "add-to-message",
-              "text": "faces danger"
-            },
-            {
-              "id": "act-btn-faces-danger-speak",
-              "type": "speak-text",
-              "text": "faces danger"
-            },
-            {
-              "id": "act-btn-faces-danger-log",
-              "type": "log-attempt"
-            }
-          ]
-        },
-        {
           "id": "btn-never-gives-up",
           "label": "never gives up",
           "role": "fringe",
@@ -566,6 +537,28 @@
             {
               "id": "act-btn-speak-sentence-2-log",
               "type": "log-attempt"
+            }
+          ]
+        },
+        {
+          "id": "btn-undo-2",
+          "label": "⌫ Undo",
+          "role": "repair",
+          "function": "repair",
+          "searchTerm": "undo backspace remove word",
+          "spokenText": "Undo the last word",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "audioCue": "Undo the last word",
+          "result": "removed-last-word",
+          "style": {
+            "fillColour": "#FFE6E6"
+          },
+          "actions": [
+            {
+              "id": "act-btn-undo-2-remove",
+              "type": "remove-last-word"
             }
           ]
         },
@@ -663,7 +656,8 @@
     {
       "source": "ARASAAC",
       "licence": "CC BY-NC-SA",
-      "note": "Symbol search terms are provided for later ARASAAC replacement; confirm exact current licence wording when publishing beyond local classroom use."
+      "note": "Symbol search terms are provided for later ARASAAC replacement; confirm exact current licence wording when publishing beyond local classroom use.",
+      "attribution": "The pictographic symbols used are the property of the Government of Aragon and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distributes them under Creative Commons License BY-NC-SA."
     }
   ],
   "licences": [

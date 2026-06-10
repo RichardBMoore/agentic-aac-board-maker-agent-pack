@@ -18,7 +18,7 @@ A real sentence builder must actually build a sentence: include a message bar th
 Likely pages (each 3x3, with Help and Speak sentence on every page):
 
 1. Sentence starters page: My hero is, I think, because, For example, and also, plus a navigation button to the describing-words page, Speak sentence, Undo, Help.
-2. Describing words page: brave, kind, helps others, faces danger, never gives up, plus a navigation button back, Speak sentence, Start again, Help.
+2. Describing words page: brave, kind, helps others, never gives up, plus a navigation button back, Speak sentence, Undo, Start again, Help. Undo and Help appear on both pages so the most likely error - a wrong word just added - is repairable wherever the student is; the describing words are placeholders for the class text.
 
 Use `navigation` buttons with `next-page`/`previous-page` actions so a gaze or switch user never faces more than nine targets at once. The shipped reference build lives in the repository's `generated/curriculum-sentence-builder/` folder.
 
@@ -31,9 +31,9 @@ User asks: “Build a QCIA community access board for going to the shops.”
 Agent should include:
 
 - go/stop/wait/help;
-- shop/money/bus/crossing/safe;
+- Hello / I want to buy this / Pay now / Where is it? / I choose this / Too expensive (matching the shipped reference pack in `generated/qcia-community-shops/`; community-safety words such as crossing, bus, and money are natural customisations);
 - I need, where, thank you, finished;
-- teacher evidence note: selections show requesting help, identifying safety, participating in community routine.
+- teacher evidence note: selections show requesting help, safety language (Stop / wait, Help please), and participating in a community routine.
 
 Access choice determines density.
 

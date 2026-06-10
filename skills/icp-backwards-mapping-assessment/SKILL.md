@@ -13,7 +13,7 @@ Keep this workflow distinct from AAC/accessibility resource building:
 
 - ICP assessment adaptation is the curriculum, evidence, standards, moderation, and judgement layer.
 - AAC/accessibility student-support building is the access, communication, interface, interaction, and tool-construction layer.
-- When a task needs both, answer the ICP question first: "What curriculum evidence are we collecting, and is this adapted task defensible?" Then answer the access question: "How will the student practically access, communicate, complete, and export the task?"
+- When a task needs both, answer the ICP question first: "What curriculum evidence are we collecting, and is this adapted task defensible?" Then answer the access question: "How will the student practically access, communicate, complete, and export the task?" Once the curriculum decision is settled, load `build-aac-student-supports` — or `eyegaze-dwell-html` for gaze HTML — for the access layer.
 
 Use this order:
 

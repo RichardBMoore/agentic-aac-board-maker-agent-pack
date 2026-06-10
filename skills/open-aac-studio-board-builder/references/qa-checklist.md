@@ -54,7 +54,7 @@ Use this checklist before telling Richard a board or board-building workflow is 
 Run local server when using the app:
 
 ```sh
-cd "/Users/richardbrucemoore/Desktop/School/05-Accessibility-AAC-and-Inclusion/AAC-Tools/Open-AAC-Studio-Working"
+cd skills/build-aac-student-supports/assets/open-boardmaker-classroom-pack
 python3 -m http.server 4173 --bind 127.0.0.1
 ```
 
@@ -67,5 +67,5 @@ Then open:
 If producing a single-file gaze HTML instead, also run the checker from `build-aac-student-supports` when practical:
 
 ```sh
-python3 ~/.hermes/skills/accessibility/build-aac-student-supports/scripts/check_eye_gaze_html.py <file.html>
+python3 skills/build-aac-student-supports/scripts/check_eye_gaze_html.py <file.html>
 ```

@@ -39,9 +39,9 @@ Use these notes as grounding, not as a substitute for current specialist advice.
 
 ## Symbols And ARASAAC
 
-- ARASAAC/Open Classroom materials are published under Creative Commons BY-NC-SA terms and require source/author/license attribution and non-commercial use.
-- Preserve the exact license wording from the symbol source or downloaded material. Some ARASAAC materials state CC BY-NC-SA 4.0; older local files may state another version.
-- Source: https://aulaabierta.arasaac.org/en/terms-of-use
+- ARASAAC pictograms are published under Creative Commons BY-NC-SA terms and require citing the author (Sergio Palao), owner (Government of Aragon), origin (ARASAAC), and licence; commercial use is excluded.
+- The pictogram terms page states "Creative Commons License BY-NC-SA" with no version number; only the separate Open Classroom tutorial-materials terms state 4.0. Keep the licence unversioned for pictograms and preserve exact wording from downloaded material.
+- Pictogram terms: https://arasaac.org/terms-of-use (tutorial materials, secondary source: https://aulaabierta.arasaac.org/en/terms-of-use)
 
 ## Access Methods
 

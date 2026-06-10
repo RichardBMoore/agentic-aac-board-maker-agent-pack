@@ -49,7 +49,7 @@ Checks:
 
 Red flags:
 
-- 16+ buttons for untested gaze user.
+- More than 9 buttons on any page for an untested gaze user (the validator's enforced limit; set denseGazeTested: true only after dense gaze access is genuinely tested).
 - Scrolling required for routine gaze selections.
 - Hover-only UI without cancellation.
 - Hidden tiny controls in student mode.

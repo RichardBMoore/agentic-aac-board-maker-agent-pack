@@ -1,4 +1,7 @@
 interface:
   display_name: "Build AAC Student Supports"
   short_description: "Build AAC access and classroom tools"
-  default_prompt: "Use $build-aac-student-supports to build a calm accessible student tool after the curriculum evidence target is clear."
+  brand_color: "#0057B8"
+  default_prompt: "Build a calm, accessible student tool once the curriculum evidence target is clear."
+policy:
+  allow_implicit_invocation: true

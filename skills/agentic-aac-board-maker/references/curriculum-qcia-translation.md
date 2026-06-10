@@ -72,33 +72,35 @@ Useful buttons: look, listen, make, perform, colour, sound, movement, I like, I 
 
 ## QCIA Translation
 
+QCIA curriculum plans and Statements of Achievement report against QCAA's five curriculum organisers (QCE & QCIA policy and procedures handbook, section 3.2). Use the official organiser names below so generated evidence notes map straight onto the plan.
+
 QCIA evidence often benefits from practical, observable communication.
 
-### Personal and Living Skills
+### Personal and living dimensions (PLD)
 
 Functions: sequence, request help, indicate safety, reflect.
 
 Buttons: first, next, finished, help, safe, hot, sharp, wash, cook, clean, I need, because.
 
-### Community Access
+### Community, citizenship and the environment (CCE)
 
 Functions: choose destination/action, ask for help, identify safety, money/transport, reflect.
 
 Buttons: go, stop, help, safe, shop, bus, money, where, wait, finished, I need, thank you.
 
-### Leisure and Recreation
+### Leisure and recreation (LR)
 
 Functions: choose, request more/again, express preference, turn-taking.
 
 Buttons: I choose, like, don't like, again, more, my turn, your turn, music, game, outside, finished.
 
-### Vocational / Transition
+### Vocational and transition activities (VTA)
 
 Functions: task sequence, ask, report completion, self-advocate.
 
 Buttons: work, break, first, next, done, help, too hard, I can, I need, job, plan.
 
-### Communication and Social Interaction
+### Communication and technologies (CT)
 
 Functions: greet, comment, ask, repair, choose, refuse.
 

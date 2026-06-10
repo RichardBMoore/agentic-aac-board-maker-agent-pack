@@ -4,24 +4,29 @@ This file gives the agent a practical evidence-informed foundation. It is not a 
 
 ## Core Sources Consulted
 
-Last checked: 2026-05-26. These are grounding sources for classroom resource design, not clinical, legal, or licensing certainty. Verify exact device, legal, school-policy, and licence details again before high-stakes use or public distribution.
+Last checked: 2026-06-10. These are grounding sources for classroom resource design, not clinical, legal, or licensing certainty. Verify exact device, legal, school-policy, and licence details again before high-stakes use or public distribution.
 
 - ASHA Practice Portal: Augmentative and Alternative Communication (AAC) — AAC supplements or compensates for speech/language production/comprehension and supports expression of thoughts, wants, needs, feelings, and ideas. https://www.asha.org/practice-portal/professional-issues/augmentative-and-alternative-communication/
 - National Joint Committee / ASHA Communication Bill of Rights, 3rd edition — people have a fundamental right to communicate across life settings, including rights to dignity, meaningful communication, direct address, response, participation, social interaction, information, refusal, preference/opinion expression, meaningful choices, supports, and functioning AAC/AT. https://www.asha.org/njc/communication-bill-of-rights/
+- NJC Communication Bill of Rights companion guidance — practical advocacy and practice guidance for putting the Bill of Rights to work in real settings. https://www.asha.org/siteassets/njc/njc-communication-bill-of-rights-guidance-for-advocacy-and-practice.pdf
+- O'Neill, Light & Pope 2018 meta-analysis — peer-reviewed anchor showing aided AAC input (aided language stimulation/modelling) has positive effects on communication outcomes. https://pubmed.ncbi.nlm.nih.gov/29931287/
 - TIES Center / University of Minnesota: core words, aided language modeling, and literacy — core + fringe vocabulary and aided language modeling support communicative competence and literacy participation for students with significant communication needs. https://publications.ici.umn.edu/ties/communicative-competence-tips/connecting-core-words-aided-language-modeling-and-literacy
 - AssistiveWare Learn AAC: communication partner skills — model AAC, wait/listen/respond, presume competence, use AAC across contexts, model more than requests, comment rather than over-question. https://www.assistiveware.com/learn-aac/build-communication-partner-skills
 - Janice Light communicative competence framework — AAC competence includes linguistic, operational, social, and strategic competence. Summary: https://praacticalaac.org/praactical/communicative-competence-in-aac/
-- Visual supports as evidence-based practice — visual supports can increase understanding, participation, independence, predictability, and reduce anxiety/challenging behaviour risk. https://docs.autismspeaks.org/evidence-based-practices/visual-supports
+- NCAEP systematic review and AFIRM visual supports module — visual supports are classified as an evidence-based practice that increases understanding, predictability, participation, and independence. https://ncaep.fpg.unc.edu/ and https://afirm.fpg.unc.edu/visual-supports
 - Indiana Resource Center for Autism: visual schedules and choice boards — visual schedules/choice boards are often receptive supports and should not be mistaken for a full expressive AAC system. https://iidc.indiana.edu/irca/articles/visual-schedules-and-choice-boards-avoid-misinterpretation-of-their-primary-functions.html
 - CAST UDL Guidelines — design multiple means of engagement, representation, and action/expression; learners need flexible ways to communicate and show learning. https://udlguidelines.cast.org/
 - Tobii Dynavox access methods — common AAC access methods include touch, eye gaze, mouse dwell, and scanning. https://www.tobiidynavox.com/pages/access-methods-for-aac
 - ISAAC Communication Access — communication access includes being understood, preferred methods, time/opportunity to communicate, accessible information, and support from trusted people where needed. https://isaac-online.org/english/communication-access/
 - Project Core — classroom AAC should include high-frequency core vocabulary and aided language input across authentic routines. https://www.project-core.com/
+- AJSLP 2024 toddler vocabulary study — supports blending core and fringe vocabulary rather than core-only boards; vocabulary selection should reflect the child's actual contexts. https://pubs.asha.org/doi/10.1044/2024_AJSLP-23-00366
+- Burkhart & Porter partner-assisted scanning — practical instructional guidance for partner-assisted scanning as an access method. https://lindaburkhart.com/wp-content/uploads/2016/07/Isaac_instructional_06.pdf
 - SETT Framework, Joy Zabala — decisions should account for Student, Environment, Task, and Tools rather than choosing tools in isolation. https://www.joyzabala.com/
-- Australian Curriculum Student Diversity — students with disability may need adjustments to access, participate, and demonstrate learning. https://www.australiancurriculum.edu.au/resources/student-diversity/students-with-disability/
+- Australian Curriculum Student Diversity — students with disability may need adjustments to access, participate, and demonstrate learning. https://v9.australiancurriculum.edu.au/student-diversity/students-with-disability
 - QCAA QCIA — evidence should show participation and achievement in planned learning, without confusing access support with curriculum judgement. https://www.qcaa.qld.edu.au/senior/certificates-and-qualifications/qcia
 - Disability Standards for Education 2005 — reasonable adjustment and consultation obligations shape access planning in Australian education contexts. https://www.education.gov.au/disability-standards-education-2005
 - WCAG 2.2 — target size, pointer cancellation, keyboard, focus, contrast, and reduced-motion principles are baseline web accessibility constraints, while AAC and gaze targets usually need much larger dimensions. https://www.w3.org/TR/WCAG22/
+- WCAG 2.2 SC 2.5.7 Dragging Movements (AA) — formal backing for the no-drag-only rule: any dragging interaction must have a single-pointer alternative. https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements
 - ARASAAC terms — preserve exact attribution and non-commercial/share-alike licence details when using ARASAAC pictograms or derived materials. https://arasaac.org/terms-of-use
 
 ## Design Commitments Derived From The Evidence

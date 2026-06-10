@@ -68,10 +68,20 @@ Default open symbol source for non-commercial educational use when appropriate. 
 Attribution template:
 
 ```text
-Pictograms by ARASAAC (Government of Aragon), CC BY-NC-SA; verify exact source/version wording before publication.
+The pictographic symbols used are the property of the Government of Aragon and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distributes them under Creative Commons License BY-NC-SA. (ARASAAC's required wording: author, owner, origin, licence. Keep the licence unversioned. Boards embedding ARASAAC symbols stay CC BY-NC-SA and must not be sold, e.g. on Teachers Pay Teachers. The ARASAAC logo is required on public-area signage.)
 ```
 
 Check current ARASAAC licence requirements if publishing outside local classroom use.
+
+## Other Open Symbol Sources
+
+- **Mulberry Symbols** (https://mulberrysymbols.org/) - CC BY-SA 2.0 UK, no non-commercial restriction; designed for adults and older users, so often the better fit for secondary students where ARASAAC imagery reads young. Attribution: "Mulberry Symbols, copyright Steve Lee, CC BY-SA 2.0 UK".
+- **Sclera** (https://www.sclera.be/) - CC BY-NC; ~11,400 high-contrast white-on-black symbols, valuable for students with CVI or low vision.
+- **OpenMoji** (https://openmoji.org/) - CC BY-SA 4.0; the principled choice when a board uses emoji-style placeholders.
+- **Global Symbols** (https://globalsymbols.com/) - free aggregator API serving Mulberry, ARASAAC, Sclera, OpenMoji and others under each set's own licence; useful fallback when api.arasaac.org is blocked on the school network.
+- **Smarty Symbols is proprietary** (subscription) - treat like Boardmaker/PCS: do not copy.
+
+For print-quality output, request ARASAAC pictograms at `resolution=2500` (the default 500 px is soft at A4 cell sizes); the API's skin and hair parameters help boards reflect the student.
 
 ### Teacher-owned custom images
 

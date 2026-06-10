@@ -1,4 +1,7 @@
 interface:
-  display_name: "ICP Assessment Adaptation"
+  display_name: "ICP Backwards Mapping and Assessment"
   short_description: "Adapt ICP tasks into defensible evidence"
-  default_prompt: "Use $icp-backwards-mapping-assessment to adapt a mainstream task into a defensible ICP evidence package."
+  brand_color: "#0057B8"
+  default_prompt: "Adapt a mainstream task into a defensible ICP evidence package."
+policy:
+  allow_implicit_invocation: true

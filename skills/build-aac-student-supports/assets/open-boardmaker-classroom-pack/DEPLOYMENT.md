@@ -1,4 +1,4 @@
-# Open Boardmaker Classroom Deployment
+# Open AAC Studio Classroom Deployment
 
 ## Recommended classroom launch
 

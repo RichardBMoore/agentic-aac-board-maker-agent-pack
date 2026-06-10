@@ -8,7 +8,7 @@ A two-page sentence-builder board for a Year 7 English hero speech. The student 
 
 ## How it works
 
-Word buttons append to the sentence bar at the top of the screen and speak the single word for feedback. **Speak sentence** reads the whole bar aloud, **Undo** removes the last word, and **Start again** clears it. Page 1 holds sentence starters and connectives; Page 2 holds describing words. Navigation buttons move between the two nine-target pages so the layout stays gaze- and switch-friendly.
+Word buttons append to the sentence bar at the top of the screen and speak the single word for feedback. **Speak sentence** reads the whole bar aloud, **Undo** removes the last word (available on both pages), and **Start again** (page 2) clears it. Page 1 holds sentence starters and connectives; Page 2 holds describing words. Navigation buttons move between the two nine-target pages so the layout stays gaze- and switch-friendly.
 
 ## Notes
 

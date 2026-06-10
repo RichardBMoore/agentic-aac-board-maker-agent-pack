@@ -2,6 +2,6 @@ interface:
   display_name: "Richard School Resource Workflow"
   short_description: "Guide accessible school resource builds"
   brand_color: "#C05621"
-  default_prompt: "Use $richard-school-resource-workflow to plan this accessible school resource."
+  default_prompt: "Plan this accessible school resource."
 policy:
   allow_implicit_invocation: true

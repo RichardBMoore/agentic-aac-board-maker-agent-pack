@@ -62,7 +62,10 @@
   ],
   "navigation": {
     "model": "two-page needs and repair board",
-    "pages": ["page-needs", "page-repair"],
+    "pages": [
+      "page-needs",
+      "page-repair"
+    ],
     "notes": "Page 1 carries urgent needs and regulation; page 2 carries communication repair and self-advocacy. Help please appears on both pages so support is never more than one selection away, and neither page exceeds nine gaze targets."
   },
   "pages": [
@@ -534,7 +537,8 @@
     {
       "source": "ARASAAC",
       "licence": "CC BY-NC-SA",
-      "note": "Symbol search terms are provided for later ARASAAC replacement; confirm exact current licence wording when publishing beyond local classroom use."
+      "note": "Symbol search terms are provided for later ARASAAC replacement; confirm exact current licence wording when publishing beyond local classroom use.",
+      "attribution": "The pictographic symbols used are the property of the Government of Aragon and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distributes them under Creative Commons License BY-NC-SA."
     }
   ],
   "licences": [

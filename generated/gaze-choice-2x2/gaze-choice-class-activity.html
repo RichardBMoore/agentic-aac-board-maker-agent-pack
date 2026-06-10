@@ -36,7 +36,7 @@
   details.teacher-notes summary { font-weight:800; cursor:pointer; padding:8px; }
   footer { font-size:.9rem; padding:8px 16px 14px; text-align:center; }
   @media (max-width: 760px) { body { display:block; } .board { grid-template-columns:1fr; grid-template-rows:none; } .aac-button { min-height:132px; } }
-  @media (prefers-reduced-motion: reduce) { .aac-button { transition:none; } }
+  @media (prefers-reduced-motion:reduce) { .aac-button { transition:none; } .aac-button.is-dwelling .dwell-progress { animation:none; width:100%; } }
   @media (forced-colors: active) { .aac-button, .control { border: 4px solid ButtonText; background: Canvas; color: ButtonText; forced-color-adjust: auto; } .aac-button:focus-visible, .aac-button.is-dwelling { outline: 6px solid Highlight; } .dwell-progress { background: Highlight; } }
   @media print { body { display:block; background:#fff; } header, main, footer { padding:8mm; } .board { display:grid; grid-template-columns:repeat(3, 1fr); gap:5mm; min-height:auto; } .aac-button { min-height:38mm; box-shadow:none; break-inside:avoid; border:2.5pt solid #000; } .controls, .dwell-progress { display:none !important; } details.teacher-notes { page-break-before:always; } }
 </style>
@@ -87,7 +87,8 @@
   </section>
 </main>
 <section class="controls" aria-label="Speech and status controls">
-  <button class="control" id="stopSpeech" type="button" aria-label="Stop speech">Stop speech</button>
+  <button class="control" id="soundCheck" type="button" aria-label="Sound check">🔊 Sound check</button>
+<button class="control" id="stopSpeech" type="button" aria-label="Stop speech">Stop speech</button>
   <div class="last-message" id="lastMessage" role="status" aria-live="polite">Ready</div>
 </section>
 <details class="teacher-notes">
@@ -110,6 +111,7 @@ class DwellManager {
     this.lastMessage = options.lastMessage;
     this.stopSpeech = options.stopSpeech;
     this.dwellTimer = null;
+    this.dwellActivatedAt = new WeakMap();
     this.current = null;
     this.cooldown = new WeakSet();
   }
@@ -119,10 +121,12 @@ class DwellManager {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'en-AU';
+        utterance.onerror = () => this.status('Speech is blocked or unavailable. Press Sound check, then try again.');
         window.speechSynthesis.speak(utterance);
       }
     } catch (error) { console.warn('Speech unavailable', error); }
   }
+  status(message) { this.lastMessage.textContent = message; }
   clearDwell(button) {
     if (this.dwellTimer) clearTimeout(this.dwellTimer);
     this.dwellTimer = null;
@@ -138,12 +142,15 @@ class DwellManager {
     setTimeout(() => button.classList.remove('activated'), 650);
     this.cooldown.add(button);
   }
+  recentDwellActivation(button) {
+    return performance.now() - (this.dwellActivatedAt.get(button) || -Infinity) < 800;
+  }
   startDwell(button) {
     if (this.cooldown.has(button)) return;
     this.clearDwell(this.current);
     this.current = button;
     button.classList.add('is-dwelling');
-    this.dwellTimer = setTimeout(() => this.activate(button), this.dwellMs);
+    this.dwellTimer = setTimeout(() => { this.dwellActivatedAt.set(button, performance.now()); this.activate(button); }, this.dwellMs);
   }
   bind() {
     this.buttons.forEach(button => {
@@ -151,9 +158,8 @@ class DwellManager {
       button.addEventListener('pointerleave', () => { this.cooldown.delete(button); this.clearDwell(button); });
       button.addEventListener('focus', () => { this.lastMessage.textContent = 'Focus: ' + (button.dataset.label || button.textContent.trim()); });
       button.addEventListener('blur', () => { this.cooldown.delete(button); this.clearDwell(button); });
-      button.addEventListener('click', event => { if (event.detail !== 0) this.activate(button); });
+      button.addEventListener('click', () => { if (this.recentDwellActivation(button)) return; this.activate(button); });
       button.addEventListener('keydown', event => {
-        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.activate(button); }
         if (event.key === 'Escape') this.clearDwell(button);
       });
     });
@@ -176,6 +182,10 @@ const dwellManager = new DwellManager({
   stopSpeech: document.getElementById('stopSpeech')
 });
 dwellManager.bind();
+document.getElementById('soundCheck').addEventListener('click', () => {
+  dwellManager.status('Sound is on.');
+  dwellManager.speak('Sound is on');
+});
 </script>
 </body>
 </html>

@@ -56,7 +56,7 @@ A good board supports one or more:
 - reflect
 - socialise
 - navigate
-- regulate/rest
+- regulate-rest
 
 Avoid boards where every button has only `answer` or `label` function unless the user explicitly asks for a narrow quiz.
 
