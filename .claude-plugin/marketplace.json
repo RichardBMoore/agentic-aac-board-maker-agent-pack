@@ -1,0 +1,15 @@
+{
+  "name": "agentic-aac-board-maker-marketplace",
+  "description": "Evidence-informed AAC board generation and accessible classroom resource workflows for Claude Code.",
+  "owner": {
+    "name": "Richard Moore"
+  },
+  "plugins": [
+    {
+      "name": "agentic-aac-board-maker",
+      "source": "./",
+      "description": "Generate evidence-informed, accessible AAC boards, differentiated classroom communication resources, eye-gaze tools, and ICP assessment supports from teacher intent.",
+      "version": "0.5.0"
+    }
+  ]
+}

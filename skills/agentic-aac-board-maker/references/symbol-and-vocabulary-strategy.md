@@ -137,3 +137,7 @@ Check:
 - Are labels respectful for the student's age?
 - Is every symbol backed by a text label?
 - Is attribution included?
+
+## Automated ARASAAC Fetch
+
+`scripts/fetch_arasaac_symbols.py` fills a validated IR with real pictograms: it searches the ARASAAC API per button `searchTerm` (falling back to the label), sets `symbolId`, and embeds the PNG into `symbolSrc` as a base64 data URI so the rendered board stays single-file and offline-capable. Run it after the IR validates and before rendering. It refuses to run if the IR lacks ARASAAC attribution, never overwrites teacher-chosen symbols unless `--overwrite` is passed, and keeps the text fallback for any miss. Use `--resolution 2500` for print outputs. Pictograms remain CC BY-NC-SA: keep attribution visible and do not sell boards that embed them.

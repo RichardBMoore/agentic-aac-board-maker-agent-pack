@@ -530,9 +530,87 @@ def check_reference_paths() -> bool:
     return success
 
 
+def check_release_metadata() -> bool:
+    """Versions, marketplace, hooks, and agents stay consistent across the pack."""
+    success = True
+
+    codex = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
+    claude = json.loads((ROOT / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8"))
+    version = codex.get("version")
+    if claude.get("version") != version:
+        fail(f".claude-plugin version {claude.get('version')} != .codex-plugin version {version}")
+        success = False
+
+    marketplace_path = ROOT / ".claude-plugin" / "marketplace.json"
+    if marketplace_path.exists():
+        marketplace = json.loads(marketplace_path.read_text(encoding="utf-8"))
+        entries = marketplace.get("plugins") or []
+        entry = next((e for e in entries if e.get("name") == codex.get("name")), None)
+        if entry is None:
+            fail("marketplace.json has no entry for this plugin")
+            success = False
+        elif entry.get("version") not in (None, version):
+            fail(f"marketplace.json entry version {entry.get('version')} != plugin version {version}")
+            success = False
+        if not marketplace.get("name") or not (marketplace.get("owner") or {}).get("name"):
+            fail("marketplace.json missing required name/owner.name fields")
+            success = False
+    else:
+        warn("no .claude-plugin/marketplace.json (needed for /plugin marketplace add installs)")
+
+    changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    if version and f"## {version} " not in changelog:
+        fail(f"CHANGELOG.md has no entry for version {version}")
+        success = False
+
+    hooks_ref = claude.get("hooks")
+    if hooks_ref:
+        hooks_path = (ROOT / hooks_ref).resolve()
+        if not hooks_path.exists():
+            fail(f".claude-plugin/plugin.json hooks path {hooks_ref} does not exist")
+            success = False
+        else:
+            hooks_data = json.loads(hooks_path.read_text(encoding="utf-8"))
+            for event, entries in (hooks_data.get("hooks") or {}).items():
+                for entry in entries:
+                    for hook in entry.get("hooks", []):
+                        command = hook.get("command", "")
+                        if "${CLAUDE_PLUGIN_ROOT}" in command:
+                            rel = command.split("${CLAUDE_PLUGIN_ROOT}/", 1)[1].strip('"')
+                            script = ROOT / rel
+                            if not script.exists():
+                                fail(f"hooks.json {event} references missing script {rel}")
+                                success = False
+                            elif script.suffix == ".py":
+                                try:
+                                    ast.parse(script.read_text(encoding="utf-8"))
+                                except SyntaxError as error:
+                                    fail(f"hook script {rel} has a syntax error: {error}")
+                                    success = False
+
+    agent_refs = claude.get("agents") or []
+    for agents_ref in agent_refs:
+        agents_dir = (ROOT / agents_ref).resolve()
+        agent_files = sorted(agents_dir.glob("*.md")) if agents_dir.exists() else []
+        if not agent_files:
+            fail(f".claude-plugin/plugin.json agents path {agents_ref} has no agent markdown files")
+            success = False
+        for agent_md in agent_files:
+            content = agent_md.read_text(encoding="utf-8")
+            front = content.split("---")[1] if content.startswith("---") and content.count("---") >= 2 else ""
+            if "name:" not in front or "description:" not in front:
+                fail(f"agent {agent_md.name} is missing name/description frontmatter")
+                success = False
+
+    if success:
+        ok("release metadata (versions, marketplace, hooks, agents) is consistent")
+    return success
+
+
 def main() -> int:
     checks = [
         check_plugin_manifest,
+        check_release_metadata,
         check_skills,
         check_python_scripts,
         check_json_files,

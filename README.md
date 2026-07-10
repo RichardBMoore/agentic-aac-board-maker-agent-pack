@@ -14,8 +14,10 @@ This is not "AI inside a board maker." It is a workflow for AI as the draft boar
 
 ```text
 agentic-aac-board-maker-agent-pack/
-  .claude-plugin/            Claude Code plugin manifest
+  .claude-plugin/            Claude Code plugin manifest and marketplace listing
   .codex-plugin/             Codex plugin manifest
+  agents/                    Claude Code subagents (independent board QA reviewer)
+  hooks/                     Claude Code hooks (auto-validate boards on write)
   .github/workflows/         GitHub validation workflow
   generated/                 Proof-of-concept boards and regression fixtures
   scripts/                   Repository validation script
@@ -59,6 +61,12 @@ Render Open AAC Studio-compatible JSON from an IR file:
 python3 skills/agentic-aac-board-maker/scripts/render_open_aac_studio.py generated/qcia-community-shops/qcia-community-shops.ir.json /tmp/qcia-community-shops.open-aac-studio.json
 ```
 
+Embed real ARASAAC pictograms into an IR file (sets `symbolId` and base64 `symbolSrc`, keeping boards single-file and offline-capable; requires internet for the fetch itself):
+
+```sh
+python3 skills/agentic-aac-board-maker/scripts/fetch_arasaac_symbols.py generated/gaze-choice-2x2/gaze-choice-class-activity.ir.json --out /tmp/board.symbols.ir.json
+```
+
 Export an Open Board Format board from an IR file:
 
 ```sh
@@ -72,6 +80,20 @@ Run the unit tests:
 ```sh
 python3 -m unittest discover -s tests
 ```
+
+## Install In Claude Code
+
+The repo doubles as a single-plugin marketplace (`.claude-plugin/marketplace.json`), so it can be installed and updated with the plugin manager:
+
+```text
+/plugin marketplace add <path-or-git-url-of-this-repo>
+/plugin install agentic-aac-board-maker@agentic-aac-board-maker-marketplace
+```
+
+Installing the plugin also activates two automation layers that standalone skill copies do not have:
+
+- A `PostToolUse` hook that automatically runs the IR validator on any written `*.ir.json` and the strict eye-gaze checker on any written dwell HTML, feeding failures straight back to the agent for repair.
+- An `aac-board-qa` subagent for independent fresh-eyes QA of a generated board before it is presented as a draft.
 
 ## Codex And Claude Code Use
 
