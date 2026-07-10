@@ -110,6 +110,18 @@ class EmbedSymbolsTests(unittest.TestCase):
         self.assertEqual(6522, button["symbolId"])
         self.assertEqual("", button["symbolSrc"])
 
+    def test_ids_only_overwrite_clears_stale_embedded_image(self) -> None:
+        ir = make_ir(symbolId=111, symbolSrc="data:image/png;base64,b2xk")
+        fetch_symbols.embed_symbols(
+            ir,
+            ids_only=True,
+            overwrite=True,
+            fetcher=FakeFetcher(self.routes()),
+        )
+        button = ir["pages"][0]["buttons"][0]
+        self.assertEqual(6522, button["symbolId"])
+        self.assertEqual("", button["symbolSrc"])
+
     def test_existing_symbol_is_not_overwritten_by_default(self) -> None:
         ir = make_ir(symbolId=111)
         fetcher = FakeFetcher(self.routes())
@@ -127,6 +139,19 @@ class EmbedSymbolsTests(unittest.TestCase):
         routes = {"search/hello": search_payload(picto(6522, "hello"))}
         ir = make_ir()
         report = fetch_symbols.embed_symbols(ir, fetcher=FakeFetcher(routes))
+        button = ir["pages"][0]["buttons"][0]
+        self.assertEqual(6522, button["symbolId"])
+        self.assertEqual("", button["symbolSrc"])
+        self.assertTrue(report[0]["status"].startswith("partial"))
+
+    def test_image_failure_during_overwrite_clears_stale_embedded_image(self) -> None:
+        routes = {"search/hello": search_payload(picto(6522, "hello"))}
+        ir = make_ir(symbolId=111, symbolSrc="data:image/png;base64,b2xk")
+        report = fetch_symbols.embed_symbols(
+            ir,
+            overwrite=True,
+            fetcher=FakeFetcher(routes),
+        )
         button = ir["pages"][0]["buttons"][0]
         self.assertEqual(6522, button["symbolId"])
         self.assertEqual("", button["symbolSrc"])

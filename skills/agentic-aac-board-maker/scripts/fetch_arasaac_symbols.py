@@ -178,11 +178,13 @@ def embed_symbols(
         button["symbolId"] = pid
         entry["symbolId"] = str(pid)
         if ids_only:
+            button["symbolSrc"] = ""
             entry["status"] = "ok: symbolId set (no image embedded)"
             report.append(entry)
             continue
         png = fetch_image(pid, resolution, fetcher, cache_dir)
         if png is None:
+            button["symbolSrc"] = ""
             entry["status"] = "partial: symbolId set, image download failed (text fallback kept)"
             report.append(entry)
             continue

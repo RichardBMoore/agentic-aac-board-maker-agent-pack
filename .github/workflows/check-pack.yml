@@ -29,17 +29,18 @@ jobs:
         run: python3 -m unittest discover -s tests
 
   claude-plugin-validate:
-    # Structural validation with the official Claude Code CLI. Marked
-    # continue-on-error until confirmed to run cleanly in CI, so it cannot
-    # block releases while it is being trialled.
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
       - name: Install Claude Code CLI
-        run: npm install -g @anthropic-ai/claude-code
+        run: npm install --global @anthropic-ai/claude-code@2.1.206
 
       - name: Validate plugin manifest and components
         run: claude plugin validate . --strict

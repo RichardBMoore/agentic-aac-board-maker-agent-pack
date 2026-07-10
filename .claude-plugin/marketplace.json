@@ -1,5 +1,6 @@
 {
   "name": "agentic-aac-board-maker-marketplace",
+  "description": "Evidence-informed AAC board generation and accessible classroom resource workflows for Claude Code.",
   "owner": {
     "name": "Richard Moore"
   },

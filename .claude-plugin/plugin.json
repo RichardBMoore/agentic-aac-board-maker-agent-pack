@@ -17,8 +17,5 @@
     "icp",
     "curriculum",
     "offline-html"
-  ],
-  "skills": "./skills/",
-  "agents": ["./agents/"],
-  "hooks": "./hooks/hooks.json"
+  ]
 }

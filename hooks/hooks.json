@@ -6,7 +6,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/validate_board_outputs.py\""
+            "command": "python3",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/hooks/validate_board_outputs.py"
+            ],
+            "timeout": 65
           }
         ]
       }

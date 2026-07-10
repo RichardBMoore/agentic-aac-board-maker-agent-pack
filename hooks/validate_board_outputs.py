@@ -9,8 +9,9 @@ Registered in hooks/hooks.json for Write|Edit. Whenever the agent writes:
   (skills/build-aac-student-supports/scripts/check_eye_gaze_html.py)
 
 On failure the hook exits 2 so the validator output is surfaced back to the
-agent, which can then repair the board before presenting it as a draft. Files
-that are not board outputs are ignored (exit 0, no output).
+agent, which can then repair the board before presenting it as a draft. Missing
+validators, launch errors, and timeouts also fail closed. Files that are not
+board outputs are ignored (exit 0, no output).
 
 This automates the pack's "run QA before claiming a board is ready" rule
 instead of relying on the agent remembering to do it.
@@ -22,6 +23,7 @@ import json
 import subprocess
 import sys
 from pathlib import Path
+from typing import TextIO
 
 PACK_ROOT = Path(__file__).resolve().parents[1]
 IR_VALIDATOR = PACK_ROOT / "skills" / "agentic-aac-board-maker" / "scripts" / "validate_board_ir.py"
@@ -30,13 +32,24 @@ TIMEOUT_SECONDS = 60
 
 
 def run_checker(script: Path, target: Path) -> tuple[int, str]:
-    result = subprocess.run(
-        [sys.executable, str(script), str(target)],
-        capture_output=True,
-        text=True,
-        timeout=TIMEOUT_SECONDS,
-    )
-    return result.returncode, (result.stdout + result.stderr).strip()
+    if not script.is_file():
+        return 2, f"Validator is missing from the plugin installation: {script}"
+    try:
+        result = subprocess.run(
+            [sys.executable, str(script), str(target)],
+            capture_output=True,
+            text=True,
+            timeout=TIMEOUT_SECONDS,
+        )
+    except subprocess.TimeoutExpired:
+        return 2, f"Validator timed out after {TIMEOUT_SECONDS} seconds."
+    except OSError as error:
+        return 2, f"Could not start validator: {error}"
+
+    output = (result.stdout + result.stderr).strip()
+    if result.returncode != 0 and not output:
+        output = f"Validator exited with status {result.returncode} and no diagnostic output."
+    return result.returncode, output
 
 
 def looks_like_dwell_html(path: Path) -> bool:
@@ -47,20 +60,35 @@ def looks_like_dwell_html(path: Path) -> bool:
     return "dwell" in text and "<button" in text
 
 
-def main() -> int:
+def extract_target(payload: object) -> Path | None:
+    if not isinstance(payload, dict):
+        return None
+    tool_input = payload.get("tool_input")
+    if not isinstance(tool_input, dict):
+        return None
+    raw_path = tool_input.get("file_path")
+    if not isinstance(raw_path, str) or not raw_path.strip():
+        return None
+
+    target = Path(raw_path.strip()).expanduser()
+    if not target.is_absolute():
+        cwd = payload.get("cwd")
+        if isinstance(cwd, str) and cwd.strip():
+            target = Path(cwd).expanduser() / target
+    return target
+
+
+def main(stdin: TextIO | None = None) -> int:
     try:
-        payload = json.load(sys.stdin)
-    except ValueError:
+        payload = json.load(stdin if stdin is not None else sys.stdin)
+    except (OSError, ValueError):
         return 0
 
-    file_path = str(payload.get("tool_input", {}).get("file_path", "")).strip()
-    if not file_path:
-        return 0
-    target = Path(file_path)
-    if not target.exists():
+    target = extract_target(payload)
+    if target is None or not target.is_file():
         return 0
 
-    if target.name.endswith(".ir.json") and IR_VALIDATOR.exists():
+    if target.name.lower().endswith(".ir.json"):
         code, output = run_checker(IR_VALIDATOR, target)
         if code != 0:
             print(
@@ -71,7 +99,7 @@ def main() -> int:
             return 2
         return 0
 
-    if target.suffix.lower() in {".html", ".htm"} and GAZE_CHECKER.exists() and looks_like_dwell_html(target):
+    if target.suffix.lower() in {".html", ".htm"} and looks_like_dwell_html(target):
         code, output = run_checker(GAZE_CHECKER, target)
         if code != 0:
             print(
@@ -86,8 +114,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    try:
-        raise SystemExit(main())
-    except subprocess.TimeoutExpired:
-        print("Board validation hook timed out; run the validators manually.", file=sys.stderr)
-        raise SystemExit(0)
+    raise SystemExit(main())
