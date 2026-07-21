@@ -90,10 +90,28 @@ def main() -> int:
 
     buttons = [(tag, attrs) for tag, attrs in collector.elements if tag == "button"]
     dwell_buttons = [(tag, attrs) for tag, attrs in buttons if "dwell-btn" in class_list(attrs)]
+    fullscreen_buttons = [
+        (tag, attrs)
+        for tag, attrs in dwell_buttons
+        if re.search(
+            r"full[ -]?screen",
+            " ".join(
+                [
+                    attrs.get("id", ""),
+                    attrs.get("aria-label", ""),
+                    attrs.get("data-action", ""),
+                    attrs.get("class", ""),
+                ]
+            ),
+            re.IGNORECASE,
+        )
+    ]
     if not buttons:
         failures.append("No button elements found.")
     if not dwell_buttons:
         warnings.append("No .dwell-btn buttons found.")
+    if not fullscreen_buttons:
+        failures.append("No gaze-sized .dwell-btn Full screen control found.")
 
     missing_labels = [
         attrs.get("id") or attrs.get("class") or "(button)"
@@ -122,6 +140,8 @@ def main() -> int:
         failures.append("No pointerenter or mouseenter dwell start handler found.")
     if "pointerleave" not in text and "mouseleave" not in text:
         failures.append("No pointerleave or mouseleave dwell cancellation handler found.")
+    if not re.search(r"\.requestFullscreen\s*\(", text):
+        failures.append("No Fullscreen API startup/control request found (requestFullscreen()).")
     # Native buttons with click listeners are keyboard-operable (Enter/Space
     # fire click); a custom keydown Enter handler also satisfies this.
     has_click_activation = "addEventListener('click'" in text or 'addEventListener("click"' in text or "onclick" in text.lower()

@@ -22,6 +22,19 @@ description: Build accessible, single-file HTML tools for students who use eye g
 
 **How gaze works:** Eye tracker moves the Windows mouse cursor → your HTML's `:hover`/`mouseenter` states fire → your dwell timer counts down → action triggers. Eye gaze does NOT fire touch events.
 
+## Fullscreen Launch And Managed EQ Deployment
+
+Fullscreen is the preferred student mode for gaze tools because it removes browser chrome, reduces accidental targets, and gives the activity the largest stable target area.
+
+- Every student-facing gaze HTML tool must attempt `document.documentElement.requestFullscreen()` once at startup and include a clearly labelled **Full screen** button that is at least 120 x 120 px. Hide that button while fullscreen is active and reveal it again after the user exits.
+- In ordinary Edge, `requestFullscreen()` needs transient user activation. Attach a native `click` listener directly to the fullscreen button and call `requestFullscreen()` synchronously inside that listener, before `DwellManager` delays or callbacks. Keyboard Enter/Space, a trusted assistive-technology click, or an operating-system dwell click can then authorise fullscreen. A JavaScript hover timer alone is not a user gesture.
+- If the startup request is blocked, keep the activity usable and announce: choose **Full screen**, press F11, or ask EQ IT to enable managed fullscreen. Never loop requests, fake success, or block the activity behind an uncloseable prompt.
+- On EQ-managed Microsoft Edge 132 or later, IT can enable `FullscreenAllowed` and set `AutomaticFullscreenAllowedForUrls` for the activity origin. This lets the startup Fullscreen API call run without a prior user gesture. Prefer a specific trusted HTTPS/localhost origin. The only wildcard for local files is `file:///*`, which grants automatic fullscreen to every local file and therefore needs an explicit EQ security decision.
+- When the activity must stay locked full screen, use Microsoft Edge Digital/Interactive Signage kiosk mode through Assigned Access or Intune, for example `msedge.exe --kiosk "https://trusted-school-origin/activity" --edge-kiosk-type=fullscreen --no-first-run`. A web page cannot configure device policy for itself.
+- Preserve an exit route for staff: Escape for Fullscreen API mode, or the managed kiosk exit process set by EQ IT.
+
+Use the copyable button and JavaScript pattern in `../build-aac-student-supports/references/templates.md`. The bundled classroom player has its managed deployment details in `../build-aac-student-supports/assets/open-boardmaker-classroom-pack/DEPLOYMENT.md`.
+
 ---
 
 ## 2. Dwell Time Guidelines
@@ -322,12 +335,18 @@ class DwellManager {
   </style>
 </head>
 <body>
+  <!-- Include the gaze-sized Full screen control from templates.md. -->
   <!-- content -->
   <script>
     /* PASTE DwellManager CLASS HERE */
+    /* Attach the direct fullscreen click handler BEFORE dwell.attach(). */
     const dwell = new DwellManager({ dwellTime: 800 });
     dwell.attach(document.querySelectorAll('.dwell-btn'), (btn) => {
-      // Handle activation: btn.dataset.value, btn.dataset.action, etc.
+      if (btn.dataset.action === 'fullscreen') {
+        requestFullScreen('dwell');
+        return;
+      }
+      // Handle other activation: btn.dataset.value, btn.dataset.action, etc.
     });
   </script>
 </body>
@@ -458,6 +477,10 @@ function unlockAndPlay(dataUri) {
 - [ ] Opens in Edge from `file:///` with no console errors (F12 → Console)
 - [ ] No external requests (F12 → Network tab should show no 404s)
 - [ ] Fits screen without scrolling (`height: 100vh`, `overflow: hidden`)
+- [ ] Attempts fullscreen once at startup and has a gaze-sized **Full screen** button
+- [ ] Direct click/Enter on **Full screen** calls `requestFullscreen()` synchronously
+- [ ] If fullscreen is blocked, the activity remains usable and gives F11/EQ IT guidance
+- [ ] Managed EQ deployment was tested with the actual Edge policy or kiosk configuration when enforced fullscreen is required
 - [ ] Mouse hover → ring fills → activates at correct dwell time
 - [ ] Moving mouse away cancels dwell
 - [ ] Keyboard Tab + Enter works as fallback
@@ -483,7 +506,7 @@ document.querySelectorAll('.dwell-btn').forEach(btn => {
 
 Use this when asking Codex to build a new gaze tool:
 
-> "Build a single-file HTML tool for a QCIA student using eye gaze on a PRC-Saltillo Accent 1000/1400 (Windows, Microsoft Edge, file:// protocol). Eye gaze = mouse cursor — student uses hover/dwell (800ms default) to activate. Requirements: (1) No external dependencies — embed everything; (2) All interactive targets minimum 120×120px; (3) Use the DwellManager class with conic-gradient progress ring; (4) Include ARIA labels and keyboard fallback (Tab + Enter); (5) Web Speech API for audio feedback in Australian English; (6) Australian spelling throughout; (7) WCAG AAA contrast (7:1). The activity is: [DESCRIBE ACTIVITY]."
+> "Build a single-file HTML tool for a QCIA student using eye gaze on a PRC-Saltillo Accent 1000/1400 (Windows, Microsoft Edge, file:// protocol). Eye gaze = mouse cursor — student uses hover/dwell (800ms default) to activate. Requirements: (1) No external dependencies — embed everything; (2) All interactive targets minimum 120×120px; (3) Use the DwellManager class with conic-gradient progress ring; (4) Include ARIA labels and keyboard fallback (Tab + Enter); (5) Web Speech API for audio feedback in Australian English; (6) Australian spelling throughout; (7) WCAG AAA contrast (7:1); (8) attempt fullscreen at startup and include a gaze-sized Full screen button whose direct click listener calls requestFullscreen() synchronously, with F11/EQ managed-policy guidance when blocked. The activity is: [DESCRIBE ACTIVITY]."
 
 ---
 

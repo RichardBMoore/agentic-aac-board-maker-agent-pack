@@ -112,7 +112,7 @@ Each skill folder also remains usable on its own:
 - `agentic-aac-board-maker` - main workflow for direct AI-generated AAC boards and resource packs.
 - `open-aac-studio-board-builder` - Open AAC Studio and Boardmaker-style compatibility layer.
 - `build-aac-student-supports` - broader AAC, symbol, print, offline HTML, QCIA, and classroom access patterns.
-- `eyegaze-dwell-html` - single-file eye-gaze and dwell-activated HTML support.
+- `eyegaze-dwell-html` - single-file eye-gaze and dwell-activated HTML support, including fullscreen-first launch and managed Edge/EQ deployment guidance.
 - `icp-backwards-mapping-assessment` - ICP backwards mapping, adapted assessment, rubrics, moderation notes, and evidence design.
 - `richard-school-resource-workflow` - Richard's broader school-resource workflow context.
 
@@ -141,6 +141,7 @@ The `curriculum-sentence-builder` and `needs-repair-board` examples also demonst
 - Keep privacy and offline classroom use in mind.
 - Use open/free symbols or teacher-owned media with attribution.
 - Keep the canonical AAC Board IR as the source of truth.
+- Prefer fullscreen student mode for eye gaze; use the page's gaze-safe launcher normally and EQ-managed Edge policy or kiosk deployment when fullscreen must be automatic or enforced.
 - Run QA before claiming a board is ready even as a draft.
 
 ## Privacy And Release Status

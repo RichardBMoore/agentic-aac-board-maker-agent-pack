@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.5.1 - 2026-07-21
+
+Fullscreen-first eye-gaze patch.
+
+- Eye-gaze HTML now attempts fullscreen once at startup and includes a gaze-sized Full screen control with direct click/keyboard activation, hover-dwell feedback, safe blocked-state guidance, and automatic hiding while fullscreen is active. All five dwell HTML regression fixtures and the canonical single-file template demonstrate the behaviour.
+- EQ-managed deployment guidance now documents Microsoft Edge 132+ `FullscreenAllowed` and `AutomaticFullscreenAllowedForUrls`, including the broad security scope of `file:///*`, plus Edge Digital/Interactive Signage kiosk mode for locked use. The classroom player now requests fullscreen automatically when opened with `?classroom=1`, and optional wake-lock failures no longer overwrite fullscreen fallback guidance.
+- The strict eye-gaze checker now fails dwell HTML that omits a gaze-sized Full screen control or Fullscreen API request. Three focused regression tests cover the canonical template and both failure paths.
+- Skill prompts and QA checklists now recommend fullscreen for eye gaze while accurately distinguishing a normal user-activated request from EQ IT-managed automatic fullscreen or kiosk enforcement.
+
 ## 0.5.0 - 2026-07-08
 
 Platform-feature and symbol-pipeline release.

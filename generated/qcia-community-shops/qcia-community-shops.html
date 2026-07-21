@@ -28,6 +28,10 @@
   @keyframes dwellFill { from { width:0; } to { width:100%; } }
   .controls { display:flex; justify-content:center; gap:16px; padding:0 24px 12px; flex-wrap:wrap; }
   .control { font-size:1.05rem; min-height:54px; padding:10px 18px; border:3px solid #17212b; border-radius:16px; background:#fff; font-weight:700; }
+  .fullscreen-control { position:relative; overflow:hidden; min-width:160px; min-height:120px; }
+  .fullscreen-control::after { content:""; position:absolute; inset:auto 0 0; height:14px; width:0; background:linear-gradient(90deg,#0b6fdd,#22a06b); }
+  .fullscreen-control.is-dwelling::after { animation:dwellFill var(--dwell-ms) linear forwards; }
+  .fullscreen-control[hidden] { display:none; }
   .last-message { min-width:min(720px,90vw); text-align:center; font-size:1.15rem; font-weight:700; }
   details.teacher-notes { margin:0 auto 12px; width:min(1120px,calc(100% - 32px)); background:#fff; border:2px solid #17212b; border-radius:16px; padding:10px 16px; }
   details.teacher-notes summary { font-weight:800; cursor:pointer; padding:8px; }
@@ -103,6 +107,7 @@
   </section>
 </main>
 <section class="controls" aria-label="Speech and status controls">
+  <button class="control dwell-btn fullscreen-control" id="fullScreen" type="button" aria-label="Start full screen">⛶ Full screen</button>
   <button class="control" id="soundCheck" type="button" aria-label="Sound check">🔊 Sound check</button>
 <button class="control" id="stopSpeech" type="button" aria-label="Stop speech">Stop speech</button>
   <div class="last-message" id="lastMessage" role="status" aria-live="polite">Ready</div>
@@ -191,6 +196,47 @@ class DwellManager {
     });
   }
 }
+function setupFullScreen(button, statusEl, dwellMs) {
+  let timer = null;
+  const status = message => { if (statusEl) statusEl.textContent = message; };
+  const clear = () => {
+    if (timer) clearTimeout(timer);
+    timer = null;
+    button.classList.remove('is-dwelling');
+  };
+  const request = source => {
+    clear();
+    if (document.fullscreenElement) return Promise.resolve(true);
+    if (!document.documentElement.requestFullscreen) {
+      status('Full screen is unavailable. Press F11 or ask EQ IT for kiosk mode.');
+      return Promise.resolve(false);
+    }
+    return document.documentElement.requestFullscreen().then(() => {
+      status('Full screen is on. Press Escape to leave.');
+      return true;
+    }).catch(() => {
+      status(source === 'startup'
+        ? 'For best eye-gaze access, choose Full screen. EQ IT can allow automatic full screen.'
+        : 'Full screen was blocked. Use click or Enter, press F11, or ask EQ IT for managed full screen.');
+      return false;
+    });
+  };
+  const enterEvent = window.PointerEvent ? 'pointerenter' : 'mouseenter';
+  const leaveEvent = window.PointerEvent ? 'pointerleave' : 'mouseleave';
+  button.addEventListener(enterEvent, () => {
+    clear();
+    button.classList.add('is-dwelling');
+    timer = setTimeout(() => request('dwell'), dwellMs);
+  });
+  button.addEventListener(leaveEvent, clear);
+  button.addEventListener('blur', clear);
+  button.addEventListener('click', () => request('click'));
+  document.addEventListener('fullscreenchange', () => {
+    button.hidden = Boolean(document.fullscreenElement);
+    if (!document.fullscreenElement) status('For best eye-gaze access, choose Full screen.');
+  });
+  window.addEventListener('load', () => request('startup'), { once:true });
+}
 const dwellManager = new DwellManager({
   dwellMs: 1100,
   buttons: document.querySelectorAll('.aac-button'),
@@ -202,6 +248,7 @@ document.getElementById('soundCheck').addEventListener('click', () => {
   dwellManager.status('Sound is on.');
   dwellManager.speak('Sound is on');
 });
+setupFullScreen(document.getElementById('fullScreen'), document.getElementById('lastMessage'), 1100);
 </script>
 </body>
 </html>
