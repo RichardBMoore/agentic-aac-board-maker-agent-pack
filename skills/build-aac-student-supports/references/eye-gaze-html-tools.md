@@ -49,6 +49,21 @@ Treat these as classroom assumptions, not a universal hardware contract. If the 
 - Use Australian English by default.
 - Use text contrast that meets WCAG AAA for labels wherever possible.
 - Avoid scroll in student mode. Remove decorative chrome before shrinking targets.
+- Attempt fullscreen once at startup and provide a gaze-sized **Full screen** button. Keep the page usable when fullscreen is unavailable or blocked.
+
+## Fullscreen On EQ-Managed Edge
+
+Fullscreen is strongly recommended for eye gaze because browser tabs, the address bar, and other chrome become accidental gaze targets.
+
+Use all three layers:
+
+1. **Page layer:** call `document.documentElement.requestFullscreen()` once at startup. Include a 120 x 120 px or larger Full screen button. Its native `click` handler must call the API synchronously, before a dwell callback or `setTimeout`, so a trusted click/keyboard activation can satisfy browser security.
+2. **Managed EQ layer:** for automatic fullscreen without a user gesture, EQ IT can enable Microsoft Edge `FullscreenAllowed` and `AutomaticFullscreenAllowedForUrls` on Edge 132+. Prefer an exact trusted HTTPS/localhost origin. `file:///*` is the only file wildcard and applies to every local file, so it requires a deliberate security decision.
+3. **Locked kiosk layer:** when students must not leave fullscreen, deploy Edge Digital/Interactive Signage kiosk mode with Assigned Access or Intune. The classroom resource must not attempt to install or change those policies itself.
+
+If no managed policy is present, keep the Full screen button visible and announce the fallback: activate it with a click/Enter/operating-system dwell click, press F11, or ask IT. JavaScript hover dwell can request fullscreen, but it does not itself count as the transient user activation required by ordinary Edge. Keep Escape available for staff in normal Fullscreen API mode.
+
+Use the implementation in `templates.md`. For the reusable classroom player and kiosk commands, use `../assets/open-boardmaker-classroom-pack/DEPLOYMENT.md`.
 
 ## Dwell Timing
 
@@ -132,14 +147,16 @@ Before handing over the file:
 2. Confirm there are no console errors.
 3. Confirm the Network tab shows no external requests.
 4. Check the page fits the target viewport without student-mode scrolling.
-5. Hover a choice and confirm dwell progress fills at the expected timing.
-6. Move away before completion and confirm dwell cancels.
-7. Leave gaze on a completed choice and confirm it does not fire repeatedly.
-8. Use Tab and Enter/Space to activate a choice.
-9. Confirm all interactive targets are at least 120 x 120 px.
-10. Confirm all buttons have accessible labels and focus states.
-11. Confirm speech can be stopped.
-12. Run `scripts/check_eye_gaze_html.py <file.html>` for static checks.
+5. Confirm the page attempts fullscreen once, and the gaze-sized Full screen button can be activated with click/Enter.
+6. Confirm a blocked fullscreen request leaves the activity usable and gives F11/EQ IT guidance.
+7. Hover a choice and confirm dwell progress fills at the expected timing.
+8. Move away before completion and confirm dwell cancels.
+9. Leave gaze on a completed choice and confirm it does not fire repeatedly.
+10. Use Tab and Enter/Space to activate a choice.
+11. Confirm all interactive targets are at least 120 x 120 px.
+12. Confirm all buttons have accessible labels and focus states.
+13. Confirm speech can be stopped.
+14. Run `scripts/check_eye_gaze_html.py <file.html>` for static checks.
 
 Use this DevTools snippet for runtime target checks:
 
@@ -157,5 +174,5 @@ document.querySelectorAll('button').forEach((btn) => {
 When expanding a user request into an implementation brief, preserve these constraints:
 
 ```text
-Build a single-file HTML resource for a student using eye gaze on a PRC-Saltillo Accent 1000/1400 or similar Windows AAC device. It will open in Microsoft Edge from file:/// with no internet. Eye gaze behaves like a mouse cursor, so interaction must be hover/dwell based with an 800 ms starting dwell time. Include no external dependencies. Make all student controls at least 120 x 120 px, use visible dwell progress, cancel dwell on pointer leave, support Tab plus Enter/Space, include ARIA labels, use Web Speech API with en-AU where speech is needed, use Australian spelling, and target WCAG AAA contrast for text. The activity is: [describe activity].
+Build a single-file HTML resource for a student using eye gaze on a PRC-Saltillo Accent 1000/1400 or similar Windows AAC device. It will open in Microsoft Edge from file:/// with no internet. Eye gaze behaves like a mouse cursor, so interaction must be hover/dwell based with an 800 ms starting dwell time. Include no external dependencies. Make all student controls at least 120 x 120 px, use visible dwell progress, cancel dwell on pointer leave, support Tab plus Enter/Space, include ARIA labels, use Web Speech API with en-AU where speech is needed, use Australian spelling, and target WCAG AAA contrast for text. Attempt fullscreen once at startup; include a gaze-sized Full screen button whose native click listener calls requestFullscreen() synchronously, and provide F11/EQ managed-policy guidance if blocked. The activity is: [describe activity].
 ```

@@ -7,6 +7,7 @@ Use this file only when implementing a single-file dwell HTML tool. For a comple
 - CSS variables
 - Dwell button CSS
 - DwellManager
+- Fullscreen helper
 - Speech helper
 - Confirmation modal pattern
 - Layout snippets
@@ -289,6 +290,80 @@ class DwellManager {
   }
 }
 ```
+
+## Fullscreen Helper
+
+Use this for every student-facing gaze HTML tool. Add the control outside the main choice grid so it does not count as activity vocabulary. The `dwell-btn` class gives it the same target-size, progress, and focus treatment as other gaze controls.
+
+```html
+<button class="dwell-btn utility" id="fullScreenButton" type="button"
+        data-action="fullscreen" data-dwell-time="800"
+        aria-label="Start full screen">
+  <span class="btn-content">
+    <span class="btn-symbol" aria-hidden="true">FULL</span>
+    <span class="btn-label">Full screen</span>
+  </span>
+  <span class="dwell-ring" aria-hidden="true"></span>
+</button>
+```
+
+Attach the native click listener below **before** calling `DwellManager.attach()`. `requestFullscreen()` is invoked synchronously inside that listener, so keyboard Enter/Space, a trusted assistive-technology click, or an operating-system dwell click can provide Edge's required user activation. The later dwell callback is still useful on an EQ-managed browser whose policy allows automatic fullscreen.
+
+```javascript
+const fullScreenButton = document.getElementById('fullScreenButton');
+const fullScreenStatus = document.getElementById('status');
+
+function announceFullScreen(message) {
+  if (fullScreenStatus) fullScreenStatus.textContent = message;
+}
+
+function requestFullScreen(source = 'button') {
+  if (document.fullscreenElement) return Promise.resolve(true);
+  if (!document.documentElement.requestFullscreen) {
+    announceFullScreen('Full screen is unavailable. Press F11 or ask EQ IT for kiosk mode.');
+    return Promise.resolve(false);
+  }
+
+  // Keep this call synchronous with the native click handler below.
+  return document.documentElement.requestFullscreen().then(() => {
+    announceFullScreen('Full screen is on. Press Escape to leave.');
+    return true;
+  }).catch(() => {
+    if (source === 'startup') {
+      announceFullScreen('For best eye-gaze access, choose Full screen. EQ IT can allow automatic full screen.');
+    } else {
+      announceFullScreen('Full screen was blocked. Use click or Enter, press F11, or ask EQ IT for managed full screen.');
+    }
+    return false;
+  });
+}
+
+function updateFullScreenControl() {
+  if (!fullScreenButton) return;
+  fullScreenButton.hidden = Boolean(document.fullscreenElement);
+  if (!document.fullscreenElement) {
+    announceFullScreen('For best eye-gaze access, choose Full screen.');
+  }
+}
+
+if (fullScreenButton) {
+  fullScreenButton.addEventListener('click', () => {
+    requestFullScreen('click');
+  });
+}
+document.addEventListener('fullscreenchange', updateFullScreenControl);
+window.addEventListener('load', () => {
+  requestFullScreen('startup');
+}, { once: true });
+
+// Then attach the general dwell manager. In its activation callback:
+// if (button.dataset.action === 'fullscreen') {
+//   requestFullScreen('dwell');
+//   return;
+// }
+```
+
+Ordinary Edge requires user activation. Automatic startup fullscreen on managed Edge 132+ requires EQ IT to enable `FullscreenAllowed` and allow the activity origin through `AutomaticFullscreenAllowedForUrls`. Prefer a specific HTTPS/localhost origin; `file:///*` covers every local file. For a locked experience, use Edge Digital/Interactive Signage kiosk mode through Assigned Access or Intune.
 
 ## Speech Helper
 

@@ -49,6 +49,7 @@ Keep this workflow distinct from ICP assessment adaptation:
 - Use Australian English unless the user asks otherwise.
 - Prefer a self-contained HTML file when the resource must run from `file:///`, on a school network with no CDN, or on a dedicated AAC device.
 - For single-file gaze HTML, keep all CSS, JS, symbols, and optional audio inline. Do not use CDNs, remote fonts, external scripts, module imports, or network symbol fetches during student use.
+- For student-facing gaze HTML, prefer fullscreen: attempt it once at startup, provide a gaze-sized **Full screen** button, and keep F11/non-fullscreen fallback guidance. Treat automatic or enforced fullscreen as an Edge policy/kiosk deployment decision, not a power the page gains merely by being on the EQ network.
 - Prefer the bundled Boardmaker asset when the user wants a reusable editor/player, activity library, starter templates, offline symbol preparation, or printable boards.
 - Use semantic HTML buttons for student controls. Avoid canvas-only interaction unless there is a strong reason and a full accessible parallel control path exists.
 - Use JSON for activity data rather than hard-coded board state.
@@ -68,6 +69,7 @@ Keep this workflow distinct from ICP assessment adaptation:
 - For switches, support linear scan first. Add row-column scan for larger grids. Provide Start/Stop Scan, Step, Select, scan speed, and Escape-to-stop where keyboard is available.
 - Provide colour plus another signal for correct/incorrect, selected, error, and completion states.
 - Keep main player boards on screen without unnecessary scrolling. Reduce chrome before shrinking access targets.
+- In fullscreen, hide the fullscreen launch control to remove an unnecessary gaze target; show it again if fullscreen exits.
 
 ## Eye-Gaze, Dwell, And Fatigue
 
@@ -107,4 +109,5 @@ Before calling the support finished, confirm:
 - Symbols have text fallback and attribution.
 - The support still makes sense without internet, colour, speech, or fine motor precision.
 - Teacher controls are separate from the student player.
+- The fullscreen startup attempt, direct click/keyboard path, blocked-state fallback, and staff exit route work on the target Edge device.
 - Print/export output is readable if it is part of the request.

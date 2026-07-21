@@ -261,8 +261,11 @@
 
   function requestFullScreen() {
     if (!document.documentElement.requestFullscreen || document.fullscreenElement) return Promise.resolve();
-    return document.documentElement.requestFullscreen().catch(function () {
-      setMessage("Full screen was blocked. Press F11, or ask IT to deploy kiosk mode.");
+    return document.documentElement.requestFullscreen().then(function () {
+      setMessage("Full screen is on. Press Escape to leave.");
+      updateModeClasses();
+    }).catch(function () {
+      setMessage("Full screen was blocked. Use Start Classroom, press F11, or ask EQ IT to enable automatic full screen or kiosk mode.");
     });
   }
 
@@ -291,7 +294,9 @@
     setMessage(requestScreen ? "Starting classroom mode" : "Classroom layout ready");
     if (requestScreen) {
       requestFullScreen();
-      requestWakeLock(false);
+      // Wake lock is helpful but optional. Keep it silent here so a rejection
+      // cannot overwrite the more important fullscreen/F11/EQ policy guidance.
+      requestWakeLock(true);
     }
   }
 
@@ -555,8 +560,8 @@
   }
 
   function toggleFullScreen() {
-    if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
-      document.documentElement.requestFullscreen();
+    if (!document.fullscreenElement) {
+      requestFullScreen();
       return;
     }
     if (document.exitFullscreen) document.exitFullscreen();
@@ -848,12 +853,15 @@
     updateModeClasses();
     bind();
     render();
+    document.addEventListener("fullscreenchange", updateModeClasses);
     if (new URLSearchParams(location.search).get("classroom") === "1") {
-      enterClassroom(false);
+      // Managed Edge 132+ can allow this startup request through
+      // AutomaticFullscreenAllowedForUrls. Otherwise the classroom layout
+      // remains usable and Start Classroom/F11 provides the fallback.
+      enterClassroom(true);
     }
     updateConnectivity();
     updateOfflineBanner();
-    document.addEventListener("fullscreenchange", updateModeClasses);
     registerServiceWorker();
   }
 

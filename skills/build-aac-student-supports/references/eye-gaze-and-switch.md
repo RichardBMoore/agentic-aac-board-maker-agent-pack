@@ -54,13 +54,14 @@ For a portable student support, create one `.html` file with:
 - Keyboard navigation with Tab and Enter/Space at minimum. Arrow navigation is useful for grid boards.
 - A Stop Speech button when speech synthesis is used.
 - A teacher/settings area that can be hidden or locked for student mode.
+- A gaze-sized Full screen button plus one startup `requestFullscreen()` attempt. The direct native click handler must request fullscreen synchronously so keyboard, assistive-technology, or operating-system dwell clicks can provide the required user activation.
 
 Avoid:
 
 - `touchstart` as the only activation path.
 - Pointer-down activation for student choices.
 - Drag-only or gesture-only interactions.
-- Auto-fullscreen assumptions. Browsers require user gesture or managed kiosk policy.
+- Claims that the EQ network alone can force fullscreen. Ordinary Edge requires user activation; automatic startup fullscreen needs the Edge 132+ `AutomaticFullscreenAllowedForUrls` policy, and locked fullscreen needs managed kiosk/Assigned Access.
 
 ## Switch Scanning
 
@@ -104,3 +105,4 @@ Manually test:
 - Switch scanning can start, step, select, and stop.
 - Target size and spacing remain usable at the target viewport.
 - Important content is not hidden below the fold in classroom mode.
+- The startup fullscreen attempt succeeds under the intended managed policy, or fails safely with a visible Full screen/F11/IT fallback.

@@ -36,7 +36,7 @@ Open:
 - Add per-button animation, media, variable, and conditional actions.
 - Apply action presets for common classroom behaviours such as correct answer, wrong answer, score increment, and conditional next page.
 - Switch player contrast between standard, high contrast, black-and-white, and yellow-on-black modes.
-- Launch a laptop-first classroom player mode with lock, size presets, and full-screen support.
+- Launch a laptop-first classroom player mode that attempts fullscreen automatically, with lock, size presets, and a normal-browser fallback.
 - Use skip links, labelled landmarks, synced page titles, announced dwell values, and a high-visibility dwell ring for access users.
 - Keep compact boards at a 120px gaze-safe button floor unless a dense board intentionally needs more cells.
 - Use curated high-contrast button fill and border swatches in the editor.
@@ -59,6 +59,6 @@ Open:
 
 Core use is local-first and does not require accounts. ARASAAC search and fresh ARASAAC image loads need internet; already loaded app files and browser-cached assets keep working offline through the service worker when served over localhost.
 
-Browser security prevents any normal web page from forcing fullscreen on load, even on a managed school network. Use the `Start Classroom` button, browser kiosk mode, or the included PWA manifest (`display: fullscreen`, start URL `player.html?classroom=1`) for Education Queensland or similar managed deployments. Allowlist `https://api.arasaac.org` if staff need live symbol search on the school network.
+Ordinary browser security prevents a page from forcing fullscreen on load without user activation. On Microsoft Edge 132+, EQ IT can allow this player's startup request with `FullscreenAllowed` plus `AutomaticFullscreenAllowedForUrls`; a locked deployment still needs Edge kiosk/Assigned Access. Without managed policy, use `Start Classroom`, F11, or the included PWA manifest (`display: fullscreen`, start URL `player.html?classroom=1`). Allowlist `https://api.arasaac.org` if staff need live symbol search on the school network.
 
 See `DEPLOYMENT.md` for the classroom launch and pre-lesson checklist.

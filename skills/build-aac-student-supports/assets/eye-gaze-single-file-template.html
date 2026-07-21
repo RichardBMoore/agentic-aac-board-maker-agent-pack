@@ -56,6 +56,12 @@
       align-items: stretch;
     }
 
+    .utility-bar {
+      display: grid;
+      grid-template-columns: repeat(2, 160px);
+      gap: var(--target-gap);
+    }
+
     .prompt {
       display: flex;
       flex-direction: column;
@@ -138,6 +144,10 @@
       min-width: 160px;
       min-height: 120px;
       font-size: 1.15rem;
+    }
+
+    .dwell-btn[hidden] {
+      display: none;
     }
 
     .btn-content {
@@ -265,6 +275,10 @@
         grid-template-columns: 1fr;
       }
 
+      .utility-bar {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
       .dwell-btn.utility {
         width: 100%;
       }
@@ -305,18 +319,27 @@
         <h1 id="activityTitle">Choice Board</h1>
         <p id="activityPrompt">What would you like to say?</p>
       </section>
-      <button class="dwell-btn utility" data-action="stop-speech" data-dwell-time="600" aria-label="Stop speech">
-        <span class="btn-content">
-          <span class="btn-symbol" aria-hidden="true">STOP</span>
-          <span class="btn-label">Stop Speech</span>
-        </span>
-        <span class="dwell-ring" aria-hidden="true"></span>
-      </button>
+      <div class="utility-bar" aria-label="Display and speech controls">
+        <button class="dwell-btn utility" id="fullScreenButton" type="button" data-action="fullscreen" data-dwell-time="800" aria-label="Start full screen">
+          <span class="btn-content">
+            <span class="btn-symbol" aria-hidden="true">FULL</span>
+            <span class="btn-label">Full Screen</span>
+          </span>
+          <span class="dwell-ring" aria-hidden="true"></span>
+        </button>
+        <button class="dwell-btn utility" type="button" data-action="stop-speech" data-dwell-time="600" aria-label="Stop speech">
+          <span class="btn-content">
+            <span class="btn-symbol" aria-hidden="true">STOP</span>
+            <span class="btn-label">Stop Speech</span>
+          </span>
+          <span class="dwell-ring" aria-hidden="true"></span>
+        </button>
+      </div>
     </div>
 
     <section class="choice-grid" id="choiceGrid" aria-label="Choices"></section>
 
-    <section class="status" id="status" aria-live="polite">Ready.</section>
+    <section class="status" id="status" aria-live="polite">For best eye-gaze access, choose Full Screen.</section>
   </main>
 
   <div class="confirm-modal" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" aria-hidden="true">
@@ -510,6 +533,35 @@
       statusEl.textContent = text;
     }
 
+    const fullScreenButton = document.getElementById('fullScreenButton');
+
+    function requestFullScreen(source = 'button') {
+      if (document.fullscreenElement) return Promise.resolve(true);
+      if (!document.documentElement.requestFullscreen) {
+        setStatus('Full screen is unavailable. Press F11 or ask EQ IT for kiosk mode.');
+        return Promise.resolve(false);
+      }
+
+      // Keep this call synchronous with the native click handler below.
+      return document.documentElement.requestFullscreen().then(() => {
+        setStatus('Full screen is on. Press Escape to leave.');
+        return true;
+      }).catch(() => {
+        if (source === 'startup') {
+          setStatus('For best eye-gaze access, choose Full Screen. EQ IT can allow automatic full screen.');
+        } else {
+          setStatus('Full screen was blocked. Use click or Enter, press F11, or ask EQ IT for managed full screen.');
+        }
+        return false;
+      });
+    }
+
+    function updateFullScreenControl() {
+      if (!fullScreenButton) return;
+      fullScreenButton.hidden = Boolean(document.fullscreenElement);
+      if (!document.fullscreenElement) setStatus('For best eye-gaze access, choose Full Screen.');
+    }
+
     function makeChoiceButton(choice) {
       const button = document.createElement('button');
       button.className = 'dwell-btn';
@@ -581,9 +633,20 @@
 
     renderActivity();
 
+    // Attach this direct listener before DwellManager.attach(). A trusted
+    // click/Enter/OS dwell click must call requestFullscreen synchronously.
+    fullScreenButton.addEventListener('click', () => {
+      requestFullScreen('click');
+    });
+    document.addEventListener('fullscreenchange', updateFullScreenControl);
+
     const mainDwell = new DwellManager({ dwellTime: ACTIVITY.dwellTime });
     mainDwell.attach(document.querySelectorAll('.dwell-btn:not(.confirm-btn)'), (button) => {
       if (confirmModal.classList.contains('visible')) return;
+      if (button.dataset.action === 'fullscreen') {
+        requestFullScreen('dwell');
+        return;
+      }
       if (button.dataset.action === 'stop-speech') {
         stopSpeech();
         setStatus('Speech stopped.');
@@ -599,6 +662,13 @@
       if (button.dataset.confirm === 'yes' && action) action();
       if (button.dataset.confirm === 'no') setStatus('Cancelled.');
     });
+
+    // EQ-managed Edge 132+ can allow this startup call through
+    // AutomaticFullscreenAllowedForUrls. Ordinary Edge will reject it and
+    // leave the gaze-sized button and F11 guidance available.
+    window.addEventListener('load', () => {
+      requestFullScreen('startup');
+    }, { once: true });
 
     window.checkEyeGazeTargets = function checkEyeGazeTargets() {
       document.querySelectorAll('button').forEach((button) => {
