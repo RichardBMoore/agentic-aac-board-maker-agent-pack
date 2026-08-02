@@ -1,0 +1,14 @@
+{
+  "name": "agentic-aac-board-maker-agent-pack",
+  "version": "0.6.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:browser": "playwright test",
+    "test:browser:chrome": "PLAYWRIGHT_USE_INSTALLED_CHROME=1 playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.62.1",
+    "axe-core": "4.12.1"
+  }
+}

@@ -1,7 +1,7 @@
 {
   "format": "open-board-0.1",
   "id": "page-main",
-  "locale": "en",
+  "locale": "en-AU",
   "name": "Main",
   "buttons": [
     {
@@ -159,7 +159,7 @@
   "ext_aac_source": {
     "generatedFrom": "agentic-aac-board-ir",
     "irId": "morning-routine-expressive-schedule",
-    "irSchemaVersion": "0.3.0"
+    "irSchemaVersion": "0.4.0"
   },
   "ext_aac_access": {
     "profile": "mixed-access",

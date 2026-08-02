@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.6.0 - 2026-08-02
+
+Output-integrity, real-interaction and resource-quality release.
+
+- Canonical IR 0.4.0 now has an executable JSON Schema and a legacy 0.2/0.3 canonicaliser. New committed IR contains only renderer-independent fields; all six proof resources and the starter skeleton were canonicalised.
+- Deterministic IR-to-HTML rendering replaces six independently hand-authored implementations. HTML embeds canonical IR and one shared dwell runtime; parity and byte-drift checks cover pages, buttons, actions, access metadata and runtime integrity.
+- Browser QA runs six boards at three classroom/device-sized viewports with real click/keyboard/dwell cancellation and activation, navigation, sentence-building, fullscreen-blocked fallback, speech-stop isolation, total active-target accounting, minimum target dimensions and axe checks.
+- Setup is limited separately from the active board, and speech exposes one large Stop Speech target while other student targets are hidden/inert. Live target accounting is available through `window.AACBoard.auditVisibleTargets()`.
+- Teacher intake and IR `systemFit` now cover the established AAC system, stable vocabulary/motor plan, known representations, real device/position/vision/fatigue, language/culture/voice and reliable partner signals.
+- ARASAAC selection is review-first: ranked candidates and a contact sheet are generated without mutating the board; only listed `approvedSymbolId` choices can be applied. Deterministic auto-selection is explicit opt-in.
+- A fresh-output harness evaluates newly generated fixture folders for canonical/schema/semantic validity, HTML/IR/runtime parity, required artifacts and structured communication/access/resource expectations.
+- Specialist skills no longer allow implicit invocation. The main skill routes deliberately to gaze, Open AAC Studio, access implementation, ICP or Richard-specific workflows only when their narrower scope is explicit.
+
 ## 0.5.1 - 2026-07-21
 
 Fullscreen-first eye-gaze patch.

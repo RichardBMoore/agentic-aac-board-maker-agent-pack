@@ -1,338 +1,885 @@
 <!doctype html>
-<html lang="en-AU">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Secondary Needs and Communication Repair Board</title>
-<style>
-  :root { --bg:#f7fbff; --ink:#102033; --panel:#ffffff; --focus:#003f8f; --accent:#0b6fdd; --repair:#7a1f1f; --shadow:0 10px 30px rgba(16,32,51,.12); --dwell-ms:1100ms; }
-  * { box-sizing:border-box; }
-  body { margin:0; min-height:100vh; min-height:100dvh; font-family:Verdana, Arial, sans-serif; background:var(--bg); color:var(--ink); display:grid; grid-template-rows:auto auto minmax(0,1fr) auto auto; }
-  header { padding:12px 24px 4px; text-align:center; }
-  h1 { margin:.05rem 0 .2rem; font-size:clamp(1.4rem,2.2vw,2.25rem); }
-  header p { margin:.1rem auto; max-width:1000px; font-size:clamp(.9rem,1.1vw,1.05rem); }
-  .page-indicator { margin:4px auto 0; text-align:center; font-weight:700; font-size:1rem; }
-  main { min-height:0; display:grid; place-items:center; padding:6px 24px 8px; }
-  .page-heading { display:none; }
-  .board { width:min(1180px,100%); min-height:min(52vh,520px); display:grid; grid-template-columns:repeat(3, minmax(132px,1fr)); grid-auto-rows:minmax(132px,1fr); gap:16px; }
-  .dwell-btn { min-width:132px; min-height:132px; }
-  .aac-button { position:relative; overflow:hidden; border:5px solid #17212b; border-radius:24px; background:var(--fill,#fff); color:var(--ink); box-shadow:var(--shadow); padding:14px 12px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.3rem; cursor:pointer; touch-action:manipulation; text-align:center; }
-  .aac-button.repair { border-style:dashed; border-color:#7a1f1f; }
-  .aac-button.comment { border-color:#365314; }
-  .aac-button.question { border-color:#3730a3; }
-  .aac-button.navigation { border-color:#334155; border-style:double; border-width:7px; }
-  .scan { position:absolute; top:8px; left:10px; width:30px; height:30px; border:2px solid #17212b; border-radius:999px; display:grid; place-items:center; font-weight:800; background:#fff; font-size:.95rem; }
-  .label { font-size:clamp(1.2rem,2.4vw,2.2rem); line-height:1.05; font-weight:800; }
-  .spoken { font-size:clamp(.78rem,1vw,1.02rem); opacity:.86; line-height:1.25; }
-  .aac-button:focus-visible, .aac-button.is-dwelling { outline:8px solid var(--focus); outline-offset:6px; transform:translateY(-2px); }
-  .aac-button.activated { outline:10px solid #087f23; }
-  .dwell-progress { position:absolute; left:0; bottom:0; height:14px; width:0; background:linear-gradient(90deg,#0b6fdd,#22a06b); transition:none; }
-  .aac-button.is-dwelling .dwell-progress { animation:dwellFill var(--dwell-ms) linear forwards; }
-  @keyframes dwellFill { from { width:0; } to { width:100%; } }
-  .controls { display:flex; justify-content:center; align-items:center; gap:14px; padding:0 24px 10px; flex-wrap:wrap; }
-  .control { font-size:1.02rem; min-height:54px; padding:10px 18px; border:3px solid #17212b; border-radius:16px; background:#fff; font-weight:700; cursor:pointer; }
-  .fullscreen-control { position:relative; overflow:hidden; min-width:160px; min-height:120px; }
-  .fullscreen-control::after { content:""; position:absolute; inset:auto 0 0; height:14px; width:0; background:linear-gradient(90deg,#0b6fdd,#22a06b); }
-  .fullscreen-control.is-dwelling::after { animation:dwellFill var(--dwell-ms) linear forwards; }
-  .fullscreen-control[hidden] { display:none; }
-  .status { min-width:min(540px,80vw); text-align:center; font-size:1.05rem; font-weight:700; }
-  details.teacher-notes { margin:0 auto 12px; width:min(1120px,calc(100% - 32px)); background:#fff; border:2px solid #17212b; border-radius:16px; padding:10px 16px; }
-  details.teacher-notes summary { font-weight:800; cursor:pointer; padding:8px; }
-  footer { font-size:.84rem; padding:6px 16px 14px; text-align:center; }
-  @media (max-width:760px) { body { display:block; } .board { grid-template-columns:1fr; } .aac-button { min-height:132px; } }
-  @media (prefers-reduced-motion:reduce) { .aac-button { transition:none; } .aac-button.is-dwelling .dwell-progress { animation:none; width:100%; } }
-  @media (forced-colors:active) { .aac-button,.control { border:4px solid ButtonText; background:Canvas; color:ButtonText; forced-color-adjust:auto; } .aac-button:focus-visible,.aac-button.is-dwelling { outline:6px solid Highlight; } .dwell-progress { background:Highlight; } }
-  @media print {
-    body { display:block; background:#fff; }
-    header, main, footer { padding:8mm; }
-    .page-indicator { display:none; }
-    section.page[hidden] { display:block !important; }
-    .page-heading { display:block; font-size:14pt; margin:0 0 4mm; }
-    section.page { page-break-inside:avoid; margin-bottom:8mm; }
-    .board { display:grid; grid-template-columns:repeat(3,1fr); gap:5mm; min-height:auto; }
-    .aac-button { min-height:30mm; box-shadow:none; break-inside:avoid; border:2.5pt solid #000; }
-    .controls,.dwell-progress { display:none !important; }
-    details.teacher-notes { page-break-before:always; }
-    .spoken { color:#000; }
-  }
-</style>
-</head>
-<body>
-<header>
-  <h1>Secondary Needs and Communication Repair Board</h1>
-  <p>Say what you need or repair the conversation. Two calm pages: my needs, and sorting it out.</p>
-  <p>Access: touch, keyboard, mouse, eye-gaze-dwell. Nine targets per page. Help please is on both pages.</p>
-</header>
-<p class="page-indicator" id="pageIndicator">Page 1 of 2: I need</p>
-<main>
-  <section class="page" id="page-needs" aria-label="I need">
-    <h2 class="page-heading">Page 1 — I need</h2>
-    <div class="board" aria-label="My needs board">
-      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" data-action="speak" data-speak="Help please" data-label="Help please" aria-label="Say: Help please">
-        <span class="scan" aria-hidden="true">1</span>
-        <span class="label">Help please</span>
-        <span class="spoken">Help please</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" data-action="speak" data-speak="I need a break" data-label="I need a break" aria-label="Say: I need a break">
-        <span class="scan" aria-hidden="true">2</span>
-        <span class="label">I need a break</span>
-        <span class="spoken">I need a break</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" data-action="speak" data-speak="Please wait" data-label="Wait" aria-label="Say: Please wait">
-        <span class="scan" aria-hidden="true">3</span>
-        <span class="label">Wait</span>
-        <span class="spoken">Please wait</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-      <button class="aac-button dwell-btn" style="--fill:#FFFFFF" data-action="speak" data-speak="I feel unwell" data-label="I feel unwell" aria-label="Say: I feel unwell">
-        <span class="scan" aria-hidden="true">4</span>
-        <span class="label">I feel unwell</span>
-        <span class="spoken">I feel unwell</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-      <button class="aac-button dwell-btn" style="--fill:#FFFFFF" data-action="speak" data-speak="I need privacy" data-label="I need privacy" aria-label="Say: I need privacy">
-        <span class="scan" aria-hidden="true">5</span>
-        <span class="label">I need privacy</span>
-        <span class="spoken">I need privacy</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-      <button class="aac-button dwell-btn comment" style="--fill:#FFFFFF" data-action="speak" data-speak="It is too loud" data-label="Too loud" aria-label="Say: It is too loud">
-        <span class="scan" aria-hidden="true">6</span>
-        <span class="label">Too loud</span>
-        <span class="spoken">It is too loud</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" data-action="speak" data-speak="I am finished" data-label="Finished" aria-label="Say: I am finished">
-        <span class="scan" aria-hidden="true">7</span>
-        <span class="label">Finished</span>
-        <span class="spoken">I am finished</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-      <button class="aac-button dwell-btn navigation" style="--fill:#ECECF4" data-action="nav" data-target="page-repair" data-speak="Go to repair and choices" data-label="Sort it out page" aria-label="Go to the sort it out page">
-        <span class="scan" aria-hidden="true">8</span>
-        <span class="label">Sort it out ▶</span>
-        <span class="spoken">Next page</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-    </div>
-  </section>
-  <section class="page" id="page-repair" hidden aria-label="Sort it out">
-    <h2 class="page-heading">Page 2 — Sort it out</h2>
-    <div class="board" aria-label="Sort it out board">
-      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" data-action="speak" data-speak="Help please" data-label="Help please" aria-label="Say: Help please">
-        <span class="scan" aria-hidden="true">1</span>
-        <span class="label">Help please</span>
-        <span class="spoken">Help please</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" data-action="speak" data-speak="Please say it another way" data-label="Say it another way" aria-label="Say: Please say it another way">
-        <span class="scan" aria-hidden="true">2</span>
-        <span class="label">Say it another way</span>
-        <span class="spoken">Please say it another way</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" data-action="speak" data-speak="Not that" data-label="Not that" aria-label="Say: Not that">
-        <span class="scan" aria-hidden="true">3</span>
-        <span class="label">Not that</span>
-        <span class="spoken">Not that</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" data-action="speak" data-speak="I need something different" data-label="Different" aria-label="Say: I need something different">
-        <span class="scan" aria-hidden="true">4</span>
-        <span class="label">Different</span>
-        <span class="spoken">I need something different</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-      <button class="aac-button dwell-btn comment" style="--fill:#FFFFFF" data-action="speak" data-speak="I disagree" data-label="I disagree" aria-label="Say: I disagree">
-        <span class="scan" aria-hidden="true">5</span>
-        <span class="label">I disagree</span>
-        <span class="spoken">I disagree</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-      <button class="aac-button dwell-btn question" style="--fill:#FFFFFF" data-action="speak" data-speak="Can I choose?" data-label="Can I choose?" aria-label="Say: Can I choose?">
-        <span class="scan" aria-hidden="true">6</span>
-        <span class="label">Can I choose?</span>
-        <span class="spoken">Can I choose?</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-      <button class="aac-button dwell-btn navigation" style="--fill:#ECECF4" data-action="nav" data-target="page-needs" data-speak="Go back to my needs" data-label="My needs page" aria-label="Go back to the my needs page">
-        <span class="scan" aria-hidden="true">7</span>
-        <span class="label">◀ My needs</span>
-        <span class="spoken">Back</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-    </div>
-  </section>
-</main>
-<section class="controls" aria-label="Speech and status controls">
-  <button class="control dwell-btn fullscreen-control" id="fullScreen" type="button" aria-label="Start full screen">⛶ Full screen</button>
-  <button class="control" id="soundCheck" type="button" aria-label="Sound check">🔊 Sound check</button>
-<button class="control" id="stopSpeech" type="button" aria-label="Stop speech">Stop speech</button>
-  <div class="status" id="status" role="status" aria-live="polite">Ready</div>
-</section>
-<details class="teacher-notes">
-  <summary>Teacher notes, customisation, and QA</summary>
-  <p><strong>How it works:</strong> Each button speaks a message immediately. Page 1 holds urgent needs and regulation; page 2 holds communication repair and self-advocacy. The navigation buttons move between the two nine-target pages, and Help please is on both pages.</p>
-  <p><strong>Modelling:</strong> Model the board neutrally during calm moments, including how to move between the two pages. Treat selections as communication, not behaviour compliance.</p>
-  <p><strong>Age-respectful:</strong> Language is plain and secondary-appropriate. Avoid childish praise, token language or public commentary about private needs.</p>
-  <p><strong>Privacy:</strong> Do not log sensitive health, behaviour or family details in the file. Use separate approved school processes for confidential notes.</p>
-  <p><strong>Repair:</strong> Honour repair messages such as Not that, Different, Say it another way and Wait before repeating demands.</p>
-  <p><strong>Use:</strong> Use as a support for needs and communication repair, not as a behaviour-control board or replacement AAC system.</p>
-  <p><strong>Caveat:</strong> Draft classroom support only. Review with the teaching/SLP/OT team and test with the actual student, access method, device and school environment before relying on it.</p>
-</details>
-<footer>
-  Source of truth: <code>secondary-needs-repair-board.ir.json</code>. Privacy: anonymous, no student data. Symbol strategy: ARASAAC search terms with text fallback; HTML uses text-only placeholders.
-</footer>
-<script>
-class PageBoard {
-  constructor(options) {
-    this.dwellMs = options.dwellMs;
-    this.buttons = Array.from(options.buttons);
-    this.pages = Array.from(options.pages);
-    this.pageOrder = this.pages.map(page => page.id);
-    this.pageIndicator = options.pageIndicator;
-    this.statusEl = options.statusEl;
-    this.stopSpeech = options.stopSpeech;
-    this.dwellTimer = null;
-    this.dwellActivatedAt = new WeakMap();
-    this.current = null;
-    this.cooldown = new WeakSet();
-  }
-  speak(text) {
-    try {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'en-AU';
-        utterance.onerror = () => this.status('Speech is blocked or unavailable. Press Sound check, then try again.');
-        window.speechSynthesis.speak(utterance);
-      }
-    } catch (error) { console.warn('Speech unavailable', error); }
-  }
-  status(message) { this.statusEl.textContent = message; }
-  showPage(id) {
-    this.clearDwell(this.current);
-    this.pages.forEach(page => { page.hidden = (page.id !== id); });
-    const active = document.getElementById(id);
-    if (!active) return;
-    const index = this.pageOrder.indexOf(id);
-    const name = active.getAttribute('aria-label');
-    this.pageIndicator.textContent = 'Page ' + (index + 1) + ' of ' + this.pageOrder.length + ': ' + name;
-    this.status('On the ' + name + ' page.');
-    const first = active.querySelector('.aac-button');
-    if (first) first.focus();
-  }
-  clearDwell(button) {
-    if (this.dwellTimer) clearTimeout(this.dwellTimer);
-    this.dwellTimer = null;
-    if (button) button.classList.remove('is-dwelling');
-    this.current = null;
-  }
-  activate(button) {
-    this.clearDwell(button);
-    const action = button.dataset.action || 'speak';
-    if (action === 'nav') {
-      this.speak(button.dataset.speak || '');
-      this.showPage(button.dataset.target);
-    } else {
-      const text = button.dataset.speak || button.dataset.label || button.textContent.trim();
-      this.status('Selected: ' + text);
-      this.speak(text);
+<html lang="en-AU" data-runtime-sha256="6618cf41c5c30094d0a1523640748625009bff7daaeedd50f3445ac1b89e0ab2">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Secondary Needs and Communication Repair Board</title><style>
+:root { --min-target: 132px; --dwell-ms: 1100ms; --ink:#17212b; --focus:#005fcc; --repair:#ffe3e3; }
+* { box-sizing:border-box; }
+html, body { margin:0; min-height:100%; font-family:Verdana,Arial,sans-serif; color:var(--ink); background:#f7fbff; }
+body { min-height:100vh; }
+button { font:inherit; color:inherit; }
+[hidden] { display:none !important; }
+.skip-link { position:absolute; left:-9999px; } .skip-link:focus { left:8px; top:8px; z-index:20; background:white; padding:8px; }
+.setup-screen, .speech-layer { min-height:100vh; display:grid; place-content:center; gap:20px; padding:24px; text-align:center; }
+.setup-controls { display:flex; flex-wrap:wrap; justify-content:center; gap:24px; }
+.student-layer { min-height:100vh; padding:12px; }
+.page-title { margin:0 0 8px; text-align:center; font-size:clamp(1.1rem,2.4vw,1.8rem); }
+.board-grid { min-height:calc(100vh - 84px); display:grid; grid-template-columns:repeat(var(--grid-columns), minmax(var(--min-target),1fr)); grid-template-rows:repeat(var(--grid-rows), minmax(var(--min-target),1fr)); gap:12px; }
+.message-bar + .board-page .board-grid, .message-bar ~ .board-page .board-grid { min-height:calc(100vh - 160px); }
+.message-bar { margin:0 auto 10px; max-width:1200px; min-height:60px; padding:10px 16px; border:3px solid var(--ink); border-radius:14px; background:white; font-size:clamp(1rem,2.2vw,1.5rem); }
+.is-placeholder { color:#58636e; }
+.dwell-btn { position:relative; overflow:hidden; min-width:var(--min-target); min-height:var(--min-target); border:4px solid var(--ink); border-radius:18px; background:#fff; padding:12px; font-size:clamp(1rem,2.5vw,1.6rem); font-weight:700; cursor:pointer; touch-action:manipulation; }
+.dwell-btn:focus-visible { outline:6px solid var(--focus); outline-offset:3px; }
+.role-repair { background:var(--repair); } .role-navigation { background:#e8eef4; }
+.dwell-progress { position:absolute; inset:auto 0 0; height:10px; background:#ffbf00; transform:scaleX(0); transform-origin:left; }
+.is-dwelling .dwell-progress { animation:dwell-fill var(--dwell-ms) linear forwards; }
+.was-activated { filter:brightness(.82); }
+.symbol { display:block; max-width:55%; max-height:55%; margin:0 auto 8px; object-fit:contain; }
+.speech-layer { position:fixed; inset:0; z-index:10; background:#f7fbff; }
+.speech-active #student-layer, .speech-active #setup-screen { visibility:hidden; }
+.stop-control { min-width:min(70vw,420px); min-height:min(55vh,320px); background:#ffe3e3; font-size:clamp(1.4rem,4vw,2.4rem); }
+.board-status { position:fixed; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
+.teacher-panel { display:none; margin:18px; padding:18px; border:2px solid #555; background:white; }
+body.teacher-mode .teacher-panel { display:block; }
+.attribution { font-size:.75rem; }
+@keyframes dwell-fill { to { transform:scaleX(1); } }
+@media (max-width:760px) { .board-grid { gap:7px; } .dwell-btn { padding:7px; } }
+@media (forced-colors:active) { .dwell-btn { border-color:ButtonText; forced-color-adjust:auto; } .dwell-progress { background:Highlight; } }
+@media print { .setup-screen,.speech-layer,.board-status { display:none !important; } .student-layer,.teacher-panel { display:block !important; } .board-page { break-after:page; } .board-page[hidden] { display:block !important; } .board-grid { min-height:auto; } .dwell-btn { min-height:110px; } }
+</style></head>
+<body data-access-profile="mixed-access" data-dwell-enabled="true" data-min-target="132" data-visible-target-limit="9" data-setup-target-limit="3">
+<a class="skip-link" href="#student-layer">Skip to board</a>
+<section id="setup-screen" class="setup-screen" aria-label="Board setup"><h1>Secondary Needs and Communication Repair Board</h1><p>Choose Start board when positioning and access are ready.</p><div class="setup-controls"><button id="start" class="dwell-btn setup-control primary" type="button" data-control="start" data-student-target data-dwell aria-label="Start board"><span class="label">Start board</span><span class="dwell-progress" aria-hidden="true"></span></button><button id="full-screen" class="dwell-btn setup-control" type="button" data-control="full-screen" data-student-target data-dwell aria-label="Full screen"><span class="label">Full screen</span><span class="dwell-progress" aria-hidden="true"></span></button><button id="sound-check" class="dwell-btn setup-control" type="button" data-control="sound-check" data-student-target data-dwell aria-label="Sound check"><span class="label">Sound check</span><span class="dwell-progress" aria-hidden="true"></span></button></div></section>
+<main id="student-layer" class="student-layer" hidden><section class="board-page" data-page-id="page-needs" aria-label="I need"><h2 class="page-title">I need</h2><div class="board-grid" style="--grid-rows:3;--grid-columns:3"><button id="btn-help-needs" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-help-needs" data-label="Help please" data-spoken="Help please" data-actions="[{&quot;id&quot;:&quot;act-btn-help-needs-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Help please&quot;},{&quot;id&quot;:&quot;act-btn-help-needs-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Help please"><span class="label">Help please</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-break" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-break" data-label="I need a break" data-spoken="I need a break" data-actions="[{&quot;id&quot;:&quot;act-btn-break-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;I need a break&quot;},{&quot;id&quot;:&quot;act-btn-break-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="I need a break"><span class="label">I need a break</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-wait" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-wait" data-label="Wait" data-spoken="Please wait" data-actions="[{&quot;id&quot;:&quot;act-btn-wait-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Please wait&quot;},{&quot;id&quot;:&quot;act-btn-wait-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Wait"><span class="label">Wait</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-unwell" class="dwell-btn board-button role-core" type="button" data-button-id="btn-unwell" data-label="I feel unwell" data-spoken="I feel unwell" data-actions="[{&quot;id&quot;:&quot;act-btn-unwell-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;I feel unwell&quot;},{&quot;id&quot;:&quot;act-btn-unwell-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="I feel unwell"><span class="label">I feel unwell</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-privacy" class="dwell-btn board-button role-core" type="button" data-button-id="btn-privacy" data-label="I need privacy" data-spoken="I need privacy" data-actions="[{&quot;id&quot;:&quot;act-btn-privacy-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;I need privacy&quot;},{&quot;id&quot;:&quot;act-btn-privacy-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="I need privacy"><span class="label">I need privacy</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-quiet" class="dwell-btn board-button role-comment" type="button" data-button-id="btn-quiet" data-label="Too loud" data-spoken="It is too loud" data-actions="[{&quot;id&quot;:&quot;act-btn-quiet-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;It is too loud&quot;},{&quot;id&quot;:&quot;act-btn-quiet-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Too loud"><span class="label">Too loud</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-finished" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-finished" data-label="Finished" data-spoken="I am finished" data-actions="[{&quot;id&quot;:&quot;act-btn-finished-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;I am finished&quot;},{&quot;id&quot;:&quot;act-btn-finished-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Finished"><span class="label">Finished</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-to-repair" class="dwell-btn board-button role-navigation" type="button" data-button-id="btn-to-repair" data-label="Sort it out ▶" data-spoken="Go to repair and choices" data-actions="[{&quot;id&quot;:&quot;act-btn-to-repair-next&quot;,&quot;type&quot;:&quot;next-page&quot;,&quot;targetPageId&quot;:&quot;page-repair&quot;}]" data-student-target data-dwell aria-label="Sort it out ▶"><span class="label">Sort it out ▶</span><span class="dwell-progress" aria-hidden="true"></span></button></div></section>
+<section class="board-page" data-page-id="page-repair" aria-label="Sort it out" hidden><h2 class="page-title">Sort it out</h2><div class="board-grid" style="--grid-rows:3;--grid-columns:3"><button id="btn-help-repair" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-help-repair" data-label="Help please" data-spoken="Help please" data-actions="[{&quot;id&quot;:&quot;act-btn-help-repair-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Help please&quot;},{&quot;id&quot;:&quot;act-btn-help-repair-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Help please"><span class="label">Help please</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-say-again" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-say-again" data-label="Say it another way" data-spoken="Please say it another way" data-actions="[{&quot;id&quot;:&quot;act-btn-say-again-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Please say it another way&quot;},{&quot;id&quot;:&quot;act-btn-say-again-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Say it another way"><span class="label">Say it another way</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-not-that" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-not-that" data-label="Not that" data-spoken="Not that" data-actions="[{&quot;id&quot;:&quot;act-btn-not-that-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Not that&quot;},{&quot;id&quot;:&quot;act-btn-not-that-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Not that"><span class="label">Not that</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-different" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-different" data-label="Different" data-spoken="I need something different" data-actions="[{&quot;id&quot;:&quot;act-btn-different-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;I need something different&quot;},{&quot;id&quot;:&quot;act-btn-different-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Different"><span class="label">Different</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-disagree" class="dwell-btn board-button role-comment" type="button" data-button-id="btn-disagree" data-label="I disagree" data-spoken="I disagree" data-actions="[{&quot;id&quot;:&quot;act-btn-disagree-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;I disagree&quot;},{&quot;id&quot;:&quot;act-btn-disagree-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="I disagree"><span class="label">I disagree</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-choose" class="dwell-btn board-button role-question" type="button" data-button-id="btn-choose" data-label="Can I choose?" data-spoken="Can I choose?" data-actions="[{&quot;id&quot;:&quot;act-btn-choose-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Can I choose?&quot;},{&quot;id&quot;:&quot;act-btn-choose-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Can I choose?"><span class="label">Can I choose?</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-to-needs" class="dwell-btn board-button role-navigation" type="button" data-button-id="btn-to-needs" data-label="◀ My needs" data-spoken="Go back to my needs" data-actions="[{&quot;id&quot;:&quot;act-btn-to-needs-prev&quot;,&quot;type&quot;:&quot;previous-page&quot;,&quot;targetPageId&quot;:&quot;page-needs&quot;}]" data-student-target data-dwell aria-label="◀ My needs"><span class="label">◀ My needs</span><span class="dwell-progress" aria-hidden="true"></span></button></div></section></main>
+<section id="speech-layer" class="speech-layer" aria-label="Speech controls" hidden><button id="stop-speech" class="dwell-btn stop-control" type="button" data-control="stop-speech" data-student-target data-dwell aria-label="Stop speech"><span class="label">Stop speech</span><span class="dwell-progress" aria-hidden="true"></span></button></section>
+<div id="board-status" class="board-status" role="status" aria-live="polite">Board ready.</div>
+<aside class="teacher-panel"><h2>Teacher notes</h2><p><strong>Model:</strong> Model the board neutrally during calm moments, including how to move between the two pages. Treat selections as communication, not behaviour compliance.</p><p><strong>Evidence:</strong> support request; privacy request; repair message; refusal; question or disagreement</p><p><strong>Customise:</strong> Review vocabulary, symbols and positions with the student and team before use.</p><p class="attribution">ARASAAC: CC BY-NC-SA. Text fallback remains available. ARASAAC pictograms, when embedded, require their stated attribution.</p></aside>
+<script id="aac-board-ir" type="application/json">{
+  "schemaVersion": "0.4.0",
+  "format": "agentic-aac-board-ir",
+  "id": "secondary-needs-repair-board",
+  "title": "Secondary Needs and Communication Repair Board",
+  "purpose": "An age-respectful two-page needs and communication repair board that lets a secondary student request support, privacy, clarification, a break, different choices or communication repair without behaviour-control framing. Help stays on every page and no page exceeds nine targets.",
+  "audience": {
+    "ageBand": "secondary",
+    "tone": "age-respectful, non-infantilising",
+    "locale": "en-AU"
+  },
+  "access": {
+    "intended": [
+      "touch",
+      "keyboard",
+      "mouse",
+      "eye-gaze-dwell"
+    ],
+    "profile": "mixed-access",
+    "minimumTargetSizePx": 132,
+    "dwellTimeMs": 1100,
+    "denseGazeTested": false,
+    "visibleTargetLimit": 9,
+    "setupTargetLimit": 3,
+    "switchScanning": false,
+    "scanSpeedMs": 1400,
+    "scanPattern": "linear",
+    "scanOrder": "left-to-right, top-to-bottom, then navigation",
+    "audioCues": true
+  },
+  "display": {
+    "orientation": "landscape",
+    "width": 1024,
+    "height": 768,
+    "backgroundColour": "#f7fbff"
+  },
+  "studentControls": {
+    "startBoard": true,
+    "fullScreen": true,
+    "soundCheck": true,
+    "stopSpeechDuringPlayback": true,
+    "teacherPanel": false
+  },
+  "communicationFunctions": [
+    "request",
+    "repair",
+    "refuse",
+    "comment",
+    "regulate-rest",
+    "ask",
+    "navigate"
+  ],
+  "pages": [
+    {
+      "id": "page-needs",
+      "name": "I need",
+      "pattern": "needs-repair-board",
+      "layout": "grid",
+      "grid": {
+        "rows": 3,
+        "columns": 3
+      },
+      "buttons": [
+        {
+          "id": "btn-help-needs",
+          "label": "Help please",
+          "role": "repair",
+          "function": "repair",
+          "spokenText": "Help please",
+          "searchTerm": "help",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-help-needs-speak",
+              "type": "speak-text",
+              "text": "Help please"
+            },
+            {
+              "id": "act-btn-help-needs-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "Help please",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-break",
+          "label": "I need a break",
+          "role": "repair",
+          "function": "regulate-rest",
+          "spokenText": "I need a break",
+          "searchTerm": "break",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-break-speak",
+              "type": "speak-text",
+              "text": "I need a break"
+            },
+            {
+              "id": "act-btn-break-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "I need a break",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-wait",
+          "label": "Wait",
+          "role": "repair",
+          "function": "regulate-rest",
+          "spokenText": "Please wait",
+          "searchTerm": "wait",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-wait-speak",
+              "type": "speak-text",
+              "text": "Please wait"
+            },
+            {
+              "id": "act-btn-wait-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "Please wait",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-unwell",
+          "label": "I feel unwell",
+          "role": "core",
+          "function": "request",
+          "spokenText": "I feel unwell",
+          "searchTerm": "unwell",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-unwell-speak",
+              "type": "speak-text",
+              "text": "I feel unwell"
+            },
+            {
+              "id": "act-btn-unwell-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "I feel unwell",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-privacy",
+          "label": "I need privacy",
+          "role": "core",
+          "function": "request",
+          "spokenText": "I need privacy",
+          "searchTerm": "privacy",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-privacy-speak",
+              "type": "speak-text",
+              "text": "I need privacy"
+            },
+            {
+              "id": "act-btn-privacy-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "I need privacy",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-quiet",
+          "label": "Too loud",
+          "role": "comment",
+          "function": "comment",
+          "spokenText": "It is too loud",
+          "searchTerm": "too loud",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-quiet-speak",
+              "type": "speak-text",
+              "text": "It is too loud"
+            },
+            {
+              "id": "act-btn-quiet-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "It is too loud",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-finished",
+          "label": "Finished",
+          "role": "repair",
+          "function": "refuse",
+          "spokenText": "I am finished",
+          "searchTerm": "finished",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-finished-speak",
+              "type": "speak-text",
+              "text": "I am finished"
+            },
+            {
+              "id": "act-btn-finished-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "I am finished",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-to-repair",
+          "label": "Sort it out ▶",
+          "role": "navigation",
+          "function": "navigate",
+          "spokenText": "Go to repair and choices",
+          "searchTerm": "next page repair self advocacy",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-to-repair-next",
+              "type": "next-page",
+              "targetPageId": "page-repair"
+            }
+          ],
+          "audioCue": "Go to repair and choices",
+          "result": "navigated",
+          "style": {
+            "fillColour": "#ECECF4"
+          }
+        }
+      ],
+      "margin": 18,
+      "backgroundColour": "#f7fbff"
+    },
+    {
+      "id": "page-repair",
+      "name": "Sort it out",
+      "pattern": "needs-repair-board",
+      "layout": "grid",
+      "grid": {
+        "rows": 3,
+        "columns": 3
+      },
+      "buttons": [
+        {
+          "id": "btn-help-repair",
+          "label": "Help please",
+          "role": "repair",
+          "function": "repair",
+          "spokenText": "Help please",
+          "searchTerm": "help",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-help-repair-speak",
+              "type": "speak-text",
+              "text": "Help please"
+            },
+            {
+              "id": "act-btn-help-repair-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "Help please",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-say-again",
+          "label": "Say it another way",
+          "role": "repair",
+          "function": "repair",
+          "spokenText": "Please say it another way",
+          "searchTerm": "clarify",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-say-again-speak",
+              "type": "speak-text",
+              "text": "Please say it another way"
+            },
+            {
+              "id": "act-btn-say-again-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "Please say it another way",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-not-that",
+          "label": "Not that",
+          "role": "repair",
+          "function": "refuse",
+          "spokenText": "Not that",
+          "searchTerm": "not that",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-not-that-speak",
+              "type": "speak-text",
+              "text": "Not that"
+            },
+            {
+              "id": "act-btn-not-that-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "Not that",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-different",
+          "label": "Different",
+          "role": "repair",
+          "function": "repair",
+          "spokenText": "I need something different",
+          "searchTerm": "different",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-different-speak",
+              "type": "speak-text",
+              "text": "I need something different"
+            },
+            {
+              "id": "act-btn-different-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "I need something different",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-disagree",
+          "label": "I disagree",
+          "role": "comment",
+          "function": "comment",
+          "spokenText": "I disagree",
+          "searchTerm": "disagree",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-disagree-speak",
+              "type": "speak-text",
+              "text": "I disagree"
+            },
+            {
+              "id": "act-btn-disagree-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "I disagree",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-choose",
+          "label": "Can I choose?",
+          "role": "question",
+          "function": "ask",
+          "spokenText": "Can I choose?",
+          "searchTerm": "choose question",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-choose-speak",
+              "type": "speak-text",
+              "text": "Can I choose?"
+            },
+            {
+              "id": "act-btn-choose-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "Can I choose?",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-to-needs",
+          "label": "◀ My needs",
+          "role": "navigation",
+          "function": "navigate",
+          "spokenText": "Go back to my needs",
+          "searchTerm": "back previous page needs",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-to-needs-prev",
+              "type": "previous-page",
+              "targetPageId": "page-needs"
+            }
+          ],
+          "audioCue": "Go back to my needs",
+          "result": "navigated",
+          "style": {
+            "fillColour": "#ECECF4"
+          }
+        }
+      ],
+      "margin": 18,
+      "backgroundColour": "#f7fbff"
     }
-    button.classList.add('activated');
-    setTimeout(() => button.classList.remove('activated'), 650);
-    this.cooldown.add(button);
+  ],
+  "teacherNotes": {
+    "modeling": "Model the board neutrally during calm moments, including how to move between the two pages. Treat selections as communication, not behaviour compliance.",
+    "evidence": "support request; privacy request; repair message; refusal; question or disagreement",
+    "customisation": "Review vocabulary, symbols and positions with the student and team before use.",
+    "age_respectful": "Language is plain and secondary-appropriate. Avoid childish praise, token language or public commentary about private needs.",
+    "privacy": "Do not log sensitive health, behaviour or family details in the file. Use separate approved school processes for confidential notes.",
+    "repair": "Honour repair messages such as Not that, Different, Say it another way and Wait before repeating demands.",
+    "navigation": "Page 1 is urgent needs and regulation; page 2 is repair and self-advocacy. Help please is on both pages so support is always one selection away.",
+    "use": "Use as a support for needs and communication repair, not as a behaviour-control board or replacement AAC system."
+  },
+  "systemFit": {
+    "reviewStatus": "team-input-needed",
+    "existingSystem": "Confirm how this support sits alongside the student's established AAC system.",
+    "vocabularyAndMotorPlan": "Confirm familiar vocabulary and stable locations before classroom use.",
+    "symbolFamiliarity": "Confirm that each symbol or text representation is recognised and meaningful.",
+    "accessCalibration": "Confirm access settings on the actual device with the student and team.",
+    "positioningAndVision": "Confirm screen, mounting, seating, visual field, contrast and fatigue conditions.",
+    "languageCultureVoice": "Confirm preferred language, culturally meaningful vocabulary and voice output.",
+    "partnerSignals": "Confirm reliable yes/no, cancel, repair and partner-assisted signals."
+  },
+  "symbolStrategy": {
+    "defaultSource": "ARASAAC search terms",
+    "textFallback": true,
+    "customMediaPolicy": "teacher-owned local media only unless explicitly approved",
+    "notes": "Use simple, respectful symbols or text. Avoid infantilising cartoons for secondary students unless the student prefers them.",
+    "reviewRequired": true
+  },
+  "privacy": {
+    "level": "anonymous",
+    "containsSensitiveData": false
+  },
+  "attribution": [
+    {
+      "source": "ARASAAC",
+      "licence": "CC BY-NC-SA",
+      "attribution": "The pictographic symbols used are the property of the Government of Aragon and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distributes them under Creative Commons License BY-NC-SA.",
+      "note": "Symbol search terms are provided for later ARASAAC replacement; confirm exact current licence wording when publishing beyond local classroom use."
+    }
+  ],
+  "navigation": {
+    "model": "two-page needs and repair board",
+    "pages": [
+      "page-needs",
+      "page-repair"
+    ],
+    "notes": "Page 1 carries urgent needs and regulation; page 2 carries communication repair and self-advocacy. Help please appears on both pages so support is never more than one selection away, and neither page exceeds nine gaze targets."
+  },
+  "sett": {
+    "student": "Secondary student can express needs, request privacy/support, refuse, disagree, ask, and repair communication in age-respectful language across two calm pages.",
+    "environment": "Secondary classroom or support setting where private needs must not be exposed through public logs or childish wording.",
+    "task": "Support self-advocacy, communication repair, and access regulation without behaviour-control framing.",
+    "tools": "Two-page needs/repair board with no more than nine targets per page, Help on every page, neutral spoken labels, text fallback, privacy-safe notes, and stable repair options."
+  },
+  "udl": {
+    "engagement": [
+      "Meaningful choice",
+      "safe repair route",
+      "wait time and partner response"
+    ],
+    "representation": [
+      "short text labels",
+      "spoken output",
+      "symbol/search-term or text fallback"
+    ],
+    "actionExpression": [
+      "touch",
+      "keyboard",
+      "mouse",
+      "eye-gaze-dwell"
+    ]
+  },
+  "differentiation": {
+    "content": "Maintain student dignity and self-advocacy instead of simplifying to compliance language.",
+    "process": "Model key vocabulary, provide wait time, allow rehearsal/repetition, and accept multimodal communication.",
+    "product": "Accept observed communication attempts and local team notes outside the public resource file.",
+    "environment": "Use a calm, predictable, local-first layout with no more than nine targets per page and teacher controls separate from student choices.",
+    "support": "Teaching, SLP, OT, family, and student/team review should personalise vocabulary and access before reliance."
+  },
+  "participationBarriers": [
+    {
+      "barrier": "Original interaction may be interpreted as behaviour rather than communication, and twelve messages on one screen are too dense for a gaze or switch user.",
+      "support": "Provide direct messages for break, privacy, disagreement, help, wait, different, and finished across two gaze-safe pages with Help on each."
+    }
+  ],
+  "evidencePlan": {
+    "observable": [
+      "support request",
+      "privacy request",
+      "repair message",
+      "refusal",
+      "question or disagreement"
+    ],
+    "notJudgement": "Needs/repair selections are communication and wellbeing context, not behaviour scoring.",
+    "export": "Use anonymous teacher notes, print/portfolio evidence, or local CSV/report only when needed. Do not include diagnoses, behaviour details, family details, or school IDs."
+  },
+  "provenance": {
+    "fixtureId": "needs-repair-board",
+    "sourcePrompt": "Make a respectful needs and communication repair board for a secondary student."
   }
-  recentDwellActivation(button) {
-    return performance.now() - (this.dwellActivatedAt.get(button) || -Infinity) < 800;
-  }
-  startDwell(button) {
-    if (this.cooldown.has(button)) return;
-    this.clearDwell(this.current);
-    this.current = button;
-    button.classList.add('is-dwelling');
-    this.dwellTimer = setTimeout(() => { this.dwellActivatedAt.set(button, performance.now()); this.activate(button); }, this.dwellMs);
-  }
-  bind() {
-    this.buttons.forEach(button => {
-      button.addEventListener('pointerenter', () => this.startDwell(button));
-      button.addEventListener('pointerleave', () => { this.cooldown.delete(button); this.clearDwell(button); });
-      button.addEventListener('focus', () => { this.status('Focus: ' + (button.dataset.label || button.textContent.trim())); });
-      button.addEventListener('blur', () => { this.cooldown.delete(button); this.clearDwell(button); });
-      button.addEventListener('click', () => { if (this.recentDwellActivation(button)) return; this.activate(button); });
-      button.addEventListener('keydown', event => {
-        if (event.key === 'Escape') this.clearDwell(button);
+}</script>
+<script>if(new URLSearchParams(location.search).get("teacher")==="1")document.body.classList.add("teacher-mode");</script>
+<!-- shared-runtime-sha256:6618cf41c5c30094d0a1523640748625009bff7daaeedd50f3445ac1b89e0ab2 -->
+<script data-aac-shared-runtime>/* Agentic AAC Board shared runtime. Keep this file dependency-free and offline-safe. */
+(() => {
+  "use strict";
+
+  const documentRoot = document.documentElement;
+  const irNode = document.getElementById("aac-board-ir");
+  if (!irNode) throw new Error("AAC Board IR payload is missing");
+  const ir = JSON.parse(irNode.textContent);
+  const state = { activePageId: ir.pages[0]?.id || "", words: [], started: false, speaking: false };
+  const setup = document.getElementById("setup-screen");
+  const studentLayer = document.getElementById("student-layer");
+  const speechLayer = document.getElementById("speech-layer");
+  const messageText = document.getElementById("message-text");
+  const status = document.getElementById("board-status");
+  let speechToken = 0;
+
+  const isRendered = (element) => {
+    if (!(element instanceof HTMLElement)) return false;
+    if (element.hidden || element.closest("[hidden]")) return false;
+    const style = getComputedStyle(element);
+    return style.display !== "none" && style.visibility !== "hidden";
+  };
+
+  const visibleTargets = () => [...document.querySelectorAll("[data-student-target]")].filter(isRendered);
+
+  const auditVisibleTargets = () => {
+    const targets = visibleTargets();
+    const phase = state.speaking ? "speech" : state.started ? "board" : "setup";
+    const limit = Number(
+      phase === "setup" ? ir.access.setupTargetLimit : phase === "speech" ? 1 : ir.access.visibleTargetLimit
+    );
+    const audit = {
+      phase,
+      count: targets.length,
+      limit,
+      ok: targets.length <= limit,
+      ids: targets.map((target) => target.id || target.dataset.buttonId || target.dataset.control || "unidentified"),
+    };
+    documentRoot.dataset.visibleTargetCount = String(audit.count);
+    documentRoot.dataset.visibleTargetLimit = String(audit.limit);
+    documentRoot.dataset.visibleTargetAudit = audit.ok ? "pass" : "fail";
+    if (!audit.ok) console.error("AAC visible-target limit exceeded", audit);
+    return audit;
+  };
+
+  const announce = (message) => {
+    if (status) status.textContent = message;
+  };
+
+  const updateMessage = () => {
+    if (!messageText) return;
+    messageText.textContent = state.words.length ? state.words.join(" ") : messageText.dataset.placeholder;
+    messageText.classList.toggle("is-placeholder", state.words.length === 0);
+  };
+
+  const setSpeechMode = (enabled) => {
+    state.speaking = enabled;
+    document.body.classList.toggle("speech-active", enabled);
+    if (speechLayer) speechLayer.hidden = !enabled;
+    if (studentLayer) studentLayer.inert = enabled;
+    if (setup) setup.inert = enabled;
+    auditVisibleTargets();
+    if (enabled) document.getElementById("stop-speech")?.focus({ preventScroll: true });
+  };
+
+  const stopSpeech = () => {
+    speechToken += 1;
+    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+    setSpeechMode(false);
+    announce("Speech stopped.");
+  };
+
+  const speak = (value) => {
+    const phrase = String(value || "").trim();
+    if (!phrase) return;
+    if (!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined") {
+      announce(`Speech is unavailable. Message: ${phrase}`);
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const token = ++speechToken;
+    const utterance = new SpeechSynthesisUtterance(phrase);
+    utterance.lang = ir.audience.locale || "en-AU";
+    utterance.onstart = () => {
+      if (token === speechToken && ir.studentControls.stopSpeechDuringPlayback) setSpeechMode(true);
+      announce(`Speaking: ${phrase}`);
+    };
+    const finish = () => {
+      if (token !== speechToken) return;
+      setSpeechMode(false);
+      announce(`Spoken: ${phrase}`);
+    };
+    utterance.onend = finish;
+    utterance.onerror = () => {
+      if (token !== speechToken) return;
+      setSpeechMode(false);
+      announce("Speech could not be played on this device.");
+    };
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const showPage = (pageId) => {
+    const page = ir.pages.find((candidate) => candidate.id === pageId);
+    if (!page) {
+      announce(`Page ${pageId} is unavailable.`);
+      return;
+    }
+    state.activePageId = pageId;
+    document.querySelectorAll("[data-page-id]").forEach((element) => {
+      element.hidden = element.dataset.pageId !== pageId;
+    });
+    announce(`${page.name} page.`);
+    auditVisibleTargets();
+    document.querySelector(`[data-page-id="${CSS.escape(pageId)}"] [data-student-target]`)?.focus({ preventScroll: true });
+  };
+
+  const adjacentPage = (offset) => {
+    const index = ir.pages.findIndex((page) => page.id === state.activePageId);
+    const page = ir.pages[index + offset];
+    if (page) showPage(page.id);
+  };
+
+  const runAction = (action, button) => {
+    switch (action.type) {
+      case "speak-text": speak(action.text || button.dataset.spoken); break;
+      case "speak-label": speak(button.dataset.label); break;
+      case "add-to-message": state.words.push(action.text || button.dataset.spoken || button.dataset.label); updateMessage(); break;
+      case "speak-message": speak(state.words.join(" ")); break;
+      case "remove-last-word": state.words.pop(); updateMessage(); announce("Last word removed."); break;
+      case "clear-message": state.words = []; updateMessage(); announce("Message cleared."); break;
+      case "navigate-page": showPage(action.targetPageId || action.pageId); break;
+      case "next-page": adjacentPage(1); break;
+      case "previous-page": adjacentPage(-1); break;
+      case "log-attempt": document.dispatchEvent(new CustomEvent("aac-attempt", { detail: { buttonId: button.dataset.buttonId } })); break;
+      case "mark-correct":
+      case "mark-incorrect": document.dispatchEvent(new CustomEvent("aac-evidence", { detail: { type: action.type, buttonId: button.dataset.buttonId } })); break;
+      default: console.warn("Unsupported AAC action", action.type);
+    }
+  };
+
+  const activate = (button) => {
+    if (!(button instanceof HTMLElement) || button.disabled || state.speaking) return;
+    const actions = JSON.parse(button.dataset.actions || "[]");
+    actions.forEach((action) => runAction(action, button));
+    button.classList.add("was-activated");
+    window.setTimeout(() => button.classList.remove("was-activated"), 240);
+  };
+
+  class DwellController {
+    constructor(milliseconds) {
+      this.milliseconds = milliseconds;
+      this.timer = 0;
+      this.target = null;
+      this.startedAt = 0;
+    }
+    attach(root = document) {
+      root.querySelectorAll("[data-dwell]").forEach((target) => {
+        target.addEventListener("pointerenter", () => this.begin(target));
+        target.addEventListener("pointerleave", () => this.cancel(target));
+        target.addEventListener("pointercancel", () => this.cancel(target));
+        target.addEventListener("blur", () => this.cancel(target));
+        target.addEventListener("click", (event) => {
+          if (target.dataset.dwellActivated === "true") {
+            target.dataset.dwellActivated = "false";
+            event.preventDefault();
+            return;
+          }
+          this.cancel(target);
+          this.dispatch(target);
+        });
       });
-    });
-    this.stopSpeech.addEventListener('click', () => {
-      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-      this.status('Speech stopped');
-    });
-    document.addEventListener('keydown', event => {
-      if (event.key === 'Escape') {
-        this.clearDwell(this.current);
-        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-      }
-    });
-  }
-}
-function setupFullScreen(button, statusEl, dwellMs) {
-  let timer = null;
-  const status = message => { if (statusEl) statusEl.textContent = message; };
-  const clear = () => {
-    if (timer) clearTimeout(timer);
-    timer = null;
-    button.classList.remove('is-dwelling');
-  };
-  const request = source => {
-    clear();
-    if (document.fullscreenElement) return Promise.resolve(true);
-    if (!document.documentElement.requestFullscreen) {
-      status('Full screen is unavailable. Press F11 or ask EQ IT for kiosk mode.');
-      return Promise.resolve(false);
     }
-    return document.documentElement.requestFullscreen().then(() => {
-      status('Full screen is on. Press Escape to leave.');
-      return true;
-    }).catch(() => {
-      status(source === 'startup'
-        ? 'For best eye-gaze access, choose Full screen. EQ IT can allow automatic full screen.'
-        : 'Full screen was blocked. Use click or Enter, press F11, or ask EQ IT for managed full screen.');
-      return false;
-    });
+    begin(target) {
+      if (target.disabled || !isRendered(target)) return;
+      this.cancel();
+      this.target = target;
+      this.startedAt = performance.now();
+      target.classList.add("is-dwelling");
+      target.style.setProperty("--dwell-ms", `${this.milliseconds}ms`);
+      this.timer = window.setTimeout(() => {
+        target.dataset.dwellActivated = "true";
+        this.dispatch(target);
+        this.cancel(target);
+        window.setTimeout(() => { target.dataset.dwellActivated = "false"; }, 900);
+      }, this.milliseconds);
+    }
+    cancel(target = null) {
+      if (target && target !== this.target) return;
+      window.clearTimeout(this.timer);
+      this.target?.classList.remove("is-dwelling");
+      this.timer = 0;
+      this.target = null;
+    }
+    dispatch(target) {
+      if (target.matches("[data-button-id]")) activate(target);
+      else target.dispatchEvent(new CustomEvent("aac-control", { bubbles: true }));
+    }
+  }
+
+  const startBoard = () => {
+    state.started = true;
+    if (setup) setup.hidden = true;
+    if (studentLayer) studentLayer.hidden = false;
+    showPage(state.activePageId);
   };
-  const enterEvent = window.PointerEvent ? 'pointerenter' : 'mouseenter';
-  const leaveEvent = window.PointerEvent ? 'pointerleave' : 'mouseleave';
-  button.addEventListener(enterEvent, () => {
-    clear();
-    button.classList.add('is-dwelling');
-    timer = setTimeout(() => request('dwell'), dwellMs);
+
+  document.addEventListener("aac-control", async (event) => {
+    const control = event.target.closest("[data-control]")?.dataset.control;
+    if (control === "start") startBoard();
+    if (control === "sound-check") speak("Sound check ready");
+    if (control === "stop-speech") stopSpeech();
+    if (control === "full-screen") {
+      try {
+        await document.documentElement.requestFullscreen();
+        announce("Full screen opened.");
+      } catch (_error) {
+        announce("Full screen was blocked. The board is still ready to use.");
+      }
+    }
   });
-  button.addEventListener(leaveEvent, clear);
-  button.addEventListener('blur', clear);
-  button.addEventListener('click', () => request('click'));
-  document.addEventListener('fullscreenchange', () => {
-    button.hidden = Boolean(document.fullscreenElement);
-    if (!document.fullscreenElement) status('For best eye-gaze access, choose Full screen.');
+
+  const dwell = new DwellController(Number(ir.access.dwellTimeMs || 1200));
+  dwell.attach();
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    dwell.cancel();
+    if (state.speaking) stopSpeech();
+    else announce("Dwell cancelled.");
   });
-  window.addEventListener('load', () => request('startup'), { once:true });
-}
-const pageBoard = new PageBoard({
-  dwellMs: 1100,
-  buttons: document.querySelectorAll('.aac-button'),
-  pages: document.querySelectorAll('.page'),
-  pageIndicator: document.getElementById('pageIndicator'),
-  statusEl: document.getElementById('status'),
-  stopSpeech: document.getElementById('stopSpeech')
-});
-pageBoard.bind();
-document.getElementById('soundCheck').addEventListener('click', () => {
-  pageBoard.status('Sound is on.');
-  pageBoard.speak('Sound is on');
-});
-setupFullScreen(document.getElementById('fullScreen'), document.getElementById('status'), 1100);
+  updateMessage();
+  if (!ir.studentControls.startBoard) startBoard();
+  else auditVisibleTargets();
+
+  window.AACBoard = Object.freeze({
+    ir,
+    state,
+    start: startBoard,
+    stopSpeech,
+    navigate: showPage,
+    activate: (buttonId) => activate(document.querySelector(`[data-button-id="${CSS.escape(buttonId)}"]`)),
+    countVisibleTargets: () => visibleTargets().length,
+    auditVisibleTargets,
+  });
+})();
 </script>
-</body>
-</html>
+</body></html>

@@ -4,8 +4,8 @@
   "id": "partner-assisted-scanning-print-board",
   "name": "Partner-Assisted Scanning Print Board",
   "type": "interactive",
-  "created": "2026-06-10T11:43:14.955226Z",
-  "modified": "2026-06-10T11:43:14.955226Z",
+  "created": "2026-08-02T00:00:00Z",
+  "modified": "2026-08-02T00:00:00Z",
   "settings": {
     "orientation": "landscape",
     "width": 1024,
@@ -16,7 +16,7 @@
     "font": "Verdana",
     "fontSize": 18,
     "fontColour": "#000000",
-    "backgroundColour": "#ffffff",
+    "backgroundColour": "#f7fbff",
     "showStopButton": true,
     "dwellTimeMs": 1200,
     "switchScanning": true,
@@ -503,13 +503,14 @@
   ],
   "variables": {},
   "teacherNotes": {
+    "modeling": "Model the scan process with another adult first: say each numbered option slowly, wait, observe the agreed signal, and confirm the selected message before acting.",
+    "evidence": "agreed signal; confirmed choice; repair request; refusal; more time request",
+    "customisation": "Review vocabulary, symbols and positions with the student and team before use.",
     "partner_script": "Partner says each option slowly in numbered order, waits, watches for the agreed signal, then confirms: I saw you choose __. Is that right?",
     "scan_order": "Scan left to right, top to bottom: 1 Help, 2 Stop, 3 Different, 4 Finished, 5 Choice A, 6 Choice B, 7 Yes, 8 No, 9 More time.",
     "wait_confirm": "Pause long enough for the student to respond. If unsure, repeat the scan or offer Yes/No confirmation without rushing.",
     "print": "Print in black and white if needed. Strong borders, large labels and numbered order are included for readability.",
-    "attribution": "If adding symbols, record the symbol source and licence. Text-only printing is usable without symbols.",
-    "modeling": "Model the scan process with another adult first: say each numbered option slowly, wait, observe the agreed signal, and confirm the selected message before acting.",
-    "evidence": "agreed signal; confirmed choice; repair request; refusal; more time request"
+    "attribution": "If adding symbols, record the symbol source and licence. Text-only printing is usable without symbols."
   },
   "communicationFunctions": [
     "answer",
@@ -521,18 +522,13 @@
   "metadata": {
     "tags": [
       "aac",
-      "agent-generated",
-      "proof-of-concept",
-      "partner-assisted-print",
-      "partner-assisted-scanning",
-      "printable",
-      "low-tech"
+      "agent-generated"
     ],
     "level": "",
-    "curriculum": "Access and communication support for partner-assisted choice-making, repair, refusal and confirmation.",
+    "curriculum": "",
     "privacyLevel": "anonymous",
     "generatedFrom": "agentic-aac-board-ir",
-    "sourceIrSchemaVersion": "0.3.0",
+    "sourceIrSchemaVersion": "0.4.0",
     "accessProfile": "partner-assisted-scanning",
     "communicationFunctions": [
       "answer",
@@ -546,7 +542,8 @@
       "purpose": "A printable partner-assisted scanning board with clear scan order, wait/confirm script, help, stop, different, finished and choice messages.",
       "audience": {
         "ageBand": "school-age to secondary",
-        "tone": "plain, partner-facing"
+        "tone": "plain, partner-facing",
+        "locale": "en-AU"
       },
       "sett": {
         "student": "Student can communicate with partner-assisted scanning through an agreed signal, confirmation, repair, refusal, and choice messages.",
@@ -601,7 +598,8 @@
         "defaultSource": "ARASAAC search terms",
         "textFallback": true,
         "customMediaPolicy": "teacher-owned local media only unless explicitly approved",
-        "notes": "Text-first, black-and-white friendly. Symbols can be added later with attribution, but the numbered scan order must remain visible."
+        "notes": "Text-first, black-and-white friendly. Symbols can be added later with attribution, but the numbered scan order must remain visible.",
+        "reviewRequired": true
       }
     }
   },
@@ -609,7 +607,8 @@
     {
       "source": "ARASAAC",
       "licence": "CC BY-NC-SA",
-      "attribution": "Pictograms by ARASAAC (Government of Aragon) if ARASAAC symbols are later inserted; these HTML drafts use text placeholders only."
+      "attribution": "The pictographic symbols used are the property of the Government of Aragon and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distributes them under Creative Commons License BY-NC-SA.",
+      "note": "Symbol search terms are provided for later ARASAAC replacement; confirm exact current licence wording when publishing beyond local classroom use."
     }
   ]
 }

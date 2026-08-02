@@ -20,7 +20,7 @@ Use this map to keep the pack grounded when adding prompts, fixtures, validators
 
 ## How This Changes The Pack
 
-- IR 0.3.0 includes `sett`, `udl`, `differentiation`, `participationBarriers`, and `evidencePlan`.
+- Canonical IR 0.4.0 adds executable schema integrity, access/control limits and `systemFit` while retaining `sett`, `udl`, `differentiation`, `participationBarriers`, and `evidencePlan`.
 - Validators fail noun grids, quiz-only boards, over-dense untested gaze layouts, missing repair routes, missing privacy, and missing attribution.
 - Validators warn when differentiation/evidence metadata is thin, because legacy boards still need to load but new boards should be stronger.
 - Generated fixtures must demonstrate agency, repair, modelling notes, access-aware density, privacy, attribution, and evidence routes.

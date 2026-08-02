@@ -4,4 +4,4 @@ interface:
   brand_color: "#C05621"
   default_prompt: "Plan this accessible school resource."
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

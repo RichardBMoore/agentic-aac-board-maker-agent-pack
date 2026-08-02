@@ -12,6 +12,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+try:
+    from canonicalize_board_ir import canonicalize
+except ModuleNotFoundError:  # Supports importlib-based unit tests.
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from canonicalize_board_ir import canonicalize
+
 # ARASAAC's required attribution names the author, owner, origin, and licence.
 # See https://arasaac.org/terms-of-use — keep the licence unversioned ("CC BY-NC-SA")
 # to match ARASAAC's own wording.
@@ -190,7 +196,7 @@ def render_button(button: dict[str, Any], index: int, rows: int, columns: int) -
 
 
 def preserved_ir_metadata(ir: dict[str, Any], access_profile: str) -> dict[str, Any]:
-    """Keep IR 0.3 design metadata available without changing the app schema."""
+    """Keep canonical IR design metadata available without changing the app schema."""
     preserved: dict[str, Any] = {
         "accessProfile": access_profile,
         "purpose": text(ir.get("purpose")),
@@ -204,19 +210,18 @@ def preserved_ir_metadata(ir: dict[str, Any], access_profile: str) -> dict[str, 
 
 
 def render(ir: dict[str, Any]) -> dict[str, Any]:
+    ir = canonicalize(ir)
     created = now_iso()
     access = as_dict(ir.get("access"))
-    accessibility = as_dict(ir.get("accessibility"))
-    metadata = as_dict(ir.get("metadata"))
     privacy = as_dict(ir.get("privacy"))
-    title = text(ir.get("title")) or text(ir.get("name")) or "AAC Board"
+    title = text(ir.get("title")) or "AAC Board"
     activity_id = slug(text(ir.get("id")) or title, "activity")
-    intended = as_list(access.get("intended")) or as_list(accessibility.get("intendedAccess")) or ["touch", "keyboard"]
+    intended = as_list(access.get("intended")) or ["touch", "keyboard"]
     profile = text(access.get("profile"))
     dwell_profile = profile in {"eye-gaze-dwell", "mouse-dwell"}
     dwell_time = access.get("dwellTimeMs")
     if dwell_time is None:
-        dwell_time = 1200 if dwell_profile else as_dict(ir.get("settings")).get("dwellTimeMs", 1200)
+        dwell_time = 1200
 
     pages: list[dict[str, Any]] = []
     for page_index, raw_page in enumerate(as_list(ir.get("pages")), start=1):
@@ -241,7 +246,7 @@ def render(ir: dict[str, Any]) -> dict[str, Any]:
             }
         )
 
-    licences = as_list(ir.get("licences")) or as_list(ir.get("attribution")) or [
+    licences = as_list(ir.get("attribution")) or [
         {
             "source": "ARASAAC",
             "licence": "CC BY-NC-SA",
@@ -258,16 +263,16 @@ def render(ir: dict[str, Any]) -> dict[str, Any]:
         "created": created,
         "modified": created,
         "settings": {
-            "orientation": "landscape",
-            "width": 1024,
-            "height": 768,
+            "orientation": text(as_dict(ir.get("display")).get("orientation")) or "landscape",
+            "width": to_int(as_dict(ir.get("display")).get("width"), 1024),
+            "height": to_int(as_dict(ir.get("display")).get("height"), 768),
             "speakLabels": True,
             "showLabels": True,
             "highlightColour": "#ffeb3b",
             "font": "Verdana",
             "fontSize": 18,
             "fontColour": "#000000",
-            "backgroundColour": "#ffffff",
+            "backgroundColour": text(as_dict(ir.get("display")).get("backgroundColour")) or "#ffffff",
             "showStopButton": True,
             "dwellTimeMs": to_int(dwell_time, 1200),
             "switchScanning": bool(access.get("switchScanning", False)),
@@ -277,22 +282,22 @@ def render(ir: dict[str, Any]) -> dict[str, Any]:
         "accessibility": {
             "intendedAccess": intended,
             "minimumTargetSizePx": to_int(
-                access.get("minimumTargetSizePx") or accessibility.get("minimumTargetSizePx"),
+                access.get("minimumTargetSizePx"),
                 120 if dwell_profile else 96,
             ),
-            "dwellSafe": dwell_profile or bool(accessibility.get("dwellSafe", False)),
-            "scanOrder": text(access.get("scanOrder")) or text(accessibility.get("scanOrder")) or "dom-order",
-            "audioCues": bool(access.get("audioCues", accessibility.get("audioCues", True))),
+            "dwellSafe": dwell_profile or "eye-gaze-dwell" in intended or "mouse-dwell" in intended,
+            "scanOrder": text(access.get("scanOrder")) or "dom-order",
+            "audioCues": bool(access.get("audioCues", True)),
         },
         "pages": pages,
         "variables": as_dict(ir.get("variables")),
         "teacherNotes": as_dict(ir.get("teacherNotes")),
         "communicationFunctions": as_list(ir.get("communicationFunctions")),
         "metadata": {
-            "tags": as_list(metadata.get("tags")) or ["aac", "agent-generated"],
-            "level": text(metadata.get("level")),
-            "curriculum": text(metadata.get("curriculum")),
-            "privacyLevel": text(privacy.get("level")) or text(metadata.get("privacyLevel")) or "anonymous",
+            "tags": ["aac", "agent-generated"],
+            "level": "",
+            "curriculum": "",
+            "privacyLevel": text(privacy.get("level")) or "anonymous",
             "generatedFrom": "agentic-aac-board-ir",
             "sourceIrSchemaVersion": text(ir.get("schemaVersion")),
             "accessProfile": profile,

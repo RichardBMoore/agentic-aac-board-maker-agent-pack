@@ -22,7 +22,8 @@ agentic-aac-board-maker-agent-pack/
   generated/                 Proof-of-concept boards and regression fixtures
   scripts/                   Repository validation script
   skills/                    Skill folders exposed by the plugin
-  tests/                     Validator, renderer, and OBF unit tests
+  browser-tests/             Real interaction/device-viewport Playwright QA
+  tests/                     IR/schema/renderer/parity/symbol/evaluation unit tests
 ```
 
 The main skill is:
@@ -37,16 +38,26 @@ It coordinates the core workflow:
 teacher intent
   -> communication functions
   -> canonical AAC Board IR
-  -> HTML, print, Open AAC Studio JSON, ICP evidence package, or resource pack
-  -> validation and QA
+  -> deterministic HTML, print, Open AAC Studio JSON, OBF/OBZ, or resource pack
+  -> schema + parity + browser + fresh-output QA
 ```
 
 ## Quick Start
 
-Run the release check:
+Install development checks, then run the release gate:
 
 ```sh
-python3 scripts/check_pack.py
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-dev.txt
+npm ci
+.venv/bin/python scripts/check_pack.py
+```
+
+Canonicalise legacy IR and verify canonical 0.4.0 output:
+
+```sh
+python3 skills/agentic-aac-board-maker/scripts/canonicalize_board_ir.py legacy.ir.json board.ir.json
+python3 skills/agentic-aac-board-maker/scripts/canonicalize_board_ir.py board.ir.json --check
 ```
 
 Validate a generated AAC Board IR:
@@ -61,10 +72,18 @@ Render Open AAC Studio-compatible JSON from an IR file:
 python3 skills/agentic-aac-board-maker/scripts/render_open_aac_studio.py generated/qcia-community-shops/qcia-community-shops.ir.json /tmp/qcia-community-shops.open-aac-studio.json
 ```
 
-Embed real ARASAAC pictograms into an IR file (sets `symbolId` and base64 `symbolSrc`, keeping boards single-file and offline-capable; requires internet for the fetch itself):
+Render and parity-check deterministic offline HTML:
 
 ```sh
-python3 skills/agentic-aac-board-maker/scripts/fetch_arasaac_symbols.py generated/gaze-choice-2x2/gaze-choice-class-activity.ir.json --out /tmp/board.symbols.ir.json
+python3 skills/agentic-aac-board-maker/scripts/render_html.py board.ir.json board.html
+python3 skills/agentic-aac-board-maker/scripts/validate_html_parity.py board.ir.json board.html
+```
+
+Generate ARASAAC candidates for review, then apply only approved choices:
+
+```sh
+python3 skills/agentic-aac-board-maker/scripts/fetch_arasaac_symbols.py board.ir.json --review-out symbol-review.json
+python3 skills/agentic-aac-board-maker/scripts/fetch_arasaac_symbols.py board.ir.json --apply-review symbol-review.json --out board.reviewed.ir.json
 ```
 
 Export an Open Board Format board from an IR file:
@@ -75,10 +94,12 @@ python3 skills/agentic-aac-board-maker/scripts/render_obf.py generated/qcia-comm
 
 Generated packs now ship `.obf`/`.obz` files importable by CoughDrop, Cboard, AsTeRICS Grid, and OptiKey.
 
-Run the unit tests:
+Run unit, fresh-output and installed-Chrome interaction tests:
 
 ```sh
-python3 -m unittest discover -s tests
+.venv/bin/python -m unittest discover -s tests
+.venv/bin/python skills/agentic-aac-board-maker/scripts/evaluate_fresh_output.py generated
+npm run test:browser:chrome
 ```
 
 ## Install In Claude Code
@@ -118,7 +139,7 @@ Each skill folder also remains usable on its own:
 
 ## Generated Examples
 
-The `generated/` folder is intentionally kept in the repo. These examples are both demonstrations and regression fixtures. The release check validates every `generated/**/*.ir.json`, renders it to Open AAC Studio JSON, and checks that paired HTML/Open AAC Studio/README outputs exist.
+The `generated/` folder is intentionally kept in the repo. These examples are demonstrations and golden regression fixtures. The release check validates canonical IR against JSON Schema, fresh-renders HTML/Open AAC Studio/OBF outputs, and enforces HTML/IR/shared-runtime parity. `evaluate_fresh_output.py` separately checks new candidate generations so golden fixtures cannot mask weak new output.
 
 Included proof-of-concept examples:
 
@@ -141,12 +162,13 @@ The `curriculum-sentence-builder` and `needs-repair-board` examples also demonst
 - Keep privacy and offline classroom use in mind.
 - Use open/free symbols or teacher-owned media with attribution.
 - Keep the canonical AAC Board IR as the source of truth.
+- Review symbol candidates with the student/team; do not treat search ranking as semantic approval.
 - Prefer fullscreen student mode for eye gaze; use the page's gaze-safe launcher normally and EQ-managed Edge policy or kiosk deployment when fullscreen must be automatic or enforced.
 - Run QA before claiming a board is ready even as a draft.
 
 ## Privacy And Release Status
 
-This repository is prepared as a private working repo. It should not contain real student names, diagnoses, behaviour records, medical details, family details, school IDs, or unnecessary site-specific information.
+This repository contains only de-identified examples and should remain free of real student names, diagnoses, behaviour records, medical details, family details, school IDs, or unnecessary site-specific information.
 
 Generated resources are draft classroom supports. Review them with the relevant education and allied-health team, test with the actual student, device, access method, browser, and classroom environment, and adjust locally before relying on them.
 

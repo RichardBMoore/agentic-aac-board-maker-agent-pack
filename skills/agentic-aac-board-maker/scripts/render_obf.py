@@ -34,6 +34,12 @@ import zipfile
 from pathlib import Path
 from typing import Any
 
+try:
+    from canonicalize_board_ir import canonicalize
+except ModuleNotFoundError:  # Supports importlib-based unit tests.
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from canonicalize_board_ir import canonicalize
+
 OBF_FORMAT = "open-board-0.1"
 
 ARASAAC_LICENSE = {
@@ -245,6 +251,7 @@ def render_board(ir: dict[str, Any], page: dict[str, Any], page_index: int, page
 
 
 def render_boards(ir: dict[str, Any]) -> list[dict[str, Any]]:
+    ir = canonicalize(ir)
     pages = as_list(ir.get("pages"))
     page_order = page_ids_in_order(ir)
     multi_page = len(pages) > 1

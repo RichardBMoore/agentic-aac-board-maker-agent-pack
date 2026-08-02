@@ -4,8 +4,8 @@
   "id": "qcia-community-shops",
   "name": "QCIA Community Access: Going to the Shops",
   "type": "interactive",
-  "created": "2026-06-10T11:43:15.048590Z",
-  "modified": "2026-06-10T11:43:15.048590Z",
+  "created": "2026-08-02T00:00:00Z",
+  "modified": "2026-08-02T00:00:00Z",
   "settings": {
     "orientation": "landscape",
     "width": 1024,
@@ -16,7 +16,7 @@
     "font": "Verdana",
     "fontSize": 18,
     "fontColour": "#000000",
-    "backgroundColour": "#ffffff",
+    "backgroundColour": "#f7fbff",
     "showStopButton": true,
     "dwellTimeMs": 1100,
     "switchScanning": false,
@@ -502,11 +502,11 @@
   ],
   "variables": {},
   "teacherNotes": {
+    "modeling": "Model real community phrases before the trip and during role play: greeting, asking where something is, paying, asking for help and saying stop/wait.",
     "evidence": "QCIA evidence can note participation in a familiar community routine, functional communication attempts, help-seeking, choice-making and safety language.",
     "customisation": "Replace shop/item vocabulary with the actual excursion, class enterprise or role-play context. Keep Help, Stop/wait and Finished stable.",
     "privacy": "Use de-identified notes only. Do not record names, behaviour details or community incidents inside the generated files.",
-    "safety": "This supports communication during community access; it does not replace adult supervision, risk assessment or emergency processes.",
-    "modeling": "Model real community phrases before the trip and during role play: greeting, asking where something is, paying, asking for help and saying stop/wait."
+    "safety": "This supports communication during community access; it does not replace adult supervision, risk assessment or emergency processes."
   },
   "communicationFunctions": [
     "ask",
@@ -521,18 +521,13 @@
   "metadata": {
     "tags": [
       "aac",
-      "agent-generated",
-      "proof-of-concept",
-      "qcia-community-shops",
-      "qcia",
-      "community-access",
-      "shopping"
+      "agent-generated"
     ],
     "level": "",
-    "curriculum": "QCIA community, communication, personal and living skills: participating safely in a shopping/community access routine.",
+    "curriculum": "",
     "privacyLevel": "anonymous",
     "generatedFrom": "agentic-aac-board-ir",
-    "sourceIrSchemaVersion": "0.3.0",
+    "sourceIrSchemaVersion": "0.4.0",
     "accessProfile": "mixed-access",
     "communicationFunctions": [
       "ask",
@@ -549,7 +544,8 @@
       "purpose": "A community access AAC board that supports practical shopping communication, safety/help language, and teacher evidence notes for QCIA-style participation.",
       "audience": {
         "ageBand": "secondary",
-        "tone": "age-respectful, practical"
+        "tone": "age-respectful, practical",
+        "locale": "en-AU"
       },
       "sett": {
         "student": "Student can use AAC to participate in shopping role-play or community access through greetings, requesting, asking, refusing, and help-seeking.",
@@ -603,7 +599,8 @@
         "defaultSource": "ARASAAC search terms",
         "textFallback": true,
         "customMediaPolicy": "teacher-owned local media only unless explicitly approved",
-        "notes": "Search terms are practical community/shop terms; local photos of familiar shops may be inserted by staff if owned/approved."
+        "notes": "Search terms are practical community/shop terms; local photos of familiar shops may be inserted by staff if owned/approved.",
+        "reviewRequired": true
       }
     }
   },
@@ -611,7 +608,8 @@
     {
       "source": "ARASAAC",
       "licence": "CC BY-NC-SA",
-      "attribution": "Pictograms by ARASAAC (Government of Aragon) if ARASAAC symbols are later inserted; these HTML drafts use text placeholders only."
+      "attribution": "The pictographic symbols used are the property of the Government of Aragon and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distributes them under Creative Commons License BY-NC-SA.",
+      "note": "Symbol search terms are provided for later ARASAAC replacement; confirm exact current licence wording when publishing beyond local classroom use."
     }
   ]
 }

@@ -1,269 +1,136 @@
 # AAC Board Intermediate Representation
 
-The AAC Board IR is the canonical structure an agent should create before rendering HTML, printable output, or Open AAC Studio JSON.
+AAC Board IR is the renderer-independent source of truth created before HTML, Open AAC Studio JSON, OBF/OBZ or print output. It forces the resource to state communication purpose, access, system fit, button semantics, repair, symbols, privacy and evidence before visual rendering.
 
-## Why It Exists
+## Version And Schema
 
-The IR prevents a common failure mode: turning a lesson topic into a pretty noun grid. It makes the agent state the student's communication purpose, access method, button roles, repair options, symbol strategy, and evidence route before visual output.
+Canonical output is `schemaVersion: "0.4.0"` with `format: "agentic-aac-board-ir"`. Validate it with `references/aac-board-ir.schema.json`.
 
-## Current Version
+Legacy 0.2/0.3 inputs remain readable through:
 
-`schemaVersion: "0.3.0"` is backward-compatible with `0.2.0`. Existing `0.2.0` boards still validate, but new generated boards should include SETT, UDL, differentiation, participation-barrier, and evidence-plan metadata so the board design remains more than a layout.
-
-## Minimal IR
-
-```json
-{
-  "schemaVersion": "0.3.0",
-  "format": "agentic-aac-board-ir",
-  "id": "activity-slug",
-  "title": "Board Title",
-  "purpose": "What the student can communicate or show.",
-  "audience": {
-    "ageBand": "secondary",
-    "tone": "age-respectful"
-  },
-  "access": {
-    "intended": ["touch", "keyboard"],
-    "profile": "direct-selection",
-    "minimumTargetSizePx": 96,
-    "dwellTimeMs": null,
-    "switchScanning": false,
-    "scanPattern": "linear"
-  },
-  "communicationFunctions": ["choose", "repair", "comment"],
-  "pages": [
-    {
-      "id": "page-main",
-      "name": "Main",
-      "pattern": "choice-board",
-      "grid": { "rows": 3, "columns": 3 },
-      "buttons": [
-        {
-          "id": "btn-help",
-          "label": "Help",
-          "role": "repair",
-          "function": "repair",
-          "spokenText": "Help",
-          "searchTerm": "help",
-          "actions": [
-            { "type": "speak-text" },
-            { "type": "log-attempt" }
-          ]
-        }
-      ]
-    }
-  ],
-  "symbolStrategy": {
-    "defaultSource": "ARASAAC search terms",
-    "textFallback": true,
-    "customMediaPolicy": "teacher-owned local media only unless explicitly approved"
-  },
-  "teacherNotes": {
-    "modeling": "Model key words while speaking; wait; respond to all communication; accept multimodal responses.",
-    "evidence": "Teacher can observe selections, repair attempts, comments, and participation.",
-    "customisation": "Replace labels/search terms with local vocabulary."
-  },
-  "sett": {
-    "student": "Strengths, preferences, communication opportunities, and access needs without diagnoses or private identifiers.",
-    "environment": "Classroom/device/network/partner conditions.",
-    "task": "Learning or participation demand and communication moves needed.",
-    "tools": "AAC, print, dwell, switch, symbol, partner, and fallback supports."
-  },
-  "udl": {
-    "engagement": ["Meaningful choice", "safe repair/rest route"],
-    "representation": ["Text labels", "symbols/photos", "spoken output"],
-    "actionExpression": ["AAC selection", "keyboard", "partner-observed response"]
-  },
-  "differentiation": {
-    "content": "Preserve the key learning intent while reducing access load.",
-    "process": "Model, wait, repeat, rehearse, and accept multimodal responses.",
-    "product": "Accept selection, constructed sentence, print evidence, export, or teacher observation as appropriate.",
-    "environment": "Calm, predictable, local-first student mode.",
-    "support": "Team review and vocabulary personalisation before use."
-  },
-  "participationBarriers": [
-    {
-      "barrier": "Original task assumes speech, handwriting, fine motor control, or fast response.",
-      "support": "Offer large AAC targets, repair vocabulary, wait time, and partner modelling."
-    }
-  ],
-  "evidencePlan": {
-    "observable": ["selection", "repair attempt", "comment", "participation"],
-    "notJudgement": "Access method and support level are context, not curriculum judgement.",
-    "export": "Use anonymous local notes, print, CSV, or portfolio summary only when needed."
-  },
-  "privacy": {
-    "level": "anonymous",
-    "containsSensitiveData": false
-  },
-  "attribution": [
-    {
-      "source": "ARASAAC",
-      "licence": "CC BY-NC-SA",
-      "note": "Confirm exact current licence wording when publishing beyond local classroom use."
-    }
-  ]
-}
+```sh
+python3 scripts/canonicalize_board_ir.py legacy.ir.json canonical.ir.json
 ```
 
-The string shorthands `"speak"` and `"log"` are still accepted in `actions`; the renderer translates them to `{ "type": "speak-text" }` and `{ "type": "log-attempt" }`. Prefer the dict forms in new boards.
+Canonicalisation removes renderer aliases such as `app`, top-level `name`, `settings`, `accessibility`, page `gridRows/gridColumns`, `metadata` and `licences`. Renderers also canonicalise legacy input internally, but committed/new IR files must already be canonical (`--check`).
+
+## Required Shape
+
+Use `templates/board-json-skeleton.json` as the complete editable starter. Canonical IR requires:
+
+- safe `id`, `title`, `purpose`, audience age/tone/locale;
+- access methods/profile, target size, dwell/scan settings and total visible/setup target limits;
+- display and student-control configuration;
+- declared communication functions;
+- pages with canonical `grid.rows/columns` and globally unique button ids;
+- each button's label, role, function, spoken text, search term, symbol fields/layout and action objects;
+- teacher notes and `systemFit` review fields;
+- symbol strategy with text fallback and review policy;
+- privacy and attribution.
+
+Optional SETT, UDL, differentiation, participation barriers and evidence-plan metadata are strongly expected for curriculum/QCIA resources.
 
 ## Controlled Values
 
-### Access Profiles
+Access profiles:
 
-- `direct-selection`
-- `eye-gaze-dwell`
-- `mouse-dwell`
-- `single-switch`
-- `two-switch`
-- `partner-assisted-print`
-- `print-only`
-- `keyboard`
-- `mixed-access`
-- `partner-assisted-scanning`
-- `unspecified`
+- `direct-selection`, `eye-gaze-dwell`, `mouse-dwell`, `single-switch`, `two-switch`;
+- `partner-assisted-print`, `partner-assisted-scanning`, `print-only`, `keyboard`, `mixed-access`, `unspecified`.
 
-### Button Roles
+Button roles:
 
-- `core`
-- `fringe`
-- `repair`
-- `navigation`
-- `comment`
-- `question`
-- `sentence`
-- `evidence`
-- `teacher`
+- `core`, `fringe`, `repair`, `navigation`, `comment`, `question`, `sentence`, `evidence`, `teacher`.
 
-Student-facing renderers must not expose `teacher` buttons inside the main student board.
+Communication functions:
 
-### Communication Functions
+- `initiate`, `request`, `refuse`, `choose`, `comment`, `ask`, `answer`, `sequence`, `explain`, `repair`, `reflect`, `socialise`, `navigate`, `regulate-rest`.
 
-- `initiate`
-- `request`
-- `refuse`
-- `choose`
-- `comment`
-- `ask`
-- `answer`
-- `sequence`
-- `explain`
-- `repair`
-- `reflect`
-- `socialise`
-- `navigate`
-- `regulate-rest`
+Canonical actions are objects with a stable id and one of:
 
-Avoid outputs where every button is only `answer` or `label`.
+- speech/logging: `speak-text`, `speak-label`, `log-attempt`;
+- navigation: `navigate-page`, `next-page`, `previous-page`;
+- message building: `add-to-message`, `speak-message`, `remove-last-word`, `clear-message`;
+- evidence: `mark-correct`, `mark-incorrect`.
 
-## Access-Density Rules
+String `"speak"`/`"log"` forms are legacy input only. New canonical output uses action objects.
 
-Use these as validation defaults. Density is counted as actual buttons per page, not declared grid cells (a 4x4 grid holding 8 buttons counts as 8).
+## Total Active-Target Rules
 
-- `eye-gaze-dwell` / `mouse-dwell` profile: 2x2, 2x3, or 3x3 by default. More than 9 buttons on a page is a validation FAILURE unless `denseGazeTested` is boolean `true` (string values like `"yes"` are treated as untested and trigger a warning).
-- `eye-gaze-dwell` / `mouse-dwell` profile: `minimumTargetSizePx` is REQUIRED and must be at least 120; prefer 200 px+ per gaze-interface research.
-- `single-switch` / `two-switch`: 2x2 or 3x3 first; larger grids need row-column scanning and a clear reason. More than 9 buttons on a page is a validator WARNING (confirm scan fatigue and pattern), not a failure.
-- `partner-assisted-print`: keep scan order explicit and include partner script.
-- `direct-selection`: 3x3 default; 4x4 acceptable for confident direct selectors.
-- Intended-access gaze: if `eye-gaze-dwell` or `mouse-dwell` appears in `access.intended` under any profile (including `mixed-access`), the same nine-target default applies. Prefer multiple calm pages with `navigation` buttons over one dense grid. The validator warns when such a board has a page over nine targets without `denseGazeTested: true`.
+Density means every simultaneously active student target—not declared grid cells and not vocabulary buttons alone. Count setup, navigation, message, speech and other utility controls whenever active.
 
-## Renderer Mapping
+- Gaze/dwell defaults to 2×2, 2×3 or 3×3; no more than nine active board targets unless `denseGazeTested` is boolean `true` after actual device testing.
+- Gaze/dwell requires `minimumTargetSizePx >= 120`, an integer dwell time and immediate pointer-leave/focus-loss cancellation.
+- Setup is a separate phase with `setupTargetLimit` (three by default).
+- During speech, the canonical HTML renderer hides/inerts other student targets so Stop Speech is the only active target.
+- Switch boards start with small predictable sets; larger sets require fatigue-aware scanning design.
+- Direct-selection defaults to 3×3; 4×4 is appropriate only when access supports it.
 
-### Single-File HTML
+The semantic validator compares page target totals with `visibleTargetLimit`. Browser QA reads the live `window.AACBoard.auditVisibleTargets()` result so hidden/active state is verified rather than inferred from grid size.
 
-Preserve:
+## System Fit
 
-- `title`, `purpose`, `pages`, `buttons`, roles, functions, access settings, teacher notes, attribution, privacy note.
-- Use semantic buttons, keyboard fallback, visible focus, and no remote scripts.
-- Load `eyegaze-dwell-html` when `access.profile` is `eye-gaze-dwell` or `mouse-dwell`.
+`systemFit` prevents a generated board from pretending to be a complete student system. Record:
+
+- review status (`team-input-needed`, `team-reviewed`, `student-trialled`);
+- relationship to the established AAC/low-tech system;
+- familiar vocabulary and stable motor/location patterns;
+- symbol/text/photo familiarity;
+- access calibration and reliable cancellation;
+- screen, mount, seating, vision, contrast and fatigue;
+- language, culture and speech voice;
+- reliable partner-interpreted yes/no, repair and refusal signals.
+
+Keep unresolved items explicit and test them with the student/team on the actual setup.
+
+## Multi-Page And Message Behaviour
+
+Use navigation-role/function buttons with explicit actions. `navigate-page` must name a real `targetPageId`; next/previous actions follow page order. Keep repair/help reachable on each page.
+
+Sentence builders use a top-level `messageBar` plus real message actions. The bar displays the current message; controls can be board buttons so gaze pages do not silently gain extra active targets.
+
+## Symbol Review
+
+`searchTerm` is a query, not an approved semantic match. Recommended workflow:
+
+```sh
+python3 scripts/fetch_arasaac_symbols.py board.ir.json --review-out symbol-review.json
+# reviewer records approvedSymbolId choices from the companion contact sheet
+python3 scripts/fetch_arasaac_symbols.py board.ir.json --apply-review symbol-review.json --out board.reviewed.ir.json
+```
+
+Review meaning, student familiarity, culture, language and visual recognisability. Leave `approvedSymbolId` null to keep text fallback. `--auto-select` is an explicit opt-in, not the default.
+
+## Renderer Mapping And Integrity
+
+### Single-file HTML
+
+Generate with:
+
+```sh
+python3 scripts/render_html.py board.ir.json board.html
+python3 scripts/validate_html_parity.py board.ir.json board.html
+```
+
+The deterministic HTML contains:
+
+- the complete canonical IR payload;
+- semantic buttons and exact button/action metadata;
+- inline/offline CSS and the exact shared `assets/aac-board-runtime.js`;
+- keyboard, click, dwell, message, navigation, TTS/Stop Speech and target-audit behaviour;
+- teacher/attribution content outside normal student mode plus print styling.
+
+Never hand-edit generated HTML. Change IR or the shared runtime and re-render. Parity and byte-drift checks fail if HTML labels/actions/pages, embedded IR or runtime differ.
 
 ### Open AAC Studio JSON
 
-Map:
+`scripts/render_open_aac_studio.py` maps title/name, access/settings, grid aliases and attribution/licences only in the target export. IR roles/functions and extended design metadata are preserved where the target supports them.
 
-- `title` -> `name`
-- `access` -> `settings` and `accessibility`
-- `grid.rows/columns` -> `gridRows/gridColumns`
-- `spokenText` -> `audioCue` or `speak-text`
-- `function` and `role` -> preserve as extra button fields where supported; otherwise keep in `metadata` or teacher notes.
-- `privacy.level` -> `metadata.privacyLevel`
-- `attribution` -> `licences`
+### Open Board Format
 
-Set `app` to `Open AAC Studio` only for an app-compatible export. Keep the IR source in a separate file or `metadata.generatedFrom` when producing a resource pack.
+`scripts/render_obf.py` writes `.obf` for one page or `.obz` for multiple pages. Navigation maps to `load_board`; message actions map to supported OBF commands; ARASAAC ids carry attribution/licence information.
 
-### Printable Board
+## Validation Failures
 
-Preserve:
+Fail IR that has malformed/duplicate ids, missing required semantic fields, empty/overfull grids, dangling navigation, incompatible gaze target size/density, no repair route on a substantive board, noun/quiz-only design without agency, absent privacy/attribution, or total active targets above the declared limit.
 
-- labels;
-- symbol search terms;
-- scan/pointing order;
-- partner-assisted note;
-- attribution;
-- black-and-white readability.
-
-## Multi-Page Navigation And Message Bar
-
-Boards with more than one page should make navigation explicit instead of relying on a single dense grid.
-
-- Use `navigation`-role buttons with `function: "navigate"`.
-- Encode page moves as dict actions: `{ "type": "next-page", "targetPageId": "page-id" }`, `{ "type": "previous-page", "targetPageId": "page-id" }`, or `{ "type": "navigate-page", "targetPageId": "page-id" }`. The Open AAC Studio renderer preserves these actions.
-- Keep a repair/help route reachable on every page, not only the first.
-- An optional top-level `navigation` object can record the page model and intent, for example `{ "model": "two-page sentence builder", "pages": ["page-one", "page-two"], "notes": "…" }`.
-
-Sentence builders should actually assemble a sentence, not speak isolated words. Use an optional top-level `messageBar` object plus message action types:
-
-```json
-"messageBar": {
-  "enabled": true,
-  "placeholder": "Build your sentence here.",
-  "speakControl": true,
-  "clearControl": true,
-  "undoControl": true
-}
-```
-
-- Word buttons add to the bar with `{ "type": "add-to-message", "text": "word" }` (also speak the single word for feedback).
-- A Speak control reads the whole bar with `{ "type": "speak-message" }`.
-- Undo and clear use `{ "type": "remove-last-word" }` and `{ "type": "clear-message" }`.
-
-`messageBar` and `navigation` are optional design metadata; the single-file HTML renderer is responsible for the live behaviour. Since 0.4.0 the validator does check them structurally: `navigate-page` actions must carry a `targetPageId` naming a real page (failure), navigation-role buttons without a navigation action warn, and a declared `messageBar` without `add-to-message`/`speak-message` actions (or vice versa) warns. See `generated/curriculum-sentence-builder/` for a worked two-page example.
-
-## Validator And Renderer Rules Added In 0.4.0
-
-- Duplicate page ids and board-wide duplicate button ids are failures.
-- `denseGazeTested` must be boolean `true` to lift the 9-target gaze density limit; truthy strings are treated as untested (with a warning).
-- Eye-gaze/mouse-dwell profiles must declare a numeric `minimumTargetSizePx` of at least 120 (prefer 200+ per gaze-interface research); a missing or zero value is a failure.
-- Declared `communicationFunctions` that no button realises (and vice versa) warn, keeping board metadata honest.
-- The renderer preserves per-button `style`/`font` (merged over defaults) and a distinct `audioCue`, emits both `targetPageId` and `pageId` on `navigate-page`, accepts `"speak"`/`"log"` string action shorthands, defaults `minimumTargetSizePx` to 120 for dwell profiles, and honours `SOURCE_DATE_EPOCH` for reproducible output.
-- `scripts/render_obf.py` renders the IR to Open Board Format — `.obf` for single-page boards, `.obz` (zip with `manifest.json`) for multi-page — importable by CoughDrop, Cboard, AsTeRICS Grid, OptiKey, PiCom, and Pasco. Navigation maps to `load_board`, message-bar actions map to `:speak`/`:clear`/`:backspace`, ARASAAC `symbolId` values become per-image entries with CC BY-NC-SA license blocks, and unsupported settings travel as `ext_aac_*` attributes. Embed symbol data before offline school use.
-
-## Powerhouse Metadata
-
-These fields are optional for legacy compatibility, but expected for new resource packs:
-
-- `sett`: explicit Student, Environment, Task, Tools design notes without diagnoses or sensitive identifiers.
-- `udl`: engagement, representation, and action/expression supports.
-- `differentiation`: content, process, product, environment, and support decisions.
-- `participationBarriers`: barriers created by the original task and the access supports that remove or reduce them.
-- `evidencePlan`: what can be observed/exported, and what must not be treated as curriculum judgement.
-
-Renderers should preserve these fields in metadata even when the target app does not natively understand them.
-
-## Validation Rules
-
-An IR should fail validation if:
-
-- required top-level fields are missing;
-- a page has no buttons;
-- a button lacks `id`, `label`, `role`, `function`, or `spokenText`;
-- access profile and grid density conflict;
-- no repair/help/refusal/finished route exists when the board has more than two content buttons;
-- the board appears to be a noun/content grid with no agency function;
-- the board is answer-only/quiz-only without uncertainty, repair, explanation, or reflection;
-- privacy level is not declared;
-- attribution is missing when symbols/search terms are used.
-
-The validator should warn, not fail, when `0.3.0` powerhouse metadata is thin. It also warns when `eye-gaze-dwell`/`mouse-dwell` is an intended access method (even under `mixed-access`) but a page exceeds nine targets without `denseGazeTested`. Warnings are still work to do before claiming a resource is differentiated, curriculum-strong, or genuinely usable by the stated access method.
+Warnings still require review before claiming the resource is student-ready—for example thin SETT/UDL/evidence metadata, declared/realised communication-function drift or an untested intended gaze path.

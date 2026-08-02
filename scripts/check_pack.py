@@ -13,6 +13,11 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urlparse
 
+try:
+    from jsonschema import Draft202012Validator
+except ModuleNotFoundError:
+    Draft202012Validator = None
+
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / "skills"
@@ -237,10 +242,35 @@ def is_external(value: str) -> bool:
     return parsed.scheme in {"http", "https"} or value.startswith("//")
 
 
+def check_ir_schema_file(path: Path) -> bool:
+    if Draft202012Validator is None:
+        fail("jsonschema is missing; install requirements-dev.txt before release checks")
+        return False
+    schema_path = SKILLS / "agentic-aac-board-maker" / "references" / "aac-board-ir.schema.json"
+    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    data = json.loads(path.read_text(encoding="utf-8"))
+    errors = sorted(Draft202012Validator(schema).iter_errors(data), key=lambda error: list(error.path))
+    if errors:
+        first = errors[0]
+        location = ".".join(str(part) for part in first.path) or "<root>"
+        fail(f"{path.relative_to(ROOT)} fails AAC Board IR schema at {location}: {first.message}")
+        return False
+    ok(f"{path.relative_to(ROOT)} satisfies AAC Board IR JSON Schema")
+    return True
+
+
 def check_ir_pipeline() -> bool:
     ir = SKILLS / "agentic-aac-board-maker" / "templates" / "board-json-skeleton.json"
     validator = SKILLS / "agentic-aac-board-maker" / "scripts" / "validate_board_ir.py"
     renderer = SKILLS / "agentic-aac-board-maker" / "scripts" / "render_open_aac_studio.py"
+    canonicalizer = SKILLS / "agentic-aac-board-maker" / "scripts" / "canonicalize_board_ir.py"
+    html_renderer = SKILLS / "agentic-aac-board-maker" / "scripts" / "render_html.py"
+    parity = SKILLS / "agentic-aac-board-maker" / "scripts" / "validate_html_parity.py"
+    if not run_command([sys.executable, str(canonicalizer), str(ir), "--check"]):
+        fail("canonical IR skeleton is not canonical")
+        return False
+    if not check_ir_schema_file(ir):
+        return False
     if not run_command([sys.executable, str(validator), str(ir)]):
         fail("canonical IR skeleton failed validation")
         return False
@@ -259,13 +289,21 @@ def check_ir_pipeline() -> bool:
             fail("Rendered Open AAC Studio JSON missing app/pages")
             return False
         ok("IR validates and renders to Open AAC Studio JSON")
+        html_out = Path(tmp) / "board.html"
+        if not run_command([sys.executable, str(html_renderer), str(ir), str(html_out)]):
+            fail("canonical IR skeleton failed HTML rendering")
+            return False
+        if not run_command([sys.executable, str(parity), str(ir), str(html_out)]):
+            fail("canonical IR skeleton HTML failed parity")
+            return False
+        ok("IR renders to HTML with IR/runtime parity")
     return True
 
 
 def check_json_files() -> bool:
     success = True
     for path in sorted(ROOT.rglob("*.json")):
-        if "__pycache__" in path.parts:
+        if any(part in {"__pycache__", ".venv", "node_modules", "test-results", "playwright-report"} for part in path.parts):
             continue
         success = parse_json(path) and success
     return success
@@ -278,8 +316,13 @@ def check_eye_gaze_template() -> bool:
         warn("eye-gaze checker/template not found; skipping")
         return True
     if run_command([sys.executable, str(checker), str(template)]):
-        ok("eye-gaze single-file template passes static gaze checks")
-        return True
+        parity = SKILLS / "agentic-aac-board-maker" / "scripts" / "validate_html_parity.py"
+        source = ROOT / "generated" / "gaze-choice-2x2" / "gaze-choice-class-activity.ir.json"
+        if run_command([sys.executable, str(parity), str(source), str(template)]):
+            ok("eye-gaze single-file template passes static gaze and shared-runtime parity checks")
+            return True
+        fail("eye-gaze single-file template drifted from the shared runtime")
+        return False
     fail("eye-gaze single-file template failed static gaze checks")
     return False
 
@@ -298,6 +341,9 @@ def check_generated_resource_fixtures() -> bool:
     validator = SKILLS / "agentic-aac-board-maker" / "scripts" / "validate_board_ir.py"
     renderer = SKILLS / "agentic-aac-board-maker" / "scripts" / "render_open_aac_studio.py"
     obf_renderer = SKILLS / "agentic-aac-board-maker" / "scripts" / "render_obf.py"
+    canonicalizer = SKILLS / "agentic-aac-board-maker" / "scripts" / "canonicalize_board_ir.py"
+    html_renderer = SKILLS / "agentic-aac-board-maker" / "scripts" / "render_html.py"
+    parity = SKILLS / "agentic-aac-board-maker" / "scripts" / "validate_html_parity.py"
     if not generated.exists():
         warn("generated/ folder not found; skipping proof-of-concept fixture checks")
         return True
@@ -328,6 +374,13 @@ def check_generated_resource_fixtures() -> bool:
             fail(f"{rel} failed AAC Board IR validation")
             success = False
             continue
+        if not run_command([sys.executable, str(canonicalizer), str(ir), "--check"]):
+            fail(f"{rel} is not canonical IR")
+            success = False
+            continue
+        if not check_ir_schema_file(ir):
+            success = False
+            continue
 
         ir_data = json.loads(ir.read_text(encoding="utf-8"))
         page_count = len(ir_data.get("pages") or [])
@@ -335,6 +388,21 @@ def check_generated_resource_fixtures() -> bool:
         shipped_obf = ir.with_name(f"{stem}{obf_suffix}")
 
         with tempfile.TemporaryDirectory() as tmp:
+            shipped_html = ir.with_name(f"{stem}.html")
+            rendered_html = Path(tmp) / "board.html"
+            if not run_command([sys.executable, str(html_renderer), str(ir), str(rendered_html)]):
+                fail(f"{rel} failed HTML rendering")
+                success = False
+                continue
+            if rendered_html.read_bytes() != shipped_html.read_bytes():
+                fail(f"{shipped_html.relative_to(ROOT)} has drifted from its IR/shared runtime; re-run render_html.py")
+                success = False
+                continue
+            if not run_command([sys.executable, str(parity), str(ir), str(shipped_html)]):
+                fail(f"{shipped_html.relative_to(ROOT)} failed HTML/IR parity")
+                success = False
+                continue
+
             rendered = Path(tmp) / "open-aac-studio.json"
             if not run_command([sys.executable, str(renderer), str(ir), str(rendered)]):
                 fail(f"{rel} failed Open AAC Studio rendering")
@@ -388,7 +456,7 @@ def check_generated_resource_fixtures() -> bool:
                 success = False
                 continue
 
-            ok(f"{rel} validates and renders ({len(pages)} page(s), {buttons} button(s), OBF in sync)")
+            ok(f"{rel} validates and renders ({len(pages)} page(s), {buttons} button(s), HTML/OAS/OBF in sync)")
 
     return success
 
@@ -462,7 +530,7 @@ def check_generated_html_accessibility() -> bool:
         if external_assets:
             fail(f"{rel} has external assets: {', '.join(external_assets[:5])}")
             local_ok = False
-        if "dwell" in lower:
+        if next((attrs for tag, attrs in elements if tag == "body"), {}).get("data-dwell-enabled") == "true":
             if "pointerenter" not in text and "mouseenter" not in text:
                 fail(f"{rel} mentions dwell but has no pointer/mouse enter handler")
                 local_ok = False
@@ -490,6 +558,15 @@ def check_generated_html_accessibility() -> bool:
             ok(f"{rel} static HTML accessibility/offline checks")
         success = local_ok and success
     return success
+
+
+def check_fresh_output_evaluation() -> bool:
+    evaluator = SKILLS / "agentic-aac-board-maker" / "scripts" / "evaluate_fresh_output.py"
+    if run_command([sys.executable, str(evaluator), str(ROOT / "generated")]):
+        ok("proof resources pass the fresh-output evaluation harness")
+        return True
+    fail("proof resources failed the fresh-output evaluation harness")
+    return False
 
 
 def check_reference_paths() -> bool:
@@ -616,6 +693,7 @@ def main() -> int:
         check_json_files,
         check_ir_pipeline,
         check_generated_resource_fixtures,
+        check_fresh_output_evaluation,
         check_generated_html_accessibility,
         check_eye_gaze_template,
         check_reference_paths,

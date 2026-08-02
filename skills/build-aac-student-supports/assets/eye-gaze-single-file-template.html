@@ -1,683 +1,642 @@
-<!DOCTYPE html>
-<html lang="en-AU">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Eye Gaze Choice Board</title>
-  <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
-
-    :root {
-      --text-dark: #1a1a2e;
-      --interactive: #003f88;
-      --interactive-soft: #e8f1ff;
-      --success: #005f2e;
-      --alert: #9f0000;
-      --bg-warm: #f9f7f2;
-      --bg-dark: #1a1a2e;
-      --button-bg: #ffffff;
-      --button-border: #2f3445;
-      --dwell-colour: var(--interactive);
-      --dwell-hover-bg: var(--interactive-soft);
-      --dwell-complete-colour: var(--success);
-      --btn-border-radius: 16px;
-      --target-min: 150px;
-      --target-gap: 24px;
-    }
-
-    html,
-    body {
-      height: 100%;
-      margin: 0;
-      overflow: hidden;
-      background: var(--bg-warm);
-      color: var(--text-dark);
-      font-family: "Segoe UI", Arial, sans-serif;
-    }
-
-    body {
-      min-width: 320px;
-    }
-
-    .app {
-      display: grid;
-      grid-template-rows: auto minmax(0, 1fr) auto;
-      gap: 18px;
-      height: 100vh;
-      padding: 24px;
-    }
-
-    .top-bar {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: var(--target-gap);
-      align-items: stretch;
-    }
-
-    .utility-bar {
-      display: grid;
-      grid-template-columns: repeat(2, 160px);
-      gap: var(--target-gap);
-    }
-
-    .prompt {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      min-height: 120px;
-      padding: 22px 28px;
-      border-radius: 16px;
-      background: var(--bg-dark);
-      color: #ffffff;
-    }
-
-    .prompt h1 {
-      margin: 0 0 8px;
-      font-size: clamp(2rem, 4vw, 3.4rem);
-      line-height: 1.05;
-      letter-spacing: 0;
-    }
-
-    .prompt p {
-      margin: 0;
-      font-size: clamp(1.2rem, 2.2vw, 1.8rem);
-      line-height: 1.25;
-    }
-
-    .choice-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      grid-template-rows: repeat(2, minmax(0, 1fr));
-      gap: var(--target-gap);
-      min-height: 0;
-    }
-
-    .dwell-btn {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-width: var(--target-min);
-      min-height: var(--target-min);
-      padding: 1.25rem;
-      border: 4px solid var(--button-border);
-      border-radius: var(--btn-border-radius);
-      background: var(--button-bg);
-      color: var(--text-dark);
-      cursor: pointer;
-      overflow: hidden;
-      font: inherit;
-      font-size: 1.4rem;
-      font-weight: 800;
-      line-height: 1.15;
-      text-align: center;
-      -webkit-appearance: none;
-      appearance: none;
-      user-select: none;
-      transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
-    }
-
-    .dwell-btn:hover,
-    .dwell-btn:focus-visible,
-    .dwell-btn.is-dwelling {
-      background: var(--dwell-hover-bg);
-      border-color: var(--dwell-colour);
-      outline: 4px solid var(--dwell-colour);
-      outline-offset: 3px;
-    }
-
-    .dwell-btn:hover,
-    .dwell-btn.is-dwelling {
-      transform: scale(1.015);
-    }
-
-    .dwell-btn.dwell-complete {
-      background: #e7f6ea;
-      border-color: var(--dwell-complete-colour);
-      outline-color: var(--dwell-complete-colour);
-    }
-
-    .dwell-btn.utility {
-      width: 160px;
-      min-width: 160px;
-      min-height: 120px;
-      font-size: 1.15rem;
-    }
-
-    .dwell-btn[hidden] {
-      display: none;
-    }
-
-    .btn-content {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.65rem;
-      width: 100%;
-      pointer-events: none;
-    }
-
-    .btn-symbol {
-      display: grid;
-      place-items: center;
-      width: 84px;
-      height: 84px;
-      border: 3px solid #d3d8e6;
-      border-radius: 14px;
-      background: #f7f9fc;
-      color: var(--text-dark);
-      font-size: 2rem;
-      font-weight: 900;
-    }
-
-    .btn-label {
-      max-width: 100%;
-      overflow-wrap: anywhere;
-    }
-
-    .dwell-ring {
-      position: absolute;
-      inset: 0;
-      z-index: 0;
-      border-radius: calc(var(--btn-border-radius) - 2px);
-      background: conic-gradient(var(--dwell-colour) 0%, transparent 0%);
-      opacity: 0.22;
-      pointer-events: none;
-    }
-
-    .dwell-btn.is-dwelling .dwell-ring {
-      opacity: 0.34;
-    }
-
-    .dwell-btn.dwell-complete .dwell-ring {
-      background: conic-gradient(var(--dwell-complete-colour) 100%, transparent 0%);
-      opacity: 0.42;
-    }
-
-    .status {
-      min-height: 70px;
-      padding: 14px 20px;
-      border-left: 8px solid var(--interactive);
-      background: #ffffff;
-      color: var(--text-dark);
-      font-size: 1.4rem;
-      font-weight: 800;
-      line-height: 1.25;
-    }
-
-    .confirm-modal {
-      position: fixed;
-      inset: 0;
-      z-index: 20;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 36px;
-      background: rgba(26, 26, 46, 0.72);
-    }
-
-    .confirm-modal.visible {
-      display: flex;
-    }
-
-    .confirm-panel {
-      width: min(900px, 100%);
-      padding: 28px;
-      border-radius: 18px;
-      background: #ffffff;
-      color: var(--text-dark);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
-    }
-
-    .confirm-panel h2 {
-      margin: 0 0 12px;
-      font-size: clamp(2rem, 4vw, 3rem);
-      line-height: 1.05;
-      letter-spacing: 0;
-    }
-
-    .confirm-panel p {
-      margin: 0 0 24px;
-      font-size: 1.6rem;
-      font-weight: 800;
-    }
-
-    .confirm-actions {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--target-gap);
-      min-height: 240px;
-    }
-
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
-    @media (max-width: 760px) {
-      .app {
-        padding: 14px;
-      }
-
-      .top-bar {
-        grid-template-columns: 1fr;
-      }
-
-      .utility-bar {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .dwell-btn.utility {
-        width: 100%;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .dwell-btn {
-        transition: none;
-      }
-
-      .dwell-btn:hover,
-      .dwell-btn.is-dwelling {
-        transform: none;
-      }
-    }
-
-    @media (forced-colors: active) {
-      .dwell-btn {
-        border: 3px solid ButtonText;
-        background: ButtonFace;
-        color: ButtonText;
-        forced-color-adjust: auto;
-      }
-
-      .dwell-btn:hover,
-      .dwell-btn:focus-visible,
-      .dwell-btn.is-dwelling {
-        outline: 4px solid Highlight;
-        border-color: Highlight;
-      }
-    }
-  </style>
-</head>
-<body>
-  <main class="app">
-    <div class="top-bar">
-      <section class="prompt" aria-labelledby="activityTitle">
-        <h1 id="activityTitle">Choice Board</h1>
-        <p id="activityPrompt">What would you like to say?</p>
-      </section>
-      <div class="utility-bar" aria-label="Display and speech controls">
-        <button class="dwell-btn utility" id="fullScreenButton" type="button" data-action="fullscreen" data-dwell-time="800" aria-label="Start full screen">
-          <span class="btn-content">
-            <span class="btn-symbol" aria-hidden="true">FULL</span>
-            <span class="btn-label">Full Screen</span>
-          </span>
-          <span class="dwell-ring" aria-hidden="true"></span>
-        </button>
-        <button class="dwell-btn utility" type="button" data-action="stop-speech" data-dwell-time="600" aria-label="Stop speech">
-          <span class="btn-content">
-            <span class="btn-symbol" aria-hidden="true">STOP</span>
-            <span class="btn-label">Stop Speech</span>
-          </span>
-          <span class="dwell-ring" aria-hidden="true"></span>
-        </button>
-      </div>
-    </div>
-
-    <section class="choice-grid" id="choiceGrid" aria-label="Choices"></section>
-
-    <section class="status" id="status" aria-live="polite">For best eye-gaze access, choose Full Screen.</section>
-  </main>
-
-  <div class="confirm-modal" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" aria-hidden="true">
-    <div class="confirm-panel">
-      <h2 id="confirmTitle">Choose this?</h2>
-      <p id="confirmLabel"></p>
-      <div class="confirm-actions">
-        <button class="dwell-btn confirm-btn" data-confirm="yes" data-dwell-time="600" aria-label="Yes, choose this">
-          <span class="btn-content">
-            <span class="btn-symbol" aria-hidden="true">YES</span>
-            <span class="btn-label">Yes</span>
-          </span>
-          <span class="dwell-ring" aria-hidden="true"></span>
-        </button>
-        <button class="dwell-btn confirm-btn" data-confirm="no" data-dwell-time="600" aria-label="No, go back">
-          <span class="btn-content">
-            <span class="btn-symbol" aria-hidden="true">NO</span>
-            <span class="btn-label">No</span>
-          </span>
-          <span class="dwell-ring" aria-hidden="true"></span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const ACTIVITY = {
-      title: 'Choice Board',
-      prompt: 'What would you like to say?',
-      dwellTime: 800,
-      confirmChoices: false,
-      choices: [
-        { id: 'help', label: 'Help', speech: 'Help, please.', symbol: 'HELP' },
-        { id: 'more', label: 'More', speech: 'More, please.', symbol: 'MORE' },
-        { id: 'different', label: 'Different', speech: 'I want something different.', symbol: 'DIFF' },
-        { id: 'finished', label: 'Finished', speech: 'I am finished.', symbol: 'DONE' }
-      ]
-    };
-
-    class DwellManager {
-      constructor(options = {}) {
-        this.defaultDwellTime = options.dwellTime || 800;
-        this.cooldownTime = options.cooldownTime || 450;
-        this.onActivate = options.onActivate || null;
-        this.audioCues = options.audioCues || false;
-        this.dwellOnFocus = options.dwellOnFocus || false;
-        this.activeButton = null;
-        this.animationTimer = null;
-        this.dwellStart = 0;
-        this.cooldownActive = false;
-        this.boundButtons = new WeakSet();
-        this.exitRequired = new WeakSet();
-        this.audioContext = null;
-      }
-
-      attach(buttons, callback) {
-        if (callback) this.onActivate = callback;
-        Array.from(buttons).forEach((button) => {
-          if (this.boundButtons.has(button)) return;
-          this.boundButtons.add(button);
-
-          const enterEvent = window.PointerEvent ? 'pointerenter' : 'mouseenter';
-          const leaveEvent = window.PointerEvent ? 'pointerleave' : 'mouseleave';
-          button.addEventListener(enterEvent, () => this.handleEnter(button));
-          button.addEventListener(leaveEvent, () => this.handleLeave(button));
-
-          if (this.dwellOnFocus) {
-            button.addEventListener('focus', () => this.handleEnter(button));
-            button.addEventListener('blur', () => this.handleLeave(button));
+<!doctype html>
+<html lang="en-AU" data-runtime-sha256="6618cf41c5c30094d0a1523640748625009bff7daaeedd50f3445ac1b89e0ab2">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Choose a Class Activity</title><style>
+:root { --min-target: 150px; --dwell-ms: 1000ms; --ink:#17212b; --focus:#005fcc; --repair:#ffe3e3; }
+* { box-sizing:border-box; }
+html, body { margin:0; min-height:100%; font-family:Verdana,Arial,sans-serif; color:var(--ink); background:#f7fbff; }
+body { min-height:100vh; }
+button { font:inherit; color:inherit; }
+[hidden] { display:none !important; }
+.skip-link { position:absolute; left:-9999px; } .skip-link:focus { left:8px; top:8px; z-index:20; background:white; padding:8px; }
+.setup-screen, .speech-layer { min-height:100vh; display:grid; place-content:center; gap:20px; padding:24px; text-align:center; }
+.setup-controls { display:flex; flex-wrap:wrap; justify-content:center; gap:24px; }
+.student-layer { min-height:100vh; padding:12px; }
+.page-title { margin:0 0 8px; text-align:center; font-size:clamp(1.1rem,2.4vw,1.8rem); }
+.board-grid { min-height:calc(100vh - 84px); display:grid; grid-template-columns:repeat(var(--grid-columns), minmax(var(--min-target),1fr)); grid-template-rows:repeat(var(--grid-rows), minmax(var(--min-target),1fr)); gap:12px; }
+.message-bar + .board-page .board-grid, .message-bar ~ .board-page .board-grid { min-height:calc(100vh - 160px); }
+.message-bar { margin:0 auto 10px; max-width:1200px; min-height:60px; padding:10px 16px; border:3px solid var(--ink); border-radius:14px; background:white; font-size:clamp(1rem,2.2vw,1.5rem); }
+.is-placeholder { color:#58636e; }
+.dwell-btn { position:relative; overflow:hidden; min-width:var(--min-target); min-height:var(--min-target); border:4px solid var(--ink); border-radius:18px; background:#fff; padding:12px; font-size:clamp(1rem,2.5vw,1.6rem); font-weight:700; cursor:pointer; touch-action:manipulation; }
+.dwell-btn:focus-visible { outline:6px solid var(--focus); outline-offset:3px; }
+.role-repair { background:var(--repair); } .role-navigation { background:#e8eef4; }
+.dwell-progress { position:absolute; inset:auto 0 0; height:10px; background:#ffbf00; transform:scaleX(0); transform-origin:left; }
+.is-dwelling .dwell-progress { animation:dwell-fill var(--dwell-ms) linear forwards; }
+.was-activated { filter:brightness(.82); }
+.symbol { display:block; max-width:55%; max-height:55%; margin:0 auto 8px; object-fit:contain; }
+.speech-layer { position:fixed; inset:0; z-index:10; background:#f7fbff; }
+.speech-active #student-layer, .speech-active #setup-screen { visibility:hidden; }
+.stop-control { min-width:min(70vw,420px); min-height:min(55vh,320px); background:#ffe3e3; font-size:clamp(1.4rem,4vw,2.4rem); }
+.board-status { position:fixed; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
+.teacher-panel { display:none; margin:18px; padding:18px; border:2px solid #555; background:white; }
+body.teacher-mode .teacher-panel { display:block; }
+.attribution { font-size:.75rem; }
+@keyframes dwell-fill { to { transform:scaleX(1); } }
+@media (max-width:760px) { .board-grid { gap:7px; } .dwell-btn { padding:7px; } }
+@media (forced-colors:active) { .dwell-btn { border-color:ButtonText; forced-color-adjust:auto; } .dwell-progress { background:Highlight; } }
+@media print { .setup-screen,.speech-layer,.board-status { display:none !important; } .student-layer,.teacher-panel { display:block !important; } .board-page { break-after:page; } .board-page[hidden] { display:block !important; } .board-grid { min-height:auto; } .dwell-btn { min-height:110px; } }
+</style></head>
+<body data-access-profile="eye-gaze-dwell" data-dwell-enabled="true" data-min-target="150" data-visible-target-limit="9" data-setup-target-limit="3">
+<a class="skip-link" href="#student-layer">Skip to board</a>
+<section id="setup-screen" class="setup-screen" aria-label="Board setup"><h1>Choose a Class Activity</h1><p>Choose Start board when positioning and access are ready.</p><div class="setup-controls"><button id="start" class="dwell-btn setup-control primary" type="button" data-control="start" data-student-target data-dwell aria-label="Start board"><span class="label">Start board</span><span class="dwell-progress" aria-hidden="true"></span></button><button id="full-screen" class="dwell-btn setup-control" type="button" data-control="full-screen" data-student-target data-dwell aria-label="Full screen"><span class="label">Full screen</span><span class="dwell-progress" aria-hidden="true"></span></button><button id="sound-check" class="dwell-btn setup-control" type="button" data-control="sound-check" data-student-target data-dwell aria-label="Sound check"><span class="label">Sound check</span><span class="dwell-progress" aria-hidden="true"></span></button></div></section>
+<main id="student-layer" class="student-layer" hidden><section class="board-page" data-page-id="page-main" aria-label="Main"><h2 class="page-title">Main</h2><div class="board-grid" style="--grid-rows:2;--grid-columns:3"><button id="btn-read" class="dwell-btn board-button role-fringe" type="button" data-button-id="btn-read" data-label="Read" data-spoken="Read" data-actions="[{&quot;id&quot;:&quot;act-btn-read-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Read&quot;},{&quot;id&quot;:&quot;act-btn-read-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Read"><span class="label">Read</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-art" class="dwell-btn board-button role-fringe" type="button" data-button-id="btn-art" data-label="Art" data-spoken="Art" data-actions="[{&quot;id&quot;:&quot;act-btn-art-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Art&quot;},{&quot;id&quot;:&quot;act-btn-art-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Art"><span class="label">Art</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-game" class="dwell-btn board-button role-fringe" type="button" data-button-id="btn-game" data-label="Game" data-spoken="Game" data-actions="[{&quot;id&quot;:&quot;act-btn-game-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Game&quot;},{&quot;id&quot;:&quot;act-btn-game-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Game"><span class="label">Game</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-music" class="dwell-btn board-button role-fringe" type="button" data-button-id="btn-music" data-label="Music" data-spoken="Music" data-actions="[{&quot;id&quot;:&quot;act-btn-music-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Music&quot;},{&quot;id&quot;:&quot;act-btn-music-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Music"><span class="label">Music</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-help" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-help" data-label="Help" data-spoken="Help please" data-actions="[{&quot;id&quot;:&quot;act-btn-help-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Help please&quot;},{&quot;id&quot;:&quot;act-btn-help-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Help"><span class="label">Help</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-different" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-different" data-label="Different" data-spoken="I want something different" data-actions="[{&quot;id&quot;:&quot;act-btn-different-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;I want something different&quot;},{&quot;id&quot;:&quot;act-btn-different-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Different"><span class="label">Different</span><span class="dwell-progress" aria-hidden="true"></span></button></div></section></main>
+<section id="speech-layer" class="speech-layer" aria-label="Speech controls" hidden><button id="stop-speech" class="dwell-btn stop-control" type="button" data-control="stop-speech" data-student-target data-dwell aria-label="Stop speech"><span class="label">Stop speech</span><span class="dwell-progress" aria-hidden="true"></span></button></section>
+<div id="board-status" class="board-status" role="status" aria-live="polite">Board ready.</div>
+<aside class="teacher-panel"><h2>Teacher notes</h2><p><strong>Model:</strong> Model the board by saying and selecting options yourself: “I choose Art”, “Help please”, “Different”. Wait after modelling and accept gaze, gesture, voice, partner interpretation, or keyboard selection.</p><p><strong>Evidence:</strong> Teacher can note whether the student initiates a choice, confirms/rejects an activity, asks for help, or uses Different to repair the offered choices.</p><p><strong>Customise:</strong> Replace the four activity labels/search terms with the real lesson choices. Keep Help and Different/Finished-style repair vocabulary stable where possible.</p><p class="attribution">ARASAAC: CC BY-NC-SA. Text fallback remains available. ARASAAC pictograms, when embedded, require their stated attribution.</p></aside>
+<script id="aac-board-ir" type="application/json">{
+  "schemaVersion": "0.4.0",
+  "format": "agentic-aac-board-ir",
+  "id": "gaze-choice-class-activity",
+  "title": "Choose a Class Activity",
+  "purpose": "An eye-gaze/dwell-safe AAC choice board that lets a student choose, request help, or repair the choice when selecting a class activity.",
+  "audience": {
+    "ageBand": "school-age",
+    "tone": "age-respectful",
+    "locale": "en-AU"
+  },
+  "access": {
+    "intended": [
+      "eye-gaze-dwell",
+      "mouse",
+      "keyboard",
+      "touch"
+    ],
+    "profile": "eye-gaze-dwell",
+    "minimumTargetSizePx": 150,
+    "dwellTimeMs": 1000,
+    "denseGazeTested": false,
+    "visibleTargetLimit": 9,
+    "setupTargetLimit": 3,
+    "switchScanning": false,
+    "scanSpeedMs": 1400,
+    "scanPattern": "linear",
+    "scanOrder": "dom-order",
+    "audioCues": true
+  },
+  "display": {
+    "orientation": "landscape",
+    "width": 1024,
+    "height": 768,
+    "backgroundColour": "#f7fbff"
+  },
+  "studentControls": {
+    "startBoard": true,
+    "fullScreen": true,
+    "soundCheck": true,
+    "stopSpeechDuringPlayback": true,
+    "teacherPanel": false
+  },
+  "communicationFunctions": [
+    "choose",
+    "repair"
+  ],
+  "pages": [
+    {
+      "id": "page-main",
+      "name": "Main",
+      "pattern": "choice-board",
+      "layout": "grid",
+      "grid": {
+        "rows": 2,
+        "columns": 3
+      },
+      "buttons": [
+        {
+          "id": "btn-read",
+          "label": "Read",
+          "role": "fringe",
+          "function": "choose",
+          "spokenText": "Read",
+          "searchTerm": "reading book",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-read-speak",
+              "type": "speak-text",
+              "text": "Read"
+            },
+            {
+              "id": "act-btn-read-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "Read",
+          "result": "selected",
+          "position": {
+            "x": 0.0,
+            "y": 0,
+            "width": 33.3333,
+            "height": 50
+          },
+          "style": {
+            "fillColour": "#E8F3FF"
           }
-
-          // Plain click listener on a native <button>: Enter/Space already
-          // fire click, and synthesised assistive-technology clicks carry
-          // event.detail === 0, so do NOT guard on event.detail. The
-          // cooldown check in activate() absorbs any duplicate event.
-          button.addEventListener('click', () => this.activate(button, 'click'));
-
-          // Escape cancels an in-progress dwell.
-          button.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape') this.cancel(button);
-          });
-        });
-      }
-
-      handleEnter(button) {
-        if (button.disabled || this.activeButton || this.exitRequired.has(button)) return;
-        this.activeButton = button;
-        this.dwellStart = performance.now();
-        button.classList.add('is-dwelling');
-        this.tone(440, 0.025, 0.04);
-
-        const dwellTime = Number.parseInt(button.dataset.dwellTime, 10) || this.defaultDwellTime;
-        const animate = (timestamp) => {
-          if (this.activeButton !== button) return;
-          const progress = Math.min((timestamp - this.dwellStart) / dwellTime, 1);
-          this.updateRing(button, progress);
-          if (progress >= 1) this.activate(button, 'dwell');
-          else this.animationTimer = window.requestAnimationFrame(animate);
-        };
-
-        this.animationTimer = window.requestAnimationFrame(animate);
-      }
-
-      handleLeave(button) {
-        this.exitRequired.delete(button);
-        if (this.activeButton === button) this.cancel(button);
-      }
-
-      activate(button, method = 'manual') {
-        if (button.disabled || this.cooldownActive) return;
-        if (this.animationTimer) window.cancelAnimationFrame(this.animationTimer);
-        this.animationTimer = null;
-        this.activeButton = null;
-        this.cooldownActive = true;
-        this.exitRequired.add(button);
-        button.classList.remove('is-dwelling');
-        button.classList.add('dwell-complete');
-        this.updateRing(button, 1);
-        this.tone(660, 0.035, 0.08);
-
-        window.setTimeout(() => {
-          button.classList.remove('dwell-complete');
-          this.resetRing(button);
-          if (this.onActivate) this.onActivate(button, method);
-          window.setTimeout(() => {
-            this.cooldownActive = false;
-          }, this.cooldownTime);
-        }, 180);
-      }
-
-      cancel(button) {
-        if (this.animationTimer) window.cancelAnimationFrame(this.animationTimer);
-        this.animationTimer = null;
-        this.activeButton = null;
-        this.dwellStart = 0;
-        button.classList.remove('is-dwelling', 'dwell-complete');
-        this.resetRing(button);
-      }
-
-      updateRing(button, progress) {
-        const ring = button.querySelector('.dwell-ring');
-        if (!ring) return;
-        const pct = Math.round(progress * 100);
-        ring.style.background = `conic-gradient(var(--dwell-colour) ${pct}%, transparent ${pct}%)`;
-      }
-
-      resetRing(button) {
-        const ring = button.querySelector('.dwell-ring');
-        if (!ring) return;
-        ring.style.background = 'conic-gradient(var(--dwell-colour) 0%, transparent 0%)';
-      }
-
-      tone(frequency, volume, duration) {
-        if (!this.audioCues) return;
-        try {
-          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-          if (!AudioContextClass) return;
-          if (!this.audioContext) this.audioContext = new AudioContextClass();
-          const osc = this.audioContext.createOscillator();
-          const gain = this.audioContext.createGain();
-          osc.connect(gain);
-          gain.connect(this.audioContext.destination);
-          osc.frequency.value = frequency;
-          gain.gain.value = volume;
-          osc.start();
-          osc.stop(this.audioContext.currentTime + duration);
-        } catch (error) {}
-      }
-    }
-
-    const statusEl = document.getElementById('status');
-    const confirmModal = document.getElementById('confirmModal');
-    const confirmLabel = document.getElementById('confirmLabel');
-    let pendingConfirm = null;
-
-    function speakAU(text) {
-      if (!('speechSynthesis' in window) || !text) return;
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-AU';
-      utterance.rate = 0.85;
-      utterance.pitch = 1;
-      window.speechSynthesis.speak(utterance);
-    }
-
-    function stopSpeech() {
-      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-    }
-
-    function setStatus(text) {
-      statusEl.textContent = text;
-    }
-
-    const fullScreenButton = document.getElementById('fullScreenButton');
-
-    function requestFullScreen(source = 'button') {
-      if (document.fullscreenElement) return Promise.resolve(true);
-      if (!document.documentElement.requestFullscreen) {
-        setStatus('Full screen is unavailable. Press F11 or ask EQ IT for kiosk mode.');
-        return Promise.resolve(false);
-      }
-
-      // Keep this call synchronous with the native click handler below.
-      return document.documentElement.requestFullscreen().then(() => {
-        setStatus('Full screen is on. Press Escape to leave.');
-        return true;
-      }).catch(() => {
-        if (source === 'startup') {
-          setStatus('For best eye-gaze access, choose Full Screen. EQ IT can allow automatic full screen.');
-        } else {
-          setStatus('Full screen was blocked. Use click or Enter, press F11, or ask EQ IT for managed full screen.');
+        },
+        {
+          "id": "btn-art",
+          "label": "Art",
+          "role": "fringe",
+          "function": "choose",
+          "spokenText": "Art",
+          "searchTerm": "painting",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-art-speak",
+              "type": "speak-text",
+              "text": "Art"
+            },
+            {
+              "id": "act-btn-art-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "Art",
+          "result": "selected",
+          "position": {
+            "x": 33.3333,
+            "y": 0,
+            "width": 33.3333,
+            "height": 50
+          },
+          "style": {
+            "fillColour": "#FFF2CC"
+          }
+        },
+        {
+          "id": "btn-game",
+          "label": "Game",
+          "role": "fringe",
+          "function": "choose",
+          "spokenText": "Game",
+          "searchTerm": "board game",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-game-speak",
+              "type": "speak-text",
+              "text": "Game"
+            },
+            {
+              "id": "act-btn-game-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "Game",
+          "result": "selected",
+          "position": {
+            "x": 66.6666,
+            "y": 0,
+            "width": 33.3333,
+            "height": 50
+          },
+          "style": {
+            "fillColour": "#E7F7E7"
+          }
+        },
+        {
+          "id": "btn-music",
+          "label": "Music",
+          "role": "fringe",
+          "function": "choose",
+          "spokenText": "Music",
+          "searchTerm": "music",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-music-speak",
+              "type": "speak-text",
+              "text": "Music"
+            },
+            {
+              "id": "act-btn-music-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "Music",
+          "result": "selected",
+          "position": {
+            "x": 0.0,
+            "y": 50,
+            "width": 33.3333,
+            "height": 50
+          },
+          "style": {
+            "fillColour": "#F2E8FF"
+          }
+        },
+        {
+          "id": "btn-help",
+          "label": "Help",
+          "role": "repair",
+          "function": "repair",
+          "spokenText": "Help please",
+          "searchTerm": "help",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-help-speak",
+              "type": "speak-text",
+              "text": "Help please"
+            },
+            {
+              "id": "act-btn-help-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "Help please",
+          "result": "selected",
+          "position": {
+            "x": 33.3333,
+            "y": 50,
+            "width": 33.3333,
+            "height": 50
+          },
+          "style": {
+            "fillColour": "#FFE6E6"
+          }
+        },
+        {
+          "id": "btn-different",
+          "label": "Different",
+          "role": "repair",
+          "function": "repair",
+          "spokenText": "I want something different",
+          "searchTerm": "different",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-different-speak",
+              "type": "speak-text",
+              "text": "I want something different"
+            },
+            {
+              "id": "act-btn-different-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "I want something different",
+          "result": "selected",
+          "position": {
+            "x": 66.6666,
+            "y": 50,
+            "width": 33.3333,
+            "height": 50
+          },
+          "style": {
+            "fillColour": "#F4F4F4"
+          }
         }
-        return false;
-      });
+      ],
+      "margin": 18,
+      "backgroundColour": "#f7fbff"
     }
-
-    function updateFullScreenControl() {
-      if (!fullScreenButton) return;
-      fullScreenButton.hidden = Boolean(document.fullscreenElement);
-      if (!document.fullscreenElement) setStatus('For best eye-gaze access, choose Full Screen.');
+  ],
+  "teacherNotes": {
+    "modeling": "Model the board by saying and selecting options yourself: “I choose Art”, “Help please”, “Different”. Wait after modelling and accept gaze, gesture, voice, partner interpretation, or keyboard selection.",
+    "evidence": "Teacher can note whether the student initiates a choice, confirms/rejects an activity, asks for help, or uses Different to repair the offered choices.",
+    "customisation": "Replace the four activity labels/search terms with the real lesson choices. Keep Help and Different/Finished-style repair vocabulary stable where possible.",
+    "access": "Default dwell is 1000 ms. Targets are arranged 2 by 3 with large buttons, visible dwell progress, pointer-leave cancellation, and keyboard fallback.",
+    "caveat": "Draft classroom support only. Review with the teaching/SLP/OT team and test on the actual student device/access setup before relying on it."
+  },
+  "systemFit": {
+    "reviewStatus": "team-input-needed",
+    "existingSystem": "Confirm how this support sits alongside the student's established AAC system.",
+    "vocabularyAndMotorPlan": "Confirm familiar vocabulary and stable locations before classroom use.",
+    "symbolFamiliarity": "Confirm that each symbol or text representation is recognised and meaningful.",
+    "accessCalibration": "Confirm access settings on the actual device with the student and team.",
+    "positioningAndVision": "Confirm screen, mounting, seating, visual field, contrast and fatigue conditions.",
+    "languageCultureVoice": "Confirm preferred language, culturally meaningful vocabulary and voice output.",
+    "partnerSignals": "Confirm reliable yes/no, cancel, repair and partner-assisted signals."
+  },
+  "symbolStrategy": {
+    "defaultSource": "ARASAAC search terms",
+    "textFallback": true,
+    "customMediaPolicy": "teacher-owned local media only unless explicitly approved",
+    "notes": "This proof of concept uses text labels and emoji-style inline icons in HTML, with ARASAAC search terms recorded for later symbol replacement.",
+    "reviewRequired": true
+  },
+  "privacy": {
+    "level": "anonymous",
+    "containsSensitiveData": false
+  },
+  "attribution": [
+    {
+      "source": "ARASAAC",
+      "licence": "CC BY-NC-SA",
+      "attribution": "The pictographic symbols used are the property of the Government of Aragon and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distributes them under Creative Commons License BY-NC-SA.",
+      "note": "Symbol search terms are provided for ARASAAC replacement; confirm exact current licence wording when publishing beyond local classroom use."
     }
-
-    function makeChoiceButton(choice) {
-      const button = document.createElement('button');
-      button.className = 'dwell-btn';
-      button.type = 'button';
-      button.dataset.choiceId = choice.id;
-      button.dataset.speech = choice.speech || choice.label;
-      button.dataset.dwellTime = String(choice.dwellTime || ACTIVITY.dwellTime);
-      button.setAttribute('aria-label', choice.ariaLabel || choice.label);
-      button.innerHTML = `
-        <span class="btn-content">
-          <span class="btn-symbol" aria-hidden="true">${choice.symbol || choice.label.slice(0, 4).toUpperCase()}</span>
-          <span class="btn-label">${choice.label}</span>
-        </span>
-        <span class="dwell-ring" aria-hidden="true"></span>
-      `;
-      return button;
+  ],
+  "sett": {
+    "student": "Student uses eye gaze/dwell, keyboard, touch, or partner interpretation to choose an activity and repair the choice if needed.",
+    "environment": "Classroom device or AAC setup with large targets, reduced visual clutter, and no dependency on live internet during use.",
+    "task": "Choose a class activity while keeping Help and Different available.",
+    "tools": "Two-by-three gaze-safe board, 1000 ms dwell, pointer-leave cancellation, spoken labels, and text/emoji fallback."
+  },
+  "udl": {
+    "engagement": [
+      "Meaningful choice",
+      "safe repair route",
+      "wait time and partner response"
+    ],
+    "representation": [
+      "short text labels",
+      "spoken output",
+      "symbol/search-term or text fallback"
+    ],
+    "actionExpression": [
+      "eye-gaze-dwell",
+      "mouse",
+      "keyboard",
+      "touch"
+    ]
+  },
+  "differentiation": {
+    "content": "Keep authentic activity choice while protecting gaze access and repair.",
+    "process": "Model key vocabulary, provide wait time, allow rehearsal/repetition, and accept multimodal communication.",
+    "product": "Accept selected activity, repair use, or teacher observation of access fit.",
+    "environment": "Use a calm, predictable, local-first layout with teacher controls separate from student choices.",
+    "support": "Teaching, SLP, OT, family, and student/team review should personalise vocabulary and access before reliance."
+  },
+  "participationBarriers": [
+    {
+      "barrier": "Activity choice can become adult-controlled or too visually dense for gaze access.",
+      "support": "Use six large targets, stable repair vocabulary, clear dwell progress, and keyboard fallback."
     }
+  ],
+  "evidencePlan": {
+    "observable": [
+      "activity choice",
+      "help request",
+      "different/repair selection",
+      "successful dwell cancellation or reselection"
+    ],
+    "notJudgement": "Dwell timing and accidental cancellation reflect access tuning, not preference certainty.",
+    "export": "Use anonymous teacher notes, print/portfolio evidence, or local CSV/report only when needed. Do not include diagnoses, behaviour details, family details, or school IDs."
+  }
+}</script>
+<script>if(new URLSearchParams(location.search).get("teacher")==="1")document.body.classList.add("teacher-mode");</script>
+<!-- shared-runtime-sha256:6618cf41c5c30094d0a1523640748625009bff7daaeedd50f3445ac1b89e0ab2 -->
+<script data-aac-shared-runtime>/* Agentic AAC Board shared runtime. Keep this file dependency-free and offline-safe. */
+(() => {
+  "use strict";
 
-    function renderActivity() {
-      document.getElementById('activityTitle').textContent = ACTIVITY.title;
-      document.getElementById('activityPrompt').textContent = ACTIVITY.prompt;
-      const grid = document.getElementById('choiceGrid');
-      grid.replaceChildren(...ACTIVITY.choices.map(makeChoiceButton));
-    }
+  const documentRoot = document.documentElement;
+  const irNode = document.getElementById("aac-board-ir");
+  if (!irNode) throw new Error("AAC Board IR payload is missing");
+  const ir = JSON.parse(irNode.textContent);
+  const state = { activePageId: ir.pages[0]?.id || "", words: [], started: false, speaking: false };
+  const setup = document.getElementById("setup-screen");
+  const studentLayer = document.getElementById("student-layer");
+  const speechLayer = document.getElementById("speech-layer");
+  const messageText = document.getElementById("message-text");
+  const status = document.getElementById("board-status");
+  let speechToken = 0;
 
-    function handleChoice(button) {
-      const choice = ACTIVITY.choices.find((item) => item.id === button.dataset.choiceId);
-      if (!choice) return;
-      const complete = () => {
-        setStatus(choice.label);
-        speakAU(choice.speech || choice.label);
-      };
+  const isRendered = (element) => {
+    if (!(element instanceof HTMLElement)) return false;
+    if (element.hidden || element.closest("[hidden]")) return false;
+    const style = getComputedStyle(element);
+    return style.display !== "none" && style.visibility !== "hidden";
+  };
 
-      if (ACTIVITY.confirmChoices) {
-        showConfirmation(choice.label, complete);
-      } else {
-        complete();
-      }
-    }
+  const visibleTargets = () => [...document.querySelectorAll("[data-student-target]")].filter(isRendered);
 
-    let lastFocus = null;
-
-    function showConfirmation(label, onConfirm) {
-      pendingConfirm = onConfirm;
-      lastFocus = document.activeElement;
-      confirmLabel.textContent = label;
-      confirmModal.classList.add('visible');
-      confirmModal.setAttribute('aria-hidden', 'false');
-      const yesButton = confirmModal.querySelector('.confirm-btn[data-confirm="yes"]');
-      if (yesButton) yesButton.focus();
-      setStatus(`Confirm: ${label}`);
-      speakAU(`Choose ${label}?`);
-    }
-
-    function closeConfirmation() {
-      pendingConfirm = null;
-      confirmModal.classList.remove('visible');
-      confirmModal.setAttribute('aria-hidden', 'true');
-      if (lastFocus && document.contains(lastFocus)) lastFocus.focus();
-      lastFocus = null;
-    }
-
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && confirmModal.classList.contains('visible')) {
-        closeConfirmation();
-        setStatus('Cancelled.');
-      }
-    });
-
-    renderActivity();
-
-    // Attach this direct listener before DwellManager.attach(). A trusted
-    // click/Enter/OS dwell click must call requestFullscreen synchronously.
-    fullScreenButton.addEventListener('click', () => {
-      requestFullScreen('click');
-    });
-    document.addEventListener('fullscreenchange', updateFullScreenControl);
-
-    const mainDwell = new DwellManager({ dwellTime: ACTIVITY.dwellTime });
-    mainDwell.attach(document.querySelectorAll('.dwell-btn:not(.confirm-btn)'), (button) => {
-      if (confirmModal.classList.contains('visible')) return;
-      if (button.dataset.action === 'fullscreen') {
-        requestFullScreen('dwell');
-        return;
-      }
-      if (button.dataset.action === 'stop-speech') {
-        stopSpeech();
-        setStatus('Speech stopped.');
-        return;
-      }
-      handleChoice(button);
-    });
-
-    const confirmDwell = new DwellManager({ dwellTime: 600 });
-    confirmDwell.attach(document.querySelectorAll('.confirm-btn'), (button) => {
-      const action = pendingConfirm;
-      closeConfirmation();
-      if (button.dataset.confirm === 'yes' && action) action();
-      if (button.dataset.confirm === 'no') setStatus('Cancelled.');
-    });
-
-    // EQ-managed Edge 132+ can allow this startup call through
-    // AutomaticFullscreenAllowedForUrls. Ordinary Edge will reject it and
-    // leave the gaze-sized button and F11 guidance available.
-    window.addEventListener('load', () => {
-      requestFullScreen('startup');
-    }, { once: true });
-
-    window.checkEyeGazeTargets = function checkEyeGazeTargets() {
-      document.querySelectorAll('button').forEach((button) => {
-        if (button.offsetParent === null) return;
-        const rect = button.getBoundingClientRect();
-        const ok = rect.width >= 120 && rect.height >= 120;
-        console.log(`${ok ? 'OK' : 'CHECK'} ${button.getAttribute('aria-label') || button.textContent.trim()} - ${Math.round(rect.width)}x${Math.round(rect.height)}px`);
-      });
+  const auditVisibleTargets = () => {
+    const targets = visibleTargets();
+    const phase = state.speaking ? "speech" : state.started ? "board" : "setup";
+    const limit = Number(
+      phase === "setup" ? ir.access.setupTargetLimit : phase === "speech" ? 1 : ir.access.visibleTargetLimit
+    );
+    const audit = {
+      phase,
+      count: targets.length,
+      limit,
+      ok: targets.length <= limit,
+      ids: targets.map((target) => target.id || target.dataset.buttonId || target.dataset.control || "unidentified"),
     };
-  </script>
-</body>
-</html>
+    documentRoot.dataset.visibleTargetCount = String(audit.count);
+    documentRoot.dataset.visibleTargetLimit = String(audit.limit);
+    documentRoot.dataset.visibleTargetAudit = audit.ok ? "pass" : "fail";
+    if (!audit.ok) console.error("AAC visible-target limit exceeded", audit);
+    return audit;
+  };
+
+  const announce = (message) => {
+    if (status) status.textContent = message;
+  };
+
+  const updateMessage = () => {
+    if (!messageText) return;
+    messageText.textContent = state.words.length ? state.words.join(" ") : messageText.dataset.placeholder;
+    messageText.classList.toggle("is-placeholder", state.words.length === 0);
+  };
+
+  const setSpeechMode = (enabled) => {
+    state.speaking = enabled;
+    document.body.classList.toggle("speech-active", enabled);
+    if (speechLayer) speechLayer.hidden = !enabled;
+    if (studentLayer) studentLayer.inert = enabled;
+    if (setup) setup.inert = enabled;
+    auditVisibleTargets();
+    if (enabled) document.getElementById("stop-speech")?.focus({ preventScroll: true });
+  };
+
+  const stopSpeech = () => {
+    speechToken += 1;
+    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+    setSpeechMode(false);
+    announce("Speech stopped.");
+  };
+
+  const speak = (value) => {
+    const phrase = String(value || "").trim();
+    if (!phrase) return;
+    if (!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined") {
+      announce(`Speech is unavailable. Message: ${phrase}`);
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const token = ++speechToken;
+    const utterance = new SpeechSynthesisUtterance(phrase);
+    utterance.lang = ir.audience.locale || "en-AU";
+    utterance.onstart = () => {
+      if (token === speechToken && ir.studentControls.stopSpeechDuringPlayback) setSpeechMode(true);
+      announce(`Speaking: ${phrase}`);
+    };
+    const finish = () => {
+      if (token !== speechToken) return;
+      setSpeechMode(false);
+      announce(`Spoken: ${phrase}`);
+    };
+    utterance.onend = finish;
+    utterance.onerror = () => {
+      if (token !== speechToken) return;
+      setSpeechMode(false);
+      announce("Speech could not be played on this device.");
+    };
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const showPage = (pageId) => {
+    const page = ir.pages.find((candidate) => candidate.id === pageId);
+    if (!page) {
+      announce(`Page ${pageId} is unavailable.`);
+      return;
+    }
+    state.activePageId = pageId;
+    document.querySelectorAll("[data-page-id]").forEach((element) => {
+      element.hidden = element.dataset.pageId !== pageId;
+    });
+    announce(`${page.name} page.`);
+    auditVisibleTargets();
+    document.querySelector(`[data-page-id="${CSS.escape(pageId)}"] [data-student-target]`)?.focus({ preventScroll: true });
+  };
+
+  const adjacentPage = (offset) => {
+    const index = ir.pages.findIndex((page) => page.id === state.activePageId);
+    const page = ir.pages[index + offset];
+    if (page) showPage(page.id);
+  };
+
+  const runAction = (action, button) => {
+    switch (action.type) {
+      case "speak-text": speak(action.text || button.dataset.spoken); break;
+      case "speak-label": speak(button.dataset.label); break;
+      case "add-to-message": state.words.push(action.text || button.dataset.spoken || button.dataset.label); updateMessage(); break;
+      case "speak-message": speak(state.words.join(" ")); break;
+      case "remove-last-word": state.words.pop(); updateMessage(); announce("Last word removed."); break;
+      case "clear-message": state.words = []; updateMessage(); announce("Message cleared."); break;
+      case "navigate-page": showPage(action.targetPageId || action.pageId); break;
+      case "next-page": adjacentPage(1); break;
+      case "previous-page": adjacentPage(-1); break;
+      case "log-attempt": document.dispatchEvent(new CustomEvent("aac-attempt", { detail: { buttonId: button.dataset.buttonId } })); break;
+      case "mark-correct":
+      case "mark-incorrect": document.dispatchEvent(new CustomEvent("aac-evidence", { detail: { type: action.type, buttonId: button.dataset.buttonId } })); break;
+      default: console.warn("Unsupported AAC action", action.type);
+    }
+  };
+
+  const activate = (button) => {
+    if (!(button instanceof HTMLElement) || button.disabled || state.speaking) return;
+    const actions = JSON.parse(button.dataset.actions || "[]");
+    actions.forEach((action) => runAction(action, button));
+    button.classList.add("was-activated");
+    window.setTimeout(() => button.classList.remove("was-activated"), 240);
+  };
+
+  class DwellController {
+    constructor(milliseconds) {
+      this.milliseconds = milliseconds;
+      this.timer = 0;
+      this.target = null;
+      this.startedAt = 0;
+    }
+    attach(root = document) {
+      root.querySelectorAll("[data-dwell]").forEach((target) => {
+        target.addEventListener("pointerenter", () => this.begin(target));
+        target.addEventListener("pointerleave", () => this.cancel(target));
+        target.addEventListener("pointercancel", () => this.cancel(target));
+        target.addEventListener("blur", () => this.cancel(target));
+        target.addEventListener("click", (event) => {
+          if (target.dataset.dwellActivated === "true") {
+            target.dataset.dwellActivated = "false";
+            event.preventDefault();
+            return;
+          }
+          this.cancel(target);
+          this.dispatch(target);
+        });
+      });
+    }
+    begin(target) {
+      if (target.disabled || !isRendered(target)) return;
+      this.cancel();
+      this.target = target;
+      this.startedAt = performance.now();
+      target.classList.add("is-dwelling");
+      target.style.setProperty("--dwell-ms", `${this.milliseconds}ms`);
+      this.timer = window.setTimeout(() => {
+        target.dataset.dwellActivated = "true";
+        this.dispatch(target);
+        this.cancel(target);
+        window.setTimeout(() => { target.dataset.dwellActivated = "false"; }, 900);
+      }, this.milliseconds);
+    }
+    cancel(target = null) {
+      if (target && target !== this.target) return;
+      window.clearTimeout(this.timer);
+      this.target?.classList.remove("is-dwelling");
+      this.timer = 0;
+      this.target = null;
+    }
+    dispatch(target) {
+      if (target.matches("[data-button-id]")) activate(target);
+      else target.dispatchEvent(new CustomEvent("aac-control", { bubbles: true }));
+    }
+  }
+
+  const startBoard = () => {
+    state.started = true;
+    if (setup) setup.hidden = true;
+    if (studentLayer) studentLayer.hidden = false;
+    showPage(state.activePageId);
+  };
+
+  document.addEventListener("aac-control", async (event) => {
+    const control = event.target.closest("[data-control]")?.dataset.control;
+    if (control === "start") startBoard();
+    if (control === "sound-check") speak("Sound check ready");
+    if (control === "stop-speech") stopSpeech();
+    if (control === "full-screen") {
+      try {
+        await document.documentElement.requestFullscreen();
+        announce("Full screen opened.");
+      } catch (_error) {
+        announce("Full screen was blocked. The board is still ready to use.");
+      }
+    }
+  });
+
+  const dwell = new DwellController(Number(ir.access.dwellTimeMs || 1200));
+  dwell.attach();
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    dwell.cancel();
+    if (state.speaking) stopSpeech();
+    else announce("Dwell cancelled.");
+  });
+  updateMessage();
+  if (!ir.studentControls.startBoard) startBoard();
+  else auditVisibleTargets();
+
+  window.AACBoard = Object.freeze({
+    ir,
+    state,
+    start: startBoard,
+    stopSpeech,
+    navigate: showPage,
+    activate: (buttonId) => activate(document.querySelector(`[data-button-id="${CSS.escape(buttonId)}"]`)),
+    countVisibleTargets: () => visibleTargets().length,
+    auditVisibleTargets,
+  });
+})();
+</script>
+</body></html>

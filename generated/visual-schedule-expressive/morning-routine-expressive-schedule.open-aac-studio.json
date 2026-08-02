@@ -4,8 +4,8 @@
   "id": "morning-routine-expressive-schedule",
   "name": "Morning Routine Expressive Visual Schedule",
   "type": "interactive",
-  "created": "2026-06-10T11:43:15.144081Z",
-  "modified": "2026-06-10T11:43:15.144081Z",
+  "created": "2026-08-02T00:00:00Z",
+  "modified": "2026-08-02T00:00:00Z",
   "settings": {
     "orientation": "landscape",
     "width": 1024,
@@ -16,7 +16,7 @@
     "font": "Verdana",
     "fontSize": 18,
     "fontColour": "#000000",
-    "backgroundColour": "#ffffff",
+    "backgroundColour": "#f7fbff",
     "showStopButton": true,
     "dwellTimeMs": 1100,
     "switchScanning": false,
@@ -502,11 +502,11 @@
   ],
   "variables": {},
   "teacherNotes": {
-    "schedule_order": "The first row and early second-row buttons are the routine sequence; the remaining buttons are expressive supports, not compliance controls.",
-    "customisation": "Replace routine steps with the actual class morning sequence and photos if available and approved.",
-    "not_full_aac_claim": "This is a visual schedule with communication supports. It is not a replacement for the student's full AAC system.",
+    "modeling": "Point to schedule steps as they happen and model expressive messages, especially Wait, Help please, Change and Finished.",
     "evidence": "Note whether the student anticipates next steps, requests help/wait/change, or comments on readiness.",
-    "modeling": "Point to schedule steps as they happen and model expressive messages, especially Wait, Help please, Change and Finished."
+    "customisation": "Replace routine steps with the actual class morning sequence and photos if available and approved.",
+    "schedule_order": "The first row and early second-row buttons are the routine sequence; the remaining buttons are expressive supports, not compliance controls.",
+    "not_full_aac_claim": "This is a visual schedule with communication supports. It is not a replacement for the student's full AAC system."
   },
   "communicationFunctions": [
     "ask",
@@ -518,18 +518,13 @@
   "metadata": {
     "tags": [
       "aac",
-      "agent-generated",
-      "proof-of-concept",
-      "visual-schedule-expressive",
-      "visual-schedule",
-      "routine",
-      "expressive-options"
+      "agent-generated"
     ],
     "level": "",
-    "curriculum": "Classroom participation and routine access: sequencing, transitions, requesting support and regulating participation.",
+    "curriculum": "",
     "privacyLevel": "anonymous",
     "generatedFrom": "agentic-aac-board-ir",
-    "sourceIrSchemaVersion": "0.3.0",
+    "sourceIrSchemaVersion": "0.4.0",
     "accessProfile": "mixed-access",
     "communicationFunctions": [
       "ask",
@@ -543,7 +538,8 @@
       "purpose": "A visual schedule that shows morning routine order while preserving expressive options for waiting, help, change, finished and student comments.",
       "audience": {
         "ageBand": "school-age",
-        "tone": "calm, routine-focused"
+        "tone": "calm, routine-focused",
+        "locale": "en-AU"
       },
       "sett": {
         "student": "Student can understand the morning sequence and express wait, help, change, finished, or a question about what comes next.",
@@ -596,7 +592,8 @@
         "defaultSource": "ARASAAC search terms",
         "textFallback": true,
         "customMediaPolicy": "teacher-owned local media only unless explicitly approved",
-        "notes": "Routine search terms can be swapped for classroom photos where staff own the image and privacy is managed."
+        "notes": "Routine search terms can be swapped for classroom photos where staff own the image and privacy is managed.",
+        "reviewRequired": true
       }
     }
   },
@@ -604,7 +601,8 @@
     {
       "source": "ARASAAC",
       "licence": "CC BY-NC-SA",
-      "attribution": "Pictograms by ARASAAC (Government of Aragon) if ARASAAC symbols are later inserted; these HTML drafts use text placeholders only."
+      "attribution": "The pictographic symbols used are the property of the Government of Aragon and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distributes them under Creative Commons License BY-NC-SA.",
+      "note": "Symbol search terms are provided for later ARASAAC replacement; confirm exact current licence wording when publishing beyond local classroom use."
     }
   ]
 }

@@ -1,6 +1,6 @@
 # Eye Gaze HTML Templates
 
-Use this file only when implementing a single-file dwell HTML tool. For a complete starter file, copy `../assets/eye-gaze-single-file-template.html` and replace the activity data.
+Legacy/migration reference only. New AAC HTML in this pack must be rendered from canonical IR and embed the single source `../../agentic-aac-board-maker/assets/aac-board-runtime.js`. Do not copy the DwellManager snippets below into new board files; they remain to explain and migrate historical/custom tools. Treat `../assets/eye-gaze-single-file-template.html` as generated output, not an editable source.
 
 ## Contents
 

@@ -79,7 +79,10 @@ class HookRoutingTests(unittest.TestCase):
             target.write_text("{}", encoding="utf-8")
             with mock.patch.object(hook, "run_checker", return_value=(0, "")) as checker:
                 self.assertEqual((0, ""), run_main(payload_for(target.name, tmp)))
-            checker.assert_called_once_with(hook.IR_VALIDATOR, target)
+            self.assertEqual(
+                [mock.call(hook.IR_VALIDATOR, target), mock.call(hook.IR_CANONICALIZER, target, "--check")],
+                checker.call_args_list,
+            )
 
     def test_valid_ir_passes_and_invalid_ir_blocks(self) -> None:
         self.assertEqual((0, ""), run_main(payload_for(VALID_IR)))
@@ -101,16 +104,29 @@ class HookRoutingTests(unittest.TestCase):
     def test_dwell_html_routes_to_gaze_checker(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             target = Path(tmp) / "board.html"
-            target.write_text("<html><button class='dwell-btn'>Dwell choice</button></html>", encoding="utf-8")
+            target.write_text('<html><body data-dwell-enabled="true"><button class="dwell-btn">Dwell choice</button></body></html>', encoding="utf-8")
             with mock.patch.object(hook, "run_checker", return_value=(0, "")) as checker:
                 self.assertEqual((0, ""), run_main(payload_for(target)))
             checker.assert_called_once_with(hook.GAZE_CHECKER, target)
+
+    def test_paired_generated_html_routes_to_parity_after_gaze_check(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "board.html"
+            paired = Path(tmp) / "board.ir.json"
+            target.write_text('<html><body data-dwell-enabled="true"><button class="dwell-btn">Dwell choice</button></body></html>', encoding="utf-8")
+            paired.write_text("{}", encoding="utf-8")
+            with mock.patch.object(hook, "run_checker", return_value=(0, "")) as checker:
+                self.assertEqual((0, ""), run_main(payload_for(target)))
+            self.assertEqual(
+                [mock.call(hook.GAZE_CHECKER, target), mock.call(hook.HTML_PARITY, paired, target)],
+                checker.call_args_list,
+            )
 
     def test_dwell_html_failure_blocks_and_plain_html_is_ignored(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             tmp_path = Path(tmp)
             dwell = tmp_path / "dwell.html"
-            dwell.write_text("<button>Dwell choice</button>", encoding="utf-8")
+            dwell.write_text('<body data-dwell-enabled="true"><button>Dwell choice</button></body>', encoding="utf-8")
             plain = tmp_path / "plain.html"
             plain.write_text("<button>Choice</button>", encoding="utf-8")
 

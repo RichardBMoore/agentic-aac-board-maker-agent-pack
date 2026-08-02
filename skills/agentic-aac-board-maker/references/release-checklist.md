@@ -12,14 +12,15 @@ The plugin root must include:
 - each key skill has `agents/openai.yaml`;
 - scripts are executable when intended;
 - generated/cache files are excluded by `.gitignore`;
-- `scripts/check_pack.py` passes.
-- `python3 -m unittest discover -s tests` passes.
+- `scripts/check_pack.py` passes with `requirements-dev.txt` installed.
+- unit and Playwright browser tests pass.
 
 Run:
 
 ```sh
-python3 scripts/check_pack.py
-python3 -m unittest discover -s tests
+.venv/bin/python scripts/check_pack.py
+.venv/bin/python -m unittest discover -s tests
+npm run test:browser:chrome
 ```
 
 ## Standalone Skill Release Gate
@@ -45,13 +46,14 @@ Before saying the agentic board workflow is usable:
    - matching `*.open-aac-studio.json` renderer output;
    - matching `*.html` classroom/print/digital output;
    - `README.md` explaining use, access assumptions, and draft-status caveats.
-3. Validate every generated IR with `scripts/validate_board_ir.py`.
-4. Render every generated IR with `scripts/render_open_aac_studio.py` and confirm the output has pages/buttons.
-5. Include IR 0.3.0 powerhouse metadata where practical: SETT, UDL, differentiation, participation barriers, and evidence plan.
-6. Build HTML outputs with static accessibility/offline markers: `lang`, viewport, semantic buttons, keyboard activation, live status, print CSS, attribution, and no external dependencies.
-7. For dwell HTML, run the eye-gaze HTML checker.
-8. Review against `qa-rubric.md` and `anti-patterns.md`.
-9. Record which reference file changed when a fixture fails.
+3. Require canonical IR 0.4.0 and pass JSON Schema plus `scripts/validate_board_ir.py`.
+4. Fresh-render HTML/Open AAC Studio/OBF outputs and fail byte drift.
+5. Pass HTML/IR/shared-runtime parity.
+6. Include powerhouse and `systemFit` metadata where practical.
+7. Run static HTML/eye-gaze checks and Playwright device-viewport interaction QA.
+8. Evaluate newly generated candidate folders with `scripts/evaluate_fresh_output.py`.
+9. Review symbols as candidates; apply only approved ids.
+10. Review against `qa-rubric.md` and `anti-patterns.md`, recording the owning reference when a fixture fails.
 
 `python3 scripts/check_pack.py` now enforces the generated-fixture regression gate for every `generated/**/*.ir.json` and static generated HTML access/offline checks for every `generated/**/*.html`.
 
@@ -67,8 +69,10 @@ Before saying the agentic board workflow is usable:
 - pack checks fail;
 - generated resources require internet when described as offline;
 - IR and renderer outputs disagree on access method or button functions;
+- canonical IR, fresh-render or HTML/runtime parity fails;
 - a proof-of-concept fixture produces quiz-only or noun-only communication;
 - a new generated fixture lacks SETT/UDL/differentiation/evidence metadata without a clear reason;
 - private student data appears in sample prompts, filenames, logs, or generated examples;
 - a gaze/dwell resource has no cancellation/progress path;
+- total active-target accounting or browser/device interaction QA fails;
 - final language implies clinical prescription or a tested AAC system when it is only a draft classroom support.
