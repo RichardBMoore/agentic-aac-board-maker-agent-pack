@@ -1,6 +1,6 @@
 ---
 name: richard-school-resource-workflow
-description: "Richard's school-resource workflow for accessible, curriculum-strong resources including ICP/QCIA assessments, eye-gaze/dwell HTML apps, AAC supports, adaptive gaming, bilingual/EALD scaffolds, and multi-platform AI handoffs. Use when building, reviewing, planning, or improving school resources for Richard."
+description: "Use explicitly for Richard's personal cross-domain school-resource workflow, cautious folder audit, multi-platform AI handoff, or a build spanning several specialist workflows. Route a focused AAC board, gaze HTML, Open AAC Studio export or ICP assessment to its owning specialist skill instead."
 ---
 
 # Richard School Resource Workflow

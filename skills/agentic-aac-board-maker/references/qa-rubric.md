@@ -40,7 +40,7 @@ Checks:
 
 ## 4. Access Method Fit
 
-- [ ] Grid density matches access method.
+- [ ] Total simultaneously active targets match `visibleTargetLimit`; setup matches `setupTargetLimit`.
 - [ ] Targets large enough.
 - [ ] Keyboard fallback present for digital outputs.
 - [ ] Dwell cancellation and progress if gaze/dwell.
@@ -49,7 +49,7 @@ Checks:
 
 Red flags:
 
-- More than 9 buttons on any page for an untested gaze user (the validator's enforced limit; set denseGazeTested: true only after dense gaze access is genuinely tested).
+- More than 9 active targets—including navigation/utilities—for an untested gaze user.
 - Scrolling required for routine gaze selections.
 - Hover-only UI without cancellation.
 - Hidden tiny controls in student mode.
@@ -65,6 +65,7 @@ Red flags:
 ## 6. Symbols, Licensing, Privacy
 
 - [ ] Text fallback for every symbol.
+- [ ] Symbol candidates were reviewed for meaning, familiarity, culture and visual access; approved ids are recorded.
 - [ ] ARASAAC/custom source attribution included.
 - [ ] No proprietary Boardmaker/PCS assets copied.
 - [ ] No unnecessary student names/diagnoses/sensitive details.
@@ -74,17 +75,19 @@ Red flags:
 
 For HTML:
 
-- [ ] File opens.
-- [ ] Browser console has no obvious JS errors.
+- [ ] Fresh-rendered from IR; embedded IR and shared-runtime parity pass.
+- [ ] File opens on intended browser/device-sized viewport with no page/console errors.
 - [ ] Buttons activate by click and keyboard.
-- [ ] TTS can stop if included.
+- [ ] Dwell start/cancel/activation are browser-tested when applicable.
+- [ ] TTS makes Stop Speech the only active target while speaking.
+- [ ] Live total-target audit passes in setup, board, navigation and speech states.
 - [ ] No external dependencies if promised offline.
 - [ ] Print preview reasonable if print required.
 
 For JSON:
 
 - [ ] Parses as JSON.
-- [ ] Required fields present.
+- [ ] Canonicalisation `--check`, JSON Schema and semantic validation pass.
 - [ ] Page/button arrays valid.
 - [ ] No trailing comments or invalid syntax.
 
@@ -93,6 +96,15 @@ For resource packs:
 - [ ] README explains use/customisation.
 - [ ] Relative links work.
 - [ ] Attribution included.
+- [ ] Fresh-output evaluation harness passes the relevant fixture(s).
+
+## 8. System Fit Review
+
+- [ ] Relationship to the student's established AAC/low-tech system is clear.
+- [ ] Familiar vocabulary and stable motor/location patterns are preserved or flagged for review.
+- [ ] Symbols/text/photos are known or awaiting explicit candidate review.
+- [ ] Actual access calibration, device, browser, mount, seating, vision and fatigue are checked or unresolved honestly.
+- [ ] Language/culture/voice and reliable partner yes/no/cancel/repair signals are recorded.
 
 ## Final Caveat Language
 

@@ -1,6 +1,6 @@
 ---
 name: open-aac-studio-board-builder
-description: "Use when creating, modifying, or QA-checking Open AAC Studio / Boardmaker-style AAC boards, activity JSON, symbol-supported classroom resources, AI-generated board starters, QCIA/Australian Curriculum boards, eye-gaze/dwell/switch-accessible players, print/export resources, or reusable Boardmaker-clone workflows."
+description: "Use only when Open AAC Studio compatibility is explicit: create, modify or QA its activity JSON/schema, import/export mapping, reference editor/player behaviour, or related prototype code. For direct classroom AAC resources from teacher intent, use agentic-aac-board-maker; do not route generic boards, curriculum resources or gaze HTML here."
 license: MIT
 metadata:
   hermes:
@@ -87,7 +87,7 @@ A board is only finished when it is:
    - Keep activity data separate from editor/player code.
    - Default `privacyLevel` to `anonymous`.
    - Include ARASAAC attribution if ARASAAC symbols/search terms are used.
-   - Preserve IR roles/functions and IR 0.3.0 SETT/UDL/differentiation/evidence metadata so the communication design is not lost in app-specific JSON.
+   - Preserve IR 0.4.0 roles/functions plus SETT/UDL/differentiation/evidence/system-fit metadata so communication design is not lost in app-specific JSON.
 
 5. **Add symbols safely**
    - Use ARASAAC IDs when known; otherwise include `searchTerm` or leave symbol blank with a text fallback.

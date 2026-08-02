@@ -1,0 +1,379 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/RichardBMoore/agentic-aac-board-maker-agent-pack/aac-board-ir.schema.json",
+  "title": "Agentic AAC Board Intermediate Representation",
+  "description": "Canonical, renderer-independent AAC Board IR 0.4.0.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "format",
+    "id",
+    "title",
+    "purpose",
+    "audience",
+    "access",
+    "display",
+    "studentControls",
+    "communicationFunctions",
+    "pages",
+    "teacherNotes",
+    "systemFit",
+    "symbolStrategy",
+    "privacy",
+    "attribution"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "0.4.0" },
+    "format": { "const": "agentic-aac-board-ir" },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "title": { "type": "string", "minLength": 1 },
+    "purpose": { "type": "string", "minLength": 1 },
+    "audience": { "$ref": "#/$defs/audience" },
+    "access": { "$ref": "#/$defs/access" },
+    "display": { "$ref": "#/$defs/display" },
+    "studentControls": { "$ref": "#/$defs/studentControls" },
+    "communicationFunctions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/communicationFunction" }
+    },
+    "pages": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/page" }
+    },
+    "messageBar": { "$ref": "#/$defs/messageBar" },
+    "navigation": { "type": "object" },
+    "teacherNotes": { "$ref": "#/$defs/teacherNotes" },
+    "systemFit": { "$ref": "#/$defs/systemFit" },
+    "sett": { "type": "object" },
+    "udl": { "type": "object" },
+    "differentiation": { "type": "object" },
+    "participationBarriers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["barrier", "support"],
+        "properties": {
+          "barrier": { "type": "string", "minLength": 1 },
+          "support": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "evidencePlan": { "type": "object" },
+    "symbolStrategy": { "$ref": "#/$defs/symbolStrategy" },
+    "privacy": { "$ref": "#/$defs/privacy" },
+    "attribution": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/attribution" }
+    },
+    "variables": { "type": "object" },
+    "provenance": { "$ref": "#/$defs/provenance" }
+  },
+  "$defs": {
+    "audience": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ageBand", "tone", "locale"],
+      "properties": {
+        "ageBand": { "type": "string", "minLength": 1 },
+        "tone": { "type": "string", "minLength": 1 },
+        "locale": { "type": "string", "minLength": 2 }
+      }
+    },
+    "accessProfile": {
+      "enum": [
+        "direct-selection",
+        "eye-gaze-dwell",
+        "mouse-dwell",
+        "single-switch",
+        "two-switch",
+        "partner-assisted-print",
+        "partner-assisted-scanning",
+        "print-only",
+        "keyboard",
+        "mixed-access",
+        "unspecified"
+      ]
+    },
+    "accessMethod": {
+      "enum": [
+        "touch",
+        "keyboard",
+        "mouse",
+        "eye-gaze-dwell",
+        "mouse-dwell",
+        "single-switch",
+        "two-switch",
+        "partner-assisted-scanning",
+        "partner-assisted-print",
+        "print"
+      ]
+    },
+    "access": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "intended",
+        "profile",
+        "minimumTargetSizePx",
+        "dwellTimeMs",
+        "denseGazeTested",
+        "visibleTargetLimit",
+        "setupTargetLimit",
+        "switchScanning",
+        "scanSpeedMs",
+        "scanPattern",
+        "scanOrder",
+        "audioCues"
+      ],
+      "properties": {
+        "intended": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/accessMethod" }
+        },
+        "profile": { "$ref": "#/$defs/accessProfile" },
+        "minimumTargetSizePx": { "type": "integer", "minimum": 44 },
+        "dwellTimeMs": {
+          "oneOf": [
+            { "type": "integer", "minimum": 500, "maximum": 3000 },
+            { "type": "null" }
+          ]
+        },
+        "denseGazeTested": { "type": "boolean" },
+        "visibleTargetLimit": { "type": "integer", "minimum": 2, "maximum": 64 },
+        "setupTargetLimit": { "type": "integer", "minimum": 1, "maximum": 9 },
+        "switchScanning": { "type": "boolean" },
+        "scanSpeedMs": { "type": "integer", "minimum": 250, "maximum": 10000 },
+        "scanPattern": { "type": "string", "minLength": 1 },
+        "scanOrder": { "type": "string", "minLength": 1 },
+        "audioCues": { "type": "boolean" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "anyOf": [
+              { "properties": { "profile": { "enum": ["eye-gaze-dwell", "mouse-dwell"] } } },
+              { "properties": { "intended": { "contains": { "enum": ["eye-gaze-dwell", "mouse-dwell"] } } } }
+            ]
+          },
+          "then": {
+            "properties": {
+              "minimumTargetSizePx": { "minimum": 120 },
+              "dwellTimeMs": { "type": "integer", "minimum": 500, "maximum": 3000 }
+            }
+          }
+        },
+        {
+          "if": {
+            "allOf": [
+              {
+                "anyOf": [
+                  { "properties": { "profile": { "enum": ["eye-gaze-dwell", "mouse-dwell"] } } },
+                  { "properties": { "intended": { "contains": { "enum": ["eye-gaze-dwell", "mouse-dwell"] } } } }
+                ]
+              },
+              { "not": { "properties": { "denseGazeTested": { "const": true } }, "required": ["denseGazeTested"] } }
+            ]
+          },
+          "then": {
+            "properties": {
+              "visibleTargetLimit": { "maximum": 9 }
+            }
+          }
+        }
+      ]
+    },
+    "display": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["orientation", "width", "height"],
+      "properties": {
+        "orientation": { "enum": ["landscape", "portrait", "responsive"] },
+        "width": { "type": "integer", "minimum": 320 },
+        "height": { "type": "integer", "minimum": 320 },
+        "backgroundColour": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" }
+      }
+    },
+    "studentControls": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["startBoard", "fullScreen", "soundCheck", "stopSpeechDuringPlayback", "teacherPanel"],
+      "properties": {
+        "startBoard": { "type": "boolean" },
+        "fullScreen": { "type": "boolean" },
+        "soundCheck": { "type": "boolean" },
+        "stopSpeechDuringPlayback": { "type": "boolean" },
+        "teacherPanel": { "type": "boolean" }
+      }
+    },
+    "buttonRole": {
+      "enum": ["core", "fringe", "repair", "navigation", "comment", "question", "sentence", "evidence", "teacher"]
+    },
+    "communicationFunction": {
+      "enum": ["initiate", "request", "refuse", "choose", "comment", "ask", "answer", "sequence", "explain", "repair", "reflect", "socialise", "navigate", "regulate-rest"]
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type"],
+      "properties": {
+        "id": { "type": "string" },
+        "type": {
+          "enum": [
+            "speak-text",
+            "speak-label",
+            "log-attempt",
+            "navigate-page",
+            "next-page",
+            "previous-page",
+            "add-to-message",
+            "speak-message",
+            "remove-last-word",
+            "clear-message",
+            "mark-correct",
+            "mark-incorrect"
+          ]
+        },
+        "text": { "type": "string" },
+        "targetPageId": { "type": "string" }
+      }
+    },
+    "button": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "role", "function", "spokenText", "searchTerm", "symbolId", "symbolSrc", "symbolLayout", "actions"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+        "label": { "type": "string", "minLength": 1 },
+        "role": { "$ref": "#/$defs/buttonRole" },
+        "function": { "$ref": "#/$defs/communicationFunction" },
+        "spokenText": { "type": "string", "minLength": 1 },
+        "searchTerm": { "type": "string" },
+        "symbolId": { "oneOf": [{ "type": "integer", "minimum": 1 }, { "type": "null" }] },
+        "symbolSrc": { "type": "string" },
+        "symbolLayout": { "type": "string", "minLength": 1 },
+        "symbolateSegments": { "type": "array" },
+        "audioCue": { "type": "string" },
+        "result": { "type": "string" },
+        "type": { "type": "string" },
+        "state": { "type": "string" },
+        "position": { "type": "object" },
+        "style": { "type": "object" },
+        "font": { "type": "object" },
+        "actions": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/action" } },
+        "evidenceTag": {},
+        "udl": {},
+        "differentiation": {},
+        "communicationPartnerCue": {}
+      }
+    },
+    "page": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "pattern", "layout", "grid", "buttons"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+        "name": { "type": "string", "minLength": 1 },
+        "pattern": { "type": "string", "minLength": 1 },
+        "layout": { "enum": ["grid"] },
+        "grid": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["rows", "columns"],
+          "properties": {
+            "rows": { "type": "integer", "minimum": 1, "maximum": 12 },
+            "columns": { "type": "integer", "minimum": 1, "maximum": 12 }
+          }
+        },
+        "margin": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "backgroundColour": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+        "backgroundImage": { "oneOf": [{ "type": "string" }, { "type": "null" }] },
+        "buttons": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/button" } }
+      }
+    },
+    "messageBar": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "placeholder", "speakControl", "clearControl", "undoControl"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "placeholder": { "type": "string" },
+        "speakControl": { "type": "boolean" },
+        "clearControl": { "type": "boolean" },
+        "undoControl": { "type": "boolean" }
+      }
+    },
+    "teacherNotes": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["modeling", "evidence", "customisation"],
+      "properties": {
+        "modeling": { "type": "string", "minLength": 1 },
+        "evidence": { "type": "string", "minLength": 1 },
+        "customisation": { "type": "string", "minLength": 1 }
+      }
+    },
+    "systemFit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reviewStatus", "existingSystem", "vocabularyAndMotorPlan", "symbolFamiliarity", "accessCalibration", "positioningAndVision", "languageCultureVoice", "partnerSignals"],
+      "properties": {
+        "reviewStatus": { "enum": ["team-input-needed", "team-reviewed", "student-trialled"] },
+        "existingSystem": { "type": "string" },
+        "vocabularyAndMotorPlan": { "type": "string" },
+        "symbolFamiliarity": { "type": "string" },
+        "accessCalibration": { "type": "string" },
+        "positioningAndVision": { "type": "string" },
+        "languageCultureVoice": { "type": "string" },
+        "partnerSignals": { "type": "string" }
+      }
+    },
+    "symbolStrategy": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["defaultSource", "textFallback", "customMediaPolicy", "reviewRequired"],
+      "properties": {
+        "defaultSource": { "type": "string", "minLength": 1 },
+        "textFallback": { "const": true },
+        "customMediaPolicy": { "type": "string", "minLength": 1 },
+        "reviewRequired": { "type": "boolean" }
+      }
+    },
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "containsSensitiveData"],
+      "properties": {
+        "level": { "enum": ["anonymous", "local-profile", "sensitive-approved"] },
+        "containsSensitiveData": { "type": "boolean" }
+      }
+    },
+    "attribution": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["source", "licence"],
+      "properties": {
+        "source": { "type": "string", "minLength": 1 },
+        "licence": { "type": "string", "minLength": 1 },
+        "attribution": { "type": "string" },
+        "note": { "type": "string" },
+        "url": { "type": "string" }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fixtureId": { "type": "string" },
+        "sourcePrompt": { "type": "string" }
+      }
+    }
+  }
+}

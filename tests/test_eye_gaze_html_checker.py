@@ -37,8 +37,8 @@ class EyeGazeFullscreenCheckerTests(unittest.TestCase):
 
     def test_fullscreen_control_must_be_gaze_sized(self) -> None:
         text = TEMPLATE.read_text(encoding="utf-8").replace(
-            'class="dwell-btn utility" id="fullScreenButton"',
-            'class="utility" id="fullScreenButton"',
+            'id="full-screen" class="dwell-btn setup-control"',
+            'id="full-screen" class="setup-control"',
         )
         with tempfile.TemporaryDirectory() as tmp:
             candidate = Path(tmp) / "small-fullscreen-control.html"

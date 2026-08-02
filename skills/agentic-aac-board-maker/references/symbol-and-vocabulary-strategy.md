@@ -138,6 +138,26 @@ Check:
 - Is every symbol backed by a text label?
 - Is attribution included?
 
-## Automated ARASAAC Fetch
+## Candidate Review Before Embedding
 
-`scripts/fetch_arasaac_symbols.py` fills a validated IR with real pictograms: it searches the ARASAAC API per button `searchTerm` (falling back to the label), sets `symbolId`, and embeds the PNG into `symbolSrc` as a base64 data URI so the rendered board stays single-file and offline-capable. Run it after the IR validates and before rendering. It refuses to run if the IR lacks ARASAAC attribution, never overwrites teacher-chosen symbols unless `--overwrite` is passed, and keeps the text fallback for any miss. Use `--resolution 2500` for print outputs. Pictograms remain CC BY-NC-SA: keep attribution visible and do not sell boards that embed them.
+Search ranking cannot establish what a symbol means to a particular student. Use the script as a candidate generator:
+
+```sh
+python3 scripts/fetch_arasaac_symbols.py board.ir.json --review-out symbol-review.json
+```
+
+This writes ranked candidates plus a visual contact sheet without changing the board. A teacher/team reviewer should check:
+
+- intended meaning and potential ambiguity;
+- whether the student already recognises the representation;
+- consistency with the established symbol set and stable motor/layout patterns;
+- language/cultural fit and age-respectfulness;
+- visual complexity, contrast and likely access conditions.
+
+Record only a listed candidate id in each `approvedSymbolId`; null means keep text fallback. Then apply reviewed choices:
+
+```sh
+python3 scripts/fetch_arasaac_symbols.py board.ir.json --apply-review symbol-review.json --out board.reviewed.ir.json
+```
+
+The script rejects unreviewed ids, embeds approved PNGs for offline HTML and retains attribution. Use `--ids-only` for id-only exports and `--resolution 2500` for print. `--auto-select` preserves deterministic top-match behaviour only as an explicit opt-in when the user accepts that semantic risk.

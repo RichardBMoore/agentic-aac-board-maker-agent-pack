@@ -400,6 +400,29 @@ def validate(data: dict[str, Any]) -> tuple[list[str], list[str]]:
     if profile in {"single-switch", "two-switch"} and max_buttons_per_page > 9:
         warnings.append("Switch-scanning board has more than 9 buttons on a page; confirm scan fatigue and pattern.")
 
+    visible_target_limit = access.get("visibleTargetLimit")
+    if visible_target_limit is not None:
+        try:
+            limit = int(visible_target_limit)
+        except (TypeError, ValueError):
+            failures.append("visibleTargetLimit must be an integer.")
+        else:
+            if max_buttons_per_page > limit:
+                failures.append(
+                    f"A page has {max_buttons_per_page} active student targets, exceeding visibleTargetLimit={limit}."
+                )
+    controls = as_dict(data.get("studentControls"))
+    setup_limit = access.get("setupTargetLimit")
+    if controls and setup_limit is not None:
+        setup_count = sum(bool(controls.get(field)) for field in ("startBoard", "fullScreen", "soundCheck"))
+        try:
+            if setup_count > int(setup_limit):
+                failures.append(
+                    f"Setup has {setup_count} active student targets, exceeding setupTargetLimit={setup_limit}."
+                )
+        except (TypeError, ValueError):
+            failures.append("setupTargetLimit must be an integer.")
+
     total_content_buttons = content_button_count(pages)
     if total_content_buttons > 2 and not has_repair_route(pages):
         failures.append("Board has more than two content buttons but no repair/refusal/finished route.")

@@ -25,6 +25,7 @@ Extract or infer:
 - **Constraints:** offline, Microsoft Edge, EQ network, PRC-Saltillo, no internet, print-only, symbol source.
 - **Age/dignity:** age band and tone.
 - **SETT/UDL/differentiation:** student strengths/access preferences without diagnoses, environment constraints, task demand, tool/support choices, and action/expression options.
+- **System fit:** established AAC, familiar vocabulary/layout/symbols, actual device/mount/vision/fatigue, language/culture/voice and partner signals.
 
 Ask only if missing data changes the product. Otherwise proceed with explicit assumptions.
 
@@ -47,53 +48,17 @@ For complex tasks, briefly share this plan with Richard before coding unless he 
 
 ## Phase 3 — Generate Canonical AAC Board IR
 
-Create a canonical AAC Board IR even if final output is HTML or print. See `aac-board-ir.md` for the full contract.
-
-```json
-{
-  "schemaVersion": "0.3.0",
-  "format": "agentic-aac-board-ir",
-  "id": "kebab-case-board-id",
-  "title": "",
-  "purpose": "",
-  "access": {
-    "intended": [],
-    "profile": ""
-  },
-  "communicationFunctions": [],
-  "pages": [
-    {
-      "name": "",
-      "pattern": "",
-      "grid": { "rows": 3, "columns": 3 },
-      "buttons": [
-        {
-          "label": "",
-          "role": "core|fringe|repair|navigation|comment|question|sentence|evidence|teacher",
-          "function": "initiate|request|refuse|choose|comment|ask|answer|sequence|explain|repair|reflect|socialise|navigate|regulate-rest",
-          "searchTerm": "",
-          "spokenText": "",
-          "actions": []
-        }
-      ]
-    }
-  ],
-  "privacy": { "level": "anonymous" },
-  "sett": {},
-  "udl": {},
-  "differentiation": {},
-  "participationBarriers": [],
-  "evidencePlan": {}
-}
-```
+Create canonical AAC Board IR even if final output is HTML or print. Start from `templates/board-json-skeleton.json`; do not invent a smaller shape that omits schema-required access, display, student-control, system-fit, symbol, privacy or attribution fields. See `aac-board-ir.md` for controlled values and behaviour.
 
 This prevents the agent from jumping straight to pretty but weak boards. Renderers should preserve the IR's roles, functions, access assumptions, privacy note, attribution, teacher notes, SETT, UDL, differentiation, participation-barrier, and evidence-plan metadata.
 
 ## Phase 4 — Output Generation
 
+First run canonical `--check`, JSON Schema and semantic validation. If symbols are requested, generate a candidate review/contact sheet and apply only approved ids. Then render rather than hand-authoring target outputs.
+
 Choose the renderer/output contract:
 
-- **Single-file HTML:** best for direct student use and eye gaze/dwell resources.
+- **Single-file HTML:** generate deterministically with `scripts/render_html.py` for direct student use.
 - **Canonical IR JSON:** best as the editable source of truth.
 - **Open AAC Studio JSON:** best for prototype import/testing or later conversion.
 - **Printable HTML/Markdown:** best for low-tech boards or teacher packets.
@@ -113,16 +78,18 @@ Run the QA rubric. Fix issues before final response where practical.
 
 Minimum checks:
 
-- Does the IR validate?
+- Does IR canonical/schema/semantic validation pass?
 - Can the student say more than adult-selected answers?
 - Is there repair/escape language?
-- Is the grid compatible with the access method?
+- Does total active-target accounting pass in every interaction phase?
 - Is text readable and age-respectful?
 - Does the file parse/open?
 - Are there no external dependencies if offline/single-file was required?
 - Is symbol attribution present?
 - Are privacy and filenames safe?
 - Does the IR include a differentiation/evidence route for any curriculum or QCIA task?
+- Does HTML/IR/shared-runtime parity pass, followed by browser/device tests where applicable?
+- Does a newly generated candidate folder pass `scripts/evaluate_fresh_output.py` rather than relying only on golden fixtures?
 
 ## Phase 6 — Delivery
 

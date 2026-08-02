@@ -1,15 +1,13 @@
 {
-  "schemaVersion": "0.3.0",
+  "schemaVersion": "0.4.0",
   "format": "agentic-aac-board-ir",
-  "app": "Agentic AAC Board Maker",
   "id": "activity-slug",
   "title": "Board Title",
-  "name": "Board Title",
-  "type": "interactive",
   "purpose": "Short statement of what the student can communicate or show.",
   "audience": {
     "ageBand": "unspecified",
-    "tone": "age-respectful"
+    "tone": "age-respectful",
+    "locale": "en-AU"
   },
   "access": {
     "intended": [
@@ -19,30 +17,27 @@
     "profile": "direct-selection",
     "minimumTargetSizePx": 96,
     "dwellTimeMs": null,
+    "denseGazeTested": false,
+    "visibleTargetLimit": 16,
+    "setupTargetLimit": 3,
     "switchScanning": false,
     "scanSpeedMs": 1400,
-    "scanPattern": "linear"
+    "scanPattern": "linear",
+    "scanOrder": "dom-order",
+    "audioCues": true
   },
-  "settings": {
+  "display": {
     "orientation": "landscape",
     "width": 1024,
     "height": 768,
-    "speakLabels": true,
-    "showLabels": true,
-    "dwellTimeMs": 1200,
-    "switchScanning": false,
-    "scanSpeedMs": 1400,
-    "scanPattern": "linear"
+    "backgroundColour": "#f7fbff"
   },
-  "accessibility": {
-    "intendedAccess": [
-      "touch",
-      "keyboard"
-    ],
-    "minimumTargetSizePx": 96,
-    "dwellSafe": false,
-    "scanOrder": "dom-order",
-    "audioCues": true
+  "studentControls": {
+    "startBoard": false,
+    "fullScreen": false,
+    "soundCheck": false,
+    "stopSpeechDuringPlayback": true,
+    "teacherPanel": false
   },
   "communicationFunctions": [
     "repair"
@@ -53,27 +48,21 @@
       "name": "Main",
       "pattern": "choice-board",
       "layout": "grid",
-      "gridColumns": 3,
-      "gridRows": 3,
+      "grid": {
+        "rows": 3,
+        "columns": 3
+      },
       "buttons": [
         {
           "id": "btn-help",
           "label": "Help",
           "role": "repair",
           "function": "repair",
-          "searchTerm": "help",
           "spokenText": "Help",
+          "searchTerm": "help",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "Help",
-          "result": "selected",
-          "position": {
-            "x": 0,
-            "y": 0,
-            "width": 33.3333,
-            "height": 33.3333
-          },
           "actions": [
             {
               "id": "act-help-speak",
@@ -83,7 +72,15 @@
               "id": "act-help-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "Help",
+          "result": "selected",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 33.3333,
+            "height": 33.3333
+          }
         }
       ]
     }
@@ -93,6 +90,33 @@
     "evidence": "Teacher can observe selections, repair attempts, comments, and participation in the shared task.",
     "customisation": "Replace labels/search terms with local vocabulary as needed."
   },
+  "systemFit": {
+    "reviewStatus": "team-input-needed",
+    "existingSystem": "Confirm how this support sits alongside the student's established AAC system.",
+    "vocabularyAndMotorPlan": "Confirm familiar vocabulary and stable locations before classroom use.",
+    "symbolFamiliarity": "Confirm that each symbol or text representation is recognised and meaningful.",
+    "accessCalibration": "Confirm access settings on the actual device with the student and team.",
+    "positioningAndVision": "Confirm screen, mounting, seating, visual field, contrast and fatigue conditions.",
+    "languageCultureVoice": "Confirm preferred language, culturally meaningful vocabulary and voice output.",
+    "partnerSignals": "Confirm reliable yes/no, cancel, repair and partner-assisted signals."
+  },
+  "symbolStrategy": {
+    "defaultSource": "ARASAAC search terms",
+    "textFallback": true,
+    "customMediaPolicy": "teacher-owned local media only unless explicitly approved",
+    "reviewRequired": true
+  },
+  "privacy": {
+    "level": "anonymous",
+    "containsSensitiveData": false
+  },
+  "attribution": [
+    {
+      "source": "ARASAAC",
+      "licence": "CC BY-NC-SA",
+      "attribution": "The pictographic symbols used are the property of the Government of Aragon and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distributes them under Creative Commons License BY-NC-SA"
+    }
+  ],
   "sett": {
     "student": "Describe strengths, preferred modalities, access needs, and communication opportunities without diagnoses or sensitive identifiers.",
     "environment": "Describe classroom/device/network/partner conditions that affect access.",
@@ -132,29 +156,5 @@
     ],
     "notJudgement": "Access method and prompt level are recorded as context, not as curriculum judgement.",
     "export": "Use anonymous local notes, CSV, print, or portfolio summary only when needed."
-  },
-  "symbolStrategy": {
-    "defaultSource": "ARASAAC search terms",
-    "textFallback": true,
-    "customMediaPolicy": "teacher-owned local media only unless explicitly approved"
-  },
-  "privacy": {
-    "level": "anonymous",
-    "containsSensitiveData": false
-  },
-  "metadata": {
-    "tags": [
-      "aac",
-      "agent-generated"
-    ],
-    "curriculum": "",
-    "privacyLevel": "anonymous"
-  },
-  "licences": [
-    {
-      "source": "ARASAAC",
-      "licence": "CC BY-NC-SA",
-      "attribution": "The pictographic symbols used are the property of the Government of Aragon and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distributes them under Creative Commons License BY-NC-SA"
-    }
-  ]
+  }
 }

@@ -3,9 +3,10 @@
 
 Registered in hooks/hooks.json for Write|Edit. Whenever the agent writes:
 
-- ``*.ir.json``  -> run the canonical IR validator
+- ``*.ir.json``  -> run the semantic validator and canonical-form check
   (skills/agentic-aac-board-maker/scripts/validate_board_ir.py)
-- ``*.html`` containing dwell markup -> run the strict eye-gaze checker
+- ``*.html`` containing dwell markup -> run the strict eye-gaze checker; when
+  a same-stem ``*.ir.json`` exists, also enforce HTML/IR/shared-runtime parity
   (skills/build-aac-student-supports/scripts/check_eye_gaze_html.py)
 
 On failure the hook exits 2 so the validator output is surfaced back to the
@@ -27,16 +28,18 @@ from typing import TextIO
 
 PACK_ROOT = Path(__file__).resolve().parents[1]
 IR_VALIDATOR = PACK_ROOT / "skills" / "agentic-aac-board-maker" / "scripts" / "validate_board_ir.py"
+IR_CANONICALIZER = PACK_ROOT / "skills" / "agentic-aac-board-maker" / "scripts" / "canonicalize_board_ir.py"
+HTML_PARITY = PACK_ROOT / "skills" / "agentic-aac-board-maker" / "scripts" / "validate_html_parity.py"
 GAZE_CHECKER = PACK_ROOT / "skills" / "build-aac-student-supports" / "scripts" / "check_eye_gaze_html.py"
 TIMEOUT_SECONDS = 60
 
 
-def run_checker(script: Path, target: Path) -> tuple[int, str]:
+def run_checker(script: Path, target: Path, *extra_args: str | Path) -> tuple[int, str]:
     if not script.is_file():
         return 2, f"Validator is missing from the plugin installation: {script}"
     try:
         result = subprocess.run(
-            [sys.executable, str(script), str(target)],
+            [sys.executable, str(script), str(target), *(str(value) for value in extra_args)],
             capture_output=True,
             text=True,
             timeout=TIMEOUT_SECONDS,
@@ -57,7 +60,7 @@ def looks_like_dwell_html(path: Path) -> bool:
         text = path.read_text(encoding="utf-8", errors="replace").lower()
     except OSError:
         return False
-    return "dwell" in text and "<button" in text
+    return 'data-dwell-enabled="true"' in text and "<button" in text
 
 
 def extract_target(payload: object) -> Path | None:
@@ -97,6 +100,14 @@ def main(stdin: TextIO | None = None) -> int:
                 file=sys.stderr,
             )
             return 2
+        code, output = run_checker(IR_CANONICALIZER, target, "--check")
+        if code != 0:
+            print(
+                f"AAC Board IR is valid legacy/best-effort input but not canonical output. "
+                f"Canonicalise it before rendering or delivery:\n{output}",
+                file=sys.stderr,
+            )
+            return 2
         return 0
 
     if target.suffix.lower() in {".html", ".htm"} and looks_like_dwell_html(target):
@@ -108,6 +119,15 @@ def main(stdin: TextIO | None = None) -> int:
                 file=sys.stderr,
             )
             return 2
+        paired_ir = target.with_name(target.name.rsplit(".", 1)[0] + ".ir.json")
+        if paired_ir.is_file():
+            code, output = run_checker(HTML_PARITY, paired_ir, target)
+            if code != 0:
+                print(
+                    f"HTML/IR/shared-runtime parity failed for {target.name}. Re-render from the paired IR:\n{output}",
+                    file=sys.stderr,
+                )
+                return 2
         return 0
 
     return 0

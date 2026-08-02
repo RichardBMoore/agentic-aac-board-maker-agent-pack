@@ -8,6 +8,8 @@ __pycache__/
 .ruff_cache/
 .venv/
 node_modules/
+test-results/
+playwright-report/
 *.log
 dist/
 build/

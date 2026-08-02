@@ -1,6 +1,6 @@
 ---
 name: build-aac-student-supports
-description: Build accessible AAC, eye-gaze, dwell, switch-scanning, symbol-supported, printable, and classroom-ready student supports as the access, communication, interface, and tool-construction layer. Use when creating or adapting choice boards, communication boards, visual schedules, first-then boards, symbol-supported curriculum tools, quizzes, story/book readers, writing supports, Boardmaker-style resources, single-file offline HTML tools, PRC-Saltillo Accent/Edge resources, QCIA/EQ Network resources, or any student tool that must work with touch, keyboard, mouse dwell, eye gaze, switches, TTS, symbols, local privacy, Microsoft Edge file URLs, and offline school networks. For generating a complete AAC board end to end from teacher intent, start with agentic-aac-board-maker instead; for the single-file eye-gaze/dwell HTML mechanics themselves, defer to eyegaze-dwell-html.
+description: Build the access/interface layer of a student support after its communication or curriculum plan is clear. Use explicitly for implementing or adapting AAC, switch, print, symbol-supported, offline HTML, story/quiz/writing or other classroom tools across touch, keyboard, TTS and local-school constraints. For a complete AAC board from teacher intent, use agentic-aac-board-maker; for explicit eye-gaze/dwell HTML mechanics, use eyegaze-dwell-html.
 ---
 
 # Build AAC Student Supports
@@ -37,11 +37,11 @@ Keep this workflow distinct from ICP assessment adaptation:
 - Read `references/student-support-patterns.md` when choosing board types, vocabulary, symbol strategies, or classroom workflows.
 - Read `references/eye-gaze-and-switch.md` when deciding access behaviour for eye gaze, dwell, switch scanning, PRC-Saltillo Accent devices, Microsoft Edge, file URLs, or accidental activation risk.
 - Read `references/eye-gaze-html-tools.md` when building a single-file dwell-activated HTML resource for PRC-Saltillo Accent/Edge, Microsoft Edge, `file:///`, EQ/offline networks, or hover-based gaze access.
-- Read `references/templates.md` when implementing the dwell button CSS, `DwellManager`, confirmation modal, speech helper, layout snippets, or QA snippets for single-file gaze HTML.
+- Read `references/templates.md` only for legacy/non-board layout explanation. For generated AAC HTML, use the canonical IR renderer and shared runtime owned by `agentic-aac-board-maker`; do not paste a separate DwellManager.
 - Read `references/activity-schema.md` when creating JSON activities, templates, action models, logs, or import/export formats.
 - Read `references/open-boardmaker-asset.md` when reusing the bundled Boardmaker-style editor/player in `assets/open-boardmaker-classroom-pack/`.
 - Read `references/source-notes.md` when checking the reasoning behind AAC, access, WCAG, ARASAAC, and device guidance.
-- Copy `assets/eye-gaze-single-file-template.html` as the starter for one-off dwell HTML tools, then replace activity data and labels.
+- Treat `assets/eye-gaze-single-file-template.html` as a generated example. Change canonical IR and re-run the main HTML renderer; do not hand-edit or fork its embedded runtime.
 - Run `scripts/check_eye_gaze_html.py <file.html>` against generated single-file gaze tools when practical.
 
 ## Default Build Choices

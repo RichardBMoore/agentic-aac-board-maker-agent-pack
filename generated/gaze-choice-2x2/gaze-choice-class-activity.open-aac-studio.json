@@ -4,8 +4,8 @@
   "id": "gaze-choice-class-activity",
   "name": "Choose a Class Activity",
   "type": "interactive",
-  "created": "2026-06-10T11:43:14.771929Z",
-  "modified": "2026-06-10T11:43:14.771929Z",
+  "created": "2026-08-02T00:00:00Z",
+  "modified": "2026-08-02T00:00:00Z",
   "settings": {
     "orientation": "landscape",
     "width": 1024,
@@ -16,7 +16,7 @@
     "font": "Verdana",
     "fontSize": 18,
     "fontColour": "#000000",
-    "backgroundColour": "#ffffff",
+    "backgroundColour": "#f7fbff",
     "showStopButton": true,
     "dwellTimeMs": 1000,
     "switchScanning": false,
@@ -365,17 +365,13 @@
   "metadata": {
     "tags": [
       "aac",
-      "agent-generated",
-      "proof-of-concept",
-      "eye-gaze",
-      "dwell",
-      "choice-board"
+      "agent-generated"
     ],
     "level": "",
-    "curriculum": "Classroom participation and communication access: making choices, requesting help, and repairing communication during shared class activities.",
+    "curriculum": "",
     "privacyLevel": "anonymous",
     "generatedFrom": "agentic-aac-board-ir",
-    "sourceIrSchemaVersion": "0.3.0",
+    "sourceIrSchemaVersion": "0.4.0",
     "accessProfile": "eye-gaze-dwell",
     "communicationFunctions": [
       "choose",
@@ -386,7 +382,8 @@
       "purpose": "An eye-gaze/dwell-safe AAC choice board that lets a student choose, request help, or repair the choice when selecting a class activity.",
       "audience": {
         "ageBand": "school-age",
-        "tone": "age-respectful"
+        "tone": "age-respectful",
+        "locale": "en-AU"
       },
       "sett": {
         "student": "Student uses eye gaze/dwell, keyboard, touch, or partner interpretation to choose an activity and repair the choice if needed.",
@@ -439,7 +436,8 @@
         "defaultSource": "ARASAAC search terms",
         "textFallback": true,
         "customMediaPolicy": "teacher-owned local media only unless explicitly approved",
-        "notes": "This proof of concept uses text labels and emoji-style inline icons in HTML, with ARASAAC search terms recorded for later symbol replacement."
+        "notes": "This proof of concept uses text labels and emoji-style inline icons in HTML, with ARASAAC search terms recorded for later symbol replacement.",
+        "reviewRequired": true
       }
     }
   },
@@ -447,7 +445,8 @@
     {
       "source": "ARASAAC",
       "licence": "CC BY-NC-SA",
-      "attribution": "Pictograms by ARASAAC (Government of Aragon) if ARASAAC symbols are later inserted; this HTML draft uses text/emoji placeholders only."
+      "attribution": "The pictographic symbols used are the property of the Government of Aragon and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distributes them under Creative Commons License BY-NC-SA.",
+      "note": "Symbol search terms are provided for ARASAAC replacement; confirm exact current licence wording when publishing beyond local classroom use."
     }
   ]
 }

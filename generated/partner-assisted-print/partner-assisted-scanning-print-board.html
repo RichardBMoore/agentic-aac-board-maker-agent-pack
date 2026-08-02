@@ -1,162 +1,703 @@
 <!doctype html>
-<html lang="en-AU">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Partner-Assisted Scanning Print Board</title>
-<style>
-  :root { --bg:#f7fbff; --ink:#102033; --panel:#ffffff; --focus:#003f8f; --accent:#0b6fdd; --repair:#7a1f1f; --shadow:0 10px 30px rgba(16,32,51,.12); }
-  * { box-sizing:border-box; }
-  body { margin:0; min-height:100vh; min-height:100dvh; font-family:Verdana, Arial, sans-serif; background:var(--bg); color:var(--ink); display:grid; grid-template-rows:auto minmax(0,1fr) auto auto; }
-  header { padding:12px 24px 8px; text-align:center; }
-  h1 { margin:.05rem 0 .25rem; font-size:clamp(1.55rem,2.4vw,2.5rem); }
-  header p { margin:.1rem auto; max-width:1000px; font-size:clamp(.95rem,1.2vw,1.12rem); }
-  main { min-height:0; display:grid; place-items:center; padding:8px 24px 10px; }
-  .board { width:min(1180px,100%); min-height:min(56vh,540px); display:grid; grid-template-columns:repeat(3, minmax(132px,1fr)); grid-template-rows:repeat(3, minmax(132px,1fr)); gap:18px; }
-  .board-btn { min-width:132px; min-height:132px; }
-  .aac-button { position:relative; overflow:hidden; border:5px solid #17212b; border-radius:24px; background:var(--fill,#fff); color:var(--ink); box-shadow:var(--shadow); padding:16px 14px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.35rem; cursor:pointer; touch-action:manipulation; text-align:center; }
-  .aac-button.repair { border-style:dashed; }
-  .aac-button.evidence { border-color:#365314; }
-  .aac-button.sentence { border-color:#3730a3; }
-  .scan { position:absolute; top:8px; left:10px; width:30px; height:30px; border:2px solid #17212b; border-radius:999px; display:grid; place-items:center; font-weight:800; background:#fff; }
-  .label { font-size:clamp(1.35rem,2.8vw,2.65rem); line-height:1.05; font-weight:800; }
-  .spoken { font-size:clamp(.82rem,1.1vw,1.1rem); opacity:.86; line-height:1.25; }
-  .aac-button:focus-visible { outline:8px solid var(--focus); outline-offset:6px; transform:translateY(-2px); }
-  .aac-button.activated { outline:10px solid #087f23; }
-  .controls { display:flex; justify-content:center; gap:16px; padding:0 24px 12px; flex-wrap:wrap; }
-  .control { font-size:1.05rem; min-height:54px; padding:10px 18px; border:3px solid #17212b; border-radius:16px; background:#fff; font-weight:700; }
-  .last-message { min-width:min(720px,90vw); text-align:center; font-size:1.15rem; font-weight:700; }
-  details.teacher-notes { margin:0 auto 12px; width:min(1120px,calc(100% - 32px)); background:#fff; border:2px solid #17212b; border-radius:16px; padding:10px 16px; }
-  details.teacher-notes summary { font-weight:800; cursor:pointer; padding:8px; }
-  footer { font-size:.86rem; padding:8px 16px 14px; text-align:center; }
-  @media (max-width:760px) { body { display:block; } .board { grid-template-columns:1fr; grid-template-rows:none; } .aac-button { min-height:132px; } }
-  @media (prefers-reduced-motion:reduce) { .aac-button { transition:none; } }
-  @media (forced-colors:active) { .aac-button,.control { border:4px solid ButtonText; background:Canvas; color:ButtonText; forced-color-adjust:auto; } .aac-button:focus-visible { outline:6px solid Highlight; } }
-  @media print { body { display:block; background:#fff; } header, main, footer { padding:8mm; } .board { display:grid; grid-template-columns:repeat(3,1fr); gap:5mm; min-height:auto; } .aac-button { min-height:34mm; box-shadow:none; break-inside:avoid; border:2.5pt solid #000; } .controls { display:none !important; } details.teacher-notes { page-break-before:always; } .spoken { color:#000; } }
-</style>
-</head>
-<body>
-<header>
-  <h1>Partner-Assisted Scanning Print Board</h1>
-  <p>A printable partner-assisted scanning board with clear scan order, wait/confirm script, help, stop, different, finished and choice messages.</p>
-  <p>Access: partner-assisted-scanning, print, touch, keyboard, mouse. Scan/order note: numbered partner scan order.</p>
-</header>
-<main>
-  <section class="board" aria-label="AAC communication board">
-      <button class="aac-button board-btn repair" style="--fill:#FFFFFF" aria-label="Help: Help please" data-speak="Help please" data-label="Help">
-        <span class="scan" aria-hidden="true">1</span>
-        <span class="label">Help</span>
-        <span class="spoken">Help please</span>
-      </button>
-      <button class="aac-button board-btn repair" style="--fill:#FFFFFF" aria-label="Stop: Stop" data-speak="Stop" data-label="Stop">
-        <span class="scan" aria-hidden="true">2</span>
-        <span class="label">Stop</span>
-        <span class="spoken">Stop</span>
-      </button>
-      <button class="aac-button board-btn repair" style="--fill:#FFFFFF" aria-label="Different: Different please" data-speak="Different please" data-label="Different">
-        <span class="scan" aria-hidden="true">3</span>
-        <span class="label">Different</span>
-        <span class="spoken">Different please</span>
-      </button>
-      <button class="aac-button board-btn repair" style="--fill:#FFFFFF" aria-label="Finished: I am finished" data-speak="I am finished" data-label="Finished">
-        <span class="scan" aria-hidden="true">4</span>
-        <span class="label">Finished</span>
-        <span class="spoken">I am finished</span>
-      </button>
-      <button class="aac-button board-btn fringe" style="--fill:#FFFFFF" aria-label="Choice A: Choice A" data-speak="Choice A" data-label="Choice A">
-        <span class="scan" aria-hidden="true">5</span>
-        <span class="label">Choice A</span>
-        <span class="spoken">Choice A</span>
-      </button>
-      <button class="aac-button board-btn fringe" style="--fill:#FFFFFF" aria-label="Choice B: Choice B" data-speak="Choice B" data-label="Choice B">
-        <span class="scan" aria-hidden="true">6</span>
-        <span class="label">Choice B</span>
-        <span class="spoken">Choice B</span>
-      </button>
-      <button class="aac-button board-btn core" style="--fill:#FFFFFF" aria-label="Yes: Yes" data-speak="Yes" data-label="Yes">
-        <span class="scan" aria-hidden="true">7</span>
-        <span class="label">Yes</span>
-        <span class="spoken">Yes</span>
-      </button>
-      <button class="aac-button board-btn core" style="--fill:#FFFFFF" aria-label="No: No" data-speak="No" data-label="No">
-        <span class="scan" aria-hidden="true">8</span>
-        <span class="label">No</span>
-        <span class="spoken">No</span>
-      </button>
-      <button class="aac-button board-btn repair" style="--fill:#FFFFFF" aria-label="More time: I need more time" data-speak="I need more time" data-label="More time">
-        <span class="scan" aria-hidden="true">9</span>
-        <span class="label">More time</span>
-        <span class="spoken">I need more time</span>
-      </button>
-  </section>
-</main>
-<section class="controls" aria-label="Speech and status controls">
-  <button class="control" id="soundCheck" type="button" aria-label="Sound check">🔊 Sound check</button>
-  <button class="control" id="stopSpeech" type="button" aria-label="Stop speech">Stop speech</button>
-  <div class="last-message" id="lastMessage" role="status" aria-live="polite">Ready</div>
-</section>
-<details class="teacher-notes">
-  <summary>Teacher notes, customisation, and QA</summary>
-  <p><strong>Partner Script:</strong> Partner says each option slowly in numbered order, waits, watches for the agreed signal, then confirms: I saw you choose __. Is that right?</p>
-  <p><strong>Scan Order:</strong> Scan left to right, top to bottom: 1 Help, 2 Stop, 3 Different, 4 Finished, 5 Choice A, 6 Choice B, 7 Yes, 8 No, 9 More time.</p>
-  <p><strong>Wait Confirm:</strong> Pause long enough for the student to respond. If unsure, repeat the scan or offer Yes/No confirmation without rushing.</p>
-  <p><strong>Sound:</strong> If using the digital version aloud, press Sound check once at setup so the browser allows speech.</p>
-  <p><strong>Print:</strong> Print in black and white if needed. Strong borders, large labels and numbered order are included for readability.</p>
-  <p><strong>Attribution:</strong> If adding symbols, record the symbol source and licence. Text-only printing is usable without symbols.</p>
-  <p><strong>Caveat:</strong> Draft classroom support only. Review with the teaching/SLP/OT team and test with the actual student, access method, device and school environment before relying on it.</p>
-</details>
-<footer>
-  Source of truth: <code>partner-assisted-scanning-print-board.ir.json</code>. Privacy: anonymous, no student data. Symbol strategy: ARASAAC search terms with text fallback; HTML uses text-only placeholders.
-</footer>
-<script>
-class SpeakBoard {
-  constructor(options) {
-    this.buttons = Array.from(options.buttons);
-    this.lastMessage = options.lastMessage;
-    this.stopSpeech = options.stopSpeech;
+<html lang="en-AU" data-runtime-sha256="6618cf41c5c30094d0a1523640748625009bff7daaeedd50f3445ac1b89e0ab2">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Partner-Assisted Scanning Print Board</title><style>
+:root { --min-target: 132px; --dwell-ms: 1200ms; --ink:#17212b; --focus:#005fcc; --repair:#ffe3e3; }
+* { box-sizing:border-box; }
+html, body { margin:0; min-height:100%; font-family:Verdana,Arial,sans-serif; color:var(--ink); background:#f7fbff; }
+body { min-height:100vh; }
+button { font:inherit; color:inherit; }
+[hidden] { display:none !important; }
+.skip-link { position:absolute; left:-9999px; } .skip-link:focus { left:8px; top:8px; z-index:20; background:white; padding:8px; }
+.setup-screen, .speech-layer { min-height:100vh; display:grid; place-content:center; gap:20px; padding:24px; text-align:center; }
+.setup-controls { display:flex; flex-wrap:wrap; justify-content:center; gap:24px; }
+.student-layer { min-height:100vh; padding:12px; }
+.page-title { margin:0 0 8px; text-align:center; font-size:clamp(1.1rem,2.4vw,1.8rem); }
+.board-grid { min-height:calc(100vh - 84px); display:grid; grid-template-columns:repeat(var(--grid-columns), minmax(var(--min-target),1fr)); grid-template-rows:repeat(var(--grid-rows), minmax(var(--min-target),1fr)); gap:12px; }
+.message-bar + .board-page .board-grid, .message-bar ~ .board-page .board-grid { min-height:calc(100vh - 160px); }
+.message-bar { margin:0 auto 10px; max-width:1200px; min-height:60px; padding:10px 16px; border:3px solid var(--ink); border-radius:14px; background:white; font-size:clamp(1rem,2.2vw,1.5rem); }
+.is-placeholder { color:#58636e; }
+.dwell-btn { position:relative; overflow:hidden; min-width:var(--min-target); min-height:var(--min-target); border:4px solid var(--ink); border-radius:18px; background:#fff; padding:12px; font-size:clamp(1rem,2.5vw,1.6rem); font-weight:700; cursor:pointer; touch-action:manipulation; }
+.dwell-btn:focus-visible { outline:6px solid var(--focus); outline-offset:3px; }
+.role-repair { background:var(--repair); } .role-navigation { background:#e8eef4; }
+.dwell-progress { position:absolute; inset:auto 0 0; height:10px; background:#ffbf00; transform:scaleX(0); transform-origin:left; }
+.is-dwelling .dwell-progress { animation:dwell-fill var(--dwell-ms) linear forwards; }
+.was-activated { filter:brightness(.82); }
+.symbol { display:block; max-width:55%; max-height:55%; margin:0 auto 8px; object-fit:contain; }
+.speech-layer { position:fixed; inset:0; z-index:10; background:#f7fbff; }
+.speech-active #student-layer, .speech-active #setup-screen { visibility:hidden; }
+.stop-control { min-width:min(70vw,420px); min-height:min(55vh,320px); background:#ffe3e3; font-size:clamp(1.4rem,4vw,2.4rem); }
+.board-status { position:fixed; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
+.teacher-panel { display:none; margin:18px; padding:18px; border:2px solid #555; background:white; }
+body.teacher-mode .teacher-panel { display:block; }
+.attribution { font-size:.75rem; }
+@keyframes dwell-fill { to { transform:scaleX(1); } }
+@media (max-width:760px) { .board-grid { gap:7px; } .dwell-btn { padding:7px; } }
+@media (forced-colors:active) { .dwell-btn { border-color:ButtonText; forced-color-adjust:auto; } .dwell-progress { background:Highlight; } }
+@media print { .setup-screen,.speech-layer,.board-status { display:none !important; } .student-layer,.teacher-panel { display:block !important; } .board-page { break-after:page; } .board-page[hidden] { display:block !important; } .board-grid { min-height:auto; } .dwell-btn { min-height:110px; } }
+</style></head>
+<body data-access-profile="partner-assisted-scanning" data-dwell-enabled="false" data-min-target="132" data-visible-target-limit="16" data-setup-target-limit="3">
+<a class="skip-link" href="#student-layer">Skip to board</a>
+<section id="setup-screen" class="setup-screen" aria-label="Board setup" hidden><h1>Partner-Assisted Scanning Print Board</h1><p>Choose Start board when positioning and access are ready.</p><div class="setup-controls"></div></section>
+<main id="student-layer" class="student-layer"><section class="board-page" data-page-id="page-main" aria-label="Main"><h2 class="page-title">Main</h2><div class="board-grid" style="--grid-rows:3;--grid-columns:3"><button id="btn-help" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-help" data-label="Help" data-spoken="Help please" data-actions="[{&quot;id&quot;:&quot;act-btn-help-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Help please&quot;},{&quot;id&quot;:&quot;act-btn-help-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target aria-label="Help"><span class="label">Help</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-stop" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-stop" data-label="Stop" data-spoken="Stop" data-actions="[{&quot;id&quot;:&quot;act-btn-stop-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Stop&quot;},{&quot;id&quot;:&quot;act-btn-stop-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target aria-label="Stop"><span class="label">Stop</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-different" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-different" data-label="Different" data-spoken="Different please" data-actions="[{&quot;id&quot;:&quot;act-btn-different-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Different please&quot;},{&quot;id&quot;:&quot;act-btn-different-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target aria-label="Different"><span class="label">Different</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-finished" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-finished" data-label="Finished" data-spoken="I am finished" data-actions="[{&quot;id&quot;:&quot;act-btn-finished-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;I am finished&quot;},{&quot;id&quot;:&quot;act-btn-finished-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target aria-label="Finished"><span class="label">Finished</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-choice-a" class="dwell-btn board-button role-fringe" type="button" data-button-id="btn-choice-a" data-label="Choice A" data-spoken="Choice A" data-actions="[{&quot;id&quot;:&quot;act-btn-choice-a-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Choice A&quot;},{&quot;id&quot;:&quot;act-btn-choice-a-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target aria-label="Choice A"><span class="label">Choice A</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-choice-b" class="dwell-btn board-button role-fringe" type="button" data-button-id="btn-choice-b" data-label="Choice B" data-spoken="Choice B" data-actions="[{&quot;id&quot;:&quot;act-btn-choice-b-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Choice B&quot;},{&quot;id&quot;:&quot;act-btn-choice-b-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target aria-label="Choice B"><span class="label">Choice B</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-yes" class="dwell-btn board-button role-core" type="button" data-button-id="btn-yes" data-label="Yes" data-spoken="Yes" data-actions="[{&quot;id&quot;:&quot;act-btn-yes-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Yes&quot;},{&quot;id&quot;:&quot;act-btn-yes-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target aria-label="Yes"><span class="label">Yes</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-no" class="dwell-btn board-button role-core" type="button" data-button-id="btn-no" data-label="No" data-spoken="No" data-actions="[{&quot;id&quot;:&quot;act-btn-no-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;No&quot;},{&quot;id&quot;:&quot;act-btn-no-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target aria-label="No"><span class="label">No</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-more-time" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-more-time" data-label="More time" data-spoken="I need more time" data-actions="[{&quot;id&quot;:&quot;act-btn-more-time-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;I need more time&quot;},{&quot;id&quot;:&quot;act-btn-more-time-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target aria-label="More time"><span class="label">More time</span><span class="dwell-progress" aria-hidden="true"></span></button></div></section></main>
+<section id="speech-layer" class="speech-layer" aria-label="Speech controls" hidden><button id="stop-speech" class="dwell-btn stop-control" type="button" data-control="stop-speech" data-student-target aria-label="Stop speech"><span class="label">Stop speech</span><span class="dwell-progress" aria-hidden="true"></span></button></section>
+<div id="board-status" class="board-status" role="status" aria-live="polite">Board ready.</div>
+<aside class="teacher-panel"><h2>Teacher notes</h2><p><strong>Model:</strong> Model the scan process with another adult first: say each numbered option slowly, wait, observe the agreed signal, and confirm the selected message before acting.</p><p><strong>Evidence:</strong> agreed signal; confirmed choice; repair request; refusal; more time request</p><p><strong>Customise:</strong> Review vocabulary, symbols and positions with the student and team before use.</p><p class="attribution">ARASAAC: CC BY-NC-SA. Text fallback remains available. ARASAAC pictograms, when embedded, require their stated attribution.</p></aside>
+<script id="aac-board-ir" type="application/json">{
+  "schemaVersion": "0.4.0",
+  "format": "agentic-aac-board-ir",
+  "id": "partner-assisted-scanning-print-board",
+  "title": "Partner-Assisted Scanning Print Board",
+  "purpose": "A printable partner-assisted scanning board with clear scan order, wait/confirm script, help, stop, different, finished and choice messages.",
+  "audience": {
+    "ageBand": "school-age to secondary",
+    "tone": "plain, partner-facing",
+    "locale": "en-AU"
+  },
+  "access": {
+    "intended": [
+      "partner-assisted-scanning",
+      "print",
+      "touch",
+      "keyboard",
+      "mouse"
+    ],
+    "profile": "partner-assisted-scanning",
+    "minimumTargetSizePx": 132,
+    "dwellTimeMs": null,
+    "denseGazeTested": false,
+    "visibleTargetLimit": 16,
+    "setupTargetLimit": 3,
+    "switchScanning": true,
+    "scanSpeedMs": 1800,
+    "scanPattern": "linear",
+    "scanOrder": "numbered partner scan order",
+    "audioCues": true
+  },
+  "display": {
+    "orientation": "landscape",
+    "width": 1024,
+    "height": 768,
+    "backgroundColour": "#f7fbff"
+  },
+  "studentControls": {
+    "startBoard": false,
+    "fullScreen": false,
+    "soundCheck": false,
+    "stopSpeechDuringPlayback": true,
+    "teacherPanel": false
+  },
+  "communicationFunctions": [
+    "answer",
+    "choose",
+    "refuse",
+    "regulate-rest",
+    "repair"
+  ],
+  "pages": [
+    {
+      "id": "page-main",
+      "name": "Main",
+      "pattern": "partner-assisted-scanning",
+      "layout": "grid",
+      "grid": {
+        "rows": 3,
+        "columns": 3
+      },
+      "buttons": [
+        {
+          "id": "btn-help",
+          "label": "Help",
+          "role": "repair",
+          "function": "repair",
+          "spokenText": "Help please",
+          "searchTerm": "help",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-help-speak",
+              "type": "speak-text",
+              "text": "Help please"
+            },
+            {
+              "id": "act-btn-help-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "Help please",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-stop",
+          "label": "Stop",
+          "role": "repair",
+          "function": "refuse",
+          "spokenText": "Stop",
+          "searchTerm": "stop",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-stop-speak",
+              "type": "speak-text",
+              "text": "Stop"
+            },
+            {
+              "id": "act-btn-stop-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "Stop",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-different",
+          "label": "Different",
+          "role": "repair",
+          "function": "repair",
+          "spokenText": "Different please",
+          "searchTerm": "different",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-different-speak",
+              "type": "speak-text",
+              "text": "Different please"
+            },
+            {
+              "id": "act-btn-different-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "Different please",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-finished",
+          "label": "Finished",
+          "role": "repair",
+          "function": "regulate-rest",
+          "spokenText": "I am finished",
+          "searchTerm": "finished",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-finished-speak",
+              "type": "speak-text",
+              "text": "I am finished"
+            },
+            {
+              "id": "act-btn-finished-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "I am finished",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-choice-a",
+          "label": "Choice A",
+          "role": "fringe",
+          "function": "choose",
+          "spokenText": "Choice A",
+          "searchTerm": "choice one",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-choice-a-speak",
+              "type": "speak-text",
+              "text": "Choice A"
+            },
+            {
+              "id": "act-btn-choice-a-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "Choice A",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-choice-b",
+          "label": "Choice B",
+          "role": "fringe",
+          "function": "choose",
+          "spokenText": "Choice B",
+          "searchTerm": "choice two",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-choice-b-speak",
+              "type": "speak-text",
+              "text": "Choice B"
+            },
+            {
+              "id": "act-btn-choice-b-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "Choice B",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-yes",
+          "label": "Yes",
+          "role": "core",
+          "function": "answer",
+          "spokenText": "Yes",
+          "searchTerm": "yes",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-yes-speak",
+              "type": "speak-text",
+              "text": "Yes"
+            },
+            {
+              "id": "act-btn-yes-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "Yes",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-no",
+          "label": "No",
+          "role": "core",
+          "function": "answer",
+          "spokenText": "No",
+          "searchTerm": "no",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-no-speak",
+              "type": "speak-text",
+              "text": "No"
+            },
+            {
+              "id": "act-btn-no-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "No",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-more-time",
+          "label": "More time",
+          "role": "repair",
+          "function": "regulate-rest",
+          "spokenText": "I need more time",
+          "searchTerm": "more time",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-more-time-speak",
+              "type": "speak-text",
+              "text": "I need more time"
+            },
+            {
+              "id": "act-btn-more-time-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "I need more time",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        }
+      ],
+      "margin": 18,
+      "backgroundColour": "#f7fbff"
+    }
+  ],
+  "teacherNotes": {
+    "modeling": "Model the scan process with another adult first: say each numbered option slowly, wait, observe the agreed signal, and confirm the selected message before acting.",
+    "evidence": "agreed signal; confirmed choice; repair request; refusal; more time request",
+    "customisation": "Review vocabulary, symbols and positions with the student and team before use.",
+    "partner_script": "Partner says each option slowly in numbered order, waits, watches for the agreed signal, then confirms: I saw you choose __. Is that right?",
+    "scan_order": "Scan left to right, top to bottom: 1 Help, 2 Stop, 3 Different, 4 Finished, 5 Choice A, 6 Choice B, 7 Yes, 8 No, 9 More time.",
+    "wait_confirm": "Pause long enough for the student to respond. If unsure, repeat the scan or offer Yes/No confirmation without rushing.",
+    "print": "Print in black and white if needed. Strong borders, large labels and numbered order are included for readability.",
+    "attribution": "If adding symbols, record the symbol source and licence. Text-only printing is usable without symbols."
+  },
+  "systemFit": {
+    "reviewStatus": "team-input-needed",
+    "existingSystem": "Confirm how this support sits alongside the student's established AAC system.",
+    "vocabularyAndMotorPlan": "Confirm familiar vocabulary and stable locations before classroom use.",
+    "symbolFamiliarity": "Confirm that each symbol or text representation is recognised and meaningful.",
+    "accessCalibration": "Confirm access settings on the actual device with the student and team.",
+    "positioningAndVision": "Confirm screen, mounting, seating, visual field, contrast and fatigue conditions.",
+    "languageCultureVoice": "Confirm preferred language, culturally meaningful vocabulary and voice output.",
+    "partnerSignals": "Confirm reliable yes/no, cancel, repair and partner-assisted signals."
+  },
+  "symbolStrategy": {
+    "defaultSource": "ARASAAC search terms",
+    "textFallback": true,
+    "customMediaPolicy": "teacher-owned local media only unless explicitly approved",
+    "notes": "Text-first, black-and-white friendly. Symbols can be added later with attribution, but the numbered scan order must remain visible.",
+    "reviewRequired": true
+  },
+  "privacy": {
+    "level": "anonymous",
+    "containsSensitiveData": false
+  },
+  "attribution": [
+    {
+      "source": "ARASAAC",
+      "licence": "CC BY-NC-SA",
+      "attribution": "The pictographic symbols used are the property of the Government of Aragon and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distributes them under Creative Commons License BY-NC-SA.",
+      "note": "Symbol search terms are provided for later ARASAAC replacement; confirm exact current licence wording when publishing beyond local classroom use."
+    }
+  ],
+  "sett": {
+    "student": "Student can communicate with partner-assisted scanning through an agreed signal, confirmation, repair, refusal, and choice messages.",
+    "environment": "Low-tech print board used by a trained partner with clear wait time, predictable scan order, and minimal visual clutter.",
+    "task": "Make or repair a choice when direct digital selection is not the best access route.",
+    "tools": "Printable numbered grid, partner script, large labels, strong borders, and confirmation language."
+  },
+  "udl": {
+    "engagement": [
+      "Meaningful choice",
+      "safe repair route",
+      "wait time and partner response"
+    ],
+    "representation": [
+      "short text labels",
+      "spoken output",
+      "symbol/search-term or text fallback"
+    ],
+    "actionExpression": [
+      "partner-assisted-scanning",
+      "print",
+      "touch",
+      "keyboard",
+      "mouse"
+    ]
+  },
+  "differentiation": {
+    "content": "Keep communication choice-making available without requiring direct touch or speech.",
+    "process": "Model key vocabulary, provide wait time, allow rehearsal/repetition, and accept multimodal communication.",
+    "product": "Accept partner-confirmed selections and teacher observation notes.",
+    "environment": "Use a calm, predictable, local-first layout with teacher controls separate from student choices.",
+    "support": "Teaching, SLP, OT, family, and student/team review should personalise vocabulary and access before reliance."
+  },
+  "participationBarriers": [
+    {
+      "barrier": "Direct pointing or speech may not be available and partner scanning can become rushed or inconsistent.",
+      "support": "Use numbered scan order, wait/confirm script, repair options, and repeated scans when uncertain."
+    }
+  ],
+  "evidencePlan": {
+    "observable": [
+      "agreed signal",
+      "confirmed choice",
+      "repair request",
+      "refusal",
+      "more time request"
+    ],
+    "notJudgement": "Partner interpretation and scan repetitions are access context, not evidence of lower understanding.",
+    "export": "Use anonymous teacher notes, print/portfolio evidence, or local CSV/report only when needed. Do not include diagnoses, behaviour details, family details, or school IDs."
+  },
+  "provenance": {
+    "fixtureId": "partner-assisted-print",
+    "sourcePrompt": "Make a printable partner-assisted scanning board for help, stop, different, finished, and choices."
   }
-  speak(text) {
-    try {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'en-AU';
-        utterance.onerror = () => { this.lastMessage.textContent = 'Speech is blocked or unavailable. Press Sound check, then try again.'; };
-        window.speechSynthesis.speak(utterance);
+}</script>
+<script>if(new URLSearchParams(location.search).get("teacher")==="1")document.body.classList.add("teacher-mode");</script>
+<!-- shared-runtime-sha256:6618cf41c5c30094d0a1523640748625009bff7daaeedd50f3445ac1b89e0ab2 -->
+<script data-aac-shared-runtime>/* Agentic AAC Board shared runtime. Keep this file dependency-free and offline-safe. */
+(() => {
+  "use strict";
+
+  const documentRoot = document.documentElement;
+  const irNode = document.getElementById("aac-board-ir");
+  if (!irNode) throw new Error("AAC Board IR payload is missing");
+  const ir = JSON.parse(irNode.textContent);
+  const state = { activePageId: ir.pages[0]?.id || "", words: [], started: false, speaking: false };
+  const setup = document.getElementById("setup-screen");
+  const studentLayer = document.getElementById("student-layer");
+  const speechLayer = document.getElementById("speech-layer");
+  const messageText = document.getElementById("message-text");
+  const status = document.getElementById("board-status");
+  let speechToken = 0;
+
+  const isRendered = (element) => {
+    if (!(element instanceof HTMLElement)) return false;
+    if (element.hidden || element.closest("[hidden]")) return false;
+    const style = getComputedStyle(element);
+    return style.display !== "none" && style.visibility !== "hidden";
+  };
+
+  const visibleTargets = () => [...document.querySelectorAll("[data-student-target]")].filter(isRendered);
+
+  const auditVisibleTargets = () => {
+    const targets = visibleTargets();
+    const phase = state.speaking ? "speech" : state.started ? "board" : "setup";
+    const limit = Number(
+      phase === "setup" ? ir.access.setupTargetLimit : phase === "speech" ? 1 : ir.access.visibleTargetLimit
+    );
+    const audit = {
+      phase,
+      count: targets.length,
+      limit,
+      ok: targets.length <= limit,
+      ids: targets.map((target) => target.id || target.dataset.buttonId || target.dataset.control || "unidentified"),
+    };
+    documentRoot.dataset.visibleTargetCount = String(audit.count);
+    documentRoot.dataset.visibleTargetLimit = String(audit.limit);
+    documentRoot.dataset.visibleTargetAudit = audit.ok ? "pass" : "fail";
+    if (!audit.ok) console.error("AAC visible-target limit exceeded", audit);
+    return audit;
+  };
+
+  const announce = (message) => {
+    if (status) status.textContent = message;
+  };
+
+  const updateMessage = () => {
+    if (!messageText) return;
+    messageText.textContent = state.words.length ? state.words.join(" ") : messageText.dataset.placeholder;
+    messageText.classList.toggle("is-placeholder", state.words.length === 0);
+  };
+
+  const setSpeechMode = (enabled) => {
+    state.speaking = enabled;
+    document.body.classList.toggle("speech-active", enabled);
+    if (speechLayer) speechLayer.hidden = !enabled;
+    if (studentLayer) studentLayer.inert = enabled;
+    if (setup) setup.inert = enabled;
+    auditVisibleTargets();
+    if (enabled) document.getElementById("stop-speech")?.focus({ preventScroll: true });
+  };
+
+  const stopSpeech = () => {
+    speechToken += 1;
+    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+    setSpeechMode(false);
+    announce("Speech stopped.");
+  };
+
+  const speak = (value) => {
+    const phrase = String(value || "").trim();
+    if (!phrase) return;
+    if (!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined") {
+      announce(`Speech is unavailable. Message: ${phrase}`);
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const token = ++speechToken;
+    const utterance = new SpeechSynthesisUtterance(phrase);
+    utterance.lang = ir.audience.locale || "en-AU";
+    utterance.onstart = () => {
+      if (token === speechToken && ir.studentControls.stopSpeechDuringPlayback) setSpeechMode(true);
+      announce(`Speaking: ${phrase}`);
+    };
+    const finish = () => {
+      if (token !== speechToken) return;
+      setSpeechMode(false);
+      announce(`Spoken: ${phrase}`);
+    };
+    utterance.onend = finish;
+    utterance.onerror = () => {
+      if (token !== speechToken) return;
+      setSpeechMode(false);
+      announce("Speech could not be played on this device.");
+    };
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const showPage = (pageId) => {
+    const page = ir.pages.find((candidate) => candidate.id === pageId);
+    if (!page) {
+      announce(`Page ${pageId} is unavailable.`);
+      return;
+    }
+    state.activePageId = pageId;
+    document.querySelectorAll("[data-page-id]").forEach((element) => {
+      element.hidden = element.dataset.pageId !== pageId;
+    });
+    announce(`${page.name} page.`);
+    auditVisibleTargets();
+    document.querySelector(`[data-page-id="${CSS.escape(pageId)}"] [data-student-target]`)?.focus({ preventScroll: true });
+  };
+
+  const adjacentPage = (offset) => {
+    const index = ir.pages.findIndex((page) => page.id === state.activePageId);
+    const page = ir.pages[index + offset];
+    if (page) showPage(page.id);
+  };
+
+  const runAction = (action, button) => {
+    switch (action.type) {
+      case "speak-text": speak(action.text || button.dataset.spoken); break;
+      case "speak-label": speak(button.dataset.label); break;
+      case "add-to-message": state.words.push(action.text || button.dataset.spoken || button.dataset.label); updateMessage(); break;
+      case "speak-message": speak(state.words.join(" ")); break;
+      case "remove-last-word": state.words.pop(); updateMessage(); announce("Last word removed."); break;
+      case "clear-message": state.words = []; updateMessage(); announce("Message cleared."); break;
+      case "navigate-page": showPage(action.targetPageId || action.pageId); break;
+      case "next-page": adjacentPage(1); break;
+      case "previous-page": adjacentPage(-1); break;
+      case "log-attempt": document.dispatchEvent(new CustomEvent("aac-attempt", { detail: { buttonId: button.dataset.buttonId } })); break;
+      case "mark-correct":
+      case "mark-incorrect": document.dispatchEvent(new CustomEvent("aac-evidence", { detail: { type: action.type, buttonId: button.dataset.buttonId } })); break;
+      default: console.warn("Unsupported AAC action", action.type);
+    }
+  };
+
+  const activate = (button) => {
+    if (!(button instanceof HTMLElement) || button.disabled || state.speaking) return;
+    const actions = JSON.parse(button.dataset.actions || "[]");
+    actions.forEach((action) => runAction(action, button));
+    button.classList.add("was-activated");
+    window.setTimeout(() => button.classList.remove("was-activated"), 240);
+  };
+
+  class DwellController {
+    constructor(milliseconds) {
+      this.milliseconds = milliseconds;
+      this.timer = 0;
+      this.target = null;
+      this.startedAt = 0;
+    }
+    attach(root = document) {
+      root.querySelectorAll("[data-dwell]").forEach((target) => {
+        target.addEventListener("pointerenter", () => this.begin(target));
+        target.addEventListener("pointerleave", () => this.cancel(target));
+        target.addEventListener("pointercancel", () => this.cancel(target));
+        target.addEventListener("blur", () => this.cancel(target));
+        target.addEventListener("click", (event) => {
+          if (target.dataset.dwellActivated === "true") {
+            target.dataset.dwellActivated = "false";
+            event.preventDefault();
+            return;
+          }
+          this.cancel(target);
+          this.dispatch(target);
+        });
+      });
+    }
+    begin(target) {
+      if (target.disabled || !isRendered(target)) return;
+      this.cancel();
+      this.target = target;
+      this.startedAt = performance.now();
+      target.classList.add("is-dwelling");
+      target.style.setProperty("--dwell-ms", `${this.milliseconds}ms`);
+      this.timer = window.setTimeout(() => {
+        target.dataset.dwellActivated = "true";
+        this.dispatch(target);
+        this.cancel(target);
+        window.setTimeout(() => { target.dataset.dwellActivated = "false"; }, 900);
+      }, this.milliseconds);
+    }
+    cancel(target = null) {
+      if (target && target !== this.target) return;
+      window.clearTimeout(this.timer);
+      this.target?.classList.remove("is-dwelling");
+      this.timer = 0;
+      this.target = null;
+    }
+    dispatch(target) {
+      if (target.matches("[data-button-id]")) activate(target);
+      else target.dispatchEvent(new CustomEvent("aac-control", { bubbles: true }));
+    }
+  }
+
+  const startBoard = () => {
+    state.started = true;
+    if (setup) setup.hidden = true;
+    if (studentLayer) studentLayer.hidden = false;
+    showPage(state.activePageId);
+  };
+
+  document.addEventListener("aac-control", async (event) => {
+    const control = event.target.closest("[data-control]")?.dataset.control;
+    if (control === "start") startBoard();
+    if (control === "sound-check") speak("Sound check ready");
+    if (control === "stop-speech") stopSpeech();
+    if (control === "full-screen") {
+      try {
+        await document.documentElement.requestFullscreen();
+        announce("Full screen opened.");
+      } catch (_error) {
+        announce("Full screen was blocked. The board is still ready to use.");
       }
-    } catch (error) { console.warn('Speech unavailable', error); }
-  }
-  activate(button) {
-    const text = button.dataset.speak || button.textContent.trim();
-    this.lastMessage.textContent = 'Selected: ' + text;
-    this.speak(text);
-    button.classList.add('activated');
-    setTimeout(() => button.classList.remove('activated'), 650);
-  }
-  bind() {
-    this.buttons.forEach(button => {
-      button.addEventListener('click', () => this.activate(button));
-      button.addEventListener('focus', () => { this.lastMessage.textContent = 'Focus: ' + (button.dataset.label || button.textContent.trim()); });
-    });
-    this.stopSpeech.addEventListener('click', () => {
-      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-      this.lastMessage.textContent = 'Speech stopped';
-    });
-    document.addEventListener('keydown', event => {
-      if (event.key === 'Escape' && 'speechSynthesis' in window) window.speechSynthesis.cancel();
-    });
-  }
-}
-const speakBoard = new SpeakBoard({
-  buttons: document.querySelectorAll('.aac-button'),
-  lastMessage: document.getElementById('lastMessage'),
-  stopSpeech: document.getElementById('stopSpeech')
-});
-speakBoard.bind();
-document.getElementById('soundCheck').addEventListener('click', () => {
-  speakBoard.lastMessage.textContent = 'Sound is on.';
-  speakBoard.speak('Sound is on');
-});
+    }
+  });
+
+  const dwell = new DwellController(Number(ir.access.dwellTimeMs || 1200));
+  dwell.attach();
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    dwell.cancel();
+    if (state.speaking) stopSpeech();
+    else announce("Dwell cancelled.");
+  });
+  updateMessage();
+  if (!ir.studentControls.startBoard) startBoard();
+  else auditVisibleTargets();
+
+  window.AACBoard = Object.freeze({
+    ir,
+    state,
+    start: startBoard,
+    stopSpeech,
+    navigate: showPage,
+    activate: (buttonId) => activate(document.querySelector(`[data-button-id="${CSS.escape(buttonId)}"]`)),
+    countVisibleTargets: () => visibleTargets().length,
+    auditVisibleTargets,
+  });
+})();
 </script>
-</body>
-</html>
+</body></html>

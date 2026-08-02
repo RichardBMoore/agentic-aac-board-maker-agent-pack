@@ -19,6 +19,7 @@ The product is not the prototype editor. The prototype remains a reference imple
 - teacher-intent intake;
 - communication-rights and AAC design rules;
 - canonical AAC Board IR;
+- deterministic renderers, JSON Schema, shared HTML/dwell runtime and parity/fresh-output gates;
 - output contract selection;
 - final QA rubric;
 - generated-resource delivery language.
@@ -39,9 +40,9 @@ The product is not the prototype editor. The prototype remains a reference imple
 
 `eyegaze-dwell-html` owns:
 
-- single-file offline dwell HTML implementation patterns;
+- explicit gaze/dwell requirements and device interaction QA;
 - PRC-Saltillo/Edge/EQ file-launch constraints;
-- dwell manager, target sizing, viewport fit, and high-stakes confirmation details.
+- target sizing, viewport fit and high-stakes confirmation details. It reuses the main skill's single runtime rather than owning another timer implementation.
 
 `richard-school-resource-workflow` owns:
 
@@ -58,12 +59,14 @@ teacher request
   -> intake assumptions / clarifying question only if needed
   -> communication functions
   -> canonical AAC Board IR
+  -> schema + semantic validation
+  -> optional reviewed symbol candidates
   -> renderer choice
        -> single-file HTML
        -> printable board
        -> Open AAC Studio JSON
        -> full resource pack
-  -> validation scripts + QA rubric
+  -> HTML/IR/runtime parity + static/browser/fresh-output QA
   -> draft classroom support with real-device/team caveat
 ```
 
@@ -74,7 +77,7 @@ Do not let an agent jump straight from teacher request to visual grid. The IR st
 When the same rule appears in multiple files, keep the canonical wording in the owning file and link to it elsewhere.
 
 - Communication rights, agency, core/fringe, aided language, and board grammar belong in `agentic-aac-board-maker`.
-- Dwell timing, pointer cancellation, and single-file HTML mechanics belong in `eyegaze-dwell-html`.
+- Gaze/dwell requirements and device QA belong in `eyegaze-dwell-html`; executable board interaction remains one shared runtime owned by the main renderer.
 - Prototype JSON quirks belong in `open-aac-studio-board-builder`.
 - Bundled editor/player use belongs in `build-aac-student-supports`.
 - School workflow and ICP/QCIA beyond board generation belong in `richard-school-resource-workflow`.
@@ -91,9 +94,10 @@ The canonical AAC Board IR is the design source. Other formats are renderer outp
 
 Before treating a generated resource as ready for classroom draft use:
 
-1. The IR validates.
-2. The renderer output opens or parses.
-3. Access method assumptions match density and controls.
-4. The QA rubric is green or explicitly caveated amber.
-5. The final response says it is a draft classroom support pending real student/device/team testing.
-
+1. Canonical IR passes JSON Schema and semantic validation.
+2. Fresh renders match committed outputs and HTML passes IR/shared-runtime parity.
+3. Access method assumptions match total active-target accounting and real browser/device-sized interaction tests.
+4. Symbols have reviewed approval or remain text fallback.
+5. A newly generated candidate passes its fresh-output fixture checks.
+6. The QA rubric is green or explicitly caveated amber.
+7. The final response states unresolved system-fit and real student/device/team testing needs.

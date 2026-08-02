@@ -1,7 +1,7 @@
 {
   "name": "agentic-aac-board-maker",
   "displayName": "Agentic AAC Board Maker",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "Generate evidence-informed, accessible AAC boards, differentiated classroom communication resources, eye-gaze tools, and ICP assessment supports from teacher intent.",
   "author": {
     "name": "Richard Moore"

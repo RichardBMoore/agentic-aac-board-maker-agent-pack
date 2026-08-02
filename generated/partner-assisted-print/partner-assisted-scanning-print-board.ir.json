@@ -1,17 +1,13 @@
 {
-  "schemaVersion": "0.3.0",
+  "schemaVersion": "0.4.0",
   "format": "agentic-aac-board-ir",
-  "app": "Agentic AAC Board Maker",
   "id": "partner-assisted-scanning-print-board",
   "title": "Partner-Assisted Scanning Print Board",
-  "name": "Partner-Assisted Scanning Print Board",
-  "type": "interactive",
   "purpose": "A printable partner-assisted scanning board with clear scan order, wait/confirm script, help, stop, different, finished and choice messages.",
-  "sourcePrompt": "Make a printable partner-assisted scanning board for help, stop, different, finished, and choices.",
-  "fixtureId": "partner-assisted-print",
   "audience": {
     "ageBand": "school-age to secondary",
-    "tone": "plain, partner-facing"
+    "tone": "plain, partner-facing",
+    "locale": "en-AU"
   },
   "access": {
     "intended": [
@@ -23,33 +19,28 @@
     ],
     "profile": "partner-assisted-scanning",
     "minimumTargetSizePx": 132,
+    "dwellTimeMs": null,
+    "denseGazeTested": false,
+    "visibleTargetLimit": 16,
+    "setupTargetLimit": 3,
     "switchScanning": true,
     "scanSpeedMs": 1800,
     "scanPattern": "linear",
-    "scanOrder": "numbered partner scan order"
+    "scanOrder": "numbered partner scan order",
+    "audioCues": true
   },
-  "settings": {
+  "display": {
     "orientation": "landscape",
     "width": 1024,
     "height": 768,
-    "speakLabels": true,
-    "showLabels": true,
-    "switchScanning": true,
-    "scanSpeedMs": 1800,
-    "scanPattern": "linear"
+    "backgroundColour": "#f7fbff"
   },
-  "accessibility": {
-    "intendedAccess": [
-      "partner-assisted-scanning",
-      "print",
-      "touch",
-      "keyboard",
-      "mouse"
-    ],
-    "minimumTargetSizePx": 132,
-    "dwellSafe": false,
-    "scanOrder": "numbered partner scan order",
-    "audioCues": true
+  "studentControls": {
+    "startBoard": false,
+    "fullScreen": false,
+    "soundCheck": false,
+    "stopSpeechDuringPlayback": true,
+    "teacherPanel": false
   },
   "communicationFunctions": [
     "answer",
@@ -68,26 +59,17 @@
         "rows": 3,
         "columns": 3
       },
-      "gridRows": 3,
-      "gridColumns": 3,
-      "margin": 18,
-      "backgroundColour": "#f7fbff",
       "buttons": [
         {
           "id": "btn-help",
           "label": "Help",
           "role": "repair",
           "function": "repair",
-          "searchTerm": "help",
           "spokenText": "Help please",
+          "searchTerm": "help",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "Help please",
-          "result": "selected",
-          "style": {
-            "fillColour": "#FFFFFF"
-          },
           "actions": [
             {
               "id": "act-btn-help-speak",
@@ -98,23 +80,23 @@
               "id": "act-btn-help-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "Help please",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
         },
         {
           "id": "btn-stop",
           "label": "Stop",
           "role": "repair",
           "function": "refuse",
-          "searchTerm": "stop",
           "spokenText": "Stop",
+          "searchTerm": "stop",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "Stop",
-          "result": "selected",
-          "style": {
-            "fillColour": "#FFFFFF"
-          },
           "actions": [
             {
               "id": "act-btn-stop-speak",
@@ -125,23 +107,23 @@
               "id": "act-btn-stop-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "Stop",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
         },
         {
           "id": "btn-different",
           "label": "Different",
           "role": "repair",
           "function": "repair",
-          "searchTerm": "different",
           "spokenText": "Different please",
+          "searchTerm": "different",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "Different please",
-          "result": "selected",
-          "style": {
-            "fillColour": "#FFFFFF"
-          },
           "actions": [
             {
               "id": "act-btn-different-speak",
@@ -152,23 +134,23 @@
               "id": "act-btn-different-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "Different please",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
         },
         {
           "id": "btn-finished",
           "label": "Finished",
           "role": "repair",
           "function": "regulate-rest",
-          "searchTerm": "finished",
           "spokenText": "I am finished",
+          "searchTerm": "finished",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "I am finished",
-          "result": "selected",
-          "style": {
-            "fillColour": "#FFFFFF"
-          },
           "actions": [
             {
               "id": "act-btn-finished-speak",
@@ -179,23 +161,23 @@
               "id": "act-btn-finished-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "I am finished",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
         },
         {
           "id": "btn-choice-a",
           "label": "Choice A",
           "role": "fringe",
           "function": "choose",
-          "searchTerm": "choice one",
           "spokenText": "Choice A",
+          "searchTerm": "choice one",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "Choice A",
-          "result": "selected",
-          "style": {
-            "fillColour": "#FFFFFF"
-          },
           "actions": [
             {
               "id": "act-btn-choice-a-speak",
@@ -206,23 +188,23 @@
               "id": "act-btn-choice-a-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "Choice A",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
         },
         {
           "id": "btn-choice-b",
           "label": "Choice B",
           "role": "fringe",
           "function": "choose",
-          "searchTerm": "choice two",
           "spokenText": "Choice B",
+          "searchTerm": "choice two",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "Choice B",
-          "result": "selected",
-          "style": {
-            "fillColour": "#FFFFFF"
-          },
           "actions": [
             {
               "id": "act-btn-choice-b-speak",
@@ -233,23 +215,23 @@
               "id": "act-btn-choice-b-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "Choice B",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
         },
         {
           "id": "btn-yes",
           "label": "Yes",
           "role": "core",
           "function": "answer",
-          "searchTerm": "yes",
           "spokenText": "Yes",
+          "searchTerm": "yes",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "Yes",
-          "result": "selected",
-          "style": {
-            "fillColour": "#FFFFFF"
-          },
           "actions": [
             {
               "id": "act-btn-yes-speak",
@@ -260,23 +242,23 @@
               "id": "act-btn-yes-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "Yes",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
         },
         {
           "id": "btn-no",
           "label": "No",
           "role": "core",
           "function": "answer",
-          "searchTerm": "no",
           "spokenText": "No",
+          "searchTerm": "no",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "No",
-          "result": "selected",
-          "style": {
-            "fillColour": "#FFFFFF"
-          },
           "actions": [
             {
               "id": "act-btn-no-speak",
@@ -287,23 +269,23 @@
               "id": "act-btn-no-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "No",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
         },
         {
           "id": "btn-more-time",
           "label": "More time",
           "role": "repair",
           "function": "regulate-rest",
-          "searchTerm": "more time",
           "spokenText": "I need more time",
+          "searchTerm": "more time",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "I need more time",
-          "result": "selected",
-          "style": {
-            "fillColour": "#FFFFFF"
-          },
           "actions": [
             {
               "id": "act-btn-more-time-speak",
@@ -314,56 +296,55 @@
               "id": "act-btn-more-time-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "I need more time",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
         }
-      ]
+      ],
+      "margin": 18,
+      "backgroundColour": "#f7fbff"
     }
   ],
   "teacherNotes": {
+    "modeling": "Model the scan process with another adult first: say each numbered option slowly, wait, observe the agreed signal, and confirm the selected message before acting.",
+    "evidence": "agreed signal; confirmed choice; repair request; refusal; more time request",
+    "customisation": "Review vocabulary, symbols and positions with the student and team before use.",
     "partner_script": "Partner says each option slowly in numbered order, waits, watches for the agreed signal, then confirms: I saw you choose __. Is that right?",
     "scan_order": "Scan left to right, top to bottom: 1 Help, 2 Stop, 3 Different, 4 Finished, 5 Choice A, 6 Choice B, 7 Yes, 8 No, 9 More time.",
     "wait_confirm": "Pause long enough for the student to respond. If unsure, repeat the scan or offer Yes/No confirmation without rushing.",
     "print": "Print in black and white if needed. Strong borders, large labels and numbered order are included for readability.",
-    "attribution": "If adding symbols, record the symbol source and licence. Text-only printing is usable without symbols.",
-    "modeling": "Model the scan process with another adult first: say each numbered option slowly, wait, observe the agreed signal, and confirm the selected message before acting.",
-    "evidence": "agreed signal; confirmed choice; repair request; refusal; more time request"
+    "attribution": "If adding symbols, record the symbol source and licence. Text-only printing is usable without symbols."
+  },
+  "systemFit": {
+    "reviewStatus": "team-input-needed",
+    "existingSystem": "Confirm how this support sits alongside the student's established AAC system.",
+    "vocabularyAndMotorPlan": "Confirm familiar vocabulary and stable locations before classroom use.",
+    "symbolFamiliarity": "Confirm that each symbol or text representation is recognised and meaningful.",
+    "accessCalibration": "Confirm access settings on the actual device with the student and team.",
+    "positioningAndVision": "Confirm screen, mounting, seating, visual field, contrast and fatigue conditions.",
+    "languageCultureVoice": "Confirm preferred language, culturally meaningful vocabulary and voice output.",
+    "partnerSignals": "Confirm reliable yes/no, cancel, repair and partner-assisted signals."
   },
   "symbolStrategy": {
     "defaultSource": "ARASAAC search terms",
     "textFallback": true,
     "customMediaPolicy": "teacher-owned local media only unless explicitly approved",
-    "notes": "Text-first, black-and-white friendly. Symbols can be added later with attribution, but the numbered scan order must remain visible."
+    "notes": "Text-first, black-and-white friendly. Symbols can be added later with attribution, but the numbered scan order must remain visible.",
+    "reviewRequired": true
   },
   "privacy": {
     "level": "anonymous",
     "containsSensitiveData": false
   },
-  "metadata": {
-    "tags": [
-      "aac",
-      "agent-generated",
-      "proof-of-concept",
-      "partner-assisted-print",
-      "partner-assisted-scanning",
-      "printable",
-      "low-tech"
-    ],
-    "curriculum": "Access and communication support for partner-assisted choice-making, repair, refusal and confirmation.",
-    "privacyLevel": "anonymous"
-  },
   "attribution": [
     {
       "source": "ARASAAC",
       "licence": "CC BY-NC-SA",
-      "note": "Symbol search terms are provided for later ARASAAC replacement; confirm exact current licence wording when publishing beyond local classroom use.",
-      "attribution": "The pictographic symbols used are the property of the Government of Aragon and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distributes them under Creative Commons License BY-NC-SA."
-    }
-  ],
-  "licences": [
-    {
-      "source": "ARASAAC",
-      "licence": "CC BY-NC-SA",
-      "attribution": "Pictograms by ARASAAC (Government of Aragon) if ARASAAC symbols are later inserted; these HTML drafts use text placeholders only."
+      "attribution": "The pictographic symbols used are the property of the Government of Aragon and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distributes them under Creative Commons License BY-NC-SA.",
+      "note": "Symbol search terms are provided for later ARASAAC replacement; confirm exact current licence wording when publishing beyond local classroom use."
     }
   ],
   "sett": {
@@ -414,5 +395,9 @@
     ],
     "notJudgement": "Partner interpretation and scan repetitions are access context, not evidence of lower understanding.",
     "export": "Use anonymous teacher notes, print/portfolio evidence, or local CSV/report only when needed. Do not include diagnoses, behaviour details, family details, or school IDs."
+  },
+  "provenance": {
+    "fixtureId": "partner-assisted-print",
+    "sourcePrompt": "Make a printable partner-assisted scanning board for help, stop, different, finished, and choices."
   }
 }

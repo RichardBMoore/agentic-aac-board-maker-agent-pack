@@ -4,4 +4,4 @@ interface:
   brand_color: "#00843D"
   default_prompt: "Create Open AAC Studio JSON for this board."
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

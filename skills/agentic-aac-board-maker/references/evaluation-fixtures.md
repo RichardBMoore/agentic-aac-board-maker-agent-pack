@@ -35,6 +35,16 @@ An agent passes the fixture if:
 6. It produces a file that parses or opens.
 7. It reports caveats honestly as draft classroom support.
 
+## Fresh-Output Harness
+
+Run the harness against newly generated candidate folders, not only `generated/` golden examples:
+
+```sh
+python3 scripts/evaluate_fresh_output.py <candidate-root> --report evaluation-report.json
+```
+
+Each candidate subfolder must use the fixture id and contain one canonical `*.ir.json`, HTML and teacher notes. The harness checks JSON Schema, semantic quality, HTML/IR/shared-runtime parity and the structured expectations in `fixtures/proof-of-concept-prompts.json`.
+
 ## Regression Rule
 
 When a generated resource fails a fixture, patch the owning reference file:
@@ -43,4 +53,3 @@ When a generated resource fails a fixture, patch the owning reference file:
 - access failure -> `access-methods.md` or `eyegaze-dwell-html`;
 - schema/output failure -> `aac-board-ir.md` or `output-contracts.md`;
 - curriculum/QCIA failure -> `curriculum-qcia-translation.md`.
-

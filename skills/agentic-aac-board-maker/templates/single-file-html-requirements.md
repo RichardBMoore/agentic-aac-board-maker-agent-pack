@@ -16,7 +16,9 @@ Use this when the agent directly creates an HTML AAC board/resource.
 - Print styles when printable use is likely.
 - Attribution footer/section.
 - Teacher notes separate from student board.
-- For gaze/dwell student resources, one startup fullscreen attempt and a gaze-sized **Full screen** button.
+- For gaze/dwell student resources, a separate setup phase with a gaze-sized **Full screen** control and no more than three setup targets.
+- Generate from canonical IR with `scripts/render_html.py`; do not hand-edit renderer output.
+- Embed the exact shared dwell runtime and pass `scripts/validate_html_parity.py`.
 
 ## Recommended HTML Sections
 
@@ -49,13 +51,14 @@ Only add dwell when requested/needed. If included:
 - Activate once after threshold.
 - Require pointer leave or cooldown before reactivation.
 - Keep Enter/Space keyboard activation independent of dwell.
+- Use the shared `assets/aac-board-runtime.js`; do not create a per-resource dwell implementation.
+- Count every active setup, board, navigation, message and speech target.
 
 ## Fullscreen Requirements For Gaze Resources
 
-- Call `document.documentElement.requestFullscreen()` once at startup. This succeeds automatically only when the browser/device policy permits it.
 - Provide a Full screen button at least 120 x 120 px with visible focus/dwell feedback.
-- Attach a direct native `click` listener before the general dwell manager and call `requestFullscreen()` synchronously inside it. A delayed JavaScript hover callback does not supply ordinary Edge's transient user activation.
-- Hide the launch button while fullscreen is active and restore it after exit.
+- Call `requestFullscreen()` from the setup control's activation path. Ordinary browsers may reject a JavaScript-timer dwell because it lacks transient user activation; keep the board usable and announce the fallback.
+- Hide setup controls after Start board so they do not remain accidental gaze targets.
 - If blocked, leave the board usable and announce the choices: activate Full screen with click/Enter/operating-system dwell click, press F11, or ask EQ IT to configure managed fullscreen.
 - For automatic EQ deployment on Edge 132+, document `FullscreenAllowed` plus `AutomaticFullscreenAllowedForUrls`. For locked use, document Edge kiosk/Assigned Access. Do not claim that a page can set either policy itself.
 - Keep Escape or the managed staff exit route available.
@@ -105,6 +108,7 @@ When possible, verify in browser/console:
 document.querySelectorAll('button').length
 [...document.querySelectorAll('button')].every(b => b.textContent.trim() || b.getAttribute('aria-label'))
 document.querySelectorAll('script[src],link[href^="http"],img[src^="http"]').length
+window.AACBoard.auditVisibleTargets()
 ```
 
 For offline files, remote dependency count should be zero unless explicitly accepted.

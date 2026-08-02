@@ -86,6 +86,14 @@ class SearchSelectionTests(unittest.TestCase):
         fetcher = FakeFetcher({})
         self.assertIsNone(fetch_symbols.search_pictogram("hello", "en", fetcher))
 
+    def test_candidate_review_keeps_ranked_alternatives(self) -> None:
+        fetcher = FakeFetcher(
+            {"search/hello": search_payload(picto(30, "greeting"), picto(20, "hello", aac=True), picto(10, "hello"))}
+        )
+        candidates = fetch_symbols.search_candidates("hello", "en", fetcher, limit=3)
+        self.assertEqual([20, 10, 30], [candidate["symbolId"] for candidate in candidates])
+        self.assertEqual([1, 2, 3], [candidate["rank"] for candidate in candidates])
+
 
 class EmbedSymbolsTests(unittest.TestCase):
     def routes(self) -> dict[str, bytes]:
@@ -176,6 +184,40 @@ class AttributionGuardTests(unittest.TestCase):
         ir["attribution"] = ""
         self.assertFalse(fetch_symbols.has_attribution(ir))
         self.assertTrue(fetch_symbols.has_attribution(make_ir()))
+
+
+class CandidateReviewTests(unittest.TestCase):
+    def routes(self) -> dict[str, bytes]:
+        return {
+            "search/hello": search_payload(picto(6522, "hello", aac=True), picto(777, "greeting")),
+            "6522/6522_300.png": PNG_BYTES,
+        }
+
+    def test_manifest_starts_unapproved_and_has_contact_sheet(self) -> None:
+        manifest = fetch_symbols.build_review_manifest(make_ir(), fetcher=FakeFetcher(self.routes()))
+        entry = manifest["entries"][0]
+        self.assertIsNone(entry["approvedSymbolId"])
+        self.assertEqual([6522, 777], [candidate["symbolId"] for candidate in entry["candidates"]])
+        review_html = fetch_symbols.render_review_html(manifest)
+        self.assertIn("Symbol candidate review", review_html)
+        self.assertIn("6522", review_html)
+
+    def test_only_approved_review_candidate_is_applied(self) -> None:
+        ir = make_ir()
+        manifest = fetch_symbols.build_review_manifest(ir, fetcher=FakeFetcher(self.routes()))
+        manifest["entries"][0]["approvedSymbolId"] = 6522
+        report = fetch_symbols.apply_review(ir, manifest, fetcher=FakeFetcher(self.routes()))
+        self.assertTrue(report[0]["status"].startswith("ok"))
+        self.assertEqual(6522, ir["pages"][0]["buttons"][0]["symbolId"])
+        self.assertTrue(ir["pages"][0]["buttons"][0]["symbolSrc"].startswith("data:image/png;base64,"))
+
+    def test_unreviewed_id_is_rejected(self) -> None:
+        ir = make_ir()
+        manifest = fetch_symbols.build_review_manifest(ir, fetcher=FakeFetcher(self.routes()))
+        manifest["entries"][0]["approvedSymbolId"] = 999999
+        report = fetch_symbols.apply_review(ir, manifest, ids_only=True)
+        self.assertTrue(report[0]["status"].startswith("error"))
+        self.assertIsNone(ir["pages"][0]["buttons"][0]["symbolId"])
 
 
 if __name__ == "__main__":

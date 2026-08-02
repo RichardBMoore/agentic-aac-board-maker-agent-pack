@@ -4,4 +4,4 @@ interface:
   brand_color: "#0057B8"
   default_prompt: "Adapt a mainstream task into a defensible ICP evidence package."
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

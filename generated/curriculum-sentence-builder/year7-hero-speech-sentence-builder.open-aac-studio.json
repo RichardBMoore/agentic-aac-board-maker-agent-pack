@@ -4,8 +4,8 @@
   "id": "year7-hero-speech-sentence-builder",
   "name": "Year 7 Hero Speech Sentence Builder",
   "type": "interactive",
-  "created": "2026-06-10T11:43:14.676684Z",
-  "modified": "2026-06-10T11:43:14.676684Z",
+  "created": "2026-08-02T00:00:00Z",
+  "modified": "2026-08-02T00:00:00Z",
   "settings": {
     "orientation": "landscape",
     "width": 1024,
@@ -16,7 +16,7 @@
     "font": "Verdana",
     "fontSize": 18,
     "fontColour": "#000000",
-    "backgroundColour": "#ffffff",
+    "backgroundColour": "#f7fbff",
     "showStopButton": true,
     "dwellTimeMs": 1100,
     "switchScanning": false,
@@ -990,12 +990,12 @@
   ],
   "variables": {},
   "teacherNotes": {
-    "curriculum": "Supports Year 7 English speaking/listening by giving access to opinion, reasoning and evidence language for a short hero speech, and by letting the student assemble and rehearse a whole sentence rather than single words.",
-    "customisation": "Replace the describing words and the hero name with the class text, film, novel or local hero being studied. Add the hero's name as a word button or let the student say it after 'My hero is'.",
-    "repair": "Keep Undo, Start again and Help please available so the student can fix or restart the sentence without losing agency.",
-    "use": "Use for planning, rehearsal or supported oral presentation. The student builds a sentence on one page, crosses to the describing-words page, then speaks the whole sentence. Do not treat the board as the student's full expressive system.",
     "modeling": "Model a complete sentence chain across both pages: My hero is … brave … because … helps others, then press Speak sentence. Accept partial sentences as valid drafting or rehearsal.",
-    "evidence": "sentence built in the message bar; opinion/because/example selection; speak-sentence use; repair (undo, start again) or help request"
+    "evidence": "sentence built in the message bar; opinion/because/example selection; speak-sentence use; repair (undo, start again) or help request",
+    "customisation": "Replace the describing words and the hero name with the class text, film, novel or local hero being studied. Add the hero's name as a word button or let the student say it after 'My hero is'.",
+    "curriculum": "Supports Year 7 English speaking/listening by giving access to opinion, reasoning and evidence language for a short hero speech, and by letting the student assemble and rehearse a whole sentence rather than single words.",
+    "repair": "Keep Undo, Start again and Help please available so the student can fix or restart the sentence without losing agency.",
+    "use": "Use for planning, rehearsal or supported oral presentation. The student builds a sentence on one page, crosses to the describing-words page, then speaks the whole sentence. Do not treat the board as the student's full expressive system."
   },
   "communicationFunctions": [
     "comment",
@@ -1007,20 +1007,13 @@
   "metadata": {
     "tags": [
       "aac",
-      "agent-generated",
-      "proof-of-concept",
-      "curriculum-sentence-builder",
-      "english",
-      "year-7",
-      "sentence-builder",
-      "multi-page",
-      "message-bar"
+      "agent-generated"
     ],
     "level": "",
-    "curriculum": "Australian Curriculum English Year 7: expressing a viewpoint, developing spoken texts, using reasons/examples, rehearsing presentation language.",
+    "curriculum": "",
     "privacyLevel": "anonymous",
     "generatedFrom": "agentic-aac-board-ir",
-    "sourceIrSchemaVersion": "0.3.0",
+    "sourceIrSchemaVersion": "0.4.0",
     "accessProfile": "mixed-access",
     "communicationFunctions": [
       "comment",
@@ -1034,7 +1027,8 @@
       "purpose": "A two-page sentence-builder board for a Year 7 English hero speech. The student adds words to a sentence bar, speaks the whole sentence, and uses opinion, reason, evidence, and repair language to rehearse a short spoken text.",
       "audience": {
         "ageBand": "year-7",
-        "tone": "secondary, curriculum-facing"
+        "tone": "secondary, curriculum-facing",
+        "locale": "en-AU"
       },
       "sett": {
         "student": "Secondary student can participate through AAC sentence starters, reasons, examples, describing words, and a spoken sentence without needing speech or handwriting as the only route.",
@@ -1088,7 +1082,8 @@
         "defaultSource": "ARASAAC search terms",
         "textFallback": true,
         "customMediaPolicy": "teacher-owned local media only unless explicitly approved",
-        "notes": "Search terms prioritise abstract curriculum language; teacher modelling, the sentence bar, and clear text labels matter more than decorative symbols."
+        "notes": "Search terms prioritise abstract curriculum language; teacher modelling, the sentence bar, and clear text labels matter more than decorative symbols.",
+        "reviewRequired": true
       }
     }
   },
@@ -1096,7 +1091,8 @@
     {
       "source": "ARASAAC",
       "licence": "CC BY-NC-SA",
-      "attribution": "Pictograms by ARASAAC (Government of Aragon) if ARASAAC symbols are later inserted; these HTML drafts use text placeholders only."
+      "attribution": "The pictographic symbols used are the property of the Government of Aragon and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distributes them under Creative Commons License BY-NC-SA.",
+      "note": "Symbol search terms are provided for later ARASAAC replacement; confirm exact current licence wording when publishing beyond local classroom use."
     }
   ]
 }

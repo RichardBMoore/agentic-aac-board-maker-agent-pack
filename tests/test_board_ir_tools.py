@@ -121,7 +121,7 @@ class OpenAacStudioRenderTests(unittest.TestCase):
     def test_renderer_preserves_ir_powerhouse_metadata(self) -> None:
         rendered = renderer.render(self.cases["valid_0_3"])
         self.assertEqual("Open AAC Studio", rendered["app"])
-        self.assertEqual("0.3.0", rendered["metadata"]["sourceIrSchemaVersion"])
+        self.assertEqual("0.4.0", rendered["metadata"]["sourceIrSchemaVersion"])
         self.assertEqual("eye-gaze-dwell", rendered["metadata"]["accessProfile"])
         self.assertIn("sett", rendered["metadata"]["ir"])
         self.assertIn("udl", rendered["metadata"]["ir"])

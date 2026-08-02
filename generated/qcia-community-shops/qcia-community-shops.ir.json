@@ -1,17 +1,13 @@
 {
-  "schemaVersion": "0.3.0",
+  "schemaVersion": "0.4.0",
   "format": "agentic-aac-board-ir",
-  "app": "Agentic AAC Board Maker",
   "id": "qcia-community-shops",
   "title": "QCIA Community Access: Going to the Shops",
-  "name": "QCIA Community Access: Going to the Shops",
-  "type": "interactive",
   "purpose": "A community access AAC board that supports practical shopping communication, safety/help language, and teacher evidence notes for QCIA-style participation.",
-  "sourcePrompt": "Create a QCIA community access board for going to the shops.",
-  "fixtureId": "qcia-community-shops",
   "audience": {
     "ageBand": "secondary",
-    "tone": "age-respectful, practical"
+    "tone": "age-respectful, practical",
+    "locale": "en-AU"
   },
   "access": {
     "intended": [
@@ -23,33 +19,27 @@
     "profile": "mixed-access",
     "minimumTargetSizePx": 132,
     "dwellTimeMs": 1100,
+    "denseGazeTested": false,
+    "visibleTargetLimit": 9,
+    "setupTargetLimit": 3,
     "switchScanning": false,
     "scanSpeedMs": 1400,
     "scanPattern": "linear",
-    "scanOrder": "left-to-right, top-to-bottom"
+    "scanOrder": "left-to-right, top-to-bottom",
+    "audioCues": true
   },
-  "settings": {
+  "display": {
     "orientation": "landscape",
     "width": 1024,
     "height": 768,
-    "speakLabels": true,
-    "showLabels": true,
-    "dwellTimeMs": 1100,
-    "switchScanning": false,
-    "scanSpeedMs": 1400,
-    "scanPattern": "linear"
+    "backgroundColour": "#f7fbff"
   },
-  "accessibility": {
-    "intendedAccess": [
-      "touch",
-      "keyboard",
-      "mouse",
-      "eye-gaze-dwell"
-    ],
-    "minimumTargetSizePx": 132,
-    "dwellSafe": true,
-    "scanOrder": "left-to-right, top-to-bottom",
-    "audioCues": true
+  "studentControls": {
+    "startBoard": true,
+    "fullScreen": true,
+    "soundCheck": true,
+    "stopSpeechDuringPlayback": true,
+    "teacherPanel": false
   },
   "communicationFunctions": [
     "ask",
@@ -71,26 +61,17 @@
         "rows": 3,
         "columns": 3
       },
-      "gridRows": 3,
-      "gridColumns": 3,
-      "margin": 18,
-      "backgroundColour": "#f7fbff",
       "buttons": [
         {
           "id": "btn-hello",
           "label": "Hello",
           "role": "core",
           "function": "initiate",
-          "searchTerm": "hello greeting",
           "spokenText": "Hello",
+          "searchTerm": "hello greeting",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "Hello",
-          "result": "selected",
-          "style": {
-            "fillColour": "#FFFFFF"
-          },
           "actions": [
             {
               "id": "act-btn-hello-speak",
@@ -101,23 +82,23 @@
               "id": "act-btn-hello-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "Hello",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
         },
         {
           "id": "btn-buy",
           "label": "I want to buy this",
           "role": "fringe",
           "function": "request",
-          "searchTerm": "buy item",
           "spokenText": "I want to buy this",
+          "searchTerm": "buy item",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "I want to buy this",
-          "result": "selected",
-          "style": {
-            "fillColour": "#FFFFFF"
-          },
           "actions": [
             {
               "id": "act-btn-buy-speak",
@@ -128,23 +109,23 @@
               "id": "act-btn-buy-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "I want to buy this",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
         },
         {
           "id": "btn-pay",
           "label": "Pay now",
           "role": "fringe",
           "function": "request",
-          "searchTerm": "pay money",
           "spokenText": "I am ready to pay",
+          "searchTerm": "pay money",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "I am ready to pay",
-          "result": "selected",
-          "style": {
-            "fillColour": "#FFFFFF"
-          },
           "actions": [
             {
               "id": "act-btn-pay-speak",
@@ -155,23 +136,23 @@
               "id": "act-btn-pay-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "I am ready to pay",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
         },
         {
           "id": "btn-where",
           "label": "Where is it?",
           "role": "question",
           "function": "ask",
-          "searchTerm": "where question",
           "spokenText": "Where is it?",
+          "searchTerm": "where question",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "Where is it?",
-          "result": "selected",
-          "style": {
-            "fillColour": "#FFFFFF"
-          },
           "actions": [
             {
               "id": "act-btn-where-speak",
@@ -182,23 +163,23 @@
               "id": "act-btn-where-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "Where is it?",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
         },
         {
           "id": "btn-choose",
           "label": "I choose this",
           "role": "fringe",
           "function": "choose",
-          "searchTerm": "choose",
           "spokenText": "I choose this one",
+          "searchTerm": "choose",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "I choose this one",
-          "result": "selected",
-          "style": {
-            "fillColour": "#FFFFFF"
-          },
           "actions": [
             {
               "id": "act-btn-choose-speak",
@@ -209,23 +190,23 @@
               "id": "act-btn-choose-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "I choose this one",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
         },
         {
           "id": "btn-too-much",
           "label": "Too expensive",
           "role": "comment",
           "function": "comment",
-          "searchTerm": "expensive",
           "spokenText": "That is too expensive",
+          "searchTerm": "expensive",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "That is too expensive",
-          "result": "selected",
-          "style": {
-            "fillColour": "#FFFFFF"
-          },
           "actions": [
             {
               "id": "act-btn-too-much-speak",
@@ -236,23 +217,23 @@
               "id": "act-btn-too-much-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "That is too expensive",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
         },
         {
           "id": "btn-help",
           "label": "Help please",
           "role": "repair",
           "function": "repair",
-          "searchTerm": "help",
           "spokenText": "Help please",
+          "searchTerm": "help",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "Help please",
-          "result": "selected",
-          "style": {
-            "fillColour": "#FFFFFF"
-          },
           "actions": [
             {
               "id": "act-btn-help-speak",
@@ -263,23 +244,23 @@
               "id": "act-btn-help-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "Help please",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
         },
         {
           "id": "btn-stop",
           "label": "Stop / wait",
           "role": "repair",
           "function": "refuse",
-          "searchTerm": "stop wait",
           "spokenText": "Stop, please wait",
+          "searchTerm": "stop wait",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "Stop, please wait",
-          "result": "selected",
-          "style": {
-            "fillColour": "#FFFFFF"
-          },
           "actions": [
             {
               "id": "act-btn-stop-speak",
@@ -290,23 +271,23 @@
               "id": "act-btn-stop-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "Stop, please wait",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
         },
         {
           "id": "btn-finished",
           "label": "Finished",
           "role": "repair",
           "function": "regulate-rest",
-          "searchTerm": "finished",
           "spokenText": "I am finished",
+          "searchTerm": "finished",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "I am finished",
-          "result": "selected",
-          "style": {
-            "fillColour": "#FFFFFF"
-          },
           "actions": [
             {
               "id": "act-btn-finished-speak",
@@ -317,54 +298,52 @@
               "id": "act-btn-finished-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "I am finished",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
         }
-      ]
+      ],
+      "margin": 18,
+      "backgroundColour": "#f7fbff"
     }
   ],
   "teacherNotes": {
+    "modeling": "Model real community phrases before the trip and during role play: greeting, asking where something is, paying, asking for help and saying stop/wait.",
     "evidence": "QCIA evidence can note participation in a familiar community routine, functional communication attempts, help-seeking, choice-making and safety language.",
     "customisation": "Replace shop/item vocabulary with the actual excursion, class enterprise or role-play context. Keep Help, Stop/wait and Finished stable.",
     "privacy": "Use de-identified notes only. Do not record names, behaviour details or community incidents inside the generated files.",
-    "safety": "This supports communication during community access; it does not replace adult supervision, risk assessment or emergency processes.",
-    "modeling": "Model real community phrases before the trip and during role play: greeting, asking where something is, paying, asking for help and saying stop/wait."
+    "safety": "This supports communication during community access; it does not replace adult supervision, risk assessment or emergency processes."
+  },
+  "systemFit": {
+    "reviewStatus": "team-input-needed",
+    "existingSystem": "Confirm how this support sits alongside the student's established AAC system.",
+    "vocabularyAndMotorPlan": "Confirm familiar vocabulary and stable locations before classroom use.",
+    "symbolFamiliarity": "Confirm that each symbol or text representation is recognised and meaningful.",
+    "accessCalibration": "Confirm access settings on the actual device with the student and team.",
+    "positioningAndVision": "Confirm screen, mounting, seating, visual field, contrast and fatigue conditions.",
+    "languageCultureVoice": "Confirm preferred language, culturally meaningful vocabulary and voice output.",
+    "partnerSignals": "Confirm reliable yes/no, cancel, repair and partner-assisted signals."
   },
   "symbolStrategy": {
     "defaultSource": "ARASAAC search terms",
     "textFallback": true,
     "customMediaPolicy": "teacher-owned local media only unless explicitly approved",
-    "notes": "Search terms are practical community/shop terms; local photos of familiar shops may be inserted by staff if owned/approved."
+    "notes": "Search terms are practical community/shop terms; local photos of familiar shops may be inserted by staff if owned/approved.",
+    "reviewRequired": true
   },
   "privacy": {
     "level": "anonymous",
     "containsSensitiveData": false
   },
-  "metadata": {
-    "tags": [
-      "aac",
-      "agent-generated",
-      "proof-of-concept",
-      "qcia-community-shops",
-      "qcia",
-      "community-access",
-      "shopping"
-    ],
-    "curriculum": "QCIA community, communication, personal and living skills: participating safely in a shopping/community access routine.",
-    "privacyLevel": "anonymous"
-  },
   "attribution": [
     {
       "source": "ARASAAC",
       "licence": "CC BY-NC-SA",
-      "note": "Symbol search terms are provided for later ARASAAC replacement; confirm exact current licence wording when publishing beyond local classroom use.",
-      "attribution": "The pictographic symbols used are the property of the Government of Aragon and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distributes them under Creative Commons License BY-NC-SA."
-    }
-  ],
-  "licences": [
-    {
-      "source": "ARASAAC",
-      "licence": "CC BY-NC-SA",
-      "attribution": "Pictograms by ARASAAC (Government of Aragon) if ARASAAC symbols are later inserted; these HTML drafts use text placeholders only."
+      "attribution": "The pictographic symbols used are the property of the Government of Aragon and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distributes them under Creative Commons License BY-NC-SA.",
+      "note": "Symbol search terms are provided for later ARASAAC replacement; confirm exact current licence wording when publishing beyond local classroom use."
     }
   ],
   "sett": {
@@ -414,5 +393,9 @@
     ],
     "notJudgement": "Adult safety support and access prompts are recorded as context, not as reduced QCIA achievement.",
     "export": "Use anonymous teacher notes, print/portfolio evidence, or local CSV/report only when needed. Do not include diagnoses, behaviour details, family details, or school IDs."
+  },
+  "provenance": {
+    "fixtureId": "qcia-community-shops",
+    "sourcePrompt": "Create a QCIA community access board for going to the shops."
   }
 }

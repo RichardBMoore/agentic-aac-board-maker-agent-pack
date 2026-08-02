@@ -1,17 +1,13 @@
 {
-  "schemaVersion": "0.3.0",
+  "schemaVersion": "0.4.0",
   "format": "agentic-aac-board-ir",
-  "app": "Agentic AAC Board Maker",
   "id": "year7-hero-speech-sentence-builder",
   "title": "Year 7 Hero Speech Sentence Builder",
-  "name": "Year 7 Hero Speech Sentence Builder",
-  "type": "interactive",
   "purpose": "A two-page sentence-builder board for a Year 7 English hero speech. The student adds words to a sentence bar, speaks the whole sentence, and uses opinion, reason, evidence, and repair language to rehearse a short spoken text.",
-  "sourcePrompt": "Make a Year 7 English hero speech sentence-builder board.",
-  "fixtureId": "curriculum-sentence-builder",
   "audience": {
     "ageBand": "year-7",
-    "tone": "secondary, curriculum-facing"
+    "tone": "secondary, curriculum-facing",
+    "locale": "en-AU"
   },
   "access": {
     "intended": [
@@ -23,33 +19,27 @@
     "profile": "mixed-access",
     "minimumTargetSizePx": 132,
     "dwellTimeMs": 1100,
+    "denseGazeTested": false,
+    "visibleTargetLimit": 9,
+    "setupTargetLimit": 3,
     "switchScanning": false,
     "scanSpeedMs": 1400,
     "scanPattern": "linear",
-    "scanOrder": "left-to-right sentence-building order, then navigation and controls"
+    "scanOrder": "left-to-right sentence-building order, then navigation and controls",
+    "audioCues": true
   },
-  "settings": {
+  "display": {
     "orientation": "landscape",
     "width": 1024,
     "height": 768,
-    "speakLabels": true,
-    "showLabels": true,
-    "dwellTimeMs": 1100,
-    "switchScanning": false,
-    "scanSpeedMs": 1400,
-    "scanPattern": "linear"
+    "backgroundColour": "#f7fbff"
   },
-  "accessibility": {
-    "intendedAccess": [
-      "touch",
-      "keyboard",
-      "mouse",
-      "eye-gaze-dwell"
-    ],
-    "minimumTargetSizePx": 132,
-    "dwellSafe": true,
-    "scanOrder": "left-to-right sentence-building order, then navigation and controls",
-    "audioCues": true
+  "studentControls": {
+    "startBoard": true,
+    "fullScreen": true,
+    "soundCheck": true,
+    "stopSpeechDuringPlayback": true,
+    "teacherPanel": false
   },
   "communicationFunctions": [
     "comment",
@@ -58,22 +48,6 @@
     "repair",
     "navigate"
   ],
-  "messageBar": {
-    "enabled": true,
-    "placeholder": "Build your sentence here.",
-    "speakControl": true,
-    "clearControl": true,
-    "undoControl": true,
-    "notes": "Word buttons append to the sentence bar and speak the single word for feedback. Speak sentence reads the whole bar. Undo removes the last word. Start again clears the bar."
-  },
-  "navigation": {
-    "model": "two-page sentence builder",
-    "pages": [
-      "page-starters",
-      "page-describe"
-    ],
-    "notes": "Each page keeps Speak sentence, Help, and a navigation button so a gaze or switch user never needs more than nine targets on screen."
-  },
   "pages": [
     {
       "id": "page-starters",
@@ -84,26 +58,17 @@
         "rows": 3,
         "columns": 3
       },
-      "gridRows": 3,
-      "gridColumns": 3,
-      "margin": 18,
-      "backgroundColour": "#f7fbff",
       "buttons": [
         {
           "id": "btn-my-hero",
           "label": "My hero is…",
           "role": "sentence",
           "function": "comment",
-          "searchTerm": "hero",
           "spokenText": "My hero is",
+          "searchTerm": "hero",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "My hero is",
-          "result": "added-to-sentence",
-          "style": {
-            "fillColour": "#E8F0FF"
-          },
           "actions": [
             {
               "id": "act-btn-my-hero-add",
@@ -119,23 +84,23 @@
               "id": "act-btn-my-hero-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "My hero is",
+          "result": "added-to-sentence",
+          "style": {
+            "fillColour": "#E8F0FF"
+          }
         },
         {
           "id": "btn-i-think",
           "label": "I think…",
           "role": "sentence",
           "function": "comment",
-          "searchTerm": "opinion think",
           "spokenText": "I think",
+          "searchTerm": "opinion think",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "I think",
-          "result": "added-to-sentence",
-          "style": {
-            "fillColour": "#E8F0FF"
-          },
           "actions": [
             {
               "id": "act-btn-i-think-add",
@@ -151,23 +116,23 @@
               "id": "act-btn-i-think-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "I think",
+          "result": "added-to-sentence",
+          "style": {
+            "fillColour": "#E8F0FF"
+          }
         },
         {
           "id": "btn-because",
           "label": "because",
           "role": "sentence",
           "function": "explain",
-          "searchTerm": "because reason",
           "spokenText": "because",
+          "searchTerm": "because reason",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "because",
-          "result": "added-to-sentence",
-          "style": {
-            "fillColour": "#E8F0FF"
-          },
           "actions": [
             {
               "id": "act-btn-because-add",
@@ -183,23 +148,23 @@
               "id": "act-btn-because-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "because",
+          "result": "added-to-sentence",
+          "style": {
+            "fillColour": "#E8F0FF"
+          }
         },
         {
           "id": "btn-example",
           "label": "For example…",
           "role": "evidence",
           "function": "explain",
-          "searchTerm": "example evidence",
           "spokenText": "For example",
+          "searchTerm": "example evidence",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "For example",
-          "result": "added-to-sentence",
-          "style": {
-            "fillColour": "#EAF6E8"
-          },
           "actions": [
             {
               "id": "act-btn-example-add",
@@ -215,23 +180,23 @@
               "id": "act-btn-example-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "For example",
+          "result": "added-to-sentence",
+          "style": {
+            "fillColour": "#EAF6E8"
+          }
         },
         {
           "id": "btn-and-also",
           "label": "and also",
           "role": "sentence",
           "function": "comment",
-          "searchTerm": "and also conjunction",
           "spokenText": "and also",
+          "searchTerm": "and also conjunction",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "and also",
-          "result": "added-to-sentence",
-          "style": {
-            "fillColour": "#E8F0FF"
-          },
           "actions": [
             {
               "id": "act-btn-and-also-add",
@@ -247,46 +212,46 @@
               "id": "act-btn-and-also-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "and also",
+          "result": "added-to-sentence",
+          "style": {
+            "fillColour": "#E8F0FF"
+          }
         },
         {
           "id": "btn-to-describe",
           "label": "Describing words ▶",
           "role": "navigation",
           "function": "navigate",
-          "searchTerm": "next page describing words",
           "spokenText": "Go to describing words",
+          "searchTerm": "next page describing words",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "Go to describing words",
-          "result": "navigated",
-          "style": {
-            "fillColour": "#ECECF4"
-          },
           "actions": [
             {
               "id": "act-btn-to-describe-next",
               "type": "next-page",
               "targetPageId": "page-describe"
             }
-          ]
+          ],
+          "audioCue": "Go to describing words",
+          "result": "navigated",
+          "style": {
+            "fillColour": "#ECECF4"
+          }
         },
         {
           "id": "btn-speak-sentence-1",
           "label": "🔊 Speak sentence",
           "role": "sentence",
           "function": "reflect",
-          "searchTerm": "speak read sentence aloud",
           "spokenText": "Speak my sentence",
+          "searchTerm": "speak read sentence aloud",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "Speak my sentence",
-          "result": "spoke-sentence",
-          "style": {
-            "fillColour": "#DDEBFF"
-          },
           "actions": [
             {
               "id": "act-btn-speak-sentence-1-speak",
@@ -296,45 +261,45 @@
               "id": "act-btn-speak-sentence-1-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "Speak my sentence",
+          "result": "spoke-sentence",
+          "style": {
+            "fillColour": "#DDEBFF"
+          }
         },
         {
           "id": "btn-undo-1",
           "label": "⌫ Undo",
           "role": "repair",
           "function": "repair",
-          "searchTerm": "undo backspace remove word",
           "spokenText": "Undo the last word",
+          "searchTerm": "undo backspace remove word",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "Undo the last word",
-          "result": "removed-last-word",
-          "style": {
-            "fillColour": "#FFE6E6"
-          },
           "actions": [
             {
               "id": "act-btn-undo-1-remove",
               "type": "remove-last-word"
             }
-          ]
+          ],
+          "audioCue": "Undo the last word",
+          "result": "removed-last-word",
+          "style": {
+            "fillColour": "#FFE6E6"
+          }
         },
         {
           "id": "btn-help-1",
           "label": "Help please",
           "role": "repair",
           "function": "repair",
-          "searchTerm": "help",
           "spokenText": "Help please",
+          "searchTerm": "help",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "Help please",
-          "result": "selected",
-          "style": {
-            "fillColour": "#FFE6E6"
-          },
           "actions": [
             {
               "id": "act-btn-help-1-speak",
@@ -345,9 +310,16 @@
               "id": "act-btn-help-1-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "Help please",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFE6E6"
+          }
         }
-      ]
+      ],
+      "margin": 18,
+      "backgroundColour": "#f7fbff"
     },
     {
       "id": "page-describe",
@@ -358,26 +330,17 @@
         "rows": 3,
         "columns": 3
       },
-      "gridRows": 3,
-      "gridColumns": 3,
-      "margin": 18,
-      "backgroundColour": "#f7fbff",
       "buttons": [
         {
           "id": "btn-brave",
           "label": "brave",
           "role": "fringe",
           "function": "comment",
-          "searchTerm": "brave",
           "spokenText": "brave",
+          "searchTerm": "brave",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "brave",
-          "result": "added-to-sentence",
-          "style": {
-            "fillColour": "#FFF3D6"
-          },
           "actions": [
             {
               "id": "act-btn-brave-add",
@@ -393,23 +356,23 @@
               "id": "act-btn-brave-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "brave",
+          "result": "added-to-sentence",
+          "style": {
+            "fillColour": "#FFF3D6"
+          }
         },
         {
           "id": "btn-kind",
           "label": "kind",
           "role": "fringe",
           "function": "comment",
-          "searchTerm": "kind",
           "spokenText": "kind",
+          "searchTerm": "kind",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "kind",
-          "result": "added-to-sentence",
-          "style": {
-            "fillColour": "#FFF3D6"
-          },
           "actions": [
             {
               "id": "act-btn-kind-add",
@@ -425,23 +388,23 @@
               "id": "act-btn-kind-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "kind",
+          "result": "added-to-sentence",
+          "style": {
+            "fillColour": "#FFF3D6"
+          }
         },
         {
           "id": "btn-helps-others",
           "label": "helps others",
           "role": "fringe",
           "function": "comment",
-          "searchTerm": "helping others",
           "spokenText": "helps others",
+          "searchTerm": "helping others",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "helps others",
-          "result": "added-to-sentence",
-          "style": {
-            "fillColour": "#FFF3D6"
-          },
           "actions": [
             {
               "id": "act-btn-helps-others-add",
@@ -457,23 +420,23 @@
               "id": "act-btn-helps-others-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "helps others",
+          "result": "added-to-sentence",
+          "style": {
+            "fillColour": "#FFF3D6"
+          }
         },
         {
           "id": "btn-never-gives-up",
           "label": "never gives up",
           "role": "fringe",
           "function": "comment",
-          "searchTerm": "perseverance determined",
           "spokenText": "never gives up",
+          "searchTerm": "perseverance determined",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "never gives up",
-          "result": "added-to-sentence",
-          "style": {
-            "fillColour": "#FFF3D6"
-          },
           "actions": [
             {
               "id": "act-btn-never-gives-up-add",
@@ -489,46 +452,46 @@
               "id": "act-btn-never-gives-up-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "never gives up",
+          "result": "added-to-sentence",
+          "style": {
+            "fillColour": "#FFF3D6"
+          }
         },
         {
           "id": "btn-to-starters",
           "label": "◀ Sentence starters",
           "role": "navigation",
           "function": "navigate",
-          "searchTerm": "back previous page starters",
           "spokenText": "Go back to sentence starters",
+          "searchTerm": "back previous page starters",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "Go back to sentence starters",
-          "result": "navigated",
-          "style": {
-            "fillColour": "#ECECF4"
-          },
           "actions": [
             {
               "id": "act-btn-to-starters-prev",
               "type": "previous-page",
               "targetPageId": "page-starters"
             }
-          ]
+          ],
+          "audioCue": "Go back to sentence starters",
+          "result": "navigated",
+          "style": {
+            "fillColour": "#ECECF4"
+          }
         },
         {
           "id": "btn-speak-sentence-2",
           "label": "🔊 Speak sentence",
           "role": "sentence",
           "function": "reflect",
-          "searchTerm": "speak read sentence aloud",
           "spokenText": "Speak my sentence",
+          "searchTerm": "speak read sentence aloud",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "Speak my sentence",
-          "result": "spoke-sentence",
-          "style": {
-            "fillColour": "#DDEBFF"
-          },
           "actions": [
             {
               "id": "act-btn-speak-sentence-2-speak",
@@ -538,45 +501,45 @@
               "id": "act-btn-speak-sentence-2-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "Speak my sentence",
+          "result": "spoke-sentence",
+          "style": {
+            "fillColour": "#DDEBFF"
+          }
         },
         {
           "id": "btn-undo-2",
           "label": "⌫ Undo",
           "role": "repair",
           "function": "repair",
-          "searchTerm": "undo backspace remove word",
           "spokenText": "Undo the last word",
+          "searchTerm": "undo backspace remove word",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "Undo the last word",
-          "result": "removed-last-word",
-          "style": {
-            "fillColour": "#FFE6E6"
-          },
           "actions": [
             {
               "id": "act-btn-undo-2-remove",
               "type": "remove-last-word"
             }
-          ]
+          ],
+          "audioCue": "Undo the last word",
+          "result": "removed-last-word",
+          "style": {
+            "fillColour": "#FFE6E6"
+          }
         },
         {
           "id": "btn-start-again",
           "label": "Start again",
           "role": "repair",
           "function": "repair",
-          "searchTerm": "clear start again change idea",
           "spokenText": "I want to start again",
+          "searchTerm": "clear start again change idea",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "I want to start again",
-          "result": "cleared-sentence",
-          "style": {
-            "fillColour": "#FFE6E6"
-          },
           "actions": [
             {
               "id": "act-btn-start-again-clear",
@@ -587,23 +550,23 @@
               "type": "speak-text",
               "text": "I want to start again"
             }
-          ]
+          ],
+          "audioCue": "I want to start again",
+          "result": "cleared-sentence",
+          "style": {
+            "fillColour": "#FFE6E6"
+          }
         },
         {
           "id": "btn-help-2",
           "label": "Help please",
           "role": "repair",
           "function": "repair",
-          "searchTerm": "help",
           "spokenText": "Help please",
+          "searchTerm": "help",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "Help please",
-          "result": "selected",
-          "style": {
-            "fillColour": "#FFE6E6"
-          },
           "actions": [
             {
               "id": "act-btn-help-2-speak",
@@ -614,59 +577,70 @@
               "id": "act-btn-help-2-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "Help please",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFE6E6"
+          }
         }
-      ]
+      ],
+      "margin": 18,
+      "backgroundColour": "#f7fbff"
     }
   ],
   "teacherNotes": {
-    "curriculum": "Supports Year 7 English speaking/listening by giving access to opinion, reasoning and evidence language for a short hero speech, and by letting the student assemble and rehearse a whole sentence rather than single words.",
-    "customisation": "Replace the describing words and the hero name with the class text, film, novel or local hero being studied. Add the hero's name as a word button or let the student say it after 'My hero is'.",
-    "repair": "Keep Undo, Start again and Help please available so the student can fix or restart the sentence without losing agency.",
-    "use": "Use for planning, rehearsal or supported oral presentation. The student builds a sentence on one page, crosses to the describing-words page, then speaks the whole sentence. Do not treat the board as the student's full expressive system.",
     "modeling": "Model a complete sentence chain across both pages: My hero is … brave … because … helps others, then press Speak sentence. Accept partial sentences as valid drafting or rehearsal.",
-    "evidence": "sentence built in the message bar; opinion/because/example selection; speak-sentence use; repair (undo, start again) or help request"
+    "evidence": "sentence built in the message bar; opinion/because/example selection; speak-sentence use; repair (undo, start again) or help request",
+    "customisation": "Replace the describing words and the hero name with the class text, film, novel or local hero being studied. Add the hero's name as a word button or let the student say it after 'My hero is'.",
+    "curriculum": "Supports Year 7 English speaking/listening by giving access to opinion, reasoning and evidence language for a short hero speech, and by letting the student assemble and rehearse a whole sentence rather than single words.",
+    "repair": "Keep Undo, Start again and Help please available so the student can fix or restart the sentence without losing agency.",
+    "use": "Use for planning, rehearsal or supported oral presentation. The student builds a sentence on one page, crosses to the describing-words page, then speaks the whole sentence. Do not treat the board as the student's full expressive system."
+  },
+  "systemFit": {
+    "reviewStatus": "team-input-needed",
+    "existingSystem": "Confirm how this support sits alongside the student's established AAC system.",
+    "vocabularyAndMotorPlan": "Confirm familiar vocabulary and stable locations before classroom use.",
+    "symbolFamiliarity": "Confirm that each symbol or text representation is recognised and meaningful.",
+    "accessCalibration": "Confirm access settings on the actual device with the student and team.",
+    "positioningAndVision": "Confirm screen, mounting, seating, visual field, contrast and fatigue conditions.",
+    "languageCultureVoice": "Confirm preferred language, culturally meaningful vocabulary and voice output.",
+    "partnerSignals": "Confirm reliable yes/no, cancel, repair and partner-assisted signals."
   },
   "symbolStrategy": {
     "defaultSource": "ARASAAC search terms",
     "textFallback": true,
     "customMediaPolicy": "teacher-owned local media only unless explicitly approved",
-    "notes": "Search terms prioritise abstract curriculum language; teacher modelling, the sentence bar, and clear text labels matter more than decorative symbols."
+    "notes": "Search terms prioritise abstract curriculum language; teacher modelling, the sentence bar, and clear text labels matter more than decorative symbols.",
+    "reviewRequired": true
   },
   "privacy": {
     "level": "anonymous",
     "containsSensitiveData": false
   },
-  "metadata": {
-    "tags": [
-      "aac",
-      "agent-generated",
-      "proof-of-concept",
-      "curriculum-sentence-builder",
-      "english",
-      "year-7",
-      "sentence-builder",
-      "multi-page",
-      "message-bar"
-    ],
-    "curriculum": "Australian Curriculum English Year 7: expressing a viewpoint, developing spoken texts, using reasons/examples, rehearsing presentation language.",
-    "privacyLevel": "anonymous"
-  },
   "attribution": [
     {
       "source": "ARASAAC",
       "licence": "CC BY-NC-SA",
-      "note": "Symbol search terms are provided for later ARASAAC replacement; confirm exact current licence wording when publishing beyond local classroom use.",
-      "attribution": "The pictographic symbols used are the property of the Government of Aragon and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distributes them under Creative Commons License BY-NC-SA."
+      "attribution": "The pictographic symbols used are the property of the Government of Aragon and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distributes them under Creative Commons License BY-NC-SA.",
+      "note": "Symbol search terms are provided for later ARASAAC replacement; confirm exact current licence wording when publishing beyond local classroom use."
     }
   ],
-  "licences": [
-    {
-      "source": "ARASAAC",
-      "licence": "CC BY-NC-SA",
-      "attribution": "Pictograms by ARASAAC (Government of Aragon) if ARASAAC symbols are later inserted; these HTML drafts use text placeholders only."
-    }
-  ],
+  "messageBar": {
+    "enabled": true,
+    "placeholder": "Build your sentence here.",
+    "speakControl": true,
+    "clearControl": true,
+    "undoControl": true
+  },
+  "navigation": {
+    "model": "two-page sentence builder",
+    "pages": [
+      "page-starters",
+      "page-describe"
+    ],
+    "notes": "Each page keeps Speak sentence, Help, and a navigation button so a gaze or switch user never needs more than nine targets on screen."
+  },
   "sett": {
     "student": "Secondary student can participate through AAC sentence starters, reasons, examples, describing words, and a spoken sentence without needing speech or handwriting as the only route.",
     "environment": "English classroom or rehearsal setting with teacher/peer modelling, keyboard/touch/mouse/gaze access, and intermittent internet.",
@@ -714,5 +688,9 @@
     ],
     "notJudgement": "Prompting, navigation support, or access method should contextualise the speech evidence, not replace judgement about English content.",
     "export": "Use anonymous teacher notes, print/portfolio evidence, or local CSV/report only when needed. Do not include diagnoses, behaviour details, family details, or school IDs."
+  },
+  "provenance": {
+    "fixtureId": "curriculum-sentence-builder",
+    "sourcePrompt": "Make a Year 7 English hero speech sentence-builder board."
   }
 }

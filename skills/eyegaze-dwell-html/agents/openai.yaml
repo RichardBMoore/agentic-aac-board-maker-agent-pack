@@ -4,4 +4,4 @@ interface:
   brand_color: "#7A4CC2"
   default_prompt: "Build a single-file eye-gaze dwell HTML activity for this lesson."
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

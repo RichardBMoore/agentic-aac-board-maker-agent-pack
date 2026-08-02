@@ -1,15 +1,13 @@
 {
-  "schemaVersion": "0.3.0",
+  "schemaVersion": "0.4.0",
   "format": "agentic-aac-board-ir",
-  "app": "Agentic AAC Board Maker",
   "id": "gaze-choice-class-activity",
   "title": "Choose a Class Activity",
-  "name": "Choose a Class Activity",
-  "type": "interactive",
   "purpose": "An eye-gaze/dwell-safe AAC choice board that lets a student choose, request help, or repair the choice when selecting a class activity.",
   "audience": {
     "ageBand": "school-age",
-    "tone": "age-respectful"
+    "tone": "age-respectful",
+    "locale": "en-AU"
   },
   "access": {
     "intended": [
@@ -21,33 +19,27 @@
     "profile": "eye-gaze-dwell",
     "minimumTargetSizePx": 150,
     "dwellTimeMs": 1000,
+    "denseGazeTested": false,
+    "visibleTargetLimit": 9,
+    "setupTargetLimit": 3,
     "switchScanning": false,
     "scanSpeedMs": 1400,
     "scanPattern": "linear",
-    "scanOrder": "dom-order"
+    "scanOrder": "dom-order",
+    "audioCues": true
   },
-  "settings": {
+  "display": {
     "orientation": "landscape",
     "width": 1024,
     "height": 768,
-    "speakLabels": true,
-    "showLabels": true,
-    "dwellTimeMs": 1000,
-    "switchScanning": false,
-    "scanSpeedMs": 1400,
-    "scanPattern": "linear"
+    "backgroundColour": "#f7fbff"
   },
-  "accessibility": {
-    "intendedAccess": [
-      "eye-gaze-dwell",
-      "mouse",
-      "keyboard",
-      "touch"
-    ],
-    "minimumTargetSizePx": 150,
-    "dwellSafe": true,
-    "scanOrder": "dom-order",
-    "audioCues": true
+  "studentControls": {
+    "startBoard": true,
+    "fullScreen": true,
+    "soundCheck": true,
+    "stopSpeechDuringPlayback": true,
+    "teacherPanel": false
   },
   "communicationFunctions": [
     "choose",
@@ -63,32 +55,17 @@
         "rows": 2,
         "columns": 3
       },
-      "gridRows": 2,
-      "gridColumns": 3,
-      "margin": 18,
-      "backgroundColour": "#f7fbff",
       "buttons": [
         {
           "id": "btn-read",
           "label": "Read",
           "role": "fringe",
           "function": "choose",
-          "searchTerm": "reading book",
           "spokenText": "Read",
+          "searchTerm": "reading book",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "Read",
-          "result": "selected",
-          "position": {
-            "x": 0.0,
-            "y": 0,
-            "width": 33.3333,
-            "height": 50
-          },
-          "style": {
-            "fillColour": "#E8F3FF"
-          },
           "actions": [
             {
               "id": "act-btn-read-speak",
@@ -99,29 +76,29 @@
               "id": "act-btn-read-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "Read",
+          "result": "selected",
+          "position": {
+            "x": 0.0,
+            "y": 0,
+            "width": 33.3333,
+            "height": 50
+          },
+          "style": {
+            "fillColour": "#E8F3FF"
+          }
         },
         {
           "id": "btn-art",
           "label": "Art",
           "role": "fringe",
           "function": "choose",
-          "searchTerm": "painting",
           "spokenText": "Art",
+          "searchTerm": "painting",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "Art",
-          "result": "selected",
-          "position": {
-            "x": 33.3333,
-            "y": 0,
-            "width": 33.3333,
-            "height": 50
-          },
-          "style": {
-            "fillColour": "#FFF2CC"
-          },
           "actions": [
             {
               "id": "act-btn-art-speak",
@@ -132,29 +109,29 @@
               "id": "act-btn-art-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "Art",
+          "result": "selected",
+          "position": {
+            "x": 33.3333,
+            "y": 0,
+            "width": 33.3333,
+            "height": 50
+          },
+          "style": {
+            "fillColour": "#FFF2CC"
+          }
         },
         {
           "id": "btn-game",
           "label": "Game",
           "role": "fringe",
           "function": "choose",
-          "searchTerm": "board game",
           "spokenText": "Game",
+          "searchTerm": "board game",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "Game",
-          "result": "selected",
-          "position": {
-            "x": 66.6666,
-            "y": 0,
-            "width": 33.3333,
-            "height": 50
-          },
-          "style": {
-            "fillColour": "#E7F7E7"
-          },
           "actions": [
             {
               "id": "act-btn-game-speak",
@@ -165,29 +142,29 @@
               "id": "act-btn-game-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "Game",
+          "result": "selected",
+          "position": {
+            "x": 66.6666,
+            "y": 0,
+            "width": 33.3333,
+            "height": 50
+          },
+          "style": {
+            "fillColour": "#E7F7E7"
+          }
         },
         {
           "id": "btn-music",
           "label": "Music",
           "role": "fringe",
           "function": "choose",
-          "searchTerm": "music",
           "spokenText": "Music",
+          "searchTerm": "music",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "Music",
-          "result": "selected",
-          "position": {
-            "x": 0.0,
-            "y": 50,
-            "width": 33.3333,
-            "height": 50
-          },
-          "style": {
-            "fillColour": "#F2E8FF"
-          },
           "actions": [
             {
               "id": "act-btn-music-speak",
@@ -198,29 +175,29 @@
               "id": "act-btn-music-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "Music",
+          "result": "selected",
+          "position": {
+            "x": 0.0,
+            "y": 50,
+            "width": 33.3333,
+            "height": 50
+          },
+          "style": {
+            "fillColour": "#F2E8FF"
+          }
         },
         {
           "id": "btn-help",
           "label": "Help",
           "role": "repair",
           "function": "repair",
-          "searchTerm": "help",
           "spokenText": "Help please",
+          "searchTerm": "help",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "Help please",
-          "result": "selected",
-          "position": {
-            "x": 33.3333,
-            "y": 50,
-            "width": 33.3333,
-            "height": 50
-          },
-          "style": {
-            "fillColour": "#FFE6E6"
-          },
           "actions": [
             {
               "id": "act-btn-help-speak",
@@ -231,29 +208,29 @@
               "id": "act-btn-help-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "Help please",
+          "result": "selected",
+          "position": {
+            "x": 33.3333,
+            "y": 50,
+            "width": 33.3333,
+            "height": 50
+          },
+          "style": {
+            "fillColour": "#FFE6E6"
+          }
         },
         {
           "id": "btn-different",
           "label": "Different",
           "role": "repair",
           "function": "repair",
-          "searchTerm": "different",
           "spokenText": "I want something different",
+          "searchTerm": "different",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
-          "audioCue": "I want something different",
-          "result": "selected",
-          "position": {
-            "x": 66.6666,
-            "y": 50,
-            "width": 33.3333,
-            "height": 50
-          },
-          "style": {
-            "fillColour": "#F4F4F4"
-          },
           "actions": [
             {
               "id": "act-btn-different-speak",
@@ -264,9 +241,22 @@
               "id": "act-btn-different-log",
               "type": "log-attempt"
             }
-          ]
+          ],
+          "audioCue": "I want something different",
+          "result": "selected",
+          "position": {
+            "x": 66.6666,
+            "y": 50,
+            "width": 33.3333,
+            "height": 50
+          },
+          "style": {
+            "fillColour": "#F4F4F4"
+          }
         }
-      ]
+      ],
+      "margin": 18,
+      "backgroundColour": "#f7fbff"
     }
   ],
   "teacherNotes": {
@@ -276,41 +266,33 @@
     "access": "Default dwell is 1000 ms. Targets are arranged 2 by 3 with large buttons, visible dwell progress, pointer-leave cancellation, and keyboard fallback.",
     "caveat": "Draft classroom support only. Review with the teaching/SLP/OT team and test on the actual student device/access setup before relying on it."
   },
+  "systemFit": {
+    "reviewStatus": "team-input-needed",
+    "existingSystem": "Confirm how this support sits alongside the student's established AAC system.",
+    "vocabularyAndMotorPlan": "Confirm familiar vocabulary and stable locations before classroom use.",
+    "symbolFamiliarity": "Confirm that each symbol or text representation is recognised and meaningful.",
+    "accessCalibration": "Confirm access settings on the actual device with the student and team.",
+    "positioningAndVision": "Confirm screen, mounting, seating, visual field, contrast and fatigue conditions.",
+    "languageCultureVoice": "Confirm preferred language, culturally meaningful vocabulary and voice output.",
+    "partnerSignals": "Confirm reliable yes/no, cancel, repair and partner-assisted signals."
+  },
   "symbolStrategy": {
     "defaultSource": "ARASAAC search terms",
     "textFallback": true,
     "customMediaPolicy": "teacher-owned local media only unless explicitly approved",
-    "notes": "This proof of concept uses text labels and emoji-style inline icons in HTML, with ARASAAC search terms recorded for later symbol replacement."
+    "notes": "This proof of concept uses text labels and emoji-style inline icons in HTML, with ARASAAC search terms recorded for later symbol replacement.",
+    "reviewRequired": true
   },
   "privacy": {
     "level": "anonymous",
     "containsSensitiveData": false
   },
-  "metadata": {
-    "tags": [
-      "aac",
-      "agent-generated",
-      "proof-of-concept",
-      "eye-gaze",
-      "dwell",
-      "choice-board"
-    ],
-    "curriculum": "Classroom participation and communication access: making choices, requesting help, and repairing communication during shared class activities.",
-    "privacyLevel": "anonymous"
-  },
   "attribution": [
     {
       "source": "ARASAAC",
       "licence": "CC BY-NC-SA",
-      "note": "Symbol search terms are provided for ARASAAC replacement; confirm exact current licence wording when publishing beyond local classroom use.",
-      "attribution": "The pictographic symbols used are the property of the Government of Aragon and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distributes them under Creative Commons License BY-NC-SA."
-    }
-  ],
-  "licences": [
-    {
-      "source": "ARASAAC",
-      "licence": "CC BY-NC-SA",
-      "attribution": "Pictograms by ARASAAC (Government of Aragon) if ARASAAC symbols are later inserted; this HTML draft uses text/emoji placeholders only."
+      "attribution": "The pictographic symbols used are the property of the Government of Aragon and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distributes them under Creative Commons License BY-NC-SA.",
+      "note": "Symbol search terms are provided for ARASAAC replacement; confirm exact current licence wording when publishing beyond local classroom use."
     }
   ],
   "sett": {

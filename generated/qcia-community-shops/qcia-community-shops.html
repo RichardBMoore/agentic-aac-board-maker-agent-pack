@@ -1,254 +1,701 @@
 <!doctype html>
-<html lang="en-AU">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>QCIA Community Access: Going to the Shops</title>
-<style>
-  :root { --bg:#f7fbff; --ink:#102033; --panel:#ffffff; --focus:#003f8f; --accent:#0b6fdd; --repair:#7a1f1f; --shadow:0 10px 30px rgba(16,32,51,.12); --dwell-ms:1100ms; }
-  * { box-sizing:border-box; }
-  body { margin:0; min-height:100vh; min-height:100dvh; font-family:Verdana, Arial, sans-serif; background:var(--bg); color:var(--ink); display:grid; grid-template-rows:auto minmax(0,1fr) auto auto; }
-  header { padding:12px 24px 8px; text-align:center; }
-  h1 { margin:.05rem 0 .25rem; font-size:clamp(1.55rem,2.4vw,2.5rem); }
-  header p { margin:.1rem auto; max-width:1000px; font-size:clamp(.95rem,1.2vw,1.12rem); }
-  main { min-height:0; display:grid; place-items:center; padding:8px 24px 10px; }
-  .board { width:min(1180px,100%); min-height:min(56vh,540px); display:grid; grid-template-columns:repeat(3, minmax(132px,1fr)); grid-template-rows:repeat(3, minmax(132px,1fr)); gap:18px; }
-  .dwell-btn { min-width:132px; min-height:132px; }
-  .aac-button { position:relative; overflow:hidden; border:5px solid #17212b; border-radius:24px; background:var(--fill,#fff); color:var(--ink); box-shadow:var(--shadow); padding:16px 14px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.35rem; cursor:pointer; touch-action:manipulation; text-align:center; }
-  .aac-button.repair { border-style:dashed; }
-  .aac-button.evidence { border-color:#365314; }
-  .aac-button.sentence { border-color:#3730a3; }
-  .scan { position:absolute; top:8px; left:10px; width:30px; height:30px; border:2px solid #17212b; border-radius:999px; display:grid; place-items:center; font-weight:800; background:#fff; }
-  .label { font-size:clamp(1.35rem,2.8vw,2.65rem); line-height:1.05; font-weight:800; }
-  .spoken { font-size:clamp(.82rem,1.1vw,1.1rem); opacity:.86; line-height:1.25; }
-  .aac-button:focus-visible, .aac-button.is-dwelling { outline:8px solid var(--focus); outline-offset:6px; transform:translateY(-2px); }
-  .aac-button.activated { outline:10px solid #087f23; }
-  .dwell-progress { position:absolute; left:0; bottom:0; height:14px; width:0; background:linear-gradient(90deg,#0b6fdd,#22a06b); transition:none; }
-  .aac-button.is-dwelling .dwell-progress { animation:dwellFill var(--dwell-ms) linear forwards; }
-  @keyframes dwellFill { from { width:0; } to { width:100%; } }
-  .controls { display:flex; justify-content:center; gap:16px; padding:0 24px 12px; flex-wrap:wrap; }
-  .control { font-size:1.05rem; min-height:54px; padding:10px 18px; border:3px solid #17212b; border-radius:16px; background:#fff; font-weight:700; }
-  .fullscreen-control { position:relative; overflow:hidden; min-width:160px; min-height:120px; }
-  .fullscreen-control::after { content:""; position:absolute; inset:auto 0 0; height:14px; width:0; background:linear-gradient(90deg,#0b6fdd,#22a06b); }
-  .fullscreen-control.is-dwelling::after { animation:dwellFill var(--dwell-ms) linear forwards; }
-  .fullscreen-control[hidden] { display:none; }
-  .last-message { min-width:min(720px,90vw); text-align:center; font-size:1.15rem; font-weight:700; }
-  details.teacher-notes { margin:0 auto 12px; width:min(1120px,calc(100% - 32px)); background:#fff; border:2px solid #17212b; border-radius:16px; padding:10px 16px; }
-  details.teacher-notes summary { font-weight:800; cursor:pointer; padding:8px; }
-  footer { font-size:.86rem; padding:8px 16px 14px; text-align:center; }
-  @media (max-width:760px) { body { display:block; } .board { grid-template-columns:1fr; grid-template-rows:none; } .aac-button { min-height:132px; } }
-  @media (prefers-reduced-motion:reduce) { .aac-button { transition:none; } .aac-button.is-dwelling .dwell-progress { animation:none; width:100%; } }
-  @media (forced-colors:active) { .aac-button,.control { border:4px solid ButtonText; background:Canvas; color:ButtonText; forced-color-adjust:auto; } .aac-button:focus-visible,.aac-button.is-dwelling { outline:6px solid Highlight; } .dwell-progress { background:Highlight; } }
-  @media print { body { display:block; background:#fff; } header, main, footer { padding:8mm; } .board { display:grid; grid-template-columns:repeat(3,1fr); gap:5mm; min-height:auto; } .aac-button { min-height:34mm; box-shadow:none; break-inside:avoid; border:2.5pt solid #000; } .controls,.dwell-progress { display:none !important; } details.teacher-notes { page-break-before:always; } .spoken { color:#000; } }
-</style>
-</head>
-<body>
-<header>
-  <h1>QCIA Community Access: Going to the Shops</h1>
-  <p>A community access AAC board that supports practical shopping communication, safety/help language, and teacher evidence notes for QCIA-style participation.</p>
-  <p>Access: touch, keyboard, mouse, eye-gaze-dwell. Scan/order note: left-to-right, top-to-bottom.</p>
-</header>
-<main>
-  <section class="board" aria-label="AAC communication board">
-      <button class="aac-button dwell-btn core" style="--fill:#FFFFFF" aria-label="Hello: Hello" data-speak="Hello" data-label="Hello">
-        <span class="scan" aria-hidden="true">1</span>
-        <span class="label">Hello</span>
-        <span class="spoken">Hello</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-      <button class="aac-button dwell-btn fringe" style="--fill:#FFFFFF" aria-label="I want to buy this: I want to buy this" data-speak="I want to buy this" data-label="I want to buy this">
-        <span class="scan" aria-hidden="true">2</span>
-        <span class="label">I want to buy this</span>
-        <span class="spoken">I want to buy this</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-      <button class="aac-button dwell-btn fringe" style="--fill:#FFFFFF" aria-label="Pay now: I am ready to pay" data-speak="I am ready to pay" data-label="Pay now">
-        <span class="scan" aria-hidden="true">3</span>
-        <span class="label">Pay now</span>
-        <span class="spoken">I am ready to pay</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-      <button class="aac-button dwell-btn question" style="--fill:#FFFFFF" aria-label="Where is it?: Where is it?" data-speak="Where is it?" data-label="Where is it?">
-        <span class="scan" aria-hidden="true">4</span>
-        <span class="label">Where is it?</span>
-        <span class="spoken">Where is it?</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-      <button class="aac-button dwell-btn fringe" style="--fill:#FFFFFF" aria-label="I choose this: I choose this one" data-speak="I choose this one" data-label="I choose this">
-        <span class="scan" aria-hidden="true">5</span>
-        <span class="label">I choose this</span>
-        <span class="spoken">I choose this one</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-      <button class="aac-button dwell-btn comment" style="--fill:#FFFFFF" aria-label="Too expensive: That is too expensive" data-speak="That is too expensive" data-label="Too expensive">
-        <span class="scan" aria-hidden="true">6</span>
-        <span class="label">Too expensive</span>
-        <span class="spoken">That is too expensive</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" aria-label="Help please: Help please" data-speak="Help please" data-label="Help please">
-        <span class="scan" aria-hidden="true">7</span>
-        <span class="label">Help please</span>
-        <span class="spoken">Help please</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" aria-label="Stop / wait: Stop, please wait" data-speak="Stop, please wait" data-label="Stop / wait">
-        <span class="scan" aria-hidden="true">8</span>
-        <span class="label">Stop / wait</span>
-        <span class="spoken">Stop, please wait</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-      <button class="aac-button dwell-btn repair" style="--fill:#FFFFFF" aria-label="Finished: I am finished" data-speak="I am finished" data-label="Finished">
-        <span class="scan" aria-hidden="true">9</span>
-        <span class="label">Finished</span>
-        <span class="spoken">I am finished</span>
-        <span class="dwell-progress" aria-hidden="true"></span>
-      </button>
-  </section>
-</main>
-<section class="controls" aria-label="Speech and status controls">
-  <button class="control dwell-btn fullscreen-control" id="fullScreen" type="button" aria-label="Start full screen">⛶ Full screen</button>
-  <button class="control" id="soundCheck" type="button" aria-label="Sound check">🔊 Sound check</button>
-<button class="control" id="stopSpeech" type="button" aria-label="Stop speech">Stop speech</button>
-  <div class="last-message" id="lastMessage" role="status" aria-live="polite">Ready</div>
-</section>
-<details class="teacher-notes">
-  <summary>Teacher notes, customisation, and QA</summary>
-  <p><strong>Modelling:</strong> Model real community phrases before the trip and during role play: greeting, asking where something is, paying, asking for help and saying stop/wait.</p>
-  <p><strong>Evidence:</strong> QCIA evidence can note participation in a familiar community routine, functional communication attempts, help-seeking, choice-making and safety language.</p>
-  <p><strong>Customisation:</strong> Replace shop/item vocabulary with the actual excursion, class enterprise or role-play context. Keep Help, Stop/wait and Finished stable.</p>
-  <p><strong>Privacy:</strong> Use de-identified notes only. Do not record names, behaviour details or community incidents inside the generated files.</p>
-  <p><strong>Safety:</strong> This supports communication during community access; it does not replace adult supervision, risk assessment or emergency processes.</p>
-  <p><strong>Caveat:</strong> Draft classroom support only. Review with the teaching/SLP/OT team and test with the actual student, access method, device and school environment before relying on it.</p>
-</details>
-<footer>
-  Source of truth: <code>qcia-community-shops.ir.json</code>. Privacy: anonymous, no student data. Symbol strategy: ARASAAC search terms with text fallback; HTML uses text-only placeholders.
-</footer>
-<script>
-class DwellManager {
-  constructor(options) {
-    this.dwellMs = options.dwellMs;
-    this.buttons = Array.from(options.buttons);
-    this.lastMessage = options.lastMessage;
-    this.stopSpeech = options.stopSpeech;
-    this.dwellTimer = null;
-    this.dwellActivatedAt = new WeakMap();
-    this.current = null;
-    this.cooldown = new WeakSet();
-  }
-  speak(text) {
-    try {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'en-AU';
-        utterance.onerror = () => this.status('Speech is blocked or unavailable. Press Sound check, then try again.');
-        window.speechSynthesis.speak(utterance);
-      }
-    } catch (error) { console.warn('Speech unavailable', error); }
-  }
-  status(message) { this.lastMessage.textContent = message; }
-  clearDwell(button) {
-    if (this.dwellTimer) clearTimeout(this.dwellTimer);
-    this.dwellTimer = null;
-    if (button) button.classList.remove('is-dwelling');
-    this.current = null;
-  }
-  activate(button) {
-    this.clearDwell(button);
-    const text = button.dataset.speak || button.textContent.trim();
-    this.lastMessage.textContent = 'Selected: ' + text;
-    this.speak(text);
-    button.classList.add('activated');
-    setTimeout(() => button.classList.remove('activated'), 650);
-    this.cooldown.add(button);
-  }
-  recentDwellActivation(button) {
-    return performance.now() - (this.dwellActivatedAt.get(button) || -Infinity) < 800;
-  }
-  startDwell(button) {
-    if (this.cooldown.has(button)) return;
-    this.clearDwell(this.current);
-    this.current = button;
-    button.classList.add('is-dwelling');
-    this.dwellTimer = setTimeout(() => { this.dwellActivatedAt.set(button, performance.now()); this.activate(button); }, this.dwellMs);
-  }
-  bind() {
-    this.buttons.forEach(button => {
-      button.addEventListener('pointerenter', () => this.startDwell(button));
-      button.addEventListener('pointerleave', () => { this.cooldown.delete(button); this.clearDwell(button); });
-      button.addEventListener('focus', () => { this.lastMessage.textContent = 'Focus: ' + (button.dataset.label || button.textContent.trim()); });
-      button.addEventListener('blur', () => { this.cooldown.delete(button); this.clearDwell(button); });
-      button.addEventListener('click', () => { if (this.recentDwellActivation(button)) return; this.activate(button); });
-      button.addEventListener('keydown', event => {
-        if (event.key === 'Escape') this.clearDwell(button);
-      });
-    });
-    this.stopSpeech.addEventListener('click', () => {
-      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-      this.lastMessage.textContent = 'Speech stopped';
-    });
-    document.addEventListener('keydown', event => {
-      if (event.key === 'Escape') {
-        this.clearDwell(this.current);
-        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-      }
-    });
-  }
-}
-function setupFullScreen(button, statusEl, dwellMs) {
-  let timer = null;
-  const status = message => { if (statusEl) statusEl.textContent = message; };
-  const clear = () => {
-    if (timer) clearTimeout(timer);
-    timer = null;
-    button.classList.remove('is-dwelling');
-  };
-  const request = source => {
-    clear();
-    if (document.fullscreenElement) return Promise.resolve(true);
-    if (!document.documentElement.requestFullscreen) {
-      status('Full screen is unavailable. Press F11 or ask EQ IT for kiosk mode.');
-      return Promise.resolve(false);
+<html lang="en-AU" data-runtime-sha256="6618cf41c5c30094d0a1523640748625009bff7daaeedd50f3445ac1b89e0ab2">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>QCIA Community Access: Going to the Shops</title><style>
+:root { --min-target: 132px; --dwell-ms: 1100ms; --ink:#17212b; --focus:#005fcc; --repair:#ffe3e3; }
+* { box-sizing:border-box; }
+html, body { margin:0; min-height:100%; font-family:Verdana,Arial,sans-serif; color:var(--ink); background:#f7fbff; }
+body { min-height:100vh; }
+button { font:inherit; color:inherit; }
+[hidden] { display:none !important; }
+.skip-link { position:absolute; left:-9999px; } .skip-link:focus { left:8px; top:8px; z-index:20; background:white; padding:8px; }
+.setup-screen, .speech-layer { min-height:100vh; display:grid; place-content:center; gap:20px; padding:24px; text-align:center; }
+.setup-controls { display:flex; flex-wrap:wrap; justify-content:center; gap:24px; }
+.student-layer { min-height:100vh; padding:12px; }
+.page-title { margin:0 0 8px; text-align:center; font-size:clamp(1.1rem,2.4vw,1.8rem); }
+.board-grid { min-height:calc(100vh - 84px); display:grid; grid-template-columns:repeat(var(--grid-columns), minmax(var(--min-target),1fr)); grid-template-rows:repeat(var(--grid-rows), minmax(var(--min-target),1fr)); gap:12px; }
+.message-bar + .board-page .board-grid, .message-bar ~ .board-page .board-grid { min-height:calc(100vh - 160px); }
+.message-bar { margin:0 auto 10px; max-width:1200px; min-height:60px; padding:10px 16px; border:3px solid var(--ink); border-radius:14px; background:white; font-size:clamp(1rem,2.2vw,1.5rem); }
+.is-placeholder { color:#58636e; }
+.dwell-btn { position:relative; overflow:hidden; min-width:var(--min-target); min-height:var(--min-target); border:4px solid var(--ink); border-radius:18px; background:#fff; padding:12px; font-size:clamp(1rem,2.5vw,1.6rem); font-weight:700; cursor:pointer; touch-action:manipulation; }
+.dwell-btn:focus-visible { outline:6px solid var(--focus); outline-offset:3px; }
+.role-repair { background:var(--repair); } .role-navigation { background:#e8eef4; }
+.dwell-progress { position:absolute; inset:auto 0 0; height:10px; background:#ffbf00; transform:scaleX(0); transform-origin:left; }
+.is-dwelling .dwell-progress { animation:dwell-fill var(--dwell-ms) linear forwards; }
+.was-activated { filter:brightness(.82); }
+.symbol { display:block; max-width:55%; max-height:55%; margin:0 auto 8px; object-fit:contain; }
+.speech-layer { position:fixed; inset:0; z-index:10; background:#f7fbff; }
+.speech-active #student-layer, .speech-active #setup-screen { visibility:hidden; }
+.stop-control { min-width:min(70vw,420px); min-height:min(55vh,320px); background:#ffe3e3; font-size:clamp(1.4rem,4vw,2.4rem); }
+.board-status { position:fixed; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
+.teacher-panel { display:none; margin:18px; padding:18px; border:2px solid #555; background:white; }
+body.teacher-mode .teacher-panel { display:block; }
+.attribution { font-size:.75rem; }
+@keyframes dwell-fill { to { transform:scaleX(1); } }
+@media (max-width:760px) { .board-grid { gap:7px; } .dwell-btn { padding:7px; } }
+@media (forced-colors:active) { .dwell-btn { border-color:ButtonText; forced-color-adjust:auto; } .dwell-progress { background:Highlight; } }
+@media print { .setup-screen,.speech-layer,.board-status { display:none !important; } .student-layer,.teacher-panel { display:block !important; } .board-page { break-after:page; } .board-page[hidden] { display:block !important; } .board-grid { min-height:auto; } .dwell-btn { min-height:110px; } }
+</style></head>
+<body data-access-profile="mixed-access" data-dwell-enabled="true" data-min-target="132" data-visible-target-limit="9" data-setup-target-limit="3">
+<a class="skip-link" href="#student-layer">Skip to board</a>
+<section id="setup-screen" class="setup-screen" aria-label="Board setup"><h1>QCIA Community Access: Going to the Shops</h1><p>Choose Start board when positioning and access are ready.</p><div class="setup-controls"><button id="start" class="dwell-btn setup-control primary" type="button" data-control="start" data-student-target data-dwell aria-label="Start board"><span class="label">Start board</span><span class="dwell-progress" aria-hidden="true"></span></button><button id="full-screen" class="dwell-btn setup-control" type="button" data-control="full-screen" data-student-target data-dwell aria-label="Full screen"><span class="label">Full screen</span><span class="dwell-progress" aria-hidden="true"></span></button><button id="sound-check" class="dwell-btn setup-control" type="button" data-control="sound-check" data-student-target data-dwell aria-label="Sound check"><span class="label">Sound check</span><span class="dwell-progress" aria-hidden="true"></span></button></div></section>
+<main id="student-layer" class="student-layer" hidden><section class="board-page" data-page-id="page-main" aria-label="Main"><h2 class="page-title">Main</h2><div class="board-grid" style="--grid-rows:3;--grid-columns:3"><button id="btn-hello" class="dwell-btn board-button role-core" type="button" data-button-id="btn-hello" data-label="Hello" data-spoken="Hello" data-actions="[{&quot;id&quot;:&quot;act-btn-hello-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Hello&quot;},{&quot;id&quot;:&quot;act-btn-hello-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Hello"><span class="label">Hello</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-buy" class="dwell-btn board-button role-fringe" type="button" data-button-id="btn-buy" data-label="I want to buy this" data-spoken="I want to buy this" data-actions="[{&quot;id&quot;:&quot;act-btn-buy-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;I want to buy this&quot;},{&quot;id&quot;:&quot;act-btn-buy-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="I want to buy this"><span class="label">I want to buy this</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-pay" class="dwell-btn board-button role-fringe" type="button" data-button-id="btn-pay" data-label="Pay now" data-spoken="I am ready to pay" data-actions="[{&quot;id&quot;:&quot;act-btn-pay-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;I am ready to pay&quot;},{&quot;id&quot;:&quot;act-btn-pay-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Pay now"><span class="label">Pay now</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-where" class="dwell-btn board-button role-question" type="button" data-button-id="btn-where" data-label="Where is it?" data-spoken="Where is it?" data-actions="[{&quot;id&quot;:&quot;act-btn-where-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Where is it?&quot;},{&quot;id&quot;:&quot;act-btn-where-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Where is it?"><span class="label">Where is it?</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-choose" class="dwell-btn board-button role-fringe" type="button" data-button-id="btn-choose" data-label="I choose this" data-spoken="I choose this one" data-actions="[{&quot;id&quot;:&quot;act-btn-choose-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;I choose this one&quot;},{&quot;id&quot;:&quot;act-btn-choose-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="I choose this"><span class="label">I choose this</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-too-much" class="dwell-btn board-button role-comment" type="button" data-button-id="btn-too-much" data-label="Too expensive" data-spoken="That is too expensive" data-actions="[{&quot;id&quot;:&quot;act-btn-too-much-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;That is too expensive&quot;},{&quot;id&quot;:&quot;act-btn-too-much-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Too expensive"><span class="label">Too expensive</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-help" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-help" data-label="Help please" data-spoken="Help please" data-actions="[{&quot;id&quot;:&quot;act-btn-help-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Help please&quot;},{&quot;id&quot;:&quot;act-btn-help-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Help please"><span class="label">Help please</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-stop" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-stop" data-label="Stop / wait" data-spoken="Stop, please wait" data-actions="[{&quot;id&quot;:&quot;act-btn-stop-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Stop, please wait&quot;},{&quot;id&quot;:&quot;act-btn-stop-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Stop / wait"><span class="label">Stop / wait</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button id="btn-finished" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-finished" data-label="Finished" data-spoken="I am finished" data-actions="[{&quot;id&quot;:&quot;act-btn-finished-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;I am finished&quot;},{&quot;id&quot;:&quot;act-btn-finished-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Finished"><span class="label">Finished</span><span class="dwell-progress" aria-hidden="true"></span></button></div></section></main>
+<section id="speech-layer" class="speech-layer" aria-label="Speech controls" hidden><button id="stop-speech" class="dwell-btn stop-control" type="button" data-control="stop-speech" data-student-target data-dwell aria-label="Stop speech"><span class="label">Stop speech</span><span class="dwell-progress" aria-hidden="true"></span></button></section>
+<div id="board-status" class="board-status" role="status" aria-live="polite">Board ready.</div>
+<aside class="teacher-panel"><h2>Teacher notes</h2><p><strong>Model:</strong> Model real community phrases before the trip and during role play: greeting, asking where something is, paying, asking for help and saying stop/wait.</p><p><strong>Evidence:</strong> QCIA evidence can note participation in a familiar community routine, functional communication attempts, help-seeking, choice-making and safety language.</p><p><strong>Customise:</strong> Replace shop/item vocabulary with the actual excursion, class enterprise or role-play context. Keep Help, Stop/wait and Finished stable.</p><p class="attribution">ARASAAC: CC BY-NC-SA. Text fallback remains available. ARASAAC pictograms, when embedded, require their stated attribution.</p></aside>
+<script id="aac-board-ir" type="application/json">{
+  "schemaVersion": "0.4.0",
+  "format": "agentic-aac-board-ir",
+  "id": "qcia-community-shops",
+  "title": "QCIA Community Access: Going to the Shops",
+  "purpose": "A community access AAC board that supports practical shopping communication, safety/help language, and teacher evidence notes for QCIA-style participation.",
+  "audience": {
+    "ageBand": "secondary",
+    "tone": "age-respectful, practical",
+    "locale": "en-AU"
+  },
+  "access": {
+    "intended": [
+      "touch",
+      "keyboard",
+      "mouse",
+      "eye-gaze-dwell"
+    ],
+    "profile": "mixed-access",
+    "minimumTargetSizePx": 132,
+    "dwellTimeMs": 1100,
+    "denseGazeTested": false,
+    "visibleTargetLimit": 9,
+    "setupTargetLimit": 3,
+    "switchScanning": false,
+    "scanSpeedMs": 1400,
+    "scanPattern": "linear",
+    "scanOrder": "left-to-right, top-to-bottom",
+    "audioCues": true
+  },
+  "display": {
+    "orientation": "landscape",
+    "width": 1024,
+    "height": 768,
+    "backgroundColour": "#f7fbff"
+  },
+  "studentControls": {
+    "startBoard": true,
+    "fullScreen": true,
+    "soundCheck": true,
+    "stopSpeechDuringPlayback": true,
+    "teacherPanel": false
+  },
+  "communicationFunctions": [
+    "ask",
+    "choose",
+    "comment",
+    "initiate",
+    "refuse",
+    "regulate-rest",
+    "repair",
+    "request"
+  ],
+  "pages": [
+    {
+      "id": "page-main",
+      "name": "Main",
+      "pattern": "community-access-board",
+      "layout": "grid",
+      "grid": {
+        "rows": 3,
+        "columns": 3
+      },
+      "buttons": [
+        {
+          "id": "btn-hello",
+          "label": "Hello",
+          "role": "core",
+          "function": "initiate",
+          "spokenText": "Hello",
+          "searchTerm": "hello greeting",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-hello-speak",
+              "type": "speak-text",
+              "text": "Hello"
+            },
+            {
+              "id": "act-btn-hello-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "Hello",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-buy",
+          "label": "I want to buy this",
+          "role": "fringe",
+          "function": "request",
+          "spokenText": "I want to buy this",
+          "searchTerm": "buy item",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-buy-speak",
+              "type": "speak-text",
+              "text": "I want to buy this"
+            },
+            {
+              "id": "act-btn-buy-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "I want to buy this",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-pay",
+          "label": "Pay now",
+          "role": "fringe",
+          "function": "request",
+          "spokenText": "I am ready to pay",
+          "searchTerm": "pay money",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-pay-speak",
+              "type": "speak-text",
+              "text": "I am ready to pay"
+            },
+            {
+              "id": "act-btn-pay-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "I am ready to pay",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-where",
+          "label": "Where is it?",
+          "role": "question",
+          "function": "ask",
+          "spokenText": "Where is it?",
+          "searchTerm": "where question",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-where-speak",
+              "type": "speak-text",
+              "text": "Where is it?"
+            },
+            {
+              "id": "act-btn-where-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "Where is it?",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-choose",
+          "label": "I choose this",
+          "role": "fringe",
+          "function": "choose",
+          "spokenText": "I choose this one",
+          "searchTerm": "choose",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-choose-speak",
+              "type": "speak-text",
+              "text": "I choose this one"
+            },
+            {
+              "id": "act-btn-choose-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "I choose this one",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-too-much",
+          "label": "Too expensive",
+          "role": "comment",
+          "function": "comment",
+          "spokenText": "That is too expensive",
+          "searchTerm": "expensive",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-too-much-speak",
+              "type": "speak-text",
+              "text": "That is too expensive"
+            },
+            {
+              "id": "act-btn-too-much-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "That is too expensive",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-help",
+          "label": "Help please",
+          "role": "repair",
+          "function": "repair",
+          "spokenText": "Help please",
+          "searchTerm": "help",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-help-speak",
+              "type": "speak-text",
+              "text": "Help please"
+            },
+            {
+              "id": "act-btn-help-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "Help please",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-stop",
+          "label": "Stop / wait",
+          "role": "repair",
+          "function": "refuse",
+          "spokenText": "Stop, please wait",
+          "searchTerm": "stop wait",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-stop-speak",
+              "type": "speak-text",
+              "text": "Stop, please wait"
+            },
+            {
+              "id": "act-btn-stop-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "Stop, please wait",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        },
+        {
+          "id": "btn-finished",
+          "label": "Finished",
+          "role": "repair",
+          "function": "regulate-rest",
+          "spokenText": "I am finished",
+          "searchTerm": "finished",
+          "symbolId": null,
+          "symbolSrc": "",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-finished-speak",
+              "type": "speak-text",
+              "text": "I am finished"
+            },
+            {
+              "id": "act-btn-finished-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "I am finished",
+          "result": "selected",
+          "style": {
+            "fillColour": "#FFFFFF"
+          }
+        }
+      ],
+      "margin": 18,
+      "backgroundColour": "#f7fbff"
     }
-    return document.documentElement.requestFullscreen().then(() => {
-      status('Full screen is on. Press Escape to leave.');
-      return true;
-    }).catch(() => {
-      status(source === 'startup'
-        ? 'For best eye-gaze access, choose Full screen. EQ IT can allow automatic full screen.'
-        : 'Full screen was blocked. Use click or Enter, press F11, or ask EQ IT for managed full screen.');
-      return false;
-    });
+  ],
+  "teacherNotes": {
+    "modeling": "Model real community phrases before the trip and during role play: greeting, asking where something is, paying, asking for help and saying stop/wait.",
+    "evidence": "QCIA evidence can note participation in a familiar community routine, functional communication attempts, help-seeking, choice-making and safety language.",
+    "customisation": "Replace shop/item vocabulary with the actual excursion, class enterprise or role-play context. Keep Help, Stop/wait and Finished stable.",
+    "privacy": "Use de-identified notes only. Do not record names, behaviour details or community incidents inside the generated files.",
+    "safety": "This supports communication during community access; it does not replace adult supervision, risk assessment or emergency processes."
+  },
+  "systemFit": {
+    "reviewStatus": "team-input-needed",
+    "existingSystem": "Confirm how this support sits alongside the student's established AAC system.",
+    "vocabularyAndMotorPlan": "Confirm familiar vocabulary and stable locations before classroom use.",
+    "symbolFamiliarity": "Confirm that each symbol or text representation is recognised and meaningful.",
+    "accessCalibration": "Confirm access settings on the actual device with the student and team.",
+    "positioningAndVision": "Confirm screen, mounting, seating, visual field, contrast and fatigue conditions.",
+    "languageCultureVoice": "Confirm preferred language, culturally meaningful vocabulary and voice output.",
+    "partnerSignals": "Confirm reliable yes/no, cancel, repair and partner-assisted signals."
+  },
+  "symbolStrategy": {
+    "defaultSource": "ARASAAC search terms",
+    "textFallback": true,
+    "customMediaPolicy": "teacher-owned local media only unless explicitly approved",
+    "notes": "Search terms are practical community/shop terms; local photos of familiar shops may be inserted by staff if owned/approved.",
+    "reviewRequired": true
+  },
+  "privacy": {
+    "level": "anonymous",
+    "containsSensitiveData": false
+  },
+  "attribution": [
+    {
+      "source": "ARASAAC",
+      "licence": "CC BY-NC-SA",
+      "attribution": "The pictographic symbols used are the property of the Government of Aragon and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distributes them under Creative Commons License BY-NC-SA.",
+      "note": "Symbol search terms are provided for later ARASAAC replacement; confirm exact current licence wording when publishing beyond local classroom use."
+    }
+  ],
+  "sett": {
+    "student": "Student can use AAC to participate in shopping role-play or community access through greetings, requesting, asking, refusing, and help-seeking.",
+    "environment": "Classroom role-play, school enterprise, or supervised community context with adult safety support and local-first device use.",
+    "task": "Communicate during a familiar shopping routine while staying able to ask for help, wait, or finish.",
+    "tools": "Nine-button board, stable help/stop/finished options, spoken labels, text fallback, and teacher evidence notes."
+  },
+  "udl": {
+    "engagement": [
+      "Meaningful choice",
+      "safe repair route",
+      "wait time and partner response"
+    ],
+    "representation": [
+      "short text labels",
+      "spoken output",
+      "symbol/search-term or text fallback"
+    ],
+    "actionExpression": [
+      "touch",
+      "keyboard",
+      "mouse",
+      "eye-gaze-dwell"
+    ]
+  },
+  "differentiation": {
+    "content": "Preserve functional community participation while reducing speech and environmental access barriers.",
+    "process": "Model key vocabulary, provide wait time, allow rehearsal/repetition, and accept multimodal communication.",
+    "product": "Accept observed AAC selections, role-play evidence, photo/portfolio notes, or anonymous session summary.",
+    "environment": "Use a calm, predictable, local-first layout with teacher controls separate from student choices.",
+    "support": "Teaching, SLP, OT, family, and student/team review should personalise vocabulary and access before reliance."
+  },
+  "participationBarriers": [
+    {
+      "barrier": "Community routines assume speech, fast responses, money handling, and environmental noise.",
+      "support": "Provide prepared functional phrases, help/safety language, wait time, and adult modelling."
+    }
+  ],
+  "evidencePlan": {
+    "observable": [
+      "greeting",
+      "request to buy",
+      "question",
+      "choice",
+      "help or stop/wait message"
+    ],
+    "notJudgement": "Adult safety support and access prompts are recorded as context, not as reduced QCIA achievement.",
+    "export": "Use anonymous teacher notes, print/portfolio evidence, or local CSV/report only when needed. Do not include diagnoses, behaviour details, family details, or school IDs."
+  },
+  "provenance": {
+    "fixtureId": "qcia-community-shops",
+    "sourcePrompt": "Create a QCIA community access board for going to the shops."
+  }
+}</script>
+<script>if(new URLSearchParams(location.search).get("teacher")==="1")document.body.classList.add("teacher-mode");</script>
+<!-- shared-runtime-sha256:6618cf41c5c30094d0a1523640748625009bff7daaeedd50f3445ac1b89e0ab2 -->
+<script data-aac-shared-runtime>/* Agentic AAC Board shared runtime. Keep this file dependency-free and offline-safe. */
+(() => {
+  "use strict";
+
+  const documentRoot = document.documentElement;
+  const irNode = document.getElementById("aac-board-ir");
+  if (!irNode) throw new Error("AAC Board IR payload is missing");
+  const ir = JSON.parse(irNode.textContent);
+  const state = { activePageId: ir.pages[0]?.id || "", words: [], started: false, speaking: false };
+  const setup = document.getElementById("setup-screen");
+  const studentLayer = document.getElementById("student-layer");
+  const speechLayer = document.getElementById("speech-layer");
+  const messageText = document.getElementById("message-text");
+  const status = document.getElementById("board-status");
+  let speechToken = 0;
+
+  const isRendered = (element) => {
+    if (!(element instanceof HTMLElement)) return false;
+    if (element.hidden || element.closest("[hidden]")) return false;
+    const style = getComputedStyle(element);
+    return style.display !== "none" && style.visibility !== "hidden";
   };
-  const enterEvent = window.PointerEvent ? 'pointerenter' : 'mouseenter';
-  const leaveEvent = window.PointerEvent ? 'pointerleave' : 'mouseleave';
-  button.addEventListener(enterEvent, () => {
-    clear();
-    button.classList.add('is-dwelling');
-    timer = setTimeout(() => request('dwell'), dwellMs);
+
+  const visibleTargets = () => [...document.querySelectorAll("[data-student-target]")].filter(isRendered);
+
+  const auditVisibleTargets = () => {
+    const targets = visibleTargets();
+    const phase = state.speaking ? "speech" : state.started ? "board" : "setup";
+    const limit = Number(
+      phase === "setup" ? ir.access.setupTargetLimit : phase === "speech" ? 1 : ir.access.visibleTargetLimit
+    );
+    const audit = {
+      phase,
+      count: targets.length,
+      limit,
+      ok: targets.length <= limit,
+      ids: targets.map((target) => target.id || target.dataset.buttonId || target.dataset.control || "unidentified"),
+    };
+    documentRoot.dataset.visibleTargetCount = String(audit.count);
+    documentRoot.dataset.visibleTargetLimit = String(audit.limit);
+    documentRoot.dataset.visibleTargetAudit = audit.ok ? "pass" : "fail";
+    if (!audit.ok) console.error("AAC visible-target limit exceeded", audit);
+    return audit;
+  };
+
+  const announce = (message) => {
+    if (status) status.textContent = message;
+  };
+
+  const updateMessage = () => {
+    if (!messageText) return;
+    messageText.textContent = state.words.length ? state.words.join(" ") : messageText.dataset.placeholder;
+    messageText.classList.toggle("is-placeholder", state.words.length === 0);
+  };
+
+  const setSpeechMode = (enabled) => {
+    state.speaking = enabled;
+    document.body.classList.toggle("speech-active", enabled);
+    if (speechLayer) speechLayer.hidden = !enabled;
+    if (studentLayer) studentLayer.inert = enabled;
+    if (setup) setup.inert = enabled;
+    auditVisibleTargets();
+    if (enabled) document.getElementById("stop-speech")?.focus({ preventScroll: true });
+  };
+
+  const stopSpeech = () => {
+    speechToken += 1;
+    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+    setSpeechMode(false);
+    announce("Speech stopped.");
+  };
+
+  const speak = (value) => {
+    const phrase = String(value || "").trim();
+    if (!phrase) return;
+    if (!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined") {
+      announce(`Speech is unavailable. Message: ${phrase}`);
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const token = ++speechToken;
+    const utterance = new SpeechSynthesisUtterance(phrase);
+    utterance.lang = ir.audience.locale || "en-AU";
+    utterance.onstart = () => {
+      if (token === speechToken && ir.studentControls.stopSpeechDuringPlayback) setSpeechMode(true);
+      announce(`Speaking: ${phrase}`);
+    };
+    const finish = () => {
+      if (token !== speechToken) return;
+      setSpeechMode(false);
+      announce(`Spoken: ${phrase}`);
+    };
+    utterance.onend = finish;
+    utterance.onerror = () => {
+      if (token !== speechToken) return;
+      setSpeechMode(false);
+      announce("Speech could not be played on this device.");
+    };
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const showPage = (pageId) => {
+    const page = ir.pages.find((candidate) => candidate.id === pageId);
+    if (!page) {
+      announce(`Page ${pageId} is unavailable.`);
+      return;
+    }
+    state.activePageId = pageId;
+    document.querySelectorAll("[data-page-id]").forEach((element) => {
+      element.hidden = element.dataset.pageId !== pageId;
+    });
+    announce(`${page.name} page.`);
+    auditVisibleTargets();
+    document.querySelector(`[data-page-id="${CSS.escape(pageId)}"] [data-student-target]`)?.focus({ preventScroll: true });
+  };
+
+  const adjacentPage = (offset) => {
+    const index = ir.pages.findIndex((page) => page.id === state.activePageId);
+    const page = ir.pages[index + offset];
+    if (page) showPage(page.id);
+  };
+
+  const runAction = (action, button) => {
+    switch (action.type) {
+      case "speak-text": speak(action.text || button.dataset.spoken); break;
+      case "speak-label": speak(button.dataset.label); break;
+      case "add-to-message": state.words.push(action.text || button.dataset.spoken || button.dataset.label); updateMessage(); break;
+      case "speak-message": speak(state.words.join(" ")); break;
+      case "remove-last-word": state.words.pop(); updateMessage(); announce("Last word removed."); break;
+      case "clear-message": state.words = []; updateMessage(); announce("Message cleared."); break;
+      case "navigate-page": showPage(action.targetPageId || action.pageId); break;
+      case "next-page": adjacentPage(1); break;
+      case "previous-page": adjacentPage(-1); break;
+      case "log-attempt": document.dispatchEvent(new CustomEvent("aac-attempt", { detail: { buttonId: button.dataset.buttonId } })); break;
+      case "mark-correct":
+      case "mark-incorrect": document.dispatchEvent(new CustomEvent("aac-evidence", { detail: { type: action.type, buttonId: button.dataset.buttonId } })); break;
+      default: console.warn("Unsupported AAC action", action.type);
+    }
+  };
+
+  const activate = (button) => {
+    if (!(button instanceof HTMLElement) || button.disabled || state.speaking) return;
+    const actions = JSON.parse(button.dataset.actions || "[]");
+    actions.forEach((action) => runAction(action, button));
+    button.classList.add("was-activated");
+    window.setTimeout(() => button.classList.remove("was-activated"), 240);
+  };
+
+  class DwellController {
+    constructor(milliseconds) {
+      this.milliseconds = milliseconds;
+      this.timer = 0;
+      this.target = null;
+      this.startedAt = 0;
+    }
+    attach(root = document) {
+      root.querySelectorAll("[data-dwell]").forEach((target) => {
+        target.addEventListener("pointerenter", () => this.begin(target));
+        target.addEventListener("pointerleave", () => this.cancel(target));
+        target.addEventListener("pointercancel", () => this.cancel(target));
+        target.addEventListener("blur", () => this.cancel(target));
+        target.addEventListener("click", (event) => {
+          if (target.dataset.dwellActivated === "true") {
+            target.dataset.dwellActivated = "false";
+            event.preventDefault();
+            return;
+          }
+          this.cancel(target);
+          this.dispatch(target);
+        });
+      });
+    }
+    begin(target) {
+      if (target.disabled || !isRendered(target)) return;
+      this.cancel();
+      this.target = target;
+      this.startedAt = performance.now();
+      target.classList.add("is-dwelling");
+      target.style.setProperty("--dwell-ms", `${this.milliseconds}ms`);
+      this.timer = window.setTimeout(() => {
+        target.dataset.dwellActivated = "true";
+        this.dispatch(target);
+        this.cancel(target);
+        window.setTimeout(() => { target.dataset.dwellActivated = "false"; }, 900);
+      }, this.milliseconds);
+    }
+    cancel(target = null) {
+      if (target && target !== this.target) return;
+      window.clearTimeout(this.timer);
+      this.target?.classList.remove("is-dwelling");
+      this.timer = 0;
+      this.target = null;
+    }
+    dispatch(target) {
+      if (target.matches("[data-button-id]")) activate(target);
+      else target.dispatchEvent(new CustomEvent("aac-control", { bubbles: true }));
+    }
+  }
+
+  const startBoard = () => {
+    state.started = true;
+    if (setup) setup.hidden = true;
+    if (studentLayer) studentLayer.hidden = false;
+    showPage(state.activePageId);
+  };
+
+  document.addEventListener("aac-control", async (event) => {
+    const control = event.target.closest("[data-control]")?.dataset.control;
+    if (control === "start") startBoard();
+    if (control === "sound-check") speak("Sound check ready");
+    if (control === "stop-speech") stopSpeech();
+    if (control === "full-screen") {
+      try {
+        await document.documentElement.requestFullscreen();
+        announce("Full screen opened.");
+      } catch (_error) {
+        announce("Full screen was blocked. The board is still ready to use.");
+      }
+    }
   });
-  button.addEventListener(leaveEvent, clear);
-  button.addEventListener('blur', clear);
-  button.addEventListener('click', () => request('click'));
-  document.addEventListener('fullscreenchange', () => {
-    button.hidden = Boolean(document.fullscreenElement);
-    if (!document.fullscreenElement) status('For best eye-gaze access, choose Full screen.');
+
+  const dwell = new DwellController(Number(ir.access.dwellTimeMs || 1200));
+  dwell.attach();
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    dwell.cancel();
+    if (state.speaking) stopSpeech();
+    else announce("Dwell cancelled.");
   });
-  window.addEventListener('load', () => request('startup'), { once:true });
-}
-const dwellManager = new DwellManager({
-  dwellMs: 1100,
-  buttons: document.querySelectorAll('.aac-button'),
-  lastMessage: document.getElementById('lastMessage'),
-  stopSpeech: document.getElementById('stopSpeech')
-});
-dwellManager.bind();
-document.getElementById('soundCheck').addEventListener('click', () => {
-  dwellManager.status('Sound is on.');
-  dwellManager.speak('Sound is on');
-});
-setupFullScreen(document.getElementById('fullScreen'), document.getElementById('lastMessage'), 1100);
+  updateMessage();
+  if (!ir.studentControls.startBoard) startBoard();
+  else auditVisibleTargets();
+
+  window.AACBoard = Object.freeze({
+    ir,
+    state,
+    start: startBoard,
+    stopSpeech,
+    navigate: showPage,
+    activate: (buttonId) => activate(document.querySelector(`[data-button-id="${CSS.escape(buttonId)}"]`)),
+    countVisibleTargets: () => visibleTargets().length,
+    auditVisibleTargets,
+  });
+})();
 </script>
-</body>
-</html>
+</body></html>
