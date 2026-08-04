@@ -20,8 +20,9 @@ For a non-AAC custom dwell activity, reuse the same runtime/interaction contract
 
 ## Device Context
 
-- Eye tracking commonly presents as a Windows pointer; test pointer enter/leave, not touch alone.
+- Eye tracking commonly presents as a Windows pointer; test pointer enter/leave, not touch alone. On NuVoice Accents the OS itself dwell-clicks (Windows Dwell default 1.0 s), so click activation is first-class on-device, not a fallback.
 - PRC-Saltillo Accent browser access depends on device configuration; test the actual Accent/Edge setup rather than assuming desktop results transfer.
+- The browser viewport on a real Accent is far smaller than the native resolution (Windows scaling, NuVoice Key Mode, Empower browser chrome). Layout/fit, engine baseline and OneDrive/EQ delivery are owned by `../accent-display-fit/SKILL.md` — apply it to every Accent-bound build.
 - Student-use files must work offline/from `file:///` unless the user explicitly accepts hosting.
 - Use Australian English by default and retain keyboard/click fallbacks for staff and alternative access.
 

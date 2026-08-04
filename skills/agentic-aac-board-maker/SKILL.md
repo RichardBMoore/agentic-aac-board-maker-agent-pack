@@ -5,7 +5,7 @@ license: MIT
 metadata:
   hermes:
     tags: [aac, agentic-ai, board-generation, communication-rights, core-vocabulary, aided-language, qcia, curriculum, eye-gaze, switch-scanning, print, offline-html]
-    related_skills: [open-aac-studio-board-builder, build-aac-student-supports, eyegaze-dwell-html, richard-school-resource-workflow]
+    related_skills: [open-aac-studio-board-builder, build-aac-student-supports, eyegaze-dwell-html, accent-display-fit, richard-school-resource-workflow]
 ---
 
 # Agentic AAC Board Maker
@@ -54,7 +54,7 @@ Read these files based on task type:
 - `templates/board-json-skeleton.json` — portable board data skeleton.
 - `templates/single-file-html-requirements.md` — required properties for direct HTML output.
 
-Load `eyegaze-dwell-html` only when eye gaze/dwell or an Accent/Edge target is explicit. Load `open-aac-studio-board-builder` only for explicit prototype/schema compatibility. Do not fan out to specialist skills merely because the board is “accessible”.
+Load `eyegaze-dwell-html` only when eye gaze/dwell is explicit. Load `accent-display-fit` whenever an Accent or EQ-managed Edge target is explicit; pair both specialists when that target also uses gaze/dwell. Load `open-aac-studio-board-builder` only for explicit prototype/schema compatibility. Do not fan out to specialist skills merely because the board is “accessible”.
 
 ## Default Agent Workflow
 
