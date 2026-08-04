@@ -1,11 +1,12 @@
 {
   "name": "agentic-aac-board-maker-agent-pack",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "type": "module",
   "scripts": {
     "test:browser": "playwright test",
-    "test:browser:chrome": "PLAYWRIGHT_USE_INSTALLED_CHROME=1 playwright test"
+    "test:browser:chrome": "PLAYWRIGHT_USE_INSTALLED_CHROME=1 playwright test",
+    "test:accent": "playwright test browser-tests/accent-display.spec.mjs --project=accent-1400-classroom"
   },
   "devDependencies": {
     "@playwright/test": "1.62.1",

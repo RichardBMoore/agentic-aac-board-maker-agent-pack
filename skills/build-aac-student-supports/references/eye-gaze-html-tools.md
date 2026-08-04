@@ -26,12 +26,12 @@ Prefer a single `.html` file for one-off classroom tools. Use the bundled Boardm
 
 Common deployed context:
 
-- OS: Windows 10 IoT LTSC or Windows 11.
+- OS: Windows 10 Pro on most fielded Accents; Windows 11 on current shipments.
 - Browser: Microsoft Edge Chromium, often launched from USB or local storage with `file:///`.
 - Eye tracker: PRC-Saltillo NuEye, Look, or similar infrared module mounted below the screen.
-- Screen: Accent 1000 and Accent 1400 units commonly use 1920 x 1200 displays.
+- Screen: the Accent 1400-30 is 14 in 1920 x 1080 native. At the common 150% Windows planning assumption, the browser sees roughly **1280 x 720 CSS px** (less browser chrome); verify the actual scale on-device. The original 2013 Accent 1400 is 1280 x 800. Design for the effective viewport, never the native resolution — see `../../accent-display-fit/SKILL.md`.
 - Network: assume no CDN, no remote fonts, no symbol API, and no internet during student use.
-- Dedicated AAC builds may need the Integrated Feature Pack for browser access.
+- Dedicated AAC builds need the Integrated Feature Pack for any browser access; NuVoice itself has no built-in browser, and OneDrive/SharePoint links download HTML rather than displaying it (see `../../accent-display-fit/references/eq-delivery-playbook.md`).
 
 Treat these as classroom assumptions, not a universal hardware contract. If the user gives a specific viewport or device model, design and test against that.
 

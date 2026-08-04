@@ -1,0 +1,7 @@
+interface:
+  display_name: "Accent Display Fit"
+  short_description: "Make HTML fit real Accent/EQ device screens"
+  brand_color: "#00897B"
+  default_prompt: "Check and fix this HTML activity so it displays correctly on a PRC-Saltillo Accent over the EQ network."
+policy:
+  allow_implicit_invocation: false

@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.7.0 - 2026-08-04
+
+Accent display-fidelity release: fixes the "looks right on a laptop, breaks on the Accent" class of failures.
+
+- New `accent-display-fit` skill owns display fidelity on real PRC-Saltillo Accents and EQ-managed Edge. Research-backed device facts (with sources): the Accent 1400-30's 14 in 1920 x 1080 screen yields about 1280 x 720 CSS px at the conservative 150% Windows planning assumption (verify the device's configured scale); the original 2013 Accent 1400 is 1280 x 800; NuVoice has no built-in browser and its Key Mode shrinks the computer window to half-screen or less; the Empower Accessible Web Browser keeps two toolbar rows and cannot download files; NuVoice eye tracking dwell-clicks at OS level (default 1.0 s).
+- Display contract: author against effective viewports, must-fit floor 1264 x 600 and grace floor 1024 x 460, fit maths for grid/target/gap/chrome, paired vh/dvh, fluid-only sizing, a conservative engine baseline with @supports guards and a no-JS fallback, and zoom/scaling resilience. Patterns in `skills/accent-display-fit/references/display-fit-rules.md`.
+- `skills/accent-display-fit/scripts/check_accent_display.py` statically validates a single-file activity: viewport/charset/lang meta, self-containment, banned modern features, dvh fallback pairing, fixed-size hazards, and actionable grid fit maths against named device floors (`--profile mustfit|fullscreen150|original1400|keymode|empower`).
+- `browser-tests/accent-display.spec.mjs` (`npm run test:accent`, or `ACCENT_QA_FILE=path` for a candidate file) verifies no-scroll fit, on-screen >=120 px targets and clean load across six effective viewports, including the published 1024 x 460 grace floor, complementing the existing native-resolution projects.
+- `skills/accent-display-fit/references/eq-delivery-playbook.md` documents working delivery on the EQ network: OneDrive/SharePoint force-download behaviour, download-then-open from `file:///`, Mark of the Web, USB (standard Accent component; required for Empower-browser devices), hosted-URL option, and a teacher handover checklist.
+- Corrected the Accent screen claim in `eye-gaze-html-tools.md` (was 1920 x 1200) and cross-referenced the new skill from `eyegaze-dwell-html` and the target-environment reference.
+
 ## 0.6.0 - 2026-08-02
 
 Output-integrity, real-interaction and resource-quality release.
