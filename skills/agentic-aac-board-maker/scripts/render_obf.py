@@ -40,6 +40,8 @@ except ModuleNotFoundError:  # Supports importlib-based unit tests.
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     from canonicalize_board_ir import canonicalize
 
+from output_layout import grid_slots
+
 OBF_FORMAT = "open-board-0.1"
 
 ARASAAC_LICENSE = {
@@ -167,7 +169,7 @@ def render_board(ir: dict[str, Any], page: dict[str, Any], page_index: int, page
     images: list[dict[str, Any]] = []
     order: list[list[str | None]] = [[None] * columns for _ in range(rows)]
 
-    for index, raw_button in enumerate(as_list(page.get("buttons"))):
+    for index, (row, column, raw_button) in enumerate(grid_slots(page)):
         button = as_dict(raw_button)
         label = text(button.get("label")) or "Button"
         button_id = slug(text(button.get("id")) or label, f"btn-{index + 1}")
@@ -218,7 +220,6 @@ def render_board(ir: dict[str, Any], page: dict[str, Any], page_index: int, page
             rendered["image_id"] = image["id"]
 
         buttons.append(rendered)
-        row, column = index // columns, index % columns
         if row < rows:
             order[row][column] = button_id
 

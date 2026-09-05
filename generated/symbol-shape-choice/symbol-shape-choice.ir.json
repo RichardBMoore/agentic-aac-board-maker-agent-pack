@@ -1,0 +1,344 @@
+{
+  "schemaVersion": "0.4.0",
+  "format": "agentic-aac-board-ir",
+  "id": "symbol-shape-choice",
+  "title": "Choose a shape",
+  "purpose": "Illustrative symbol-rendering fixture: choose a shape, request help or something different. Team review is needed for learner familiarity.",
+  "audience": {
+    "ageBand": "school-age",
+    "tone": "age-respectful",
+    "locale": "en-AU"
+  },
+  "access": {
+    "intended": [
+      "eye-gaze-dwell",
+      "mouse",
+      "keyboard",
+      "touch"
+    ],
+    "profile": "eye-gaze-dwell",
+    "minimumTargetSizePx": 150,
+    "dwellTimeMs": 1000,
+    "denseGazeTested": false,
+    "visibleTargetLimit": 9,
+    "setupTargetLimit": 3,
+    "switchScanning": false,
+    "scanSpeedMs": 1400,
+    "scanPattern": "linear",
+    "scanOrder": "dom-order",
+    "audioCues": true
+  },
+  "display": {
+    "orientation": "landscape",
+    "width": 1024,
+    "height": 768,
+    "backgroundColour": "#f7fbff"
+  },
+  "studentControls": {
+    "startBoard": true,
+    "fullScreen": true,
+    "soundCheck": true,
+    "stopSpeechDuringPlayback": true,
+    "teacherPanel": false
+  },
+  "communicationFunctions": [
+    "choose",
+    "repair"
+  ],
+  "pages": [
+    {
+      "id": "page-main",
+      "name": "Main",
+      "pattern": "choice-board",
+      "layout": "grid",
+      "grid": {
+        "rows": 2,
+        "columns": 3
+      },
+      "buttons": [
+        {
+          "id": "btn-read",
+          "label": "Circle",
+          "role": "fringe",
+          "function": "choose",
+          "spokenText": "Circle",
+          "searchTerm": "circle",
+          "symbolId": null,
+          "symbolSrc": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iMzQiLz48L2c+PC9zdmc+",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-read-speak",
+              "type": "speak-text",
+              "text": "Circle"
+            },
+            {
+              "id": "act-btn-read-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "Read",
+          "result": "selected",
+          "position": {
+            "x": 0.0,
+            "y": 0,
+            "width": 33.3333,
+            "height": 50
+          },
+          "style": {
+            "fillColour": "#E8F3FF"
+          }
+        },
+        {
+          "id": "btn-art",
+          "label": "Square",
+          "role": "fringe",
+          "function": "choose",
+          "spokenText": "Square",
+          "searchTerm": "square",
+          "symbolId": null,
+          "symbolSrc": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PHJlY3QgeD0iMTgiIHk9IjE4IiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiLz48L2c+PC9zdmc+",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-art-speak",
+              "type": "speak-text",
+              "text": "Square"
+            },
+            {
+              "id": "act-btn-art-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "Art",
+          "result": "selected",
+          "position": {
+            "x": 33.3333,
+            "y": 0,
+            "width": 33.3333,
+            "height": 50
+          },
+          "style": {
+            "fillColour": "#FFF2CC"
+          }
+        },
+        {
+          "id": "btn-game",
+          "label": "Triangle",
+          "role": "fringe",
+          "function": "choose",
+          "spokenText": "Triangle",
+          "searchTerm": "triangle",
+          "symbolId": null,
+          "symbolSrc": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PHBhdGggZD0iTTUwIDEyTDkwIDg2SDEwWiIvPjwvZz48L3N2Zz4=",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-game-speak",
+              "type": "speak-text",
+              "text": "Triangle"
+            },
+            {
+              "id": "act-btn-game-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "Game",
+          "result": "selected",
+          "position": {
+            "x": 66.6666,
+            "y": 0,
+            "width": 33.3333,
+            "height": 50
+          },
+          "style": {
+            "fillColour": "#E7F7E7"
+          }
+        },
+        {
+          "id": "btn-music",
+          "label": "Star",
+          "role": "fringe",
+          "function": "choose",
+          "spokenText": "Star",
+          "searchTerm": "star",
+          "symbolId": null,
+          "symbolSrc": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PHBhdGggZD0iTTUwIDhMNjEgMzdMOTIgMzhMNjggNThMNzcgOTBMNTAgNzFMMjMgOTBMMzIgNThMOCAzOEwzOSAzN1oiLz48L2c+PC9zdmc+",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-music-speak",
+              "type": "speak-text",
+              "text": "Star"
+            },
+            {
+              "id": "act-btn-music-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "Music",
+          "result": "selected",
+          "position": {
+            "x": 0.0,
+            "y": 50,
+            "width": 33.3333,
+            "height": 50
+          },
+          "style": {
+            "fillColour": "#F2E8FF"
+          }
+        },
+        {
+          "id": "btn-help",
+          "label": "Help",
+          "role": "repair",
+          "function": "repair",
+          "spokenText": "Help",
+          "searchTerm": "help",
+          "symbolId": null,
+          "symbolSrc": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PHRleHQgeD0iNTAiIHk9Ijc0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iNzIiPj88L3RleHQ+PC9nPjwvc3ZnPg==",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-help-speak",
+              "type": "speak-text",
+              "text": "Help"
+            },
+            {
+              "id": "act-btn-help-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "Help please",
+          "result": "selected",
+          "position": {
+            "x": 33.3333,
+            "y": 50,
+            "width": 33.3333,
+            "height": 50
+          },
+          "style": {
+            "fillColour": "#FFE6E6"
+          }
+        },
+        {
+          "id": "btn-different",
+          "label": "Different",
+          "role": "repair",
+          "function": "repair",
+          "spokenText": "Different",
+          "searchTerm": "different",
+          "symbolId": null,
+          "symbolSrc": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PGNpcmNsZSBjeD0iMjgiIGN5PSI1MCIgcj0iMTkiLz48cmVjdCB4PSI2MCIgeT0iMzEiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzOCIvPjwvZz48L3N2Zz4=",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-different-speak",
+              "type": "speak-text",
+              "text": "Different"
+            },
+            {
+              "id": "act-btn-different-log",
+              "type": "log-attempt"
+            }
+          ],
+          "audioCue": "I want something different",
+          "result": "selected",
+          "position": {
+            "x": 66.6666,
+            "y": 50,
+            "width": 33.3333,
+            "height": 50
+          },
+          "style": {
+            "fillColour": "#F4F4F4"
+          }
+        }
+      ],
+      "margin": 18,
+      "backgroundColour": "#f7fbff"
+    }
+  ],
+  "teacherNotes": {
+    "modeling": "Model choosing a shape, Help and Different. These original geometric symbols demonstrate offline image rendering; they are not a prescribed AAC symbol set.",
+    "evidence": "Teacher can note whether the student initiates a choice, confirms/rejects an activity, asks for help, or uses Different to repair the offered choices.",
+    "customisation": "Replace symbols with familiar representations after team review. Preserve chosen cell locations.",
+    "access": "Default dwell is 1000 ms. Targets are arranged 2 by 3 with large buttons, visible dwell progress, pointer-leave cancellation, and keyboard fallback.",
+    "caveat": "Draft classroom support only. Review with the teaching/SLP/OT team and test on the actual student device/access setup before relying on it."
+  },
+  "systemFit": {
+    "reviewStatus": "team-input-needed",
+    "existingSystem": "Confirm how this support sits alongside the student's established AAC system.",
+    "vocabularyAndMotorPlan": "Confirm familiar vocabulary and stable locations before classroom use.",
+    "symbolFamiliarity": "Confirm that each symbol or text representation is recognised and meaningful.",
+    "accessCalibration": "Confirm access settings on the actual device with the student and team.",
+    "positioningAndVision": "Confirm screen, mounting, seating, visual field, contrast and fatigue conditions.",
+    "languageCultureVoice": "Confirm preferred language, culturally meaningful vocabulary and voice output.",
+    "partnerSignals": "Confirm reliable yes/no, cancel, repair and partner-assisted signals."
+  },
+  "symbolStrategy": {
+    "defaultSource": "Original geometric SVGs",
+    "textFallback": true,
+    "customMediaPolicy": "teacher-owned local media only unless explicitly approved",
+    "notes": "Six embedded geometric SVG images exercise offline rendering. Help and Different symbols require learner/team review; this is an illustrative fixture.",
+    "reviewRequired": true
+  },
+  "privacy": {
+    "level": "anonymous",
+    "containsSensitiveData": false
+  },
+  "attribution": [
+    {
+      "source": "Original geometric symbols",
+      "licence": "MIT",
+      "attribution": "Created for this repository. Help and Different representations require learner/team review."
+    }
+  ],
+  "sett": {
+    "student": "Student uses eye gaze/dwell, keyboard, touch, or partner interpretation to choose an activity and repair the choice if needed.",
+    "environment": "Classroom device or AAC setup with large targets, reduced visual clutter, and no dependency on live internet during use.",
+    "task": "Choose a class activity while keeping Help and Different available.",
+    "tools": "Two-by-three gaze-safe board, 1000 ms dwell, pointer-leave cancellation, spoken labels, and text/emoji fallback."
+  },
+  "udl": {
+    "engagement": [
+      "Meaningful choice",
+      "safe repair route",
+      "wait time and partner response"
+    ],
+    "representation": [
+      "short text labels",
+      "spoken output",
+      "symbol/search-term or text fallback"
+    ],
+    "actionExpression": [
+      "eye-gaze-dwell",
+      "mouse",
+      "keyboard",
+      "touch"
+    ]
+  },
+  "differentiation": {
+    "content": "Keep authentic activity choice while protecting gaze access and repair.",
+    "process": "Model key vocabulary, provide wait time, allow rehearsal/repetition, and accept multimodal communication.",
+    "product": "Accept selected activity, repair use, or teacher observation of access fit.",
+    "environment": "Use a calm, predictable, local-first layout with teacher controls separate from student choices.",
+    "support": "Teaching, SLP, OT, family, and student/team review should personalise vocabulary and access before reliance."
+  },
+  "participationBarriers": [
+    {
+      "barrier": "Activity choice can become adult-controlled or too visually dense for gaze access.",
+      "support": "Use six large targets, stable repair vocabulary, clear dwell progress, and keyboard fallback."
+    }
+  ],
+  "evidencePlan": {
+    "observable": [
+      "activity choice",
+      "help request",
+      "different/repair selection",
+      "successful dwell cancellation or reselection"
+    ],
+    "notJudgement": "Dwell timing and accidental cancellation reflect access tuning, not preference certainty.",
+    "export": "Use anonymous teacher notes, print/portfolio evidence, or local CSV/report only when needed. Do not include diagnoses, behaviour details, family details, or school IDs."
+  }
+}

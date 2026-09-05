@@ -4,73 +4,210 @@
     {
       "id": "gaze-choice-2x2",
       "prompt": "Make an eye-gaze choice board for choosing a class activity.",
-      "expectedOutputs": ["aac-board-ir", "single-file-html", "teacher-notes"],
-      "requiredChecks": ["dwell-safe", "large-targets", "repair-option", "keyboard-fallback"],
+      "expectedOutputs": [
+        "aac-board-ir",
+        "single-file-html",
+        "teacher-notes"
+      ],
+      "requiredChecks": [
+        "dwell-safe",
+        "large-targets",
+        "repair-option",
+        "keyboard-fallback"
+      ],
       "expectations": {
-        "accessProfiles": ["eye-gaze-dwell"],
-        "requiredFunctions": ["choose", "repair"],
-        "requiredLabels": ["help"],
-        "forbiddenPhrases": ["good looking", "try harder"]
+        "accessProfiles": [
+          "eye-gaze-dwell"
+        ],
+        "requiredFunctions": [
+          "choose",
+          "repair"
+        ],
+        "requiredLabels": [
+          "help"
+        ],
+        "forbiddenPhrases": [
+          "good looking",
+          "try harder"
+        ]
       }
     },
     {
       "id": "qcia-community-shops",
       "prompt": "Create a QCIA community access board for going to the shops.",
-      "expectedOutputs": ["aac-board-ir", "single-file-html-or-resource-pack", "printable", "teacher-evidence-note"],
-      "requiredChecks": ["qcia-evidence", "safety-language", "help-route", "privacy-note"],
+      "expectedOutputs": [
+        "aac-board-ir",
+        "single-file-html-or-resource-pack",
+        "printable",
+        "teacher-evidence-note"
+      ],
+      "requiredChecks": [
+        "qcia-evidence",
+        "safety-language",
+        "help-route",
+        "privacy-note"
+      ],
       "expectations": {
-        "accessProfiles": ["mixed-access", "direct-selection"],
-        "requiredFunctions": ["request", "repair"],
-        "requiredLabels": ["help"],
-        "forbiddenPhrases": ["non-compliant", "behaviour problem"]
+        "accessProfiles": [
+          "mixed-access",
+          "direct-selection"
+        ],
+        "requiredFunctions": [
+          "request",
+          "repair"
+        ],
+        "requiredLabels": [
+          "help"
+        ],
+        "forbiddenPhrases": [
+          "non-compliant",
+          "behaviour problem"
+        ]
       }
     },
     {
       "id": "curriculum-sentence-builder",
       "prompt": "Make a Year 7 English hero speech sentence-builder board.",
-      "expectedOutputs": ["aac-board-ir", "sentence-builder-resource", "teacher-notes"],
-      "requiredChecks": ["opinion", "because", "rehearse-or-speak", "repair-option"],
+      "expectedOutputs": [
+        "aac-board-ir",
+        "sentence-builder-resource",
+        "teacher-notes"
+      ],
+      "requiredChecks": [
+        "opinion",
+        "because",
+        "rehearse-or-speak",
+        "repair-option"
+      ],
       "expectations": {
-        "accessProfiles": ["mixed-access", "direct-selection"],
-        "requiredFunctions": ["explain", "repair"],
-        "requiredLabels": ["because", "help"],
-        "forbiddenPhrases": ["baby words"]
+        "accessProfiles": [
+          "mixed-access",
+          "direct-selection"
+        ],
+        "requiredFunctions": [
+          "explain",
+          "repair"
+        ],
+        "requiredLabels": [
+          "because",
+          "help"
+        ],
+        "forbiddenPhrases": [
+          "baby words"
+        ],
+        "messageSequences": [
+          {
+            "buttonIds": [
+              "btn-my-hero",
+              "btn-and-also",
+              "btn-i-think",
+              "btn-brave",
+              "btn-because",
+              "btn-helps-others"
+            ],
+            "expected": "My hero is a firefighter. I think they are brave because they help others."
+          }
+        ]
       }
     },
     {
       "id": "visual-schedule-expressive",
       "prompt": "Make a morning routine visual schedule with expressive options.",
-      "expectedOutputs": ["aac-board-ir", "visual-schedule", "teacher-notes"],
-      "requiredChecks": ["schedule-order", "wait-help-change", "not-full-aac-claim"],
+      "expectedOutputs": [
+        "aac-board-ir",
+        "visual-schedule",
+        "teacher-notes"
+      ],
+      "requiredChecks": [
+        "schedule-order",
+        "wait-help-change",
+        "not-full-aac-claim"
+      ],
       "expectations": {
-        "accessProfiles": ["mixed-access", "direct-selection"],
-        "requiredFunctions": ["sequence", "repair"],
-        "requiredLabels": ["wait", "help", "change"],
-        "forbiddenPhrases": ["must comply"]
+        "accessProfiles": [
+          "mixed-access",
+          "direct-selection"
+        ],
+        "requiredFunctions": [
+          "sequence",
+          "repair"
+        ],
+        "requiredLabels": [
+          "wait",
+          "help",
+          "change"
+        ],
+        "forbiddenPhrases": [
+          "must comply"
+        ]
       }
     },
     {
       "id": "needs-repair-board",
       "prompt": "Make a respectful needs and communication repair board for a secondary student.",
-      "expectedOutputs": ["aac-board-ir", "html-or-printable-board", "teacher-notes"],
-      "requiredChecks": ["age-respectful", "repair-language", "privacy-safe", "not-behaviour-control"],
+      "expectedOutputs": [
+        "aac-board-ir",
+        "html-or-printable-board",
+        "teacher-notes"
+      ],
+      "requiredChecks": [
+        "age-respectful",
+        "repair-language",
+        "privacy-safe",
+        "not-behaviour-control"
+      ],
       "expectations": {
-        "accessProfiles": ["mixed-access", "direct-selection"],
-        "requiredFunctions": ["refuse", "repair"],
-        "requiredLabels": ["help", "different"],
-        "forbiddenPhrases": ["naughty", "good boy", "good girl"]
+        "accessProfiles": [
+          "mixed-access",
+          "direct-selection"
+        ],
+        "requiredFunctions": [
+          "refuse",
+          "repair"
+        ],
+        "requiredLabels": [
+          "help",
+          "different"
+        ],
+        "forbiddenPhrases": [
+          "naughty",
+          "good boy",
+          "good girl"
+        ]
       }
     },
     {
       "id": "partner-assisted-print",
       "prompt": "Make a printable partner-assisted scanning board for help, stop, different, finished, and choices.",
-      "expectedOutputs": ["aac-board-ir", "printable-board", "partner-script"],
-      "requiredChecks": ["scan-order", "black-and-white-readable", "partner-wait-confirm", "attribution"],
+      "expectedOutputs": [
+        "aac-board-ir",
+        "printable-board",
+        "partner-script"
+      ],
+      "requiredChecks": [
+        "scan-order",
+        "black-and-white-readable",
+        "partner-wait-confirm",
+        "attribution"
+      ],
       "expectations": {
-        "accessProfiles": ["partner-assisted-scanning", "partner-assisted-print"],
-        "requiredFunctions": ["choose", "repair"],
-        "requiredLabels": ["help", "stop", "different", "finished"],
-        "forbiddenPhrases": ["no response means no"]
+        "accessProfiles": [
+          "partner-assisted-scanning",
+          "partner-assisted-print"
+        ],
+        "requiredFunctions": [
+          "choose",
+          "repair"
+        ],
+        "requiredLabels": [
+          "help",
+          "stop",
+          "different",
+          "finished"
+        ],
+        "forbiddenPhrases": [
+          "no response means no"
+        ]
       }
     }
   ]

@@ -42,6 +42,7 @@ from __future__ import annotations
 import argparse
 import base64
 import html
+import hashlib
 import json
 import sys
 import urllib.error
@@ -169,6 +170,10 @@ def has_attribution(ir: dict[str, Any]) -> bool:
     return "arasaac" in text.lower()
 
 
+def board_fingerprint(ir: dict[str, Any]) -> str:
+    return hashlib.sha256(json.dumps(ir, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+
+
 def build_review_manifest(
     ir: dict[str, Any], locale: str = "en", limit: int = 5, fetcher: Fetcher = default_fetcher
 ) -> dict[str, Any]:
@@ -187,8 +192,13 @@ def build_review_manifest(
                 "decisionNote": "",
             }
         )
+    for entry in entries:
+        for candidate in entry["candidates"]:
+            png = fetch_image(candidate["symbolId"], 300, fetcher, None)
+            candidate["imageData"] = build_data_uri(png) if png else ""
     return {
-        "version": "0.1.0",
+        "version": "0.2.0",
+        "boardFingerprint": board_fingerprint(ir),
         "boardId": str(ir.get("id", "aac-board")),
         "locale": locale,
         "instructions": "Set approvedSymbolId to one listed candidate only after checking meaning, recognisability, culture and student familiarity. Leave null to keep text fallback.",
@@ -198,13 +208,13 @@ def build_review_manifest(
 
 def render_review_html(manifest: dict[str, Any]) -> str:
     cards: list[str] = []
-    for entry in manifest.get("entries", []):
+    for index, entry in enumerate(manifest.get("entries", [])):
         candidates = "".join(
             (
-                '<figure class="candidate">'
-                f'<img src="{html.escape(str(candidate["imageUrl"]), quote=True)}" alt="Candidate ARASAAC symbol {candidate["symbolId"]}">'
-                f'<figcaption>ID {candidate["symbolId"]} · score {candidate["score"]}<br>{html.escape(", ".join(candidate["keywords"][:5]))}</figcaption>'
-                '</figure>'
+                f'<label class="candidate"><input type="radio" name="entry-{index}" value="{candidate["symbolId"]}" {"disabled" if not candidate.get("imageData") else ""}>'
+                f'<img src="{html.escape(str(candidate.get("imageData") or ""), quote=True)}" alt="Candidate ARASAAC symbol {candidate["symbolId"]}">'
+                f'<span class="caption">ID {candidate["symbolId"]} · score {candidate["score"]}<br>{html.escape(", ".join(candidate["keywords"][:5]))}</span>'
+                '</label>'
             )
             for candidate in entry.get("candidates", [])
         ) or "<p>No candidates found; keep the text fallback or revise the search term.</p>"
@@ -212,9 +222,20 @@ def render_review_html(manifest: dict[str, Any]) -> str:
             '<section class="entry">'
             f'<h2>{html.escape(entry.get("label", ""))}</h2>'
             f'<p>Page/button: <code>{html.escape(entry.get("pageId", ""))} / {html.escape(entry.get("buttonId", ""))}</code> · search: <strong>{html.escape(entry.get("searchTerm", ""))}</strong></p>'
-            f'<div class="candidates">{candidates}</div></section>'
+            f'<div><label><input type="radio" name="entry-{index}" value="keep" checked>Keep current / pending</label> <label><input type="radio" name="entry-{index}" value="none">None fits — keep current</label> <label><input type="radio" name="entry-{index}" value="text">Use text only</label></div><div class="candidates">{candidates}</div></section>'
         )
-    return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Symbol candidate review — {html.escape(str(manifest.get('boardId', 'board')))}</title><style>body{{font-family:Arial,sans-serif;max-width:1400px;margin:auto;padding:24px;color:#17212b}}.entry{{border-top:3px solid #17212b;padding:18px 0}}.candidates{{display:flex;flex-wrap:wrap;gap:18px}}.candidate{{width:180px;margin:0;padding:10px;border:2px solid #64727f;border-radius:10px}}img{{display:block;width:160px;height:160px;object-fit:contain}}figcaption{{margin-top:8px}}@media print{{.entry{{break-inside:avoid}}}}</style></head><body><h1>Symbol candidate review</h1><p>{html.escape(str(manifest.get('instructions', '')))}</p>{''.join(cards)}<footer><p>Review sheet only; images are fetched from ARASAAC. Pictograms: Sergio Palao / Government of Aragon, CC BY-NC-SA.</p></footer></body></html>"""
+    payload = json.dumps(manifest, ensure_ascii=False).replace("<", "\\u003c")
+    review_script = r"""const review=JSON.parse(document.getElementById('review-data').textContent);
+    document.getElementById('download').onclick=()=>{
+      review.entries.forEach((entry,index)=>{
+        const value=document.querySelector('input[name="entry-'+index+'"]:checked').value;
+        entry.approvedSymbolId=/^\d+$/.test(value)?Number(value):null;
+        entry.decisionNote=value==='text'?'text-only':value==='none'?'none-fits':value==='keep'?'keep-current':'approved';
+      });
+      const url=URL.createObjectURL(new Blob([JSON.stringify(review,null,2)],{type:'application/json'}));
+      const a=document.createElement('a');a.href=url;a.download='symbol-review.decisions.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    };"""
+    return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Symbol candidate review — {html.escape(str(manifest.get('boardId', 'board')))}</title><style>body{{font-family:Arial,sans-serif;max-width:1400px;margin:auto;padding:24px;color:#17212b}}.entry{{border-top:3px solid #17212b;padding:18px 0}}.candidates{{display:flex;flex-wrap:wrap;gap:18px}}.candidate{{width:180px;margin:0;padding:10px;border:2px solid #64727f;border-radius:10px}}img{{display:block;width:160px;height:160px;object-fit:contain}} .caption{{display:block;margin-top:8px}}@media print{{.entry{{break-inside:avoid}}}}</style></head><body><h1>Symbol candidate review</h1><p>{html.escape(str(manifest.get('instructions', '')))}</p>{''.join(cards)}<footer><p>Review sheet only; available previews are embedded for offline use. Missing previews must not be approved. Pictograms: Sergio Palao / Government of Aragon, CC BY-NC-SA.</p></footer><button id="download" type="button">Download decisions</button><script id="review-data" type="application/json">{payload}</script><script>{review_script}</script></body></html>"""
 
 
 def apply_review(
@@ -225,6 +246,8 @@ def apply_review(
     fetcher: Fetcher = default_fetcher,
     cache_dir: Path | None = None,
 ) -> list[dict[str, str]]:
+    if manifest.get("boardFingerprint") != board_fingerprint(ir):
+        return [{"page": "", "button": "", "term": "", "status": "error: stale or unbound review; regenerate for this board revision"}]
     button_map = {(str(page.get("id")), str(button.get("id"))): button for page, button in iter_buttons(ir)}
     report: list[dict[str, str]] = []
     for entry in manifest.get("entries", []):
@@ -237,6 +260,8 @@ def apply_review(
             continue
         approved = entry.get("approvedSymbolId")
         if approved in (None, "", 0):
+            if entry.get("decisionNote") == "text-only":
+                button["symbolId"], button["symbolSrc"] = None, ""
             status["status"] = "skipped: no candidate approved (text fallback kept)"
             report.append(status)
             continue
@@ -249,16 +274,16 @@ def apply_review(
             status["status"] = "error: approvedSymbolId is not one of the reviewed candidates"
             report.append(status)
             continue
-        button["symbolId"] = pid
-        button["symbolSrc"] = ""
         status["symbolId"] = str(pid)
         if ids_only:
+            button["symbolId"], button["symbolSrc"] = pid, ""
             status["status"] = "ok: approved symbolId set (no image embedded)"
         else:
             png = fetch_image(pid, resolution, fetcher, cache_dir)
             if png is None:
-                status["status"] = "partial: approved symbolId set, image download failed"
+                status["status"] = "partial: image download failed; previous symbol retained"
             else:
+                button["symbolId"] = pid
                 button["symbolSrc"] = build_data_uri(png)
                 status["status"] = "ok: approved symbol embedded"
         report.append(status)

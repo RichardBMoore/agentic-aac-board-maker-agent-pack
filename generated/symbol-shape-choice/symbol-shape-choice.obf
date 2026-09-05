@@ -1,0 +1,157 @@
+{
+  "format": "open-board-0.1",
+  "id": "page-main",
+  "locale": "en-AU",
+  "name": "Main",
+  "buttons": [
+    {
+      "id": "btn-read",
+      "label": "Circle",
+      "background_color": "rgb(232, 243, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-read-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "fringe",
+      "ext_aac_function": "choose",
+      "image_id": "img-btn-read"
+    },
+    {
+      "id": "btn-art",
+      "label": "Square",
+      "background_color": "rgb(255, 242, 204)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-art-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "fringe",
+      "ext_aac_function": "choose",
+      "image_id": "img-btn-art"
+    },
+    {
+      "id": "btn-game",
+      "label": "Triangle",
+      "background_color": "rgb(231, 247, 231)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-game-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "fringe",
+      "ext_aac_function": "choose",
+      "image_id": "img-btn-game"
+    },
+    {
+      "id": "btn-music",
+      "label": "Star",
+      "background_color": "rgb(242, 232, 255)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-music-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "fringe",
+      "ext_aac_function": "choose",
+      "image_id": "img-btn-music"
+    },
+    {
+      "id": "btn-help",
+      "label": "Help",
+      "background_color": "rgb(255, 230, 230)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-help-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "repair",
+      "ext_aac_function": "repair",
+      "image_id": "img-btn-help"
+    },
+    {
+      "id": "btn-different",
+      "label": "Different",
+      "background_color": "rgb(244, 244, 244)",
+      "ext_aac_actions": [
+        {
+          "id": "act-btn-different-log",
+          "type": "log-attempt"
+        }
+      ],
+      "ext_aac_role": "repair",
+      "ext_aac_function": "repair",
+      "image_id": "img-btn-different"
+    }
+  ],
+  "grid": {
+    "rows": 2,
+    "columns": 3,
+    "order": [
+      [
+        "btn-read",
+        "btn-art",
+        "btn-game"
+      ],
+      [
+        "btn-music",
+        "btn-help",
+        "btn-different"
+      ]
+    ]
+  },
+  "images": [
+    {
+      "id": "img-btn-read",
+      "data": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iMzQiLz48L2c+PC9zdmc+",
+      "content_type": "image/svg+xml"
+    },
+    {
+      "id": "img-btn-art",
+      "data": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PHJlY3QgeD0iMTgiIHk9IjE4IiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiLz48L2c+PC9zdmc+",
+      "content_type": "image/svg+xml"
+    },
+    {
+      "id": "img-btn-game",
+      "data": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PHBhdGggZD0iTTUwIDEyTDkwIDg2SDEwWiIvPjwvZz48L3N2Zz4=",
+      "content_type": "image/svg+xml"
+    },
+    {
+      "id": "img-btn-music",
+      "data": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PHBhdGggZD0iTTUwIDhMNjEgMzdMOTIgMzhMNjggNThMNzcgOTBMNTAgNzFMMjMgOTBMMzIgNThMOCAzOEwzOSAzN1oiLz48L2c+PC9zdmc+",
+      "content_type": "image/svg+xml"
+    },
+    {
+      "id": "img-btn-help",
+      "data": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PHRleHQgeD0iNTAiIHk9Ijc0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iNzIiPj88L3RleHQ+PC9nPjwvc3ZnPg==",
+      "content_type": "image/svg+xml"
+    },
+    {
+      "id": "img-btn-different",
+      "data": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PGNpcmNsZSBjeD0iMjgiIGN5PSI1MCIgcj0iMTkiLz48cmVjdCB4PSI2MCIgeT0iMzEiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzOCIvPjwvZz48L3N2Zz4=",
+      "content_type": "image/svg+xml"
+    }
+  ],
+  "sounds": [],
+  "license": {
+    "type": "MIT",
+    "source_url": "",
+    "author_name": "Created for this repository. Help and Different representations require learner/team review."
+  },
+  "ext_aac_source": {
+    "generatedFrom": "agentic-aac-board-ir",
+    "irId": "symbol-shape-choice",
+    "irSchemaVersion": "0.4.0"
+  },
+  "ext_aac_access": {
+    "profile": "eye-gaze-dwell",
+    "dwellTimeMs": 1000,
+    "minimumTargetSizePx": 150
+  },
+  "description_html": "Illustrative symbol-rendering fixture: choose a shape, request help or something different. Team review is needed for learner familiarity."
+}

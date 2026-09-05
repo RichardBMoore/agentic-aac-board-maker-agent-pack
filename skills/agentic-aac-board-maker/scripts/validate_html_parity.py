@@ -20,6 +20,9 @@ except ModuleNotFoundError:  # Supports importlib-based unit tests.
     from canonicalize_board_ir import canonicalize
 
 
+from output_layout import grid_slots
+from render_html import render
+
 SCRIPT_DIR = Path(__file__).resolve().parent
 RUNTIME_PATH = SCRIPT_DIR.parent / "assets" / "aac-board-runtime.js"
 
@@ -28,6 +31,9 @@ class BoardCollector(HTMLParser):
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
         self.pages: list[str] = []
+        self.presentation = []
+        self.visible_labels = []
+        self._in_label = False
         self.buttons: list[dict[str, str]] = []
         self.html_attrs: dict[str, str] = {}
         self.body_attrs: dict[str, str] = {}
@@ -38,6 +44,12 @@ class BoardCollector(HTMLParser):
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         values = {key: value or "" for key, value in attrs}
+        if tag == "span" and "label" in values.get("class", "").split():
+            self._in_label = True
+        if values.get("data-button-id"):
+            self.presentation.append(("button", {key: values.get(key, "") for key in ("style", "data-symbol-layout", "aria-label")}))
+        if tag == "img":
+            self.presentation.append(("image", values))
         if tag == "html": self.html_attrs = values
         if tag == "body": self.body_attrs = values
         if values.get("data-page-id"): self.pages.append(values["data-page-id"])
@@ -47,11 +59,13 @@ class BoardCollector(HTMLParser):
         if tag == "script" and "data-aac-shared-runtime" in values: self._runtime_depth = 1
 
     def handle_endtag(self, tag: str) -> None:
+        if tag == "span": self._in_label = False
         if tag == "script":
             self._ir_depth = 0
             self._runtime_depth = 0
 
     def handle_data(self, data: str) -> None:
+        if self._in_label: self.visible_labels.append(data)
         if self._ir_depth: self.ir_parts.append(data)
         if self._runtime_depth: self.runtime_parts.append(data)
 
@@ -59,8 +73,16 @@ class BoardCollector(HTMLParser):
 def validate(source: dict[str, Any], html_text: str, runtime_source: str | None = None) -> list[str]:
     failures: list[str] = []
     canonical = canonicalize(source)
+    try:
+        expected_html = render(canonical, runtime_source=runtime_source)
+    except (ValueError, TypeError) as error:
+        return [f"HTML capability/layout error: {error}"]
+    expected_collector = BoardCollector()
+    expected_collector.feed(expected_html)
     collector = BoardCollector()
     collector.feed(html_text)
+    if collector.presentation != expected_collector.presentation or collector.visible_labels != expected_collector.visible_labels:
+        failures.append("HTML positions, styling, labels or symbol images differ from rendered IR")
     try:
         embedded = json.loads("".join(collector.ir_parts))
     except json.JSONDecodeError as error:
@@ -72,7 +94,7 @@ def validate(source: dict[str, Any], html_text: str, runtime_source: str | None 
         failures.append(f"HTML page order differs: expected {expected_pages}, got {collector.pages}")
     expected_buttons = [
         {"data-button-id": button["id"], "data-label": button["label"], "data-spoken": button["spokenText"], "data-actions": json.dumps(button["actions"], ensure_ascii=False, separators=(",", ":"))}
-        for page in canonical["pages"] for button in page["buttons"]
+        for page in canonical["pages"] for _, _, button in grid_slots(page)
     ]
     actual_buttons = [
         {**button, "data-actions": html.unescape(button["data-actions"])} for button in collector.buttons

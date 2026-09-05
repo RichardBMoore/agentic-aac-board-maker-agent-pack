@@ -23,7 +23,7 @@
     "denseGazeTested": false,
     "visibleTargetLimit": 16,
     "setupTargetLimit": 3,
-    "switchScanning": true,
+    "switchScanning": false,
     "scanSpeedMs": 1800,
     "scanPattern": "linear",
     "scanOrder": "numbered partner scan order",
