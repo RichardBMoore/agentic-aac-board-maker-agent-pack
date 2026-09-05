@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.8.0 - 2026-09-06
+
+- Fix native touch/keyboard activation without dwell; restore visible focus after speech and retain a readable selected message.
+- Reject standalone HTML switch-scanning exports that the runtime cannot implement.
+- Preserve aligned grid positions across HTML/OBF, supported font/colour and symbol-label placement in HTML; check visual attributes and images in parity validation.
+- Add offline selectable symbol review with downloadable revision-bound decisions; retain existing images on replacement failure and render full attribution.
+- Add A4/A3 portrait/landscape print settings, scan numbering and a separate teacher page.
+- Add a complete hero-speech example sequence and an original geometric symbol fixture; expand browser and Python regression coverage.
+- Identify the evaluator as static-only and report symbol coverage and unresolved device/learner checks.
+
 ## 0.7.0 - 2026-08-04
 
 Accent display-fidelity release: fixes the "looks right on a laptop, breaks on the Accent" class of failures.

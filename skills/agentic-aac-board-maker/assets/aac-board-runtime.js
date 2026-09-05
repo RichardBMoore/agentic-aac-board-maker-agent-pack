@@ -13,6 +13,7 @@
   const messageText = document.getElementById("message-text");
   const status = document.getElementById("board-status");
   let speechToken = 0;
+  let speechOrigin = null;
 
   const isRendered = (element) => {
     if (!(element instanceof HTMLElement)) return false;
@@ -54,6 +55,8 @@
   };
 
   const setSpeechMode = (enabled) => {
+    if (enabled && !state.speaking) speechOrigin = document.activeElement;
+    dwell.cancel();
     state.speaking = enabled;
     document.body.classList.toggle("speech-active", enabled);
     if (speechLayer) speechLayer.hidden = !enabled;
@@ -61,6 +64,11 @@
     if (setup) setup.inert = enabled;
     auditVisibleTargets();
     if (enabled) document.getElementById("stop-speech")?.focus({ preventScroll: true });
+    else if (speechOrigin) {
+      const destination = isRendered(speechOrigin) ? speechOrigin : visibleTargets()[0];
+      destination?.focus({ preventScroll: true });
+      speechOrigin = null;
+    }
   };
 
   const stopSpeech = () => {
@@ -73,6 +81,8 @@
   const speak = (value) => {
     const phrase = String(value || "").trim();
     if (!phrase) return;
+    const selectedMessage = document.getElementById("selected-message");
+    if (selectedMessage) selectedMessage.textContent = phrase;
     if (!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined") {
       announce(`Speech is unavailable. Message: ${phrase}`);
       return;
@@ -154,11 +164,13 @@
       this.startedAt = 0;
     }
     attach(root = document) {
-      root.querySelectorAll("[data-dwell]").forEach((target) => {
-        target.addEventListener("pointerenter", () => this.begin(target));
-        target.addEventListener("pointerleave", () => this.cancel(target));
-        target.addEventListener("pointercancel", () => this.cancel(target));
-        target.addEventListener("blur", () => this.cancel(target));
+      root.querySelectorAll("[data-student-target]").forEach((target) => {
+        if (target.hasAttribute("data-dwell")) {
+          target.addEventListener("pointerenter", () => this.begin(target));
+          target.addEventListener("pointerleave", () => this.cancel(target));
+          target.addEventListener("pointercancel", () => this.cancel(target));
+          target.addEventListener("blur", () => this.cancel(target));
+        }
         target.addEventListener("click", (event) => {
           if (target.dataset.dwellActivated === "true") {
             target.dataset.dwellActivated = "false";

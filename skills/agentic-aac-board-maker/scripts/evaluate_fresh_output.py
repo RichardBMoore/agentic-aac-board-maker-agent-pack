@@ -146,6 +146,18 @@ def evaluate_fixture(root: Path, fixture: dict[str, Any], schema: dict[str, Any]
     board_labels = labels(ir)
     for required in expectations.get("requiredLabels", []):
         record(f"label:{required}", any(required.lower() in label for label in board_labels))
+    symbol_buttons = buttons(ir)
+    embedded = sum(str(button.get("symbolSrc", "")).startswith("data:image/") for button in symbol_buttons)
+    if expectations.get("requiredEmbeddedSymbols") is not None:
+        record("embedded-symbol-count", embedded >= expectations["requiredEmbeddedSymbols"])
+    for example in expectations.get("messageSequences", []):
+        lookup = {button["id"]: button for button in symbol_buttons}
+        parts = []
+        for button_id in example["buttonIds"]:
+            for action in lookup.get(button_id, {}).get("actions", []):
+                if action.get("type") == "add-to-message":
+                    parts.append(action.get("text") or lookup[button_id].get("spokenText", ""))
+        record("message:" + example["expected"], " ".join(parts) == example["expected"])
     realised = functions(ir)
     for required in expectations.get("requiredFunctions", []):
         record(f"function:{required}", required in realised)
@@ -159,14 +171,14 @@ def evaluate_fixture(root: Path, fixture: dict[str, Any], schema: dict[str, Any]
         passed, detail = check_named(name, ir, html_text, notes_text)
         record(f"fixture:{name}", passed, detail)
 
-    return {"id": fixture["id"], "passed": all(item["passed"] for item in checks), "checks": checks, "warnings": warnings}
+    return {"id": fixture["id"], "passed": all(item["passed"] for item in checks), "checks": checks, "warnings": warnings, "symbols": {"total": len(symbol_buttons), "embedded": embedded, "withoutEmbeddedImage": len(symbol_buttons) - embedded}, "unverified": ["real input device", "speech voice", "learner symbol familiarity", "print pagination"]}
 
 
 def evaluate(root: Path, manifest: dict[str, Any], fixture_ids: set[str] | None = None) -> dict[str, Any]:
     schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
     fixtures = [fixture for fixture in manifest.get("fixtures", []) if fixture_ids is None or fixture.get("id") in fixture_ids]
     results = [evaluate_fixture(root, fixture, schema) for fixture in fixtures]
-    return {"manifestVersion": manifest.get("version"), "candidateRoot": str(root), "passed": bool(results) and all(result["passed"] for result in results), "fixtures": results}
+    return {"validationScope": "static-structure-only; browser interaction and learner review are separate", "manifestVersion": manifest.get("version"), "candidateRoot": str(root), "passed": bool(results) and all(result["passed"] for result in results), "fixtures": results}
 
 
 def main(argv: list[str] | None = None) -> int:

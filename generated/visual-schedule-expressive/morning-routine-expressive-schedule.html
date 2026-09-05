@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en-AU" data-runtime-sha256="6618cf41c5c30094d0a1523640748625009bff7daaeedd50f3445ac1b89e0ab2">
+<html lang="en-AU" data-runtime-sha256="2d1e7c1aeaf42494b372c8c4cf29915c3602bc8815c22c7bb51e23731cbeedf3">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Morning Routine Expressive Visual Schedule</title><style>
 :root { --min-target: 132px; --dwell-ms: 1100ms; --ink:#17212b; --focus:#005fcc; --repair:#ffe3e3; }
 * { box-sizing:border-box; }
@@ -12,8 +12,8 @@ button { font:inherit; color:inherit; }
 .setup-controls { display:flex; flex-wrap:wrap; justify-content:center; gap:24px; }
 .student-layer { min-height:100vh; padding:12px; }
 .page-title { margin:0 0 8px; text-align:center; font-size:clamp(1.1rem,2.4vw,1.8rem); }
-.board-grid { min-height:calc(100vh - 84px); display:grid; grid-template-columns:repeat(var(--grid-columns), minmax(var(--min-target),1fr)); grid-template-rows:repeat(var(--grid-rows), minmax(var(--min-target),1fr)); gap:12px; }
-.message-bar + .board-page .board-grid, .message-bar ~ .board-page .board-grid { min-height:calc(100vh - 160px); }
+.board-grid { min-height:calc(100vh - 154px); display:grid; grid-template-columns:repeat(var(--grid-columns), minmax(var(--min-target),1fr)); grid-template-rows:repeat(var(--grid-rows), minmax(var(--min-target),1fr)); gap:12px; }
+.message-bar + .board-page .board-grid, .message-bar ~ .board-page .board-grid { min-height:calc(100vh - 218px); }
 .message-bar { margin:0 auto 10px; max-width:1200px; min-height:60px; padding:10px 16px; border:3px solid var(--ink); border-radius:14px; background:white; font-size:clamp(1rem,2.2vw,1.5rem); }
 .is-placeholder { color:#58636e; }
 .dwell-btn { position:relative; overflow:hidden; min-width:var(--min-target); min-height:var(--min-target); border:4px solid var(--ink); border-radius:18px; background:#fff; padding:12px; font-size:clamp(1rem,2.5vw,1.6rem); font-weight:700; cursor:pointer; touch-action:manipulation; }
@@ -22,7 +22,13 @@ button { font:inherit; color:inherit; }
 .dwell-progress { position:absolute; inset:auto 0 0; height:10px; background:#ffbf00; transform:scaleX(0); transform-origin:left; }
 .is-dwelling .dwell-progress { animation:dwell-fill var(--dwell-ms) linear forwards; }
 .was-activated { filter:brightness(.82); }
-.symbol { display:block; max-width:55%; max-height:55%; margin:0 auto 8px; object-fit:contain; }
+.board-button { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; }
+.board-button[data-symbol-layout="label-top"] .label { order:-1; }
+.board-button[data-symbol-layout="label-left"] { flex-direction:row-reverse; }
+.board-button[data-symbol-layout="label-right"] { flex-direction:row; }
+.symbol { display:block; width:auto; max-width:65%; height:clamp(48px,14vh,180px); object-fit:contain; }
+.selected-message { min-height:48px; margin:0 0 10px; padding:8px; text-align:center; font-size:1.2rem; }
+.scan-number,.print-attribution { display:none; }
 .speech-layer { position:fixed; inset:0; z-index:10; background:#f7fbff; }
 .speech-active #student-layer, .speech-active #setup-screen { visibility:hidden; }
 .stop-control { min-width:min(70vw,420px); min-height:min(55vh,320px); background:#ffe3e3; font-size:clamp(1.4rem,4vw,2.4rem); }
@@ -33,23 +39,24 @@ body.teacher-mode .teacher-panel { display:block; }
 @keyframes dwell-fill { to { transform:scaleX(1); } }
 @media (max-width:760px) { .board-grid { gap:7px; } .dwell-btn { padding:7px; } }
 @media (forced-colors:active) { .dwell-btn { border-color:ButtonText; forced-color-adjust:auto; } .dwell-progress { background:Highlight; } }
-@media print { .setup-screen,.speech-layer,.board-status { display:none !important; } .student-layer,.teacher-panel { display:block !important; } .board-page { break-after:page; } .board-page[hidden] { display:block !important; } .board-grid { min-height:auto; } .dwell-btn { min-height:110px; } }
+@page { size:A4 landscape; margin:12mm; }
+@media print { .selected-message,.message-bar,.setup-screen,.speech-layer,.board-status { display:none !important; } .student-layer,.teacher-panel { display:block !important; } .board-page { break-after:page; break-inside:avoid; } .teacher-panel { break-before:page; } .scan-number { display:inline; position:absolute; top:5px; left:8px; font-size:12pt; } .dwell-progress { display:none; } .board-page[hidden] { display:block !important; } .board-grid { min-height:0; height:156mm; } .print-attribution { display:block; margin:6px 0 0; font-size:8pt; } .dwell-btn { min-width:0; min-height:30mm; font-size:16pt; } .symbol { height:20mm; } .student-layer { min-height:0; padding:0; } }
 </style></head>
 <body data-access-profile="mixed-access" data-dwell-enabled="true" data-min-target="132" data-visible-target-limit="9" data-setup-target-limit="3">
 <a class="skip-link" href="#student-layer">Skip to board</a>
 <section id="setup-screen" class="setup-screen" aria-label="Board setup"><h1>Morning Routine Expressive Visual Schedule</h1><p>Choose Start board when positioning and access are ready.</p><div class="setup-controls"><button id="start" class="dwell-btn setup-control primary" type="button" data-control="start" data-student-target data-dwell aria-label="Start board"><span class="label">Start board</span><span class="dwell-progress" aria-hidden="true"></span></button><button id="full-screen" class="dwell-btn setup-control" type="button" data-control="full-screen" data-student-target data-dwell aria-label="Full screen"><span class="label">Full screen</span><span class="dwell-progress" aria-hidden="true"></span></button><button id="sound-check" class="dwell-btn setup-control" type="button" data-control="sound-check" data-student-target data-dwell aria-label="Sound check"><span class="label">Sound check</span><span class="dwell-progress" aria-hidden="true"></span></button></div></section>
-<main id="student-layer" class="student-layer" hidden><section class="board-page" data-page-id="page-main" aria-label="Main"><h2 class="page-title">Main</h2><div class="board-grid" style="--grid-rows:3;--grid-columns:3"><button id="btn-arrive" class="dwell-btn board-button role-fringe" type="button" data-button-id="btn-arrive" data-label="Arrive" data-spoken="Arrive" data-actions="[{&quot;id&quot;:&quot;act-btn-arrive-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Arrive&quot;},{&quot;id&quot;:&quot;act-btn-arrive-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Arrive"><span class="label">Arrive</span><span class="dwell-progress" aria-hidden="true"></span></button>
-<button id="btn-bag" class="dwell-btn board-button role-fringe" type="button" data-button-id="btn-bag" data-label="Bag away" data-spoken="Bag away" data-actions="[{&quot;id&quot;:&quot;act-btn-bag-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Bag away&quot;},{&quot;id&quot;:&quot;act-btn-bag-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Bag away"><span class="label">Bag away</span><span class="dwell-progress" aria-hidden="true"></span></button>
-<button id="btn-morning" class="dwell-btn board-button role-fringe" type="button" data-button-id="btn-morning" data-label="Morning job" data-spoken="Morning job" data-actions="[{&quot;id&quot;:&quot;act-btn-morning-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Morning job&quot;},{&quot;id&quot;:&quot;act-btn-morning-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Morning job"><span class="label">Morning job</span><span class="dwell-progress" aria-hidden="true"></span></button>
-<button id="btn-group" class="dwell-btn board-button role-fringe" type="button" data-button-id="btn-group" data-label="Group time" data-spoken="Group time" data-actions="[{&quot;id&quot;:&quot;act-btn-group-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Group time&quot;},{&quot;id&quot;:&quot;act-btn-group-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Group time"><span class="label">Group time</span><span class="dwell-progress" aria-hidden="true"></span></button>
-<button id="btn-next" class="dwell-btn board-button role-question" type="button" data-button-id="btn-next" data-label="What next?" data-spoken="What is next?" data-actions="[{&quot;id&quot;:&quot;act-btn-next-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;What is next?&quot;},{&quot;id&quot;:&quot;act-btn-next-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="What next?"><span class="label">What next?</span><span class="dwell-progress" aria-hidden="true"></span></button>
-<button id="btn-wait" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-wait" data-label="Wait" data-spoken="I need to wait" data-actions="[{&quot;id&quot;:&quot;act-btn-wait-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;I need to wait&quot;},{&quot;id&quot;:&quot;act-btn-wait-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Wait"><span class="label">Wait</span><span class="dwell-progress" aria-hidden="true"></span></button>
-<button id="btn-help" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-help" data-label="Help please" data-spoken="Help please" data-actions="[{&quot;id&quot;:&quot;act-btn-help-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Help please&quot;},{&quot;id&quot;:&quot;act-btn-help-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Help please"><span class="label">Help please</span><span class="dwell-progress" aria-hidden="true"></span></button>
-<button id="btn-change" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-change" data-label="Change" data-spoken="I need a change" data-actions="[{&quot;id&quot;:&quot;act-btn-change-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;I need a change&quot;},{&quot;id&quot;:&quot;act-btn-change-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Change"><span class="label">Change</span><span class="dwell-progress" aria-hidden="true"></span></button>
-<button id="btn-finished" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-finished" data-label="Finished" data-spoken="I am finished" data-actions="[{&quot;id&quot;:&quot;act-btn-finished-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;I am finished&quot;},{&quot;id&quot;:&quot;act-btn-finished-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Finished"><span class="label">Finished</span><span class="dwell-progress" aria-hidden="true"></span></button></div></section></main>
+<main id="student-layer" class="student-layer" hidden><p id="selected-message" class="selected-message" aria-live="polite">Choose a message.</p><section class="board-page" data-page-id="page-main" aria-label="Main"><h2 class="page-title">Morning Routine Expressive Visual Schedule</h2><div class="board-grid" style="--grid-rows:3;--grid-columns:3"><button style="grid-row:1;grid-column:1;background-color:#FFFFFF" data-symbol-layout="label-bottom" id="btn-arrive" class="dwell-btn board-button role-fringe" type="button" data-button-id="btn-arrive" data-label="Arrive" data-spoken="Arrive" data-actions="[{&quot;id&quot;:&quot;act-btn-arrive-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Arrive&quot;},{&quot;id&quot;:&quot;act-btn-arrive-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Arrive"><span class="scan-number" aria-hidden="true">1. </span><span class="label">Arrive</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button style="grid-row:1;grid-column:2;background-color:#FFFFFF" data-symbol-layout="label-bottom" id="btn-bag" class="dwell-btn board-button role-fringe" type="button" data-button-id="btn-bag" data-label="Bag away" data-spoken="Bag away" data-actions="[{&quot;id&quot;:&quot;act-btn-bag-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Bag away&quot;},{&quot;id&quot;:&quot;act-btn-bag-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Bag away"><span class="scan-number" aria-hidden="true">2. </span><span class="label">Bag away</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button style="grid-row:1;grid-column:3;background-color:#FFFFFF" data-symbol-layout="label-bottom" id="btn-morning" class="dwell-btn board-button role-fringe" type="button" data-button-id="btn-morning" data-label="Morning job" data-spoken="Morning job" data-actions="[{&quot;id&quot;:&quot;act-btn-morning-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Morning job&quot;},{&quot;id&quot;:&quot;act-btn-morning-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Morning job"><span class="scan-number" aria-hidden="true">3. </span><span class="label">Morning job</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button style="grid-row:2;grid-column:1;background-color:#FFFFFF" data-symbol-layout="label-bottom" id="btn-group" class="dwell-btn board-button role-fringe" type="button" data-button-id="btn-group" data-label="Group time" data-spoken="Group time" data-actions="[{&quot;id&quot;:&quot;act-btn-group-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Group time&quot;},{&quot;id&quot;:&quot;act-btn-group-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Group time"><span class="scan-number" aria-hidden="true">4. </span><span class="label">Group time</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button style="grid-row:2;grid-column:2;background-color:#FFFFFF" data-symbol-layout="label-bottom" id="btn-next" class="dwell-btn board-button role-question" type="button" data-button-id="btn-next" data-label="What next?" data-spoken="What is next?" data-actions="[{&quot;id&quot;:&quot;act-btn-next-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;What is next?&quot;},{&quot;id&quot;:&quot;act-btn-next-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="What next?"><span class="scan-number" aria-hidden="true">5. </span><span class="label">What next?</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button style="grid-row:2;grid-column:3;background-color:#FFFFFF" data-symbol-layout="label-bottom" id="btn-wait" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-wait" data-label="Wait" data-spoken="I need to wait" data-actions="[{&quot;id&quot;:&quot;act-btn-wait-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;I need to wait&quot;},{&quot;id&quot;:&quot;act-btn-wait-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Wait"><span class="scan-number" aria-hidden="true">6. </span><span class="label">Wait</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button style="grid-row:3;grid-column:1;background-color:#FFFFFF" data-symbol-layout="label-bottom" id="btn-help" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-help" data-label="Help please" data-spoken="Help please" data-actions="[{&quot;id&quot;:&quot;act-btn-help-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Help please&quot;},{&quot;id&quot;:&quot;act-btn-help-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Help please"><span class="scan-number" aria-hidden="true">7. </span><span class="label">Help please</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button style="grid-row:3;grid-column:2;background-color:#FFFFFF" data-symbol-layout="label-bottom" id="btn-change" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-change" data-label="Change" data-spoken="I need a change" data-actions="[{&quot;id&quot;:&quot;act-btn-change-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;I need a change&quot;},{&quot;id&quot;:&quot;act-btn-change-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Change"><span class="scan-number" aria-hidden="true">8. </span><span class="label">Change</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button style="grid-row:3;grid-column:3;background-color:#FFFFFF" data-symbol-layout="label-bottom" id="btn-finished" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-finished" data-label="Finished" data-spoken="I am finished" data-actions="[{&quot;id&quot;:&quot;act-btn-finished-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;I am finished&quot;},{&quot;id&quot;:&quot;act-btn-finished-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Finished"><span class="scan-number" aria-hidden="true">9. </span><span class="label">Finished</span><span class="dwell-progress" aria-hidden="true"></span></button></div><p class="print-attribution">ARASAAC: CC BY-NC-SA. The pictographic symbols used are the property of the Government of Aragon and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distributes them under Creative Commons License BY-NC-SA. </p></section></main>
 <section id="speech-layer" class="speech-layer" aria-label="Speech controls" hidden><button id="stop-speech" class="dwell-btn stop-control" type="button" data-control="stop-speech" data-student-target data-dwell aria-label="Stop speech"><span class="label">Stop speech</span><span class="dwell-progress" aria-hidden="true"></span></button></section>
 <div id="board-status" class="board-status" role="status" aria-live="polite">Board ready.</div>
-<aside class="teacher-panel"><h2>Teacher notes</h2><p><strong>Model:</strong> Point to schedule steps as they happen and model expressive messages, especially Wait, Help please, Change and Finished.</p><p><strong>Evidence:</strong> Note whether the student anticipates next steps, requests help/wait/change, or comments on readiness.</p><p><strong>Customise:</strong> Replace routine steps with the actual class morning sequence and photos if available and approved.</p><p class="attribution">ARASAAC: CC BY-NC-SA. Text fallback remains available. ARASAAC pictograms, when embedded, require their stated attribution.</p></aside>
+<aside class="teacher-panel"><h2>Teacher notes</h2><p><strong>Model:</strong> Point to schedule steps as they happen and model expressive messages, especially Wait, Help please, Change and Finished.</p><p><strong>Evidence:</strong> Note whether the student anticipates next steps, requests help/wait/change, or comments on readiness.</p><p><strong>Customise:</strong> Replace routine steps with the actual class morning sequence and photos if available and approved.</p><p class="attribution">ARASAAC: CC BY-NC-SA. The pictographic symbols used are the property of the Government of Aragon and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distributes them under Creative Commons License BY-NC-SA. . Text fallback remains available. ARASAAC pictograms, when embedded, require their stated attribution.</p></aside>
 <script id="aac-board-ir" type="application/json">{
   "schemaVersion": "0.4.0",
   "format": "agentic-aac-board-ir",
@@ -448,7 +455,7 @@ body.teacher-mode .teacher-panel { display:block; }
   }
 }</script>
 <script>if(new URLSearchParams(location.search).get("teacher")==="1")document.body.classList.add("teacher-mode");</script>
-<!-- shared-runtime-sha256:6618cf41c5c30094d0a1523640748625009bff7daaeedd50f3445ac1b89e0ab2 -->
+<!-- shared-runtime-sha256:2d1e7c1aeaf42494b372c8c4cf29915c3602bc8815c22c7bb51e23731cbeedf3 -->
 <script data-aac-shared-runtime>/* Agentic AAC Board shared runtime. Keep this file dependency-free and offline-safe. */
 (() => {
   "use strict";
@@ -464,6 +471,7 @@ body.teacher-mode .teacher-panel { display:block; }
   const messageText = document.getElementById("message-text");
   const status = document.getElementById("board-status");
   let speechToken = 0;
+  let speechOrigin = null;
 
   const isRendered = (element) => {
     if (!(element instanceof HTMLElement)) return false;
@@ -505,6 +513,8 @@ body.teacher-mode .teacher-panel { display:block; }
   };
 
   const setSpeechMode = (enabled) => {
+    if (enabled && !state.speaking) speechOrigin = document.activeElement;
+    dwell.cancel();
     state.speaking = enabled;
     document.body.classList.toggle("speech-active", enabled);
     if (speechLayer) speechLayer.hidden = !enabled;
@@ -512,6 +522,11 @@ body.teacher-mode .teacher-panel { display:block; }
     if (setup) setup.inert = enabled;
     auditVisibleTargets();
     if (enabled) document.getElementById("stop-speech")?.focus({ preventScroll: true });
+    else if (speechOrigin) {
+      const destination = isRendered(speechOrigin) ? speechOrigin : visibleTargets()[0];
+      destination?.focus({ preventScroll: true });
+      speechOrigin = null;
+    }
   };
 
   const stopSpeech = () => {
@@ -524,6 +539,8 @@ body.teacher-mode .teacher-panel { display:block; }
   const speak = (value) => {
     const phrase = String(value || "").trim();
     if (!phrase) return;
+    const selectedMessage = document.getElementById("selected-message");
+    if (selectedMessage) selectedMessage.textContent = phrase;
     if (!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined") {
       announce(`Speech is unavailable. Message: ${phrase}`);
       return;
@@ -605,11 +622,13 @@ body.teacher-mode .teacher-panel { display:block; }
       this.startedAt = 0;
     }
     attach(root = document) {
-      root.querySelectorAll("[data-dwell]").forEach((target) => {
-        target.addEventListener("pointerenter", () => this.begin(target));
-        target.addEventListener("pointerleave", () => this.cancel(target));
-        target.addEventListener("pointercancel", () => this.cancel(target));
-        target.addEventListener("blur", () => this.cancel(target));
+      root.querySelectorAll("[data-student-target]").forEach((target) => {
+        if (target.hasAttribute("data-dwell")) {
+          target.addEventListener("pointerenter", () => this.begin(target));
+          target.addEventListener("pointerleave", () => this.cancel(target));
+          target.addEventListener("pointercancel", () => this.cancel(target));
+          target.addEventListener("blur", () => this.cancel(target));
+        }
         target.addEventListener("click", (event) => {
           if (target.dataset.dwellActivated === "true") {
             target.dataset.dwellActivated = "false";

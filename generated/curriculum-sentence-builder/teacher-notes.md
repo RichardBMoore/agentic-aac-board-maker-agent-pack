@@ -14,7 +14,7 @@ Word buttons append to the sentence bar at the top of the screen and speak the s
 
 ### Modelling
 
-Model a complete sentence chain across both pages: My hero is … brave … because … helps others, then press Speak sentence. Accept partial sentences as valid drafting or rehearsal.
+Model a complete sentence chain across both pages: My hero is … a firefighter … I think … brave … because … helps others, then press Speak sentence. Accept partial sentences as valid drafting or rehearsal.
 
 ### Curriculum
 
@@ -22,7 +22,7 @@ Supports Year 7 English speaking/listening by giving access to opinion, reasonin
 
 ### Customisation
 
-Replace the describing words and add the hero's name (as a word button or spoken after "My hero is") to match the class text, film, novel or local hero being studied.
+The firefighter is generic demonstration content, not evidence from a class text. Replace the firefighter, rescue example and describing words, and add the hero's name (as a word button or spoken after "My hero is") to match the class text, film, novel or local hero being studied.
 
 ### Repair
 

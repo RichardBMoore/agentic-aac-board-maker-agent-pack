@@ -96,8 +96,8 @@
           "label": "I think…",
           "role": "sentence",
           "function": "comment",
-          "spokenText": "I think",
-          "searchTerm": "opinion think",
+          "spokenText": "I think they are",
+          "searchTerm": "I think…",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
@@ -105,12 +105,12 @@
             {
               "id": "act-btn-i-think-add",
               "type": "add-to-message",
-              "text": "I think"
+              "text": "I think they are"
             },
             {
               "id": "act-btn-i-think-speak",
               "type": "speak-text",
-              "text": "I think"
+              "text": "I think they are"
             },
             {
               "id": "act-btn-i-think-log",
@@ -160,8 +160,8 @@
           "label": "For example…",
           "role": "evidence",
           "function": "explain",
-          "spokenText": "For example",
-          "searchTerm": "example evidence",
+          "spokenText": "For example,",
+          "searchTerm": "For example…",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
@@ -169,12 +169,12 @@
             {
               "id": "act-btn-example-add",
               "type": "add-to-message",
-              "text": "For example"
+              "text": "For example,"
             },
             {
               "id": "act-btn-example-speak",
               "type": "speak-text",
-              "text": "For example"
+              "text": "For example,"
             },
             {
               "id": "act-btn-example-log",
@@ -189,11 +189,11 @@
         },
         {
           "id": "btn-and-also",
-          "label": "and also",
+          "label": "a firefighter",
           "role": "sentence",
           "function": "comment",
-          "spokenText": "and also",
-          "searchTerm": "and also conjunction",
+          "spokenText": "a firefighter.",
+          "searchTerm": "a firefighter",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
@@ -201,12 +201,12 @@
             {
               "id": "act-btn-and-also-add",
               "type": "add-to-message",
-              "text": "and also"
+              "text": "a firefighter."
             },
             {
               "id": "act-btn-and-also-speak",
               "type": "speak-text",
-              "text": "and also"
+              "text": "a firefighter."
             },
             {
               "id": "act-btn-and-also-log",
@@ -400,8 +400,8 @@
           "label": "helps others",
           "role": "fringe",
           "function": "comment",
-          "spokenText": "helps others",
-          "searchTerm": "helping others",
+          "spokenText": "they help others.",
+          "searchTerm": "helps others",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
@@ -409,12 +409,12 @@
             {
               "id": "act-btn-helps-others-add",
               "type": "add-to-message",
-              "text": "helps others"
+              "text": "they help others."
             },
             {
               "id": "act-btn-helps-others-speak",
               "type": "speak-text",
-              "text": "helps others"
+              "text": "they help others."
             },
             {
               "id": "act-btn-helps-others-log",
@@ -429,11 +429,11 @@
         },
         {
           "id": "btn-never-gives-up",
-          "label": "never gives up",
+          "label": "rescues people",
           "role": "fringe",
           "function": "comment",
-          "spokenText": "never gives up",
-          "searchTerm": "perseverance determined",
+          "spokenText": "they rescue people.",
+          "searchTerm": "rescues people",
           "symbolId": null,
           "symbolSrc": "",
           "symbolLayout": "label-bottom",
@@ -441,12 +441,12 @@
             {
               "id": "act-btn-never-gives-up-add",
               "type": "add-to-message",
-              "text": "never gives up"
+              "text": "they rescue people."
             },
             {
               "id": "act-btn-never-gives-up-speak",
               "type": "speak-text",
-              "text": "never gives up"
+              "text": "they rescue people."
             },
             {
               "id": "act-btn-never-gives-up-log",

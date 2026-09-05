@@ -45,6 +45,7 @@ Read these files based on task type:
 - `references/symbol-and-vocabulary-strategy.md` — core/fringe vocabulary, ARASAAC/custom media, attribution, privacy.
 - `references/access-methods.md` — touch, keyboard, eye gaze/dwell, switch scanning, print/partner-assisted design rules.
 - `references/curriculum-qcia-translation.md` — convert curriculum/QCIA tasks into communication moves.
+- `references/output-quality.md` — renderer capabilities, symbol completion, stable grid positions and task-level acceptance.
 - `references/output-contracts.md` — expected shapes for HTML, JSON, printable boards, and resource packs.
 - `references/prompt-recipes.md` — reusable prompts for board generation and self-critique.
 - `references/qa-rubric.md` — final checks before returning a resource.
@@ -63,7 +64,7 @@ Load `eyegaze-dwell-html` only when eye gaze/dwell is explicit. Load `accent-dis
 3. **Select a board pattern.** Choose from yes/no, choice board, first-then, visual schedule, core/fringe board, quiz/comprehension, sentence builder, story/book reader, needs/repair, or curriculum participation board.
 4. **Create canonical AAC Board IR 0.4.0 before visuals.** Define pages, roles/functions/actions, real visible-target limits, student/setup controls, system fit, repair, privacy, attribution, SETT/UDL/differentiation and evidence needs. Run `scripts/canonicalize_board_ir.py` for legacy input, then validate against `references/aac-board-ir.schema.json` and `scripts/validate_board_ir.py`.
 5. **Review symbols as candidates.** When symbols are wanted, run `scripts/fetch_arasaac_symbols.py <ir> --review-out <review.json>`. A teacher/team reviewer chooses `approvedSymbolId` values from the contact sheet; apply them with `--apply-review`. Keep text fallback. Use `--auto-select` only when the user explicitly accepts automated semantic selection.
-6. **Render from IR.** Use `scripts/render_html.py` for deterministic single-file HTML, `scripts/render_open_aac_studio.py` for explicit app compatibility, and `scripts/render_obf.py` for OBF/OBZ. Never hand-edit a generated HTML export; change IR or the shared runtime and re-render.
+6. **Render from IR.** Follow `references/output-quality.md`: preserve chosen positions, distinguish symbol drafts from complete representations, and reject unsupported access modes. Use `scripts/render_html.py` for deterministic single-file HTML, `scripts/render_open_aac_studio.py` for explicit app compatibility, and `scripts/render_obf.py` for OBF/OBZ. Never hand-edit a generated HTML export; change IR or the shared runtime and re-render.
 7. **Validate and run real QA.** Run `scripts/validate_html_parity.py`, static checks, and browser/device tests where available. Count every active student target, including setup, navigation and stop controls—not only vocabulary cells. For new candidate folders, run `scripts/evaluate_fresh_output.py` against the fixture manifest.
 8. **Return usable files and honest caveats.** Include where the file was saved, what it supports, what needs real-device/team testing, unresolved `systemFit` items, and what can be customised.
 

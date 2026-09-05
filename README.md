@@ -138,6 +138,10 @@ Each skill folder also remains usable on its own:
 - `icp-backwards-mapping-assessment` - ICP backwards mapping, adapted assessment, rubrics, moderation notes, and evidence design.
 - `richard-school-resource-workflow` - Richard's broader school-resource workflow context.
 
+## Output quality in 0.8.0
+
+Native touch/keyboard activation works independently of dwell. Standalone HTML rejects switch-scanning configurations; use a verified scanning player for those requests. Symbol-review sheets support offline previews and downloadable revision-bound decisions. HTML/OBF preserve aligned grid cells; print supports A4/A3 portrait/landscape and scan numbers. See `skills/agentic-aac-board-maker/references/output-quality.md` for capabilities and acceptance checks.
+
 ## Generated Examples
 
 The `generated/` folder is intentionally kept in the repo. These examples are demonstrations and golden regression fixtures. The release check validates canonical IR against JSON Schema, fresh-renders HTML/Open AAC Studio/OBF outputs, and enforces HTML/IR/shared-runtime parity. `evaluate_fresh_output.py` separately checks new candidate generations so golden fixtures cannot mask weak new output.
@@ -150,6 +154,7 @@ Included proof-of-concept examples:
 - `visual-schedule-expressive` - visual schedule with expressive options.
 - `needs-repair-board` - respectful needs and repair board; two gaze-safe pages with Help on each.
 - `partner-assisted-print` - printable partner-assisted scanning board.
+- `symbol-shape-choice` - original embedded geometric symbols for offline rendering QA; learner familiarity remains unverified.
 
 The `curriculum-sentence-builder` and `needs-repair-board` examples also demonstrate multi-page `navigation` buttons (`next-page`/`previous-page` actions), so the regression fixtures cover navigation as well as single-page boards.
 

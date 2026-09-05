@@ -19,7 +19,7 @@
     "backgroundColour": "#f7fbff",
     "showStopButton": true,
     "dwellTimeMs": 1200,
-    "switchScanning": true,
+    "switchScanning": false,
     "scanSpeedMs": 1800,
     "scanPattern": "linear"
   },
