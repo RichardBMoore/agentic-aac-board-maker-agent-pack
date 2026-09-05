@@ -15,7 +15,7 @@ function renderCandidate(edit){const ir=JSON.parse(readFileSync(source));edit(ir
 async function open(page,file){await page.addInitScript(()=>{window.__spoken=[];window.SpeechSynthesisUtterance=class {constructor(text){this.text=text;}};Object.defineProperty(window,'speechSynthesis',{value:{cancel(){},speak(utterance){window.__spoken.push(utterance.text);window.__utterance=utterance;utterance.onstart?.();}}});});await page.goto(pathToFileURL(file).href);}
 
 test('touch-only start, vocabulary and stop work with keyboard',async({page})=>{
- const file=renderCandidate(ir=>{ir.access.profile='touch';ir.access.intended=['touch','keyboard'];ir.access.dwellTimeMs=null;});
+ const file=renderCandidate(ir=>{ir.access.profile='direct-selection';ir.access.intended=['touch','keyboard'];ir.access.dwellTimeMs=null;});
  await open(page,file);await page.getByRole('button',{name:'Start board'}).focus();await page.keyboard.press('Enter');
  await expect(page.locator('#student-layer')).toBeVisible();await page.locator('#btn-art').focus();await page.keyboard.press('Space');
  expect(await page.evaluate(()=>window.__spoken)).toEqual(['Art']);
