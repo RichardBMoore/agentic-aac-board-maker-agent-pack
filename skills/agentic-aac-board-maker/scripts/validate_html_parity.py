@@ -41,6 +41,8 @@ class BoardCollector(HTMLParser):
         self._runtime_depth = 0
         self.ir_parts: list[str] = []
         self.runtime_parts: list[str] = []
+        self.symbols: dict[str, str] = {}
+        self._symbol_id = ""
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         values = {key: value or "" for key, value in attrs}
@@ -50,6 +52,13 @@ class BoardCollector(HTMLParser):
             self.presentation.append(("button", {key: values.get(key, "") for key in ("style", "data-symbol-layout", "aria-label")}))
         if tag == "img":
             self.presentation.append(("image", values))
+        if tag == "use":
+            self.presentation.append(("symbol-use", values))
+        if tag == "symbol" and values.get("id", "").startswith("sym-"):
+            self._symbol_id = values["id"].removeprefix("sym-")
+        if tag == "image" and self._symbol_id:
+            self.symbols[self._symbol_id] = values.get("href", "")
+            self._symbol_id = ""
         if tag == "html": self.html_attrs = values
         if tag == "body": self.body_attrs = values
         if values.get("data-page-id"): self.pages.append(values["data-page-id"])
@@ -87,6 +96,11 @@ def validate(source: dict[str, Any], html_text: str, runtime_source: str | None 
         embedded = json.loads("".join(collector.ir_parts))
     except json.JSONDecodeError as error:
         return [f"embedded IR is missing or invalid: {error}"]
+    for page in embedded.get("pages", []):
+        for button in page.get("buttons", []):
+            source = str(button.get("symbolSrc") or "")
+            if source.startswith("sym:"):
+                button["symbolSrc"] = collector.symbols.get(source.removeprefix("sym:"), source)
     if embedded != canonical:
         failures.append("embedded IR does not equal canonical source IR")
     expected_pages = [page["id"] for page in canonical["pages"]]
@@ -94,7 +108,7 @@ def validate(source: dict[str, Any], html_text: str, runtime_source: str | None 
         failures.append(f"HTML page order differs: expected {expected_pages}, got {collector.pages}")
     expected_buttons = [
         {"data-button-id": button["id"], "data-label": button["label"], "data-spoken": button["spokenText"], "data-actions": json.dumps(button["actions"], ensure_ascii=False, separators=(",", ":"))}
-        for page in canonical["pages"] for _, _, button in grid_slots(page)
+        for page in canonical["pages"] for _, _, button in grid_slots(page) if not button.get("hidden")
     ]
     actual_buttons = [
         {**button, "data-actions": html.unescape(button["data-actions"])} for button in collector.buttons

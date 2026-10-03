@@ -4,19 +4,12 @@ Generated from proof-of-concept fixture: `needs-repair-board` / "Make a respectf
 
 ## Files
 
-- `secondary-needs-repair-board.ir.json` - canonical AAC Board IR source of truth.
-- `secondary-needs-repair-board.html` - single-file offline HTML student/player draft with two pages and a print stylesheet.
-- `secondary-needs-repair-board.open-aac-studio.json` - Open AAC Studio-compatible renderer output created from the IR.
+- `secondary-needs-repair-board.ir.json` - canonical AAC Board IR 0.5.0 source of truth (house standards applied).
+- `secondary-needs-repair-board.html` - single-file offline HTML board with print stylesheet and teacher panel.
+- `partner-card.html` - one-page card for communication partners.
+- `secondary-needs-repair-board.open-aac-studio.json` - Open AAC Studio-compatible export.
+- `secondary-needs-repair-board.obz` - Open Board Format export.
 - `teacher-notes.md` - teacher notes, evidence/customisation notes and caveats.
-
-## Layout
-
-Two gaze-safe pages with navigation between them, so no page shows more than nine targets:
-
-- **Page 1 - I need:** Help please, I need a break, Wait, I feel unwell, I need privacy, Too loud, Finished, and a navigation button to page 2.
-- **Page 2 - Sort it out:** Help please, Say it another way, Not that, Different, I disagree, Can I choose?, and a navigation button back to page 1.
-
-Help please appears on both pages so support is never more than one selection away. All twelve self-advocacy and repair messages from the original single-page draft are preserved.
 
 ## Expected outputs covered
 
@@ -30,26 +23,37 @@ Help please appears on both pages so support is never more than one selection aw
 - `repair-language`
 - `privacy-safe`
 - `not-behaviour-control`
+- `house-standards`
+- `partner-card`
+- `keyboard-route`
+- `core-words`
+
+## How the board works
+
+- **I need** (3x3): Break, Wait, I feel unwell, ABC, I need privacy, Sort it out ▶, Help, Too loud, Finished.
+- **Sort it out** (3x3): Say it another way, Not that, I disagree, ◀ I need, Can I choose?, Core words ▶, Help, Different.
+
+The house standards tool added a **Core words** page (I, want, don't, like, go, more) that builds messages in the message bar, a **Word endings** page (-s, -ing, -ed, with Undo and Start again) and an **ABC keyboard** (QWERTY letter groups, then letters; Speak, Delete and Help on the keyboard page). Talking pages link forward with the right-middle button and back with the left-middle button; ABC sits left-middle on the first page.
+
+- **House words:** Help is bottom-left on every page; Different is bottom-middle wherever it appears; Undo is bottom-middle wherever it appears; Finished is bottom-right wherever it appears; Speak is top-right wherever it appears; ABC is left-middle of the first page. Page buttons: ▶ forward is right-middle, ◀ back is left-middle. Stop speech appears at the right edge while the board is talking. Each house word says the same message on every board.
+- **Speech:** the board stays visible while it speaks; Stop speech appears at the right edge; a new selection interrupts.
+- **Colour:** fills follow the Modified Fitzgerald Key by word type (for example green actions, blue describing words, pink social words, red help/stop words).
 
 ## Access
 
-- Intended access: touch, keyboard, mouse, eye-gaze-dwell.
-- Minimum target size: 132 px.
-- Dwell default: 1100 ms.
-- Keyboard: Tab plus Enter/Space. Escape cancels dwell/speech.
-- Print: use the browser print command; the HTML includes a print stylesheet.
+- Intended access: touch, keyboard, mouse, eye-gaze-dwell (profile `mixed-access`).
+- At most 9 active targets per page; minimum target size 132 px.
+- Dwell: 1100 ms; dwell re-arms only after the pointer leaves.
+- Keyboard: Tab plus Enter/Space; Escape cancels dwell or stops speech.
+- Print: browser print shows every page with scan numbers and a teacher/partner-card page.
 
 ## Communication purpose
 
-An age-respectful two-page needs and repair board that lets a secondary student request support, privacy, clarification, a break, different choices or communication repair without behaviour-control framing.
+An age-respectful two-page needs and communication repair board that lets a secondary student request support, privacy, clarification, a break, different choices or communication repair without behaviour-control framing. Help stays on every page and no page exceeds nine targets.
 
-## Teacher notes
+## Symbols
 
-- **Modelling:** Model the board neutrally during calm moments, including how to move between the two pages. Treat selections as communication, not behaviour compliance.
-- **Age Respectful:** Language is plain and secondary-appropriate. Avoid childish praise, token language or public commentary about private needs.
-- **Privacy:** Do not log sensitive health, behaviour or family details in the file. Use separate approved school processes for confidential notes.
-- **Repair:** Honour repair messages such as Not that, Different, Say it another way and Wait before repeating demands.
-- **Use:** Use as a support for needs and communication repair, not as a behaviour-control board or replacement AAC system.
+21 of 23 different word and message buttons show a symbol; 21 of these were proposed by the agent and await team review. Letters and page buttons are text by design. Text-only words: don't, Space.
 
 ## Caveat
 

@@ -54,7 +54,7 @@ class CanonicalIrTests(unittest.TestCase):
             "licences": [{"source": "Text only", "licence": "None"}],
         }
         canonical = canonicalizer.canonicalize(legacy)
-        self.assertEqual("0.4.0", canonical["schemaVersion"])
+        self.assertEqual("0.5.0", canonical["schemaVersion"])
         self.assertEqual("Legacy board", canonical["title"])
         self.assertNotIn("app", canonical)
         self.assertNotIn("name", canonical)

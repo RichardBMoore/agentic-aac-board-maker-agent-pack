@@ -48,4 +48,4 @@ class OutputQualityTests(unittest.TestCase):
   self.assertTrue(validate(self.ir,changed))
   example=json.loads(next((ROOT/'generated/symbol-shape-choice').glob('*.ir.json')).read_text())
   import re
-  self.assertTrue(validate(example,re.sub(r'<img[^>]+>', '',render(example),count=1)))
+  self.assertTrue(validate(example,re.sub(r'<use [^>]+/>', '',render(example),count=1)))

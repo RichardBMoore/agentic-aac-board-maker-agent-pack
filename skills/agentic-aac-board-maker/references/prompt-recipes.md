@@ -84,7 +84,7 @@ Return <output type>.
 ## SETT/UDL Differentiation Prompt
 
 ```text
-For this AAC board/resource, add canonical IR 0.4.0 support and system-fit metadata:
+For this AAC board/resource, add canonical IR 0.5.0 support, house standards (run scripts/apply_house_standards.py) and system-fit metadata:
 - SETT: student strengths/access preferences without diagnoses, environment constraints, task demand, tools/supports.
 - UDL: engagement, representation, action/expression.
 - Differentiation: content, process, product, environment, support.

@@ -4,9 +4,9 @@ AAC Board IR is the renderer-independent source of truth created before HTML, Op
 
 ## Version And Schema
 
-Canonical output is `schemaVersion: "0.4.0"` with `format: "agentic-aac-board-ir"`. Validate it with `references/aac-board-ir.schema.json`.
+Canonical output is `schemaVersion: "0.5.0"` with `format: "agentic-aac-board-ir"`. Validate it with `references/aac-board-ir.schema.json`. 0.5.0 IR must also record that house standards were applied (`house`); see `references/house-standards.md`.
 
-Legacy 0.2/0.3 inputs remain readable through:
+Legacy 0.2/0.3/0.4 inputs remain readable through:
 
 ```sh
 python3 scripts/canonicalize_board_ir.py legacy.ir.json canonical.ir.json
@@ -30,6 +30,16 @@ Use `templates/board-json-skeleton.json` as the complete editable starter. Canon
 
 Optional SETT, UDL, differentiation, participation barriers and evidence-plan metadata are strongly expected for curriculum/QCIA resources.
 
+### Added in 0.5.0
+
+- Button `lexiconId` (house word), `wordClass` (colour and logging), `hidden` (masked cell that keeps its address) and `symbolStatus` (`proposed` or `approved`).
+- Page `schedule` (`steps` in order, optional `finishedAdvances`).
+- `house` (`standardsVersion`, `layoutSource` `house` or `student-system` with `layoutNote`, `symbolSet`).
+- `literacy` (`keyboard` with `enabled`/`layout`/`mode` or an `omitReason`; `coreWords`; `wordEndings`).
+- `partnerCard` (`modelWords` 3-5 button ids, `waitSeconds` >= 5, `commentExamples`, `promptLadder`, `notes`).
+- `speech` (`lang`, `voiceName`, `rate`, `pitch`, `preferLocal`) and `evidenceLog` (`enabled`, `consentNote`).
+- `display.colourScheme` (`modified-fitzgerald` or `none`), `display.visualProfile` (`standard` or `cvi`), `display.highlightColour`; `audience.settings` (for example `community`).
+
 ## Controlled Values
 
 Access profiles:
@@ -50,6 +60,8 @@ Canonical actions are objects with a stable id and one of:
 - speech/logging: `speak-text`, `speak-label`, `log-attempt`;
 - navigation: `navigate-page`, `next-page`, `previous-page`;
 - message building: `add-to-message`, `speak-message`, `remove-last-word`, `clear-message`;
+- spelling and grammar: `add-letter`, `add-space`, `delete-letter`, `add-word-ending` (`text`: s, ing, ed, er, est);
+- schedules: `schedule-done`;
 - evidence: `mark-correct`, `mark-incorrect`.
 
 String `"speak"`/`"log"` forms are legacy input only. New canonical output uses action objects.
@@ -61,7 +73,8 @@ Density means every simultaneously active student target—not declared grid cel
 - Gaze/dwell defaults to 2×2, 2×3 or 3×3; no more than nine active board targets unless `denseGazeTested` is boolean `true` after actual device testing.
 - Gaze/dwell requires `minimumTargetSizePx >= 120`, an integer dwell time and immediate pointer-leave/focus-loss cancellation.
 - Setup is a separate phase with `setupTargetLimit` (three by default).
-- During speech, the canonical HTML renderer hides/inerts other student targets so Stop Speech is the only active target.
+- During speech the board stays visible and live (a new selection interrupts) and one Stop speech control appears in a reserved right-edge column, so the speech-phase limit is `visibleTargetLimit + 1`. After any selection or page change, dwell waits for the pointer to leave before it can start again.
+- Hidden (masked) buttons are not targets and do not count.
 - Switch boards start with small predictable sets; larger sets require fatigue-aware scanning design.
 - Direct-selection defaults to 3×3; 4×4 is appropriate only when access supports it.
 
@@ -84,7 +97,7 @@ Keep unresolved items explicit and test them with the student/team on the actual
 
 ## Multi-Page And Message Behaviour
 
-Use navigation-role/function buttons with explicit actions. `navigate-page` must name a real `targetPageId`; next/previous actions follow page order. Keep repair/help reachable on each page.
+Use navigation-role/function buttons with explicit actions. `navigate-page` must name a real `targetPageId`; next/previous actions follow page order. Keep repair/help reachable on each page. `apply_house_standards.py` links talking pages in a ring (one forward button, plus a back button on talking pages after the first) and places them in the house navigation cells.
 
 Sentence builders use a top-level `messageBar` plus real message actions. The bar displays the current message; controls can be board buttons so gaze pages do not silently gain extra active targets.
 
@@ -113,11 +126,11 @@ python3 scripts/validate_html_parity.py board.ir.json board.html
 
 The deterministic HTML contains:
 
-- the complete canonical IR payload;
+- the complete canonical IR payload (each embedded image stored once in shared SVG symbol definitions and referenced as `sym:<key>`);
 - semantic buttons and exact button/action metadata;
 - inline/offline CSS and the exact shared `assets/aac-board-runtime.js`;
 - keyboard, click, dwell, message, navigation, TTS/Stop Speech and target-audit behaviour;
-- teacher/attribution content outside normal student mode plus print styling.
+- a teacher panel (never a student target) with voice status, symbol status, partner card, notes, schedule controls and the opt-in selection log, plus print styling.
 
 Never hand-edit generated HTML. Change IR or the shared runtime and re-render. Parity and byte-drift checks fail if HTML labels/actions/pages, embedded IR or runtime differ.
 
@@ -127,7 +140,7 @@ Never hand-edit generated HTML. Change IR or the shared runtime and re-render. P
 
 ### Open Board Format
 
-`scripts/render_obf.py` writes `.obf` for one page or `.obz` for multiple pages. Navigation maps to `load_board`; message actions map to supported OBF commands; ARASAAC ids carry attribution/licence information.
+`scripts/render_obf.py` writes `.obf` for one page or `.obz` for multiple pages. Navigation maps to `load_board`; message actions map to supported OBF commands (`:speak`, `:clear`, `:backspace`, `:space`, `+letter`); word endings become `:ext_aac_ending_<ending>`; hidden buttons keep their grid address with `hidden: true`; every ARASAAC image carries a licence block; in `.obz` each picture is stored once under `images/`.
 
 ## Validation Failures
 

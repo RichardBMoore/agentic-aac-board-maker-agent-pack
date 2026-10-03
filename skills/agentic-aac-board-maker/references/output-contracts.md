@@ -1,10 +1,10 @@
 # Output Contracts
 
-Every output derives from canonical AAC Board IR 0.4.0. The IR is the design source; HTML, Open AAC Studio JSON and OBF/OBZ are disposable deterministic renders.
+Every output derives from canonical AAC Board IR 0.5.0 with house standards applied. The IR is the design source; HTML, Open AAC Studio JSON and OBF/OBZ are disposable deterministic renders.
 
 ## Contract 0 — Canonical IR
 
-- Pass `scripts/canonicalize_board_ir.py <ir> --check`.
+- Pass `scripts/canonicalize_board_ir.py <ir> --check` and `scripts/apply_house_standards.py <ir> --check`.
 - Pass `references/aac-board-ir.schema.json` and `scripts/validate_board_ir.py`.
 - Contain no target-renderer aliases.
 - Include total target limits, student/setup controls, system fit, teacher notes, symbol review strategy, privacy and attribution.
@@ -55,6 +55,7 @@ Include large labels, strong borders, declared scan/pointing order, partner wait
   <slug>.open-aac-studio.json       # when useful
   <slug>.obf or <slug>.obz          # when useful
   teacher-notes.md
+  partner-card.html                 # scripts/render_partner_card.py
   symbol-review.json/html           # while candidate review is pending
 ```
 

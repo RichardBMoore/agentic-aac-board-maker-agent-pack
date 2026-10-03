@@ -24,8 +24,16 @@ Communication quality
 - Spoken output is student voice ("I want a break"), not adult instruction voice ("take a break").
 - Not a noun-only grid; core words are present where the pattern calls for them.
 
+House standards
+- Run `skills/agentic-aac-board-maker/scripts/apply_house_standards.py <ir> --check` when the IR is 0.5.0; report any house word that has moved or says a different message.
+- The first page reaches the ABC keyboard (or an omit reason is recorded); core words and word endings exist where the age band calls for them.
+- Colour means word type; a CVI profile turns colour coding off.
+- A partner card exists with 3-5 model words, a wait of at least 5 seconds and comments rather than test questions. Community boards open with How I talk.
+- Symbols marked `proposed` are reported as awaiting team review, not as approved.
+- Speech prefers an installed voice; the selection log is off unless an evidence plan explains it.
+
 Access-method fit
-- Eye-gaze/dwell boards: no more than 9 targets per page unless the IR marks `denseGazeTested: true`; targets at least 120 px; a dwell-cancel/escape path; no hover-triggered activation on partner-assisted or touch boards.
+- Eye-gaze/dwell boards: no more than 9 targets per page unless the IR marks `denseGazeTested: true`; targets at least 120 px; a dwell-cancel/escape path; no hover-triggered activation on partner-assisted or touch boards; speech keeps the board visible with Stop at the edge, and dwell re-arms only after the pointer leaves.
 - Keyboard baseline: every action reachable by Tab plus Enter/Space; visible focus.
 - Switch scanning declared? Check scan order and grouping are sensible.
 

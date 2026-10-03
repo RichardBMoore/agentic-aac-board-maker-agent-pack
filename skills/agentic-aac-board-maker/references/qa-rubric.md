@@ -79,7 +79,7 @@ For HTML:
 - [ ] File opens on intended browser/device-sized viewport with no page/console errors.
 - [ ] Buttons activate by click and keyboard.
 - [ ] Dwell start/cancel/activation are browser-tested when applicable.
-- [ ] TTS makes Stop Speech the only active target while speaking.
+- [ ] While speaking, the board stays visible and live, Stop speech appears at the edge, and a resting gaze does not cut off or repeat the message.
 - [ ] Live total-target audit passes in setup, board, navigation and speech states.
 - [ ] No external dependencies if promised offline.
 - [ ] Print preview reasonable if print required.
@@ -98,7 +98,18 @@ For resource packs:
 - [ ] Attribution included.
 - [ ] Fresh-output evaluation harness passes the relevant fixture(s).
 
-## 8. System Fit Review
+## 8. House Standards
+
+- [ ] `scripts/apply_house_standards.py <ir> --check` passes (or `house.layoutSource` is `student-system` with a note).
+- [ ] Recurring words use `lexiconId`; the same label says the same message on every board.
+- [ ] The first page reaches the ABC keyboard, or `literacy.keyboard.omitReason` explains why not.
+- [ ] Every visible button has a `wordClass`; colour follows the scheme (or the CVI profile switches it off).
+- [ ] Partner card names 3-5 model words, waits at least 5 seconds and uses comments, not test questions.
+- [ ] Community boards open with How I talk.
+- [ ] Speech prefers an installed voice; the selection log is off unless the team agreed its purpose.
+- [ ] Symbol status is honest: proposed symbols are reported as awaiting team review.
+
+## 9. System Fit Review
 
 - [ ] Relationship to the student's established AAC/low-tech system is clear.
 - [ ] Familiar vocabulary and stable motor/location patterns are preserved or flagged for review.

@@ -12,7 +12,8 @@ Use this when the agent directly creates an HTML AAC board/resource.
 - Keyboard operation with Tab + Enter/Space.
 - Visible focus and high contrast states.
 - Text fallback for every symbol/image.
-- Stop Speech button when speech synthesis is included.
+- Stop speech control when speech synthesis is included, in a fixed edge position outside the grid; the board stays visible and live while speaking and a new selection interrupts.
+- Speech prefers an installed voice (`localService`) in the board locale and reports the voice in use.
 - Print styles when printable use is likely.
 - Attribution footer/section.
 - Teacher notes separate from student board.

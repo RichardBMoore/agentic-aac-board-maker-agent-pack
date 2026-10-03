@@ -184,12 +184,12 @@ def render_button(button: dict[str, Any], index: int, rows: int, columns: int) -
         "position": as_dict(button.get("position")) or position(index, rows, columns),
         "style": style,
         "font": font,
-        "state": text(button.get("state")) or "selectable",
+        "state": "hidden" if button.get("hidden") is True else (text(button.get("state")) or "selectable"),
         "audioCue": text(button.get("audioCue")) or spoken,
         "result": text(button.get("result")) or "selected",
         "actions": action_list(button),
     }
-    for field in ("evidenceTag", "udl", "differentiation", "communicationPartnerCue"):
+    for field in ("evidenceTag", "udl", "differentiation", "communicationPartnerCue", "wordClass", "lexiconId", "symbolStatus"):
         if button.get(field):
             rendered[field] = button.get(field)
     return rendered
@@ -202,7 +202,10 @@ def preserved_ir_metadata(ir: dict[str, Any], access_profile: str) -> dict[str, 
         "purpose": text(ir.get("purpose")),
         "audience": as_dict(ir.get("audience")),
     }
-    for field in ("sett", "udl", "differentiation", "participationBarriers", "evidencePlan", "symbolStrategy"):
+    for field in (
+        "sett", "udl", "differentiation", "participationBarriers", "evidencePlan", "symbolStrategy",
+        "speech", "literacy", "partnerCard", "evidenceLog", "house", "messageBar",
+    ):
         value = ir.get(field)
         if value:
             preserved[field] = value

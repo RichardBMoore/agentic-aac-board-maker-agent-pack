@@ -1,20 +1,25 @@
 <!doctype html>
-<html lang="en-AU" data-runtime-sha256="2d1e7c1aeaf42494b372c8c4cf29915c3602bc8815c22c7bb51e23731cbeedf3">
+<html lang="en-AU" data-runtime-sha256="d15113b442e5c913969eaa03256e78f1c73e071d4841716f18a4d0b634230e3a">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Choose a shape</title><style>
-:root { --min-target: 150px; --dwell-ms: 1000ms; --ink:#17212b; --focus:#005fcc; --repair:#ffe3e3; }
+:root { --min-target: 150px; --dwell-ms: 1000ms; --ink:#17212b; --focus:#005fcc; --repair:#ffe3e3; --highlight:#FFD400; --stop-column:calc(var(--min-target) + 12px); }
 * { box-sizing:border-box; }
 html, body { margin:0; min-height:100%; font-family:Verdana,Arial,sans-serif; color:var(--ink); background:#f7fbff; }
 body { min-height:100vh; }
 button { font:inherit; color:inherit; }
 [hidden] { display:none !important; }
 .skip-link { position:absolute; left:-9999px; } .skip-link:focus { left:8px; top:8px; z-index:20; background:white; padding:8px; }
-.setup-screen, .speech-layer { min-height:100vh; display:grid; place-content:center; gap:20px; padding:24px; text-align:center; }
+.setup-screen { min-height:100vh; display:grid; place-content:center; gap:20px; padding:24px; text-align:center; }
 .setup-controls { display:flex; flex-wrap:wrap; justify-content:center; gap:24px; }
-.student-layer { min-height:100vh; padding:12px; }
-.page-title { margin:0 0 8px; text-align:center; font-size:clamp(1.1rem,2.4vw,1.8rem); }
-.board-grid { min-height:calc(100vh - 154px); display:grid; grid-template-columns:repeat(var(--grid-columns), minmax(var(--min-target),1fr)); grid-template-rows:repeat(var(--grid-rows), minmax(var(--min-target),1fr)); gap:12px; }
-.message-bar + .board-page .board-grid, .message-bar ~ .board-page .board-grid { min-height:calc(100vh - 218px); }
-.message-bar { margin:0 auto 10px; max-width:1200px; min-height:60px; padding:10px 16px; border:3px solid var(--ink); border-radius:14px; background:white; font-size:clamp(1rem,2.2vw,1.5rem); }
+.student-layer { height:100vh; overflow:auto; padding:12px; display:flex; flex-direction:column; }
+.board-area { flex:1 1 0; min-height:0; display:grid; grid-template-columns:minmax(0,1fr) var(--stop-column); }
+.board-pages { display:flex; flex-direction:column; min-width:0; min-height:0; }
+.board-page { flex:1 1 0; min-height:0; display:flex; flex-direction:column; }
+.speech-column { display:flex; justify-content:flex-end; align-items:flex-start; }
+.stop-control { visibility:hidden; width:var(--min-target); background:#ffe3e3; font-size:clamp(1rem,2vw,1.4rem); }
+.speech-active .stop-control { visibility:visible; }
+.page-title { margin:0 0 8px; text-align:center; font-size:clamp(1.1rem,2.4vw,1.8rem); user-select:none; }
+.board-grid { flex:1 1 0; min-height:calc(var(--grid-rows) * var(--min-target) + (var(--grid-rows) - 1) * 12px); display:grid; grid-template-columns:repeat(var(--grid-columns), minmax(var(--min-target),1fr)); grid-template-rows:repeat(var(--grid-rows), minmax(var(--min-target),1fr)); gap:12px; }
+.message-bar { width:100%; margin:0 auto 10px; max-width:1200px; min-height:60px; padding:10px 16px; border:3px solid var(--ink); border-radius:14px; background:white; font-size:clamp(1rem,2.2vw,1.5rem); }
 .is-placeholder { color:#58636e; }
 .dwell-btn { position:relative; overflow:hidden; min-width:var(--min-target); min-height:var(--min-target); border:4px solid var(--ink); border-radius:18px; background:#fff; padding:12px; font-size:clamp(1rem,2.5vw,1.6rem); font-weight:700; cursor:pointer; touch-action:manipulation; }
 .dwell-btn:focus-visible { outline:6px solid var(--focus); outline-offset:3px; }
@@ -22,40 +27,59 @@ button { font:inherit; color:inherit; }
 .dwell-progress { position:absolute; inset:auto 0 0; height:10px; background:#ffbf00; transform:scaleX(0); transform-origin:left; }
 .is-dwelling .dwell-progress { animation:dwell-fill var(--dwell-ms) linear forwards; }
 .was-activated { filter:brightness(.82); }
+.masked-cell { border:3px dashed transparent; border-radius:18px; }
 .board-button { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; }
 .board-button[data-symbol-layout="label-top"] .label { order:-1; }
 .board-button[data-symbol-layout="label-left"] { flex-direction:row-reverse; }
 .board-button[data-symbol-layout="label-right"] { flex-direction:row; }
-.symbol { display:block; width:auto; max-width:65%; height:clamp(48px,14vh,180px); object-fit:contain; }
-.selected-message { min-height:48px; margin:0 0 10px; padding:8px; text-align:center; font-size:1.2rem; }
+.symbol { display:block; flex:1 1 0; min-height:0; width:100%; max-width:100%; max-height:180px; object-fit:contain; }
+.symbol-defs { position:absolute; width:0; height:0; overflow:hidden; }
+.selected-message { min-height:44px; margin:0 0 6px; padding:6px; text-align:center; font-size:clamp(1.1rem,2.2vw,1.5rem); font-weight:700; }
+.schedule-status { margin-left:.6em; font-size:.75em; font-weight:400; }
+.schedule-badge { display:inline-block; padding:2px 10px; border-radius:999px; background:var(--ink); color:#fff; font-size:.8em; }
+.schedule-badge:empty { display:none; }
+.is-now { border-width:8px; } .is-next { border-style:dashed; }
+.is-done .label { text-decoration:line-through; } .is-done { color:#3d4a55; }
 .scan-number,.print-attribution { display:none; }
-.speech-layer { position:fixed; inset:0; z-index:10; background:#f7fbff; }
-.speech-active #student-layer, .speech-active #setup-screen { visibility:hidden; }
-.stop-control { min-width:min(70vw,420px); min-height:min(55vh,320px); background:#ffe3e3; font-size:clamp(1.4rem,4vw,2.4rem); }
 .board-status { position:fixed; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
-.teacher-panel { display:none; margin:18px; padding:18px; border:2px solid #555; background:white; }
-body.teacher-mode .teacher-panel { display:block; }
+.indicator { position:fixed; top:6px; left:8px; z-index:15; padding:4px 10px; border-radius:999px; background:#17212b; color:#fff; font-size:.9rem; pointer-events:none; }
+#modelling-indicator { left:auto; right:8px; background:#5b2a86; }
+.teacher-panel { display:none; padding:18px; border:2px solid #555; background:white; color:#17212b; }
+body.teacher-mode .teacher-panel { display:block; position:fixed; top:0; right:0; bottom:0; z-index:30; width:min(480px,100vw); overflow:auto; box-shadow:-6px 0 18px rgba(0,0,0,.25); }
+.teacher-head { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.teacher-controls { display:flex; flex-wrap:wrap; gap:8px; }
+.teacher-control { padding:8px 12px; border:2px solid #17212b; border-radius:8px; background:#fff; cursor:pointer; }
+.teacher-control[aria-pressed="true"] { background:#17212b; color:#fff; }
+.teacher-panel table { border-collapse:collapse; margin-top:8px; } .teacher-panel th, .teacher-panel td { border:1px solid #888; padding:3px 8px; text-align:left; }
 .attribution { font-size:.75rem; }
+body[data-visual-profile="cvi"] { background:#000; color:#fff; }
+body[data-visual-profile="cvi"] .dwell-btn { background:#000 !important; color:#fff !important; border-color:#fff; }
+body[data-visual-profile="cvi"] .dwell-btn:focus-visible, body[data-visual-profile="cvi"] .is-dwelling { border-color:var(--highlight); outline:6px solid var(--highlight); }
+body[data-visual-profile="cvi"] .dwell-progress { background:var(--highlight); height:14px; }
+body[data-visual-profile="cvi"] .symbol { background:#fff; border-radius:12px; padding:6px; }
+body[data-visual-profile="cvi"] .board-grid { gap:24px; }
+body[data-visual-profile="cvi"] .message-bar { background:#000; color:#fff; border-color:#fff; }
+body[data-visual-profile="cvi"] .is-placeholder { color:#cfcfcf; }
 @keyframes dwell-fill { to { transform:scaleX(1); } }
 @media (max-width:760px) { .board-grid { gap:7px; } .dwell-btn { padding:7px; } }
 @media (forced-colors:active) { .dwell-btn { border-color:ButtonText; forced-color-adjust:auto; } .dwell-progress { background:Highlight; } }
 @page { size:A4 landscape; margin:12mm; }
-@media print { .selected-message,.message-bar,.setup-screen,.speech-layer,.board-status { display:none !important; } .student-layer,.teacher-panel { display:block !important; } .board-page { break-after:page; break-inside:avoid; } .teacher-panel { break-before:page; } .scan-number { display:inline; position:absolute; top:5px; left:8px; font-size:12pt; } .dwell-progress { display:none; } .board-page[hidden] { display:block !important; } .board-grid { min-height:0; height:156mm; } .print-attribution { display:block; margin:6px 0 0; font-size:8pt; } .dwell-btn { min-width:0; min-height:30mm; font-size:16pt; } .symbol { height:20mm; } .student-layer { min-height:0; padding:0; } }
+@media print { .selected-message,.message-bar,.setup-screen,.speech-column,.board-status,.indicator,.teacher-controls,.teacher-head button,.teacher-help,.schedule-status,.schedule-badge { display:none !important; } .board-area { display:block; } .student-layer { display:block !important; } .student-layer,.teacher-panel { display:block !important; position:static !important; width:auto !important; box-shadow:none !important; } .board-page { break-after:page; break-inside:avoid; } .teacher-panel { break-before:page; } .scan-number { display:inline; position:absolute; top:5px; left:8px; font-size:12pt; } .dwell-progress { display:none; } .dwell-btn:focus-visible { outline:none; } .board-page[hidden] { display:block !important; } .board-grid { min-height:0; height:156mm; } .print-attribution { display:block; margin:6px 0 0; font-size:8pt; } .dwell-btn { min-width:0; min-height:30mm; font-size:16pt; } .symbol { flex:none; height:20mm; } .student-layer { height:auto; min-height:0; overflow:visible; padding:0; } }
 </style></head>
-<body data-access-profile="eye-gaze-dwell" data-dwell-enabled="true" data-min-target="150" data-visible-target-limit="9" data-setup-target-limit="3">
+<body data-access-profile="eye-gaze-dwell" data-dwell-enabled="true" data-min-target="150" data-visible-target-limit="9" data-setup-target-limit="3" data-visual-profile="standard" data-colour-scheme="modified-fitzgerald">
+<svg class="symbol-defs" width="0" height="0" aria-hidden="true" focusable="false"><defs><symbol id="sym-s1" viewBox="0 0 300 300"><image href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iMzQiLz48L2c+PC9zdmc+" width="300" height="300" preserveAspectRatio="xMidYMid meet"/></symbol><symbol id="sym-s2" viewBox="0 0 300 300"><image href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PHJlY3QgeD0iMTgiIHk9IjE4IiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiLz48L2c+PC9zdmc+" width="300" height="300" preserveAspectRatio="xMidYMid meet"/></symbol><symbol id="sym-s3" viewBox="0 0 300 300"><image href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PHBhdGggZD0iTTUwIDEyTDkwIDg2SDEwWiIvPjwvZz48L3N2Zz4=" width="300" height="300" preserveAspectRatio="xMidYMid meet"/></symbol><symbol id="sym-s4" viewBox="0 0 300 300"><image href="data:image/png;base64,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" width="300" height="300" preserveAspectRatio="xMidYMid meet"/></symbol><symbol id="sym-s5" viewBox="0 0 300 300"><image href="data:image/png;base64,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" width="300" height="300" preserveAspectRatio="xMidYMid meet"/></symbol><symbol id="sym-s6" viewBox="0 0 300 300"><image href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PHBhdGggZD0iTTUwIDhMNjEgMzdMOTIgMzhMNjggNThMNzcgOTBMNTAgNzFMMjMgOTBMMzIgNThMOCAzOEwzOSAzN1oiLz48L2c+PC9zdmc+" width="300" height="300" preserveAspectRatio="xMidYMid meet"/></symbol></defs></svg>
 <a class="skip-link" href="#student-layer">Skip to board</a>
-<section id="setup-screen" class="setup-screen" aria-label="Board setup"><h1>Choose a shape</h1><p>Choose Start board when positioning and access are ready.</p><div class="setup-controls"><button id="start" class="dwell-btn setup-control primary" type="button" data-control="start" data-student-target data-dwell aria-label="Start board"><span class="label">Start board</span><span class="dwell-progress" aria-hidden="true"></span></button><button id="full-screen" class="dwell-btn setup-control" type="button" data-control="full-screen" data-student-target data-dwell aria-label="Full screen"><span class="label">Full screen</span><span class="dwell-progress" aria-hidden="true"></span></button><button id="sound-check" class="dwell-btn setup-control" type="button" data-control="sound-check" data-student-target data-dwell aria-label="Sound check"><span class="label">Sound check</span><span class="dwell-progress" aria-hidden="true"></span></button></div></section>
-<main id="student-layer" class="student-layer" hidden><p id="selected-message" class="selected-message" aria-live="polite">Choose a message.</p><section class="board-page" data-page-id="page-main" aria-label="Main"><h2 class="page-title">Choose a shape</h2><div class="board-grid" style="--grid-rows:2;--grid-columns:3"><button style="grid-row:1;grid-column:1;background-color:#E8F3FF" data-symbol-layout="label-bottom" id="btn-read" class="dwell-btn board-button role-fringe" type="button" data-button-id="btn-read" data-label="Circle" data-spoken="Circle" data-actions="[{&quot;id&quot;:&quot;act-btn-read-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Circle&quot;},{&quot;id&quot;:&quot;act-btn-read-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Circle"><img class="symbol" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iMzQiLz48L2c+PC9zdmc+" alt="" aria-hidden="true"><span class="scan-number" aria-hidden="true">1. </span><span class="label">Circle</span><span class="dwell-progress" aria-hidden="true"></span></button>
-<button style="grid-row:1;grid-column:2;background-color:#FFF2CC" data-symbol-layout="label-bottom" id="btn-art" class="dwell-btn board-button role-fringe" type="button" data-button-id="btn-art" data-label="Square" data-spoken="Square" data-actions="[{&quot;id&quot;:&quot;act-btn-art-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Square&quot;},{&quot;id&quot;:&quot;act-btn-art-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Square"><img class="symbol" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PHJlY3QgeD0iMTgiIHk9IjE4IiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiLz48L2c+PC9zdmc+" alt="" aria-hidden="true"><span class="scan-number" aria-hidden="true">2. </span><span class="label">Square</span><span class="dwell-progress" aria-hidden="true"></span></button>
-<button style="grid-row:1;grid-column:3;background-color:#E7F7E7" data-symbol-layout="label-bottom" id="btn-game" class="dwell-btn board-button role-fringe" type="button" data-button-id="btn-game" data-label="Triangle" data-spoken="Triangle" data-actions="[{&quot;id&quot;:&quot;act-btn-game-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Triangle&quot;},{&quot;id&quot;:&quot;act-btn-game-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Triangle"><img class="symbol" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PHBhdGggZD0iTTUwIDEyTDkwIDg2SDEwWiIvPjwvZz48L3N2Zz4=" alt="" aria-hidden="true"><span class="scan-number" aria-hidden="true">3. </span><span class="label">Triangle</span><span class="dwell-progress" aria-hidden="true"></span></button>
-<button style="grid-row:2;grid-column:1;background-color:#F2E8FF" data-symbol-layout="label-bottom" id="btn-music" class="dwell-btn board-button role-fringe" type="button" data-button-id="btn-music" data-label="Star" data-spoken="Star" data-actions="[{&quot;id&quot;:&quot;act-btn-music-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Star&quot;},{&quot;id&quot;:&quot;act-btn-music-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Star"><img class="symbol" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PHBhdGggZD0iTTUwIDhMNjEgMzdMOTIgMzhMNjggNThMNzcgOTBMNTAgNzFMMjMgOTBMMzIgNThMOCAzOEwzOSAzN1oiLz48L2c+PC9zdmc+" alt="" aria-hidden="true"><span class="scan-number" aria-hidden="true">4. </span><span class="label">Star</span><span class="dwell-progress" aria-hidden="true"></span></button>
-<button style="grid-row:2;grid-column:2;background-color:#FFE6E6" data-symbol-layout="label-bottom" id="btn-help" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-help" data-label="Help" data-spoken="Help" data-actions="[{&quot;id&quot;:&quot;act-btn-help-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Help&quot;},{&quot;id&quot;:&quot;act-btn-help-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Help"><img class="symbol" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PHRleHQgeD0iNTAiIHk9Ijc0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iNzIiPj88L3RleHQ+PC9nPjwvc3ZnPg==" alt="" aria-hidden="true"><span class="scan-number" aria-hidden="true">5. </span><span class="label">Help</span><span class="dwell-progress" aria-hidden="true"></span></button>
-<button style="grid-row:2;grid-column:3;background-color:#F4F4F4" data-symbol-layout="label-bottom" id="btn-different" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-different" data-label="Different" data-spoken="Different" data-actions="[{&quot;id&quot;:&quot;act-btn-different-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Different&quot;},{&quot;id&quot;:&quot;act-btn-different-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-student-target data-dwell aria-label="Different"><img class="symbol" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PGNpcmNsZSBjeD0iMjgiIGN5PSI1MCIgcj0iMTkiLz48cmVjdCB4PSI2MCIgeT0iMzEiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzOCIvPjwvZz48L3N2Zz4=" alt="" aria-hidden="true"><span class="scan-number" aria-hidden="true">6. </span><span class="label">Different</span><span class="dwell-progress" aria-hidden="true"></span></button></div><p class="print-attribution">Original geometric symbols: MIT. Created for this repository. Help and Different representations require learner/team review. </p></section></main>
-<section id="speech-layer" class="speech-layer" aria-label="Speech controls" hidden><button id="stop-speech" class="dwell-btn stop-control" type="button" data-control="stop-speech" data-student-target data-dwell aria-label="Stop speech"><span class="label">Stop speech</span><span class="dwell-progress" aria-hidden="true"></span></button></section>
+<section id="setup-screen" class="setup-screen" aria-label="Board setup"><h1 class="setup-title">Choose a shape</h1><p>Choose Start board when positioning and access are ready.</p><div class="setup-controls"><button id="start" class="dwell-btn setup-control primary" type="button" data-control="start" data-student-target data-dwell aria-label="Start board"><span class="label">Start board</span><span class="dwell-progress" aria-hidden="true"></span></button><button id="full-screen" class="dwell-btn setup-control" type="button" data-control="full-screen" data-student-target data-dwell aria-label="Full screen"><span class="label">Full screen</span><span class="dwell-progress" aria-hidden="true"></span></button><button id="sound-check" class="dwell-btn setup-control" type="button" data-control="sound-check" data-student-target data-dwell aria-label="Sound check"><span class="label">Sound check</span><span class="dwell-progress" aria-hidden="true"></span></button></div></section>
+<main id="student-layer" class="student-layer" hidden><span id="recording-indicator" class="indicator" hidden>&#9679; Recording</span><span id="modelling-indicator" class="indicator" hidden>Partner modelling</span><p id="selected-message" class="selected-message" aria-live="polite">Choose a message.</p><div class="board-area"><div class="board-pages"><section class="board-page" data-page-id="page-main" data-pattern="choice-board" aria-label="Main"><h2 class="page-title">Choose a shape</h2><div class="board-grid" style="--grid-rows:2;--grid-columns:3"><button style="grid-row:1;grid-column:1;background-color:#FFD8B0" data-symbol-layout="label-bottom" id="btn-read" class="dwell-btn board-button role-fringe" type="button" data-button-id="btn-read" data-label="Circle" data-spoken="Circle" data-actions="[{&quot;id&quot;:&quot;act-btn-read-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Circle&quot;},{&quot;id&quot;:&quot;act-btn-read-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-function="choose" data-role="fringe" data-word-class="noun" data-student-target data-dwell aria-label="Circle"><svg class="symbol" viewBox="0 0 300 300" aria-hidden="true" focusable="false"><use href="#sym-s1"/></svg><span class="scan-number" aria-hidden="true">1. </span><span class="label">Circle</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button style="grid-row:1;grid-column:2;background-color:#FFD8B0" data-symbol-layout="label-bottom" id="btn-art" class="dwell-btn board-button role-fringe" type="button" data-button-id="btn-art" data-label="Square" data-spoken="Square" data-actions="[{&quot;id&quot;:&quot;act-btn-art-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Square&quot;},{&quot;id&quot;:&quot;act-btn-art-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-function="choose" data-role="fringe" data-word-class="noun" data-student-target data-dwell aria-label="Square"><svg class="symbol" viewBox="0 0 300 300" aria-hidden="true" focusable="false"><use href="#sym-s2"/></svg><span class="scan-number" aria-hidden="true">2. </span><span class="label">Square</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button style="grid-row:1;grid-column:3;background-color:#FFD8B0" data-symbol-layout="label-bottom" id="btn-game" class="dwell-btn board-button role-fringe" type="button" data-button-id="btn-game" data-label="Triangle" data-spoken="Triangle" data-actions="[{&quot;id&quot;:&quot;act-btn-game-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Triangle&quot;},{&quot;id&quot;:&quot;act-btn-game-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-function="choose" data-role="fringe" data-word-class="noun" data-student-target data-dwell aria-label="Triangle"><svg class="symbol" viewBox="0 0 300 300" aria-hidden="true" focusable="false"><use href="#sym-s3"/></svg><span class="scan-number" aria-hidden="true">3. </span><span class="label">Triangle</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button style="grid-row:2;grid-column:1;background-color:#FFC7C7" data-symbol-layout="label-bottom" id="btn-help" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-help" data-label="Help" data-spoken="Help please" data-actions="[{&quot;id&quot;:&quot;act-btn-help-speak-text&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Help please&quot;},{&quot;id&quot;:&quot;act-btn-help-log-attempt&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-function="repair" data-role="repair" data-word-class="important" data-student-target data-dwell aria-label="Help"><svg class="symbol" viewBox="0 0 300 300" aria-hidden="true" focusable="false"><use href="#sym-s4"/></svg><span class="scan-number" aria-hidden="true">4. </span><span class="label">Help</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button style="grid-row:2;grid-column:2;background-color:#CFE2FF" data-symbol-layout="label-bottom" id="btn-different" class="dwell-btn board-button role-repair" type="button" data-button-id="btn-different" data-label="Different" data-spoken="I want something different" data-actions="[{&quot;id&quot;:&quot;act-btn-different-speak-text&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;I want something different&quot;},{&quot;id&quot;:&quot;act-btn-different-log-attempt&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-function="repair" data-role="repair" data-word-class="describing" data-student-target data-dwell aria-label="Different"><svg class="symbol" viewBox="0 0 300 300" aria-hidden="true" focusable="false"><use href="#sym-s5"/></svg><span class="scan-number" aria-hidden="true">5. </span><span class="label">Different</span><span class="dwell-progress" aria-hidden="true"></span></button>
+<button style="grid-row:2;grid-column:3;background-color:#FFD8B0" data-symbol-layout="label-bottom" id="btn-music" class="dwell-btn board-button role-fringe" type="button" data-button-id="btn-music" data-label="Star" data-spoken="Star" data-actions="[{&quot;id&quot;:&quot;act-btn-music-speak&quot;,&quot;type&quot;:&quot;speak-text&quot;,&quot;text&quot;:&quot;Star&quot;},{&quot;id&quot;:&quot;act-btn-music-log&quot;,&quot;type&quot;:&quot;log-attempt&quot;}]" data-function="choose" data-role="fringe" data-word-class="noun" data-student-target data-dwell aria-label="Star"><svg class="symbol" viewBox="0 0 300 300" aria-hidden="true" focusable="false"><use href="#sym-s6"/></svg><span class="scan-number" aria-hidden="true">6. </span><span class="label">Star</span><span class="dwell-progress" aria-hidden="true"></span></button></div><p class="print-attribution">Original geometric symbols: MIT. Created for this repository. Help and Different representations require learner/team review. </p></section></div><div class="speech-column" role="group" aria-label="Speech controls"><button id="stop-speech" class="dwell-btn stop-control" type="button" data-control="stop-speech" data-student-target data-dwell aria-label="Stop speech"><span class="label">Stop speech</span><span class="dwell-progress" aria-hidden="true"></span></button></div></div></main>
 <div id="board-status" class="board-status" role="status" aria-live="polite">Board ready.</div>
-<aside class="teacher-panel"><h2>Teacher notes</h2><p><strong>Model:</strong> Model choosing a shape, Help and Different. These original geometric symbols demonstrate offline image rendering; they are not a prescribed AAC symbol set.</p><p><strong>Evidence:</strong> Teacher can note whether the student initiates a choice, confirms/rejects an activity, asks for help, or uses Different to repair the offered choices.</p><p><strong>Customise:</strong> Replace symbols with familiar representations after team review. Preserve chosen cell locations.</p><p class="attribution">Original geometric symbols: MIT. Created for this repository. Help and Different representations require learner/team review. . Text fallback remains available. ARASAAC pictograms, when embedded, require their stated attribution.</p></aside>
+<aside id="teacher-panel" class="teacher-panel" aria-label="Teacher panel" aria-hidden="true"><div class="teacher-head"><h2 tabindex="-1">Teacher panel</h2><button type="button" class="teacher-control" data-teacher-control="panel-close" aria-label="Close teacher panel">Close teacher panel</button></div><p class="teacher-help">Open with three quick taps on the board title, Ctrl+Shift+T, or by adding ?teacher=1 to the address. These controls are never student targets.</p><section><h3>Voice</h3><p id="voice-status">Voice: browser default.</p><p>Preferred voice: none pinned: the board picks an installed voice for en-AU. Installed voices keep working offline; Edge "Online (Natural)" voices need internet.</p></section><section><h3>Selection log</h3><p>Off by default. Turn on only after the team and family agree, and only for the purpose in the evidence plan. Logs stay on this device in memory until exported.</p><p>Selection logging is switched off for this board. The team can switch it on in the board settings (evidenceLog.enabled) once the purpose and consent are agreed.</p><div id="log-summary" aria-live="polite"></div></section><section><h3>Symbols</h3><p>6 of 6 word and message buttons show a symbol (letters and page buttons are text by design); 2 proposed by the agent and awaiting team review; 4 supplied with the board; 0 text-only.</p></section><section class="partner-card" aria-label="Partner card"><h3>Partner card: Choose a shape</h3><h4>1. Model these words this week</h4><p>Touch the button on the board as you say the word in your own talk. Don’t ask the student to copy you.</p><ul><li><strong>Circle</strong> <span class="where">(Main page, top left)</span></li><li><strong>Square</strong> <span class="where">(Main page, top column 2)</span></li><li><strong>Star</strong> <span class="where">(Main page, bottom right)</span></li><li><strong>Different</strong> — says “I want something different” <span class="where">(Main page, bottom column 2)</span></li></ul><h4>2. Wait</h4><p>After you model, comment or ask, wait at least <strong>15 seconds</strong>. Count in your head and keep an expectant look.</p><h4>3. Comment more than you question</h4><ul><li>Touch Star: &quot;That star has five points.&quot;</li><li>Touch Circle: &quot;A circle is round like a plate.&quot;</li></ul><p>Avoid test questions you already know the answer to.</p><h4>4. If more support is needed (least to most)</h4><ol><li>Model the word yourself on the board while you talk. Don&#x27;t ask the student to copy you.</li><li>Wait with an expectant look: count the wait time in your head.</li><li>Comment on what is happening, then wait again.</li><li>Ask an open question, then wait.</li><li>Point near the part of the board (not the button), then wait.</li><li>Never move the student&#x27;s hand or body to the board (no hand-over-hand).</li></ol><h4>5. Every way counts</h4><p>Respond to speech, sounds, looks, gestures and the board. Help is bottom-left on every page; Different is bottom-middle on every page. Stop speech appears at the right edge while the board is talking.</p><p class="card-notes">Rendering fixture: the shape drawings are original line art, not a prescribed symbol set.</p></section><section><h3>Board notes</h3><p><strong>Model:</strong> Model choosing a shape, Help and Different. These original geometric symbols demonstrate offline image rendering; they are not a prescribed AAC symbol set.</p><p><strong>Evidence:</strong> Teacher can note whether the student initiates a choice, confirms/rejects an activity, asks for help, or uses Different to repair the offered choices.</p><p><strong>Customise:</strong> Replace symbols with familiar representations after team review. Preserve chosen cell locations.</p></section><p class="attribution">Original geometric symbols: MIT. Created for this repository. Help and Different representations require learner/team review. . Text fallback remains available. ARASAAC pictograms, when embedded, require their stated attribution.</p></aside>
 <script id="aac-board-ir" type="application/json">{
-  "schemaVersion": "0.4.0",
+  "schemaVersion": "0.5.0",
   "format": "agentic-aac-board-ir",
   "id": "symbol-shape-choice",
   "title": "Choose a shape",
@@ -88,7 +112,8 @@ body.teacher-mode .teacher-panel { display:block; }
     "orientation": "landscape",
     "width": 1024,
     "height": 768,
-    "backgroundColour": "#f7fbff"
+    "backgroundColour": "#f7fbff",
+    "colourScheme": "modified-fitzgerald"
   },
   "studentControls": {
     "startBoard": true,
@@ -120,7 +145,7 @@ body.teacher-mode .teacher-panel { display:block; }
           "spokenText": "Circle",
           "searchTerm": "circle",
           "symbolId": null,
-          "symbolSrc": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iMzQiLz48L2c+PC9zdmc+",
+          "symbolSrc": "sym:s1",
           "symbolLayout": "label-bottom",
           "actions": [
             {
@@ -133,16 +158,17 @@ body.teacher-mode .teacher-panel { display:block; }
               "type": "log-attempt"
             }
           ],
+          "wordClass": "noun",
           "audioCue": "Read",
           "result": "selected",
           "position": {
             "x": 0.0,
-            "y": 0,
+            "y": 0.0,
             "width": 33.3333,
-            "height": 50
+            "height": 50.0
           },
           "style": {
-            "fillColour": "#E8F3FF"
+            "fillColour": "#FFD8B0"
           }
         },
         {
@@ -153,7 +179,7 @@ body.teacher-mode .teacher-panel { display:block; }
           "spokenText": "Square",
           "searchTerm": "square",
           "symbolId": null,
-          "symbolSrc": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PHJlY3QgeD0iMTgiIHk9IjE4IiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiLz48L2c+PC9zdmc+",
+          "symbolSrc": "sym:s2",
           "symbolLayout": "label-bottom",
           "actions": [
             {
@@ -166,16 +192,17 @@ body.teacher-mode .teacher-panel { display:block; }
               "type": "log-attempt"
             }
           ],
+          "wordClass": "noun",
           "audioCue": "Art",
           "result": "selected",
           "position": {
             "x": 33.3333,
-            "y": 0,
+            "y": 0.0,
             "width": 33.3333,
-            "height": 50
+            "height": 50.0
           },
           "style": {
-            "fillColour": "#FFF2CC"
+            "fillColour": "#FFD8B0"
           }
         },
         {
@@ -186,7 +213,7 @@ body.teacher-mode .teacher-panel { display:block; }
           "spokenText": "Triangle",
           "searchTerm": "triangle",
           "symbolId": null,
-          "symbolSrc": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PHBhdGggZD0iTTUwIDEyTDkwIDg2SDEwWiIvPjwvZz48L3N2Zz4=",
+          "symbolSrc": "sym:s3",
           "symbolLayout": "label-bottom",
           "actions": [
             {
@@ -199,16 +226,89 @@ body.teacher-mode .teacher-panel { display:block; }
               "type": "log-attempt"
             }
           ],
+          "wordClass": "noun",
           "audioCue": "Game",
           "result": "selected",
           "position": {
-            "x": 66.6666,
-            "y": 0,
+            "x": 66.6667,
+            "y": 0.0,
             "width": 33.3333,
-            "height": 50
+            "height": 50.0
           },
           "style": {
-            "fillColour": "#E7F7E7"
+            "fillColour": "#FFD8B0"
+          }
+        },
+        {
+          "id": "btn-help",
+          "label": "Help",
+          "role": "repair",
+          "function": "repair",
+          "spokenText": "Help please",
+          "searchTerm": "help",
+          "symbolId": 32648,
+          "symbolSrc": "sym:s4",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-help-speak-text",
+              "type": "speak-text",
+              "text": "Help please"
+            },
+            {
+              "id": "act-btn-help-log-attempt",
+              "type": "log-attempt"
+            }
+          ],
+          "lexiconId": "help",
+          "wordClass": "important",
+          "symbolStatus": "proposed",
+          "audioCue": "Help please",
+          "result": "selected",
+          "position": {
+            "x": 0.0,
+            "y": 50.0,
+            "width": 33.3333,
+            "height": 50.0
+          },
+          "style": {
+            "fillColour": "#FFC7C7"
+          }
+        },
+        {
+          "id": "btn-different",
+          "label": "Different",
+          "role": "repair",
+          "function": "repair",
+          "spokenText": "I want something different",
+          "searchTerm": "different",
+          "symbolId": 4628,
+          "symbolSrc": "sym:s5",
+          "symbolLayout": "label-bottom",
+          "actions": [
+            {
+              "id": "act-btn-different-speak-text",
+              "type": "speak-text",
+              "text": "I want something different"
+            },
+            {
+              "id": "act-btn-different-log-attempt",
+              "type": "log-attempt"
+            }
+          ],
+          "lexiconId": "different",
+          "wordClass": "describing",
+          "symbolStatus": "proposed",
+          "audioCue": "I want something different",
+          "result": "selected",
+          "position": {
+            "x": 33.3333,
+            "y": 50.0,
+            "width": 33.3333,
+            "height": 50.0
+          },
+          "style": {
+            "fillColour": "#CFE2FF"
           }
         },
         {
@@ -219,7 +319,7 @@ body.teacher-mode .teacher-panel { display:block; }
           "spokenText": "Star",
           "searchTerm": "star",
           "symbolId": null,
-          "symbolSrc": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PHBhdGggZD0iTTUwIDhMNjEgMzdMOTIgMzhMNjggNThMNzcgOTBMNTAgNzFMMjMgOTBMMzIgNThMOCAzOEwzOSAzN1oiLz48L2c+PC9zdmc+",
+          "symbolSrc": "sym:s6",
           "symbolLayout": "label-bottom",
           "actions": [
             {
@@ -232,82 +332,17 @@ body.teacher-mode .teacher-panel { display:block; }
               "type": "log-attempt"
             }
           ],
+          "wordClass": "noun",
           "audioCue": "Music",
           "result": "selected",
           "position": {
-            "x": 0.0,
-            "y": 50,
+            "x": 66.6667,
+            "y": 50.0,
             "width": 33.3333,
-            "height": 50
+            "height": 50.0
           },
           "style": {
-            "fillColour": "#F2E8FF"
-          }
-        },
-        {
-          "id": "btn-help",
-          "label": "Help",
-          "role": "repair",
-          "function": "repair",
-          "spokenText": "Help",
-          "searchTerm": "help",
-          "symbolId": null,
-          "symbolSrc": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PHRleHQgeD0iNTAiIHk9Ijc0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iNzIiPj88L3RleHQ+PC9nPjwvc3ZnPg==",
-          "symbolLayout": "label-bottom",
-          "actions": [
-            {
-              "id": "act-btn-help-speak",
-              "type": "speak-text",
-              "text": "Help"
-            },
-            {
-              "id": "act-btn-help-log",
-              "type": "log-attempt"
-            }
-          ],
-          "audioCue": "Help please",
-          "result": "selected",
-          "position": {
-            "x": 33.3333,
-            "y": 50,
-            "width": 33.3333,
-            "height": 50
-          },
-          "style": {
-            "fillColour": "#FFE6E6"
-          }
-        },
-        {
-          "id": "btn-different",
-          "label": "Different",
-          "role": "repair",
-          "function": "repair",
-          "spokenText": "Different",
-          "searchTerm": "different",
-          "symbolId": null,
-          "symbolSrc": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIxMmIiIHN0cm9rZS13aWR0aD0iNSI+PGNpcmNsZSBjeD0iMjgiIGN5PSI1MCIgcj0iMTkiLz48cmVjdCB4PSI2MCIgeT0iMzEiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzOCIvPjwvZz48L3N2Zz4=",
-          "symbolLayout": "label-bottom",
-          "actions": [
-            {
-              "id": "act-btn-different-speak",
-              "type": "speak-text",
-              "text": "Different"
-            },
-            {
-              "id": "act-btn-different-log",
-              "type": "log-attempt"
-            }
-          ],
-          "audioCue": "I want something different",
-          "result": "selected",
-          "position": {
-            "x": 66.6666,
-            "y": 50,
-            "width": 33.3333,
-            "height": 50
-          },
-          "style": {
-            "fillColour": "#F4F4F4"
+            "fillColour": "#FFD8B0"
           }
         }
       ],
@@ -350,6 +385,59 @@ body.teacher-mode .teacher-panel { display:block; }
       "attribution": "Created for this repository. Help and Different representations require learner/team review."
     }
   ],
+  "speech": {
+    "lang": "en-AU",
+    "rate": 1,
+    "preferLocal": true
+  },
+  "literacy": {
+    "keyboard": {
+      "enabled": false,
+      "omitReason": "Early choice board smaller than 3x3; spelling and core words stay on the student's main system."
+    },
+    "coreWords": {
+      "enabled": false,
+      "words": [
+        "i",
+        "want",
+        "dont",
+        "like",
+        "go",
+        "more"
+      ]
+    },
+    "wordEndings": {
+      "enabled": false,
+      "endings": [
+        "s",
+        "ing",
+        "ed"
+      ]
+    }
+  },
+  "partnerCard": {
+    "modelWords": [
+      "btn-read",
+      "btn-art",
+      "btn-music",
+      "btn-different"
+    ],
+    "waitSeconds": 15,
+    "commentExamples": [
+      "Touch Star: \"That star has five points.\"",
+      "Touch Circle: \"A circle is round like a plate.\""
+    ],
+    "notes": "Rendering fixture: the shape drawings are original line art, not a prescribed symbol set."
+  },
+  "evidenceLog": {
+    "enabled": false,
+    "consentNote": "Off by default. Turn on only after the team and family agree, and only for the purpose in the evidence plan. Logs stay on this device in memory until exported."
+  },
+  "house": {
+    "standardsVersion": "1.0.0",
+    "layoutSource": "house",
+    "symbolSet": "house-lexicon 1.0.0"
+  },
   "sett": {
     "student": "Student uses eye gaze/dwell, keyboard, touch, or partner interpretation to choose an activity and repair the choice if needed.",
     "environment": "Classroom device or AAC setup with large targets, reduced visual clutter, and no dependency on live internet during use.",
@@ -398,8 +486,7 @@ body.teacher-mode .teacher-panel { display:block; }
     "export": "Use anonymous teacher notes, print/portfolio evidence, or local CSV/report only when needed. Do not include diagnoses, behaviour details, family details, or school IDs."
   }
 }</script>
-<script>if(new URLSearchParams(location.search).get("teacher")==="1")document.body.classList.add("teacher-mode");</script>
-<!-- shared-runtime-sha256:2d1e7c1aeaf42494b372c8c4cf29915c3602bc8815c22c7bb51e23731cbeedf3 -->
+<!-- shared-runtime-sha256:d15113b442e5c913969eaa03256e78f1c73e071d4841716f18a4d0b634230e3a -->
 <script data-aac-shared-runtime>/* Agentic AAC Board shared runtime. Keep this file dependency-free and offline-safe. */
 (() => {
   "use strict";
@@ -408,14 +495,26 @@ body.teacher-mode .teacher-panel { display:block; }
   const irNode = document.getElementById("aac-board-ir");
   if (!irNode) throw new Error("AAC Board IR payload is missing");
   const ir = JSON.parse(irNode.textContent);
-  const state = { activePageId: ir.pages[0]?.id || "", words: [], started: false, speaking: false };
+  const speechSettings = ir.speech || {};
+  const logSettings = ir.evidenceLog || { enabled: false };
+  const state = {
+    activePageId: ir.pages[0]?.id || "",
+    words: [],
+    spelling: false,
+    started: false,
+    speaking: false,
+    schedule: {},
+    voice: { name: "browser default", lang: speechSettings.lang || ir.audience.locale || "en-AU", local: null, pinnedFound: null },
+    log: { recording: false, modelling: false, entries: [] },
+  };
   const setup = document.getElementById("setup-screen");
   const studentLayer = document.getElementById("student-layer");
-  const speechLayer = document.getElementById("speech-layer");
+  const stopControl = document.getElementById("stop-speech");
   const messageText = document.getElementById("message-text");
   const status = document.getElementById("board-status");
+  const teacherPanel = document.getElementById("teacher-panel");
   let speechToken = 0;
-  let speechOrigin = null;
+  let chosenVoice = null;
 
   const isRendered = (element) => {
     if (!(element instanceof HTMLElement)) return false;
@@ -426,12 +525,12 @@ body.teacher-mode .teacher-panel { display:block; }
 
   const visibleTargets = () => [...document.querySelectorAll("[data-student-target]")].filter(isRendered);
 
+  // During speech the board stays live and the reserved edge Stop control is the one extra target.
   const auditVisibleTargets = () => {
     const targets = visibleTargets();
     const phase = state.speaking ? "speech" : state.started ? "board" : "setup";
-    const limit = Number(
-      phase === "setup" ? ir.access.setupTargetLimit : phase === "speech" ? 1 : ir.access.visibleTargetLimit
-    );
+    const boardLimit = Number(ir.access.visibleTargetLimit);
+    const limit = phase === "setup" ? Number(ir.access.setupTargetLimit) : phase === "speech" ? boardLimit + 1 : boardLimit;
     const audit = {
       phase,
       count: targets.length,
@@ -450,27 +549,115 @@ body.teacher-mode .teacher-panel { display:block; }
     if (status) status.textContent = message;
   };
 
+  /* ---------- Message building, spelling and word endings ---------- */
+
   const updateMessage = () => {
     if (!messageText) return;
     messageText.textContent = state.words.length ? state.words.join(" ") : messageText.dataset.placeholder;
     messageText.classList.toggle("is-placeholder", state.words.length === 0);
   };
 
+  const IRREGULAR = {
+    ed: { go: "went", run: "ran", eat: "ate", see: "saw", have: "had", do: "did", make: "made", say: "said", get: "got", come: "came", take: "took", give: "gave", think: "thought", buy: "bought", is: "was", are: "were", find: "found", tell: "told", feel: "felt", write: "wrote", read: "read", swim: "swam", sit: "sat", win: "won", fly: "flew", drink: "drank", sing: "sang", ride: "rode", draw: "drew", leave: "left", lose: "lost", catch: "caught", teach: "taught", bring: "brought", fall: "fell", know: "knew", put: "put", cut: "cut", hit: "hit", hurt: "hurt" },
+    s: { person: "people", child: "children", man: "men", woman: "women", mouse: "mice", foot: "feet", tooth: "teeth", sheep: "sheep", fish: "fish", go: "goes", do: "does", have: "has", be: "is" },
+  };
+  const VOWELS = "aeiou";
+  const syllableGroups = (word) => (word.match(/[aeiouy]+/g) || []).length;
+  const endsCvc = (word) => {
+    if (word.length < 3) return false;
+    const [a, b, c] = word.slice(-3);
+    return !VOWELS.includes(a) && VOWELS.includes(b) && !VOWELS.includes(c) && !"wxy".includes(c) && syllableGroups(word) === 1;
+  };
+  const inflect = (word, ending) => {
+    const lower = word.toLowerCase();
+    if (IRREGULAR[ending]?.[lower]) return IRREGULAR[ending][lower];
+    if (ending === "s") {
+      if (/(s|x|z|ch|sh)$/.test(lower)) return `${word}es`;
+      if (/[^aeiou]y$/.test(lower)) return `${word.slice(0, -1)}ies`;
+      return `${word}s`;
+    }
+    if (ending === "ed") {
+      if (lower.endsWith("e")) return `${word}d`;
+      if (/[^aeiou]y$/.test(lower)) return `${word.slice(0, -1)}ied`;
+      if (endsCvc(lower)) return `${word}${word.slice(-1)}ed`;
+      return `${word}ed`;
+    }
+    if (ending === "ing") {
+      if (lower.endsWith("ie")) return `${word.slice(0, -2)}ying`;
+      if (lower.endsWith("e") && !lower.endsWith("ee") && lower.length > 2) return `${word.slice(0, -1)}ing`;
+      if (endsCvc(lower)) return `${word}${word.slice(-1)}ing`;
+      return `${word}ing`;
+    }
+    if (ending === "er" || ending === "est") {
+      if (lower.endsWith("e")) return `${word}${ending.slice(1)}`;
+      if (/[^aeiou]y$/.test(lower)) return `${word.slice(0, -1)}i${ending}`;
+      if (endsCvc(lower)) return `${word}${word.slice(-1)}${ending}`;
+      return `${word}${ending}`;
+    }
+    return `${word}${ending}`;
+  };
+  const addWordEnding = (ending) => {
+    if (!state.words.length) {
+      announce("Choose a word first, then add an ending.");
+      return;
+    }
+    const chunk = state.words[state.words.length - 1];
+    const match = chunk.match(/^(.*?)([A-Za-z']+)([^A-Za-z']*)$/);
+    if (!match) return;
+    const [, before, word, after] = match;
+    const changed = inflect(word, ending);
+    state.words[state.words.length - 1] = `${before}${changed}${after}`;
+    state.spelling = false;
+    updateMessage();
+    speak(changed);
+  };
+
+  /* ---------- Speech output: installed voices first ---------- */
+
+  const langStarts = (voice, prefix) => String(voice.lang || "").toLowerCase().replace("_", "-").startsWith(prefix);
+  const pickVoice = () => {
+    const synth = window.speechSynthesis;
+    if (!synth || typeof synth.getVoices !== "function") return;
+    const voices = synth.getVoices() || [];
+    if (!voices.length) return;
+    const wanted = String(speechSettings.voiceName || "").trim().toLowerCase();
+    const lang = String(speechSettings.lang || ir.audience.locale || "en-AU").toLowerCase();
+    const pinned = wanted ? voices.find((voice) => voice.name.toLowerCase() === wanted) || voices.find((voice) => voice.name.toLowerCase().includes(wanted)) : null;
+    const installed = voices.filter((voice) => voice.localService !== false);
+    const preferLocal = speechSettings.preferLocal !== false;
+    const pool = preferLocal && installed.length ? installed : voices;
+    chosenVoice =
+      pinned ||
+      pool.find((voice) => langStarts(voice, lang)) ||
+      pool.find((voice) => langStarts(voice, "en-au")) ||
+      pool.find((voice) => langStarts(voice, "en-gb")) ||
+      pool.find((voice) => langStarts(voice, "en")) ||
+      null;
+    state.voice = {
+      name: chosenVoice ? chosenVoice.name : "browser default",
+      lang: chosenVoice ? chosenVoice.lang : lang,
+      local: chosenVoice ? chosenVoice.localService !== false : null,
+      pinnedFound: wanted ? Boolean(pinned) : null,
+    };
+    renderVoiceStatus();
+  };
+  const voiceSummary = () => {
+    const where = state.voice.local === true ? "installed on this device" : state.voice.local === false ? "online voice: needs internet" : "browser default";
+    const pinnedNote = state.voice.pinnedFound === false ? ` The chosen voice "${speechSettings.voiceName}" is not on this device.` : "";
+    if (state.voice.local === null) return `Voice: browser default (no installed voice list yet; use Sound check).${pinnedNote}`;
+    return `Voice: ${state.voice.name} (${where}).${pinnedNote}`;
+  };
+  const renderVoiceStatus = () => {
+    const node = document.getElementById("voice-status");
+    if (node) node.textContent = voiceSummary();
+    documentRoot.dataset.voiceLocal = String(state.voice.local);
+  };
+
   const setSpeechMode = (enabled) => {
-    if (enabled && !state.speaking) speechOrigin = document.activeElement;
-    dwell.cancel();
     state.speaking = enabled;
     document.body.classList.toggle("speech-active", enabled);
-    if (speechLayer) speechLayer.hidden = !enabled;
-    if (studentLayer) studentLayer.inert = enabled;
-    if (setup) setup.inert = enabled;
+    if (!enabled) dwell.cancel(stopControl);
     auditVisibleTargets();
-    if (enabled) document.getElementById("stop-speech")?.focus({ preventScroll: true });
-    else if (speechOrigin) {
-      const destination = isRendered(speechOrigin) ? speechOrigin : visibleTargets()[0];
-      destination?.focus({ preventScroll: true });
-      speechOrigin = null;
-    }
   };
 
   const stopSpeech = () => {
@@ -489,10 +676,15 @@ body.teacher-mode .teacher-panel { display:block; }
       announce(`Speech is unavailable. Message: ${phrase}`);
       return;
     }
+    // A new message interrupts the previous one; the board never locks while speaking.
     window.speechSynthesis.cancel();
+    if (!chosenVoice) pickVoice();
     const token = ++speechToken;
     const utterance = new SpeechSynthesisUtterance(phrase);
-    utterance.lang = ir.audience.locale || "en-AU";
+    utterance.lang = chosenVoice ? chosenVoice.lang : speechSettings.lang || ir.audience.locale || "en-AU";
+    if (chosenVoice) utterance.voice = chosenVoice;
+    if (speechSettings.rate) utterance.rate = Number(speechSettings.rate);
+    if (speechSettings.pitch) utterance.pitch = Number(speechSettings.pitch);
     utterance.onstart = () => {
       if (token === speechToken && ir.studentControls.stopSpeechDuringPlayback) setSpeechMode(true);
       announce(`Speaking: ${phrase}`);
@@ -511,6 +703,103 @@ body.teacher-mode .teacher-panel { display:block; }
     window.speechSynthesis.speak(utterance);
   };
 
+  /* ---------- Visual schedule: now / next / done ---------- */
+
+  const schedulePages = ir.pages.filter((page) => page.schedule && Array.isArray(page.schedule.steps) && page.schedule.steps.length);
+  const renderSchedule = (pageId) => {
+    const page = ir.pages.find((candidate) => candidate.id === pageId);
+    if (!page?.schedule) return;
+    const current = state.schedule[pageId] || 0;
+    page.schedule.steps.forEach((buttonId, index) => {
+      const button = document.querySelector(`[data-button-id="${CSS.escape(buttonId)}"]`);
+      if (!button) return;
+      const badge = button.querySelector(".schedule-badge");
+      const status = index < current ? "done" : index === current ? "now" : index === current + 1 ? "next" : "";
+      button.classList.toggle("is-done", status === "done");
+      button.classList.toggle("is-now", status === "now");
+      button.classList.toggle("is-next", status === "next");
+      if (badge) badge.textContent = status === "done" ? "Done ✓" : status === "now" ? "Now ▶" : status === "next" ? "Next" : "";
+      const label = button.dataset.label;
+      button.setAttribute("aria-label", status ? `${label}, ${status === "done" ? "done" : status}` : label);
+    });
+    const node = document.getElementById("schedule-status");
+    if (node) {
+      const steps = page.schedule.steps.length;
+      node.textContent = current >= steps ? "\u2014 all steps done" : `\u2014 step ${current + 1} of ${steps}`;
+    }
+  };
+  const scheduleStep = (direction) => {
+    const page = schedulePages.find((candidate) => candidate.id === state.activePageId) || schedulePages[0];
+    if (!page) return;
+    const steps = page.schedule.steps.length;
+    const current = state.schedule[page.id] || 0;
+    state.schedule[page.id] = Math.max(0, Math.min(steps, current + direction));
+    renderSchedule(page.id);
+    announce(direction > 0 ? "Step marked done." : "Last done step restored.");
+  };
+
+  /* ---------- Opt-in, on-device evidence log ---------- */
+
+  const logEnabled = Boolean(logSettings.enabled);
+  const updateLogView = () => {
+    const indicator = document.getElementById("modelling-indicator");
+    if (indicator) indicator.hidden = !state.log.modelling;
+    const recording = document.getElementById("recording-indicator");
+    if (recording) recording.hidden = !state.log.recording;
+    const summary = document.getElementById("log-summary");
+    if (!summary) return;
+    const studentEntries = state.log.entries.filter((entry) => entry.source === "student");
+    const counts = {};
+    studentEntries.forEach((entry) => { counts[entry.function] = (counts[entry.function] || 0) + 1; });
+    const distinct = new Set(studentEntries.map((entry) => entry.label.toLowerCase())).size;
+    const models = state.log.entries.length - studentEntries.length;
+    const rows = Object.keys(counts).sort().map((name) => `<tr><th scope="row">${name}</th><td>${counts[name]}</td></tr>`).join("");
+    summary.innerHTML =
+      `<p>${state.log.recording ? "Recording" : "Not recording"}. Student selections: ${studentEntries.length}. ` +
+      `Different messages used: ${distinct}. Partner models: ${models}.</p>` +
+      (rows ? `<table><caption>Student selections by communication function</caption><tbody>${rows}</tbody></table>` : "");
+  };
+  const recordSelection = (button, method) => {
+    if (!logEnabled || !state.log.recording) return;
+    state.log.entries.push({
+      time: new Date().toISOString(),
+      page: state.activePageId,
+      buttonId: button.dataset.buttonId,
+      label: button.dataset.label,
+      message: button.dataset.spoken,
+      function: button.dataset.function || "",
+      role: button.dataset.role || "",
+      wordClass: button.dataset.wordClass || "",
+      source: state.log.modelling ? "partner-model" : "student",
+      method,
+    });
+    updateLogView();
+  };
+  const csvCell = (value) => `"${String(value ?? "").replace(/"/g, '""')}"`;
+  const exportLog = () => {
+    const columns = ["time", "page", "buttonId", "label", "message", "function", "role", "wordClass", "source", "method"];
+    const lines = [columns.join(",")].concat(state.log.entries.map((entry) => columns.map((column) => csvCell(entry[column])).join(",")));
+    const blob = new Blob([`${lines.join("\r\n")}\r\n`], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${ir.id}-selections-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    announce("Selection log downloaded.");
+  };
+  const setModelling = (enabled) => {
+    state.log.modelling = enabled;
+    const toggle = document.querySelector('[data-teacher-control="log-model"]');
+    if (toggle) toggle.setAttribute("aria-pressed", String(enabled));
+    updateLogView();
+    announce(enabled ? "Partner modelling is on: selections are logged as models." : "Partner modelling is off.");
+  };
+
+  /* ---------- Pages and actions ---------- */
+
   const showPage = (pageId) => {
     const page = ir.pages.find((candidate) => candidate.id === pageId);
     if (!page) {
@@ -522,6 +811,7 @@ body.teacher-mode .teacher-panel { display:block; }
       element.hidden = element.dataset.pageId !== pageId;
     });
     announce(`${page.name} page.`);
+    renderSchedule(pageId);
     auditVisibleTargets();
     document.querySelector(`[data-page-id="${CSS.escape(pageId)}"] [data-student-target]`)?.focus({ preventScroll: true });
   };
@@ -536,13 +826,37 @@ body.teacher-mode .teacher-panel { display:block; }
     switch (action.type) {
       case "speak-text": speak(action.text || button.dataset.spoken); break;
       case "speak-label": speak(button.dataset.label); break;
-      case "add-to-message": state.words.push(action.text || button.dataset.spoken || button.dataset.label); updateMessage(); break;
+      case "add-to-message":
+        state.words.push(action.text || button.dataset.spoken || button.dataset.label);
+        state.spelling = false;
+        updateMessage();
+        break;
+      case "add-letter": {
+        const letters = String(action.text || button.dataset.label || "").toLowerCase();
+        if (state.spelling && state.words.length) state.words[state.words.length - 1] += letters;
+        else state.words.push(letters);
+        state.spelling = true;
+        updateMessage();
+        break;
+      }
+      case "add-space": state.spelling = false; announce("Space."); break;
+      case "delete-letter": {
+        if (!state.words.length) break;
+        const last = state.words[state.words.length - 1].slice(0, -1);
+        if (last) state.words[state.words.length - 1] = last;
+        else { state.words.pop(); state.spelling = false; }
+        updateMessage();
+        announce("Letter deleted.");
+        break;
+      }
+      case "add-word-ending": addWordEnding(String(action.text || "")); break;
       case "speak-message": speak(state.words.join(" ")); break;
-      case "remove-last-word": state.words.pop(); updateMessage(); announce("Last word removed."); break;
-      case "clear-message": state.words = []; updateMessage(); announce("Message cleared."); break;
+      case "remove-last-word": state.words.pop(); state.spelling = false; updateMessage(); announce("Last word removed."); break;
+      case "clear-message": state.words = []; state.spelling = false; updateMessage(); announce("Message cleared."); break;
       case "navigate-page": showPage(action.targetPageId || action.pageId); break;
       case "next-page": adjacentPage(1); break;
       case "previous-page": adjacentPage(-1); break;
+      case "schedule-done": scheduleStep(1); break;
       case "log-attempt": document.dispatchEvent(new CustomEvent("aac-attempt", { detail: { buttonId: button.dataset.buttonId } })); break;
       case "mark-correct":
       case "mark-incorrect": document.dispatchEvent(new CustomEvent("aac-evidence", { detail: { type: action.type, buttonId: button.dataset.buttonId } })); break;
@@ -550,26 +864,33 @@ body.teacher-mode .teacher-panel { display:block; }
     }
   };
 
-  const activate = (button) => {
-    if (!(button instanceof HTMLElement) || button.disabled || state.speaking) return;
+  const activate = (button, method = "pointer") => {
+    if (!(button instanceof HTMLElement) || button.disabled) return;
     const actions = JSON.parse(button.dataset.actions || "[]");
+    recordSelection(button, method);
     actions.forEach((action) => runAction(action, button));
     button.classList.add("was-activated");
     window.setTimeout(() => button.classList.remove("was-activated"), 240);
   };
+
+  /* ---------- Dwell: cancel on leave, re-arm only after the pointer leaves ---------- */
 
   class DwellController {
     constructor(milliseconds) {
       this.milliseconds = milliseconds;
       this.timer = 0;
       this.target = null;
-      this.startedAt = 0;
+      this.awaitingExit = false;
     }
     attach(root = document) {
       root.querySelectorAll("[data-student-target]").forEach((target) => {
         if (target.hasAttribute("data-dwell")) {
           target.addEventListener("pointerenter", () => this.begin(target));
-          target.addEventListener("pointerleave", () => this.cancel(target));
+          target.addEventListener("pointerleave", () => {
+            // A target hidden by navigation does not count as the pointer leaving.
+            if (isRendered(target)) this.awaitingExit = false;
+            this.cancel(target);
+          });
           target.addEventListener("pointercancel", () => this.cancel(target));
           target.addEventListener("blur", () => this.cancel(target));
         }
@@ -580,21 +901,24 @@ body.teacher-mode .teacher-panel { display:block; }
             return;
           }
           this.cancel(target);
-          this.dispatch(target);
+          this.dispatch(target, event.detail === 0 ? "keyboard" : "pointer");
         });
       });
+      document.addEventListener("pointermove", (event) => {
+        const over = event.target instanceof Element ? event.target.closest("[data-dwell]") : null;
+        if (!over || !isRendered(over)) this.awaitingExit = false;
+      }, { passive: true });
     }
     begin(target) {
-      if (target.disabled || !isRendered(target)) return;
+      if (this.awaitingExit || target.disabled || !isRendered(target)) return;
       this.cancel();
       this.target = target;
-      this.startedAt = performance.now();
       target.classList.add("is-dwelling");
       target.style.setProperty("--dwell-ms", `${this.milliseconds}ms`);
       this.timer = window.setTimeout(() => {
         target.dataset.dwellActivated = "true";
-        this.dispatch(target);
         this.cancel(target);
+        this.dispatch(target, "dwell");
         window.setTimeout(() => { target.dataset.dwellActivated = "false"; }, 900);
       }, this.milliseconds);
     }
@@ -605,8 +929,14 @@ body.teacher-mode .teacher-panel { display:block; }
       this.timer = 0;
       this.target = null;
     }
-    dispatch(target) {
-      if (target.matches("[data-button-id]")) activate(target);
+    requireExit() {
+      // After any selection, nothing dwells again until the pointer leaves the spot it is resting on.
+      this.cancel();
+      this.awaitingExit = true;
+    }
+    dispatch(target, method) {
+      this.requireExit();
+      if (target.matches("[data-button-id]")) activate(target, method);
       else target.dispatchEvent(new CustomEvent("aac-control", { bubbles: true }));
     }
   }
@@ -621,7 +951,11 @@ body.teacher-mode .teacher-panel { display:block; }
   document.addEventListener("aac-control", async (event) => {
     const control = event.target.closest("[data-control]")?.dataset.control;
     if (control === "start") startBoard();
-    if (control === "sound-check") speak("Sound check ready");
+    if (control === "sound-check") {
+      pickVoice();
+      speak("Sound check. This is my voice.");
+      announce(voiceSummary());
+    }
     if (control === "stop-speech") stopSpeech();
     if (control === "full-screen") {
       try {
@@ -633,15 +967,52 @@ body.teacher-mode .teacher-panel { display:block; }
     }
   });
 
+  /* ---------- Teacher panel (never a student target) ---------- */
+
+  const setTeacherMode = (enabled) => {
+    document.body.classList.toggle("teacher-mode", enabled);
+    if (teacherPanel) teacherPanel.setAttribute("aria-hidden", String(!enabled));
+    if (enabled) teacherPanel?.querySelector("h2")?.focus({ preventScroll: true });
+  };
+  document.querySelectorAll("[data-teacher-control]").forEach((control) => {
+    control.addEventListener("click", () => {
+      const name = control.dataset.teacherControl;
+      if (name === "panel-close") setTeacherMode(false);
+      if (name === "log-start" && logEnabled) { state.log.recording = !state.log.recording; control.setAttribute("aria-pressed", String(state.log.recording)); updateLogView(); }
+      if (name === "log-model" && logEnabled) setModelling(!state.log.modelling);
+      if (name === "log-export" && logEnabled) exportLog();
+      if (name === "log-clear" && logEnabled) { state.log.entries = []; updateLogView(); announce("Selection log cleared."); }
+      if (name === "schedule-done") scheduleStep(1);
+      if (name === "schedule-undo") scheduleStep(-1);
+    });
+  });
+  let titleTaps = [];
+  document.querySelectorAll(".page-title, .setup-title").forEach((title) => {
+    title.addEventListener("click", () => {
+      const now = performance.now();
+      titleTaps = titleTaps.filter((time) => now - time < 1500).concat(now);
+      if (titleTaps.length >= 3) { titleTaps = []; setTeacherMode(!document.body.classList.contains("teacher-mode")); }
+    });
+  });
+
   const dwell = new DwellController(Number(ir.access.dwellTimeMs || 1200));
   dwell.attach();
   document.addEventListener("keydown", (event) => {
+    if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "t") { event.preventDefault(); setTeacherMode(!document.body.classList.contains("teacher-mode")); return; }
+    if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "m" && logEnabled) { event.preventDefault(); setModelling(!state.log.modelling); return; }
     if (event.key !== "Escape") return;
     dwell.cancel();
     if (state.speaking) stopSpeech();
     else announce("Dwell cancelled.");
   });
+  if ("speechSynthesis" in window && window.speechSynthesis && typeof window.speechSynthesis.addEventListener === "function") {
+    window.speechSynthesis.addEventListener("voiceschanged", pickVoice);
+  }
+  pickVoice();
+  renderVoiceStatus();
   updateMessage();
+  updateLogView();
+  if (new URLSearchParams(location.search).get("teacher") === "1") setTeacherMode(true);
   if (!ir.studentControls.startBoard) startBoard();
   else auditVisibleTargets();
 
@@ -651,9 +1022,12 @@ body.teacher-mode .teacher-panel { display:block; }
     start: startBoard,
     stopSpeech,
     navigate: showPage,
-    activate: (buttonId) => activate(document.querySelector(`[data-button-id="${CSS.escape(buttonId)}"]`)),
+    activate: (buttonId) => activate(document.querySelector(`[data-button-id="${CSS.escape(buttonId)}"]`), "script"),
     countVisibleTargets: () => visibleTargets().length,
     auditVisibleTargets,
+    inflect,
+    voice: () => ({ ...state.voice }),
+    log: () => state.log.entries.map((entry) => ({ ...entry })),
   });
 })();
 </script>

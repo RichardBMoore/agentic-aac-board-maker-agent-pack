@@ -159,6 +159,40 @@ Better pattern:
 - attribution;
 - text remains meaningful without images.
 
+## 10. Moving or Shape-Shifting House Words
+
+Weak output:
+
+- Help bottom-left on one board and top-left on the next; Wait meaning "Please wait" on one board and "I need to wait" on another.
+
+Why it fails: students learn where words live and what they say. Moving or changing them breaks that learning.
+
+Better pattern: house words with `lexiconId` at their house addresses; masked cells instead of reshuffling.
+
+## 11. Phrase-Only Boards
+
+Weak output:
+
+- Every button is a whole pre-stored sentence and there is no way to name something new.
+
+Better pattern: keep quick phrases, and add core words, word endings and an ABC keyboard so the student can say what the adult did not predict.
+
+## 12. Decorative Colour
+
+Weak output:
+
+- A different pastel for every cell, or describing words in the people colour.
+
+Better pattern: one named scheme by word class, grouping by word type first, or no colour (CVI profile).
+
+## 13. Speech That Hides the Board
+
+Weak output:
+
+- A full-screen Stop overlay with dwell that appears under the student's gaze and cuts off their own message.
+
+Better pattern: board stays visible, Stop at the edge, dwell re-arms only after the pointer leaves, new selections interrupt.
+
 ## Review Question
 
 For every generated board, ask:

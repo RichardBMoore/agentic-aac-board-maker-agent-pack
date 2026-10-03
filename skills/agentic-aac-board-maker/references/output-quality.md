@@ -18,7 +18,7 @@ Render paper settings with `render_html.py board.ir.json board.html --paper A4 -
 
 ## Functional acceptance
 
-Use browser tests to start, select, navigate, speak, stop and recover focus through the requested access method. Check speech completion, error and unavailable modes, decoded offline images, and a long-label case at the intended viewport. Metadata and a successful parity check do not prove real-device access.
+Speech never hides the board: the message stays visible for the partner, Stop speech appears at the right edge, new selections interrupt, and dwell waits for the pointer to leave after any selection or page change. Use browser tests to start, select, navigate, speak, stop and recover focus through the requested access method, including a resting-gaze check that the message is spoken once and not cut off. Check speech completion, error and unavailable modes, decoded offline images, and a long-label case at the intended viewport. Metadata and a successful parity check do not prove real-device access.
 
 For curriculum boards, construct at least one complete context-specific message through the actual buttons and include alternatives, repair and uncertainty as appropriate. Preserve valid partial messages. If subject/evidence vocabulary is missing, resolve it from the source or clearly mark the teacher handoff as awaiting content. Do not present generic demonstration content as evidence from a class text.
 

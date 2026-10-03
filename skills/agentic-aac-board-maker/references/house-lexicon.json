@@ -1,0 +1,745 @@
+{
+  "version": "1.0.0",
+  "description": "House word list: one label, one spoken message, one word class and one symbol per recurring word, shared by every board. Buttons that use a house word set lexiconId and copy label/spokenText/wordClass exactly. Behaviour: speak = says the whole message now; compose = adds the word to the message bar (and says it); operation = runs operationAction.",
+  "symbolSet": {
+    "source": "ARASAAC",
+    "licence": "CC BY-NC-SA",
+    "status": "Symbols marked 'proposed' were chosen by the agent and await one-off team review (scripts/review_house_symbols.py). Approved symbols apply to every board."
+  },
+  "words": {
+    "help": {
+      "label": "Help",
+      "spokenText": "Help please",
+      "wordClass": "important",
+      "role": "repair",
+      "function": "repair",
+      "behaviour": "speak",
+      "searchTerm": "help",
+      "slot": "help",
+      "aliases": [
+        "help please",
+        "i need help"
+      ],
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 32648,
+        "status": "proposed"
+      }
+    },
+    "stop": {
+      "label": "Stop",
+      "spokenText": "Stop",
+      "wordClass": "important",
+      "role": "repair",
+      "function": "refuse",
+      "behaviour": "speak",
+      "searchTerm": "stop",
+      "slot": "stop",
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 8289,
+        "status": "proposed"
+      }
+    },
+    "finished": {
+      "label": "Finished",
+      "spokenText": "I'm finished",
+      "wordClass": "social",
+      "role": "repair",
+      "function": "regulate-rest",
+      "behaviour": "speak",
+      "searchTerm": "finish",
+      "slot": "finished",
+      "aliases": [
+        "i am finished",
+        "all done",
+        "done"
+      ],
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 28429,
+        "status": "proposed"
+      }
+    },
+    "different": {
+      "label": "Different",
+      "spokenText": "I want something different",
+      "wordClass": "describing",
+      "role": "repair",
+      "function": "repair",
+      "behaviour": "speak",
+      "searchTerm": "different",
+      "slot": "different",
+      "aliases": [
+        "something different",
+        "different please"
+      ],
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 4628,
+        "status": "proposed"
+      }
+    },
+    "speak-message": {
+      "label": "Speak",
+      "spokenText": "Speak my message",
+      "wordClass": "operation",
+      "role": "sentence",
+      "function": "initiate",
+      "behaviour": "operation",
+      "searchTerm": "speak",
+      "slot": "stop",
+      "aliases": [
+        "speak sentence",
+        "🔊 speak sentence",
+        "speak message"
+      ],
+      "operationAction": "speak-message",
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 6517,
+        "status": "proposed"
+      }
+    },
+    "undo": {
+      "label": "Undo",
+      "spokenText": "Undo",
+      "wordClass": "operation",
+      "role": "repair",
+      "function": "repair",
+      "behaviour": "operation",
+      "searchTerm": "delete",
+      "slot": "different",
+      "aliases": [
+        "⌫ undo",
+        "delete word"
+      ],
+      "operationAction": "remove-last-word",
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 38200,
+        "status": "proposed"
+      }
+    },
+    "clear": {
+      "label": "Start again",
+      "spokenText": "Start again",
+      "wordClass": "operation",
+      "role": "repair",
+      "function": "repair",
+      "behaviour": "operation",
+      "searchTerm": "start again",
+      "slot": "finished",
+      "aliases": [
+        "clear",
+        "clear message"
+      ],
+      "operationAction": "clear-message",
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 5431,
+        "status": "proposed"
+      }
+    },
+    "delete-letter": {
+      "label": "Delete",
+      "spokenText": "Delete",
+      "wordClass": "operation",
+      "role": "repair",
+      "function": "repair",
+      "behaviour": "operation",
+      "searchTerm": "delete",
+      "slot": "different",
+      "aliases": [
+        "backspace"
+      ],
+      "operationAction": "delete-letter",
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 38200,
+        "status": "proposed"
+      }
+    },
+    "space": {
+      "label": "Space",
+      "spokenText": "Space",
+      "wordClass": "operation",
+      "role": "sentence",
+      "function": "explain",
+      "behaviour": "operation",
+      "searchTerm": "space",
+      "operationAction": "add-space",
+      "symbol": {
+        "source": "text-only",
+        "id": null,
+        "status": "none",
+        "note": "No clear pictogram; text label is clearer."
+      }
+    },
+    "keyboard": {
+      "label": "ABC",
+      "spokenText": "Spell a word",
+      "wordClass": "operation",
+      "role": "navigation",
+      "function": "navigate",
+      "behaviour": "operation",
+      "searchTerm": "alphabet",
+      "slot": "keyboard",
+      "aliases": [
+        "abc keyboard",
+        "keyboard",
+        "spell"
+      ],
+      "operationAction": "navigate-page",
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 3050,
+        "status": "proposed"
+      }
+    },
+    "hello": {
+      "label": "Hello",
+      "spokenText": "Hello",
+      "wordClass": "social",
+      "role": "core",
+      "function": "initiate",
+      "behaviour": "speak",
+      "searchTerm": "hello",
+      "aliases": [
+        "hi"
+      ],
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 6522,
+        "status": "proposed"
+      }
+    },
+    "goodbye": {
+      "label": "Goodbye",
+      "spokenText": "Goodbye",
+      "wordClass": "social",
+      "role": "core",
+      "function": "socialise",
+      "behaviour": "speak",
+      "searchTerm": "goodbye",
+      "aliases": [
+        "bye"
+      ],
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 6028,
+        "status": "proposed"
+      }
+    },
+    "thats-all": {
+      "label": "That's all",
+      "spokenText": "That's all, thanks",
+      "wordClass": "social",
+      "role": "core",
+      "function": "socialise",
+      "behaviour": "speak",
+      "searchTerm": "finished",
+      "aliases": [
+        "that is all"
+      ],
+      "symbol": {
+        "source": "text-only",
+        "id": null,
+        "status": "none",
+        "note": "No clear pictogram; text label is clearer."
+      }
+    },
+    "thank-you": {
+      "label": "Thank you",
+      "spokenText": "Thank you",
+      "wordClass": "social",
+      "role": "core",
+      "function": "socialise",
+      "behaviour": "speak",
+      "searchTerm": "thank you",
+      "aliases": [
+        "thanks"
+      ],
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 8129,
+        "status": "proposed"
+      }
+    },
+    "yes": {
+      "label": "Yes",
+      "spokenText": "Yes",
+      "wordClass": "social",
+      "role": "core",
+      "function": "answer",
+      "behaviour": "speak",
+      "searchTerm": "yes",
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 5584,
+        "status": "proposed"
+      }
+    },
+    "no": {
+      "label": "No",
+      "spokenText": "No",
+      "wordClass": "important",
+      "role": "core",
+      "function": "answer",
+      "behaviour": "speak",
+      "searchTerm": "no",
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 5526,
+        "status": "proposed"
+      }
+    },
+    "how-i-talk": {
+      "label": "How I talk",
+      "spokenText": "I use this device to talk. Please wait while I build my message. Talk to me, not my helper.",
+      "wordClass": "social",
+      "role": "core",
+      "function": "initiate",
+      "behaviour": "speak",
+      "searchTerm": "communication device",
+      "aliases": [
+        "about me",
+        "how i communicate"
+      ],
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 37418,
+        "status": "proposed"
+      }
+    },
+    "i-dont-know": {
+      "label": "I don't know",
+      "spokenText": "I don't know",
+      "wordClass": "social",
+      "role": "repair",
+      "function": "repair",
+      "behaviour": "speak",
+      "searchTerm": "I don't know",
+      "aliases": [
+        "i do not know",
+        "not sure"
+      ],
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 7180,
+        "status": "proposed"
+      }
+    },
+    "say-it-another-way": {
+      "label": "Say it another way",
+      "spokenText": "Please say it another way",
+      "wordClass": "social",
+      "role": "repair",
+      "function": "repair",
+      "behaviour": "speak",
+      "searchTerm": "explain",
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 34623,
+        "status": "proposed"
+      }
+    },
+    "not-that": {
+      "label": "Not that",
+      "spokenText": "Not that",
+      "wordClass": "important",
+      "role": "repair",
+      "function": "refuse",
+      "behaviour": "speak",
+      "searchTerm": "no",
+      "aliases": [
+        "wrong one"
+      ],
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 17054,
+        "status": "proposed"
+      }
+    },
+    "wait": {
+      "label": "Wait",
+      "spokenText": "Please wait",
+      "wordClass": "verb",
+      "role": "repair",
+      "function": "regulate-rest",
+      "behaviour": "speak",
+      "searchTerm": "wait",
+      "aliases": [
+        "please wait",
+        "i need to wait"
+      ],
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 7195,
+        "status": "proposed"
+      }
+    },
+    "more-time": {
+      "label": "More time",
+      "spokenText": "I need more time",
+      "wordClass": "describing",
+      "role": "repair",
+      "function": "regulate-rest",
+      "behaviour": "speak",
+      "searchTerm": "time",
+      "aliases": [
+        "i need more time"
+      ],
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 22631,
+        "status": "proposed"
+      }
+    },
+    "break": {
+      "label": "Break",
+      "spokenText": "I need a break",
+      "wordClass": "noun",
+      "role": "repair",
+      "function": "regulate-rest",
+      "behaviour": "speak",
+      "searchTerm": "rest",
+      "aliases": [
+        "i need a break"
+      ],
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 16643,
+        "status": "proposed"
+      }
+    },
+    "change": {
+      "label": "Change",
+      "spokenText": "I need a change",
+      "wordClass": "verb",
+      "role": "repair",
+      "function": "repair",
+      "behaviour": "speak",
+      "searchTerm": "change",
+      "aliases": [
+        "i need a change"
+      ],
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 37360,
+        "status": "proposed"
+      }
+    },
+    "too-loud": {
+      "label": "Too loud",
+      "spokenText": "It's too loud",
+      "wordClass": "describing",
+      "role": "comment",
+      "function": "comment",
+      "behaviour": "speak",
+      "searchTerm": "noise",
+      "aliases": [
+        "it is too loud"
+      ],
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 7157,
+        "status": "proposed"
+      }
+    },
+    "i-disagree": {
+      "label": "I disagree",
+      "spokenText": "I disagree",
+      "wordClass": "verb",
+      "role": "comment",
+      "function": "comment",
+      "behaviour": "speak",
+      "searchTerm": "disagree",
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 16000,
+        "status": "proposed"
+      }
+    },
+    "i-like-it": {
+      "label": "I like it",
+      "spokenText": "I like it",
+      "wordClass": "verb",
+      "role": "comment",
+      "function": "comment",
+      "behaviour": "speak",
+      "searchTerm": "like",
+      "aliases": [
+        "i like this"
+      ],
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 37721,
+        "status": "proposed"
+      }
+    },
+    "i-dont-like-it": {
+      "label": "I don't like it",
+      "spokenText": "I don't like it",
+      "wordClass": "important",
+      "role": "comment",
+      "function": "refuse",
+      "behaviour": "speak",
+      "searchTerm": "dislike",
+      "aliases": [
+        "i don't like this",
+        "don't like"
+      ],
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 37825,
+        "status": "proposed"
+      }
+    },
+    "whats-next": {
+      "label": "What's next?",
+      "spokenText": "What's next?",
+      "wordClass": "question",
+      "role": "question",
+      "function": "ask",
+      "behaviour": "speak",
+      "searchTerm": "what",
+      "aliases": [
+        "what next?",
+        "what is next?"
+      ],
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 38252,
+        "status": "proposed"
+      }
+    },
+    "my-turn": {
+      "label": "My turn",
+      "spokenText": "My turn",
+      "wordClass": "social",
+      "role": "core",
+      "function": "socialise",
+      "behaviour": "speak",
+      "searchTerm": "my turn",
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 7158,
+        "status": "proposed"
+      }
+    },
+    "i": {
+      "label": "I",
+      "spokenText": "I",
+      "wordClass": "pronoun",
+      "role": "core",
+      "function": "initiate",
+      "behaviour": "compose",
+      "searchTerm": "I",
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 6632,
+        "status": "proposed"
+      }
+    },
+    "you": {
+      "label": "you",
+      "spokenText": "you",
+      "wordClass": "pronoun",
+      "role": "core",
+      "function": "socialise",
+      "behaviour": "compose",
+      "searchTerm": "you",
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 6625,
+        "status": "proposed"
+      }
+    },
+    "it": {
+      "label": "it",
+      "spokenText": "it",
+      "wordClass": "pronoun",
+      "role": "core",
+      "function": "comment",
+      "behaviour": "compose",
+      "searchTerm": "it",
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 31670,
+        "status": "proposed"
+      }
+    },
+    "want": {
+      "label": "want",
+      "spokenText": "want",
+      "wordClass": "verb",
+      "role": "core",
+      "function": "request",
+      "behaviour": "compose",
+      "searchTerm": "want",
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 36518,
+        "status": "proposed"
+      }
+    },
+    "not": {
+      "label": "not",
+      "spokenText": "not",
+      "wordClass": "important",
+      "role": "core",
+      "function": "refuse",
+      "behaviour": "compose",
+      "searchTerm": "no",
+      "symbol": {
+        "source": "text-only",
+        "id": null,
+        "status": "none",
+        "note": "Function word: text label, red 'important' colour."
+      }
+    },
+    "dont": {
+      "label": "don't",
+      "spokenText": "don't",
+      "wordClass": "important",
+      "role": "core",
+      "function": "refuse",
+      "behaviour": "compose",
+      "searchTerm": "don't",
+      "symbol": {
+        "source": "text-only",
+        "id": null,
+        "status": "none",
+        "note": "Function word: text label, red 'important' colour."
+      }
+    },
+    "like": {
+      "label": "like",
+      "spokenText": "like",
+      "wordClass": "verb",
+      "role": "core",
+      "function": "comment",
+      "behaviour": "compose",
+      "searchTerm": "like",
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 37826,
+        "status": "proposed"
+      }
+    },
+    "go": {
+      "label": "go",
+      "spokenText": "go",
+      "wordClass": "verb",
+      "role": "core",
+      "function": "request",
+      "behaviour": "compose",
+      "searchTerm": "go",
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 8142,
+        "status": "proposed"
+      }
+    },
+    "more": {
+      "label": "more",
+      "spokenText": "more",
+      "wordClass": "describing",
+      "role": "core",
+      "function": "request",
+      "behaviour": "compose",
+      "searchTerm": "more",
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 5508,
+        "status": "proposed"
+      }
+    },
+    "is": {
+      "label": "is",
+      "spokenText": "is",
+      "wordClass": "verb",
+      "role": "core",
+      "function": "comment",
+      "behaviour": "compose",
+      "searchTerm": "be",
+      "symbol": {
+        "source": "text-only",
+        "id": null,
+        "status": "none",
+        "note": "Function word: text label, green verb colour."
+      }
+    },
+    "because": {
+      "label": "because",
+      "spokenText": "because",
+      "wordClass": "conjunction",
+      "role": "sentence",
+      "function": "explain",
+      "behaviour": "compose",
+      "searchTerm": "because",
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 11348,
+        "status": "proposed"
+      }
+    },
+    "what": {
+      "label": "what",
+      "spokenText": "what",
+      "wordClass": "question",
+      "role": "question",
+      "function": "ask",
+      "behaviour": "compose",
+      "searchTerm": "what",
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 22620,
+        "status": "proposed"
+      }
+    },
+    "where": {
+      "label": "where",
+      "spokenText": "where",
+      "wordClass": "question",
+      "role": "question",
+      "function": "ask",
+      "behaviour": "compose",
+      "searchTerm": "where",
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 7764,
+        "status": "proposed"
+      }
+    },
+    "who": {
+      "label": "who",
+      "spokenText": "who",
+      "wordClass": "question",
+      "role": "question",
+      "function": "ask",
+      "behaviour": "compose",
+      "searchTerm": "who",
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 9853,
+        "status": "proposed"
+      }
+    },
+    "why": {
+      "label": "why",
+      "spokenText": "why",
+      "wordClass": "question",
+      "role": "question",
+      "function": "ask",
+      "behaviour": "compose",
+      "searchTerm": "why",
+      "symbol": {
+        "source": "ARASAAC",
+        "id": 36719,
+        "status": "proposed"
+      }
+    }
+  }
+}

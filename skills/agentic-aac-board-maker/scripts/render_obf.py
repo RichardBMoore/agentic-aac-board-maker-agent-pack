@@ -14,8 +14,13 @@ Mapping notes:
 - style.fillColour/borderColour (hex) -> background_color/border_color rgb().
 - next-page/previous-page/navigate-page actions -> load_board entries.
 - speak-message -> ":speak", clear-message -> ":clear",
-  remove-last-word -> ":backspace"; add-to-message is the OBF default
-  behaviour (buttons append to the message window), so it needs no action.
+  remove-last-word/delete-letter -> ":backspace", add-space -> ":space",
+  add-letter -> "+<letters>" (OBF spelling); add-word-ending ->
+  ":ext_aac_ending_<ending>". add-to-message is the OBF default behaviour
+  (buttons append to the message window), so it needs no action.
+- hidden (masked) buttons stay in grid.order with "hidden": true so their
+  address survives import.
+- wordClass/lexiconId travel as ext_aac_word_class/ext_aac_lexicon_id.
 - ARASAAC symbolId -> images[].url (static.arasaac.org) with a per-image
   CC BY-NC-SA license block naming the author Sergio Palao; symbolSrc
   data URIs -> images[].data. Embed real image data before offline use on
@@ -56,6 +61,8 @@ MESSAGE_ACTION_MAP = {
     "speak-message": ":speak",
     "clear-message": ":clear",
     "remove-last-word": ":backspace",
+    "delete-letter": ":backspace",
+    "add-space": ":space",
 }
 
 NAVIGATION_ACTIONS = {"navigate-page", "next-page", "previous-page"}
@@ -127,9 +134,14 @@ def page_ids_in_order(ir: dict[str, Any]) -> list[str]:
 
 def button_image(button: dict[str, Any], image_id: str) -> dict[str, Any] | None:
     symbol_src = text(button.get("symbolSrc"))
-    if symbol_src.startswith("data:"):
-        return {"id": image_id, "data": symbol_src, "content_type": symbol_src.split(";")[0].removeprefix("data:")}
     symbol_id = button.get("symbolId")
+    if symbol_src.startswith("data:"):
+        image = {"id": image_id, "data": symbol_src, "content_type": symbol_src.split(";")[0].removeprefix("data:")}
+        if symbol_id is not None and re.fullmatch(r"\d+", str(symbol_id)):
+            # Without a licence block importers treat images as all-rights-reserved.
+            image["license"] = dict(ARASAAC_LICENSE)
+            image["symbol"] = {"set": "arasaac", "filename": f"{symbol_id}.png"}
+        return image
     if symbol_id is not None and re.fullmatch(r"\d+", str(symbol_id)):
         return {
             "id": image_id,
@@ -196,6 +208,10 @@ def render_board(ir: dict[str, Any], page: dict[str, Any], page_index: int, page
             action_type = text(action.get("type")) if isinstance(action, dict) else text(action)
             if action_type in MESSAGE_ACTION_MAP:
                 extra_actions.append(MESSAGE_ACTION_MAP[action_type])
+            elif action_type == "add-letter" and isinstance(action, dict):
+                extra_actions.append("+" + text(action.get("text")))
+            elif action_type == "add-word-ending" and isinstance(action, dict):
+                extra_actions.append(":ext_aac_ending_" + text(action.get("text")))
             elif action_type in NAVIGATION_ACTIONS or action_type in {"speak-text", "speak-label", "add-to-message"}:
                 continue  # navigation handled above; speech/add are OBF default behaviour
             elif action_type:
@@ -207,6 +223,12 @@ def render_board(ir: dict[str, Any], page: dict[str, Any], page_index: int, page
         if carried_actions:
             rendered["ext_aac_actions"] = carried_actions
 
+        if button.get("hidden") is True:
+            rendered["hidden"] = True
+        if text(button.get("wordClass")):
+            rendered["ext_aac_word_class"] = text(button.get("wordClass"))
+        if text(button.get("lexiconId")):
+            rendered["ext_aac_lexicon_id"] = text(button.get("lexiconId"))
         role = text(button.get("role"))
         function = text(button.get("function"))
         if role:
@@ -262,16 +284,39 @@ def render_boards(ir: dict[str, Any]) -> list[dict[str, Any]]:
     ]
 
 
-def obz_manifest(boards: list[dict[str, Any]]) -> dict[str, Any]:
+def obz_manifest(boards: list[dict[str, Any]], image_paths: dict[str, str] | None = None) -> dict[str, Any]:
     return {
         "format": OBF_FORMAT,
         "root": f"boards/{boards[0]['id']}.obf",
         "paths": {
             "boards": {board["id"]: f"boards/{board['id']}.obf" for board in boards},
-            "images": {},
+            "images": dict(sorted((image_paths or {}).items())),
             "sounds": {},
         },
     }
+
+
+def share_images(boards: list[dict[str, Any]]) -> tuple[dict[str, bytes], dict[str, str]]:
+    """Move embedded image data into shared images/ files so each picture is stored once per package."""
+    import base64
+    import hashlib
+
+    files: dict[str, bytes] = {}
+    image_paths: dict[str, str] = {}
+    for board in boards:
+        for image in board.get("images", []):
+            data = text(image.get("data"))
+            if not data.startswith("data:") or ";base64," not in data:
+                continue
+            header, encoded = data.split(";base64,", 1)
+            payload = base64.b64decode(encoded)
+            extension = {"image/png": "png", "image/svg+xml": "svg", "image/jpeg": "jpg", "image/gif": "gif"}.get(header.removeprefix("data:"), "bin")
+            name = f"images/{hashlib.sha256(payload).hexdigest()[:16]}.{extension}"
+            files[name] = payload
+            image.pop("data")
+            image["path"] = name
+            image_paths[image["id"]] = name
+    return files, image_paths
 
 
 def zip_timestamp() -> tuple[int, int, int, int, int, int]:
@@ -290,13 +335,18 @@ def zip_timestamp() -> tuple[int, int, int, int, int, int]:
 
 def write_obz(boards: list[dict[str, Any]], output: Path) -> None:
     stamp = zip_timestamp()
+    image_files, image_paths = share_images(boards)
     with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-        entries = [("manifest.json", obz_manifest(boards))]
+        entries: list[tuple[str, Any]] = [("manifest.json", obz_manifest(boards, image_paths))]
         entries += [(f"boards/{board['id']}.obf", board) for board in boards]
         for name, payload in entries:
             info = zipfile.ZipInfo(name, date_time=stamp)
             info.compress_type = zipfile.ZIP_DEFLATED
             archive.writestr(info, json.dumps(payload, indent=2, ensure_ascii=False) + "\n")
+        for name in sorted(image_files):
+            info = zipfile.ZipInfo(name, date_time=stamp)
+            info.compress_type = zipfile.ZIP_DEFLATED
+            archive.writestr(info, image_files[name])
 
 
 def main() -> int:

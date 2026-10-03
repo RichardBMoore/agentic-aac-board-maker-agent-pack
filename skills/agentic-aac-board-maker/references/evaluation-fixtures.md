@@ -53,3 +53,15 @@ When a generated resource fails a fixture, patch the owning reference file:
 - access failure -> `access-methods.md` or `eyegaze-dwell-html`;
 - schema/output failure -> `aac-board-ir.md` or `output-contracts.md`;
 - curriculum/QCIA failure -> `curriculum-qcia-translation.md`.
+
+## House-standard checks (manifest 0.3.0)
+
+Every fixture folder must also contain `partner-card.html`. Named checks added in 0.9.0:
+
+- `house-standards` — `house` is recorded and every visible button has a `wordClass`.
+- `partner-card` — 3-5 model words and a wait of at least 5 seconds.
+- `keyboard-route` — the first page navigates to a keyboard page.
+- `keyboard-omit-reason` — either a keyboard or a recorded reason for leaving it out.
+- `core-words` — a generated core words page exists.
+- `community-intro` — the first page has How I talk.
+- `schedule-states` — a page declares schedule steps and a button can mark a step done.

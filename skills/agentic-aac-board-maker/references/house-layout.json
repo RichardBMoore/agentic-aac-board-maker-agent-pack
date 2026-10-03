@@ -1,0 +1,78 @@
+{
+  "version": "1.0.0",
+  "description": "House layout: permanent grid addresses for recurring operational and repair words. Addresses are 1-based [row, column] and are computed from the grid size, so Help is always the bottom-left cell, Finished the bottom-right, and so on. Every board page must place these words at their house address; a word keeps its address for life. Grow a board by hiding cells in place (button.hidden), never by reshuffling.",
+  "slots": {
+    "help": {
+      "words": [
+        "help"
+      ],
+      "row": "last",
+      "column": "first",
+      "note": "Help is always bottom-left."
+    },
+    "different": {
+      "words": [
+        "different",
+        "undo",
+        "delete-letter"
+      ],
+      "row": "last",
+      "column": "middle",
+      "note": "'Not that' family: Different on talking pages, Undo on message pages, Delete on keyboard pages. Grids with fewer than 3 columns have no different slot."
+    },
+    "finished": {
+      "words": [
+        "finished",
+        "clear"
+      ],
+      "row": "last",
+      "column": "last",
+      "note": "Finished on talking pages; Start again (clear) on message pages."
+    },
+    "stop": {
+      "words": [
+        "stop",
+        "speak-message"
+      ],
+      "row": "first",
+      "column": "last",
+      "note": "Top-right is the voice corner: the Stop word, or Speak on message pages. The runtime's Stop speech control appears just beside it in the reserved edge column."
+    },
+    "nav": {
+      "words": [
+        "navigation"
+      ],
+      "row": "middle",
+      "column": "last",
+      "note": "The forward page button ('<next page> ▶'). On grids with fewer than 3 rows it shares the top-right cell with the stop slot."
+    },
+    "keyboard": {
+      "words": [
+        "keyboard"
+      ],
+      "row": "middle",
+      "column": "first",
+      "note": "ABC: opens the spelling keyboard from the first page. Shares its cell with nav-back, which only appears on later pages. Grids with fewer than 3 rows use the top-left cell."
+    },
+    "nav-back": {
+      "words": [
+        "navigation-back"
+      ],
+      "row": "middle",
+      "column": "first",
+      "note": "'◀ previous page' on talking pages after the first, so neighbouring pages are one step apart. Same cell as ABC on the first page."
+    }
+  },
+  "positionKeywords": {
+    "first": "row/column 1",
+    "last": "the final row/column",
+    "middle": "ceil(n / 2): row 2 of 3 or 4, column 2 of 3 or 4, column 3 of 5 or 6"
+  },
+  "contentRules": [
+    "Content words fill the remaining cells in reading order.",
+    "A reserved cell whose house word is absent from the page may hold content, except the Help cell (validator warning).",
+    "Talking pages are linked in a ring: one forward button per page (nav) plus a back button (nav-back) on talking pages after the first. Generated core-word and word-ending pages are forward-only.",
+    "Two words from the same slot on one page is a conflict: split the page or drop one.",
+    "Grids smaller than 2x2 have no house template; the validator warns."
+  ]
+}

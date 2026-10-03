@@ -344,6 +344,8 @@ def check_generated_resource_fixtures() -> bool:
     canonicalizer = SKILLS / "agentic-aac-board-maker" / "scripts" / "canonicalize_board_ir.py"
     html_renderer = SKILLS / "agentic-aac-board-maker" / "scripts" / "render_html.py"
     parity = SKILLS / "agentic-aac-board-maker" / "scripts" / "validate_html_parity.py"
+    house = SKILLS / "agentic-aac-board-maker" / "scripts" / "apply_house_standards.py"
+    partner_card = SKILLS / "agentic-aac-board-maker" / "scripts" / "render_partner_card.py"
     if not generated.exists():
         warn("generated/ folder not found; skipping proof-of-concept fixture checks")
         return True
@@ -363,6 +365,7 @@ def check_generated_resource_fixtures() -> bool:
             ir.with_name(f"{stem}.html"),
             ir.parent / "README.md",
             ir.parent / "teacher-notes.md",
+            ir.parent / "partner-card.html",
         ]
         missing_outputs = [path.name for path in expected_outputs if not path.exists()]
         if missing_outputs:
@@ -379,6 +382,10 @@ def check_generated_resource_fixtures() -> bool:
             success = False
             continue
         if not check_ir_schema_file(ir):
+            success = False
+            continue
+        if not run_command([sys.executable, str(house), str(ir), "--check"]):
+            fail(f"{rel} does not meet the house standards (layout, word list, literacy pages)")
             success = False
             continue
 
@@ -400,6 +407,15 @@ def check_generated_resource_fixtures() -> bool:
                 continue
             if not run_command([sys.executable, str(parity), str(ir), str(shipped_html)]):
                 fail(f"{shipped_html.relative_to(ROOT)} failed HTML/IR parity")
+                success = False
+                continue
+            rendered_card = Path(tmp) / "partner-card.html"
+            if not run_command([sys.executable, str(partner_card), str(ir), str(rendered_card)]):
+                fail(f"{rel} failed partner card rendering")
+                success = False
+                continue
+            if rendered_card.read_bytes() != (ir.parent / "partner-card.html").read_bytes():
+                fail(f"{(ir.parent / 'partner-card.html').relative_to(ROOT)} has drifted from its IR; re-run render_partner_card.py")
                 success = False
                 continue
 
@@ -464,7 +480,7 @@ def check_generated_resource_fixtures() -> bool:
 def check_generated_html_accessibility() -> bool:
     """Run static access/offline checks against generated HTML fixtures."""
     success = True
-    html_files = sorted((ROOT / "generated").glob("*/*.html"))
+    html_files = sorted(path for path in (ROOT / "generated").glob("*/*.html") if path.name != "partner-card.html")
     if not html_files:
         warn("generated/ contains no HTML fixtures; skipping HTML accessibility checks")
         return True

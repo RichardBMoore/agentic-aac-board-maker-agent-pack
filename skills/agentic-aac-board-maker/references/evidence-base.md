@@ -27,6 +27,16 @@ Last checked: 2026-06-10. These are grounding sources for classroom resource des
 - Disability Standards for Education 2005 — reasonable adjustment and consultation obligations shape access planning in Australian education contexts. https://www.education.gov.au/disability-standards-education-2005
 - WCAG 2.2 — target size, pointer cancellation, keyboard, focus, contrast, and reduced-motion principles are baseline web accessibility constraints, while AAC and gaze targets usually need much larger dimensions. https://www.w3.org/TR/WCAG22/
 - WCAG 2.2 SC 2.5.7 Dragging Movements (AA) — formal backing for the no-drag-only rule: any dragging interaction must have a single-pointer alternative. https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements
+- Thistle, Holmes, Horn & Reum 2018 (AJSLP) — children located symbols significantly faster by session 5 when locations stayed consistent; backs the house layout. https://pubmed.ncbi.nlm.nih.gov/29860450
+- Thistle & Wilkinson 2009 (AJSLP) and later work — colour inside the symbol and grouping by word type help search more than background colour alone for young children; colour is a secondary cue. https://pubs.asha.org/doi/10.1044/1058-0360(2009/08-0029)
+- Modified Fitzgerald Key colour scheme (PrAACtical AAC summary). https://praacticalaac.org/strategy/communication-boards-colorful-considerations/
+- Mathis et al. 2011 — AAC users aged about 9-21 (mean 16) responded more often and with longer messages when partners paused 10 or 45 seconds rather than 2. https://ir.canterbury.ac.nz/handle/10092/3878
+- Communication partner instruction meta-analysis (ASHA Evidence Map summary) — large effects for teaching partners aided modelling, expectant delay and open questions. https://apps.asha.org/EvidenceMaps/Articles/ArticleSummary/4ccd2d70-c323-4cc2-9f78-a47f4b7f1e6f
+- Burkhart — partner-assisted scanning: flat voice for the scan, social voice for the message, never turn the cue into a question, catch-all options last. https://lindaburkhart.com/wp-content/uploads/2016/06/Light_Com_part_1_-5_12_handout.pdf
+- AssistiveWare / Erickson & Koppenhaver — students who use AAC need an "alternative pencil": keyboard or alphabet access. https://www.assistiveware.com/learn-aac/integrating-comprehensive-literacy-instruction
+- Grammatical morphemes with school-age AAC users (JSLHR 2016) — word endings can be taught; teen results are more mixed. https://pubs.asha.org/doi/10.1044/2016_JSLHR-L-15-0246
+- Scope Communication Access for All — give time, talk to the person, don't pretend to understand; basis for the How I talk introduction. https://www.ideas.org.au/images/resources/Communication-Access-for-All-Booklet-Scope.pdf
+- MDN SpeechSynthesisVoice.localService and Microsoft Edge Read Aloud — remote voices add latency and Edge natural voices need internet. https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/localService and https://www.microsoft.com/en-us/edge/learning-center/customize-read-aloud-settings
 - ARASAAC terms — preserve exact attribution and non-commercial/share-alike licence details when using ARASAAC pictograms or derived materials. https://arasaac.org/terms-of-use
 
 ## Design Commitments Derived From The Evidence

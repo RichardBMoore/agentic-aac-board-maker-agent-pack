@@ -14,6 +14,10 @@ import sys
 from pathlib import Path
 from typing import Any
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import house_standards as hs  # noqa: E402
+from output_layout import grid_slots  # noqa: E402
+
 
 ALLOWED_ROLES = {
     "core",
@@ -309,13 +313,14 @@ def validate(data: dict[str, Any]) -> tuple[list[str], list[str]]:
             if page_id in seen_page_ids:
                 failures.append(f"Duplicate page id '{page_id}'.")
             seen_page_ids.add(page_id)
-        buttons = as_list(page.get("buttons"))
+        all_buttons = as_list(page.get("buttons"))
+        buttons = [raw for raw in all_buttons if as_dict(raw).get("hidden") is not True]
         rows, columns = grid_size(page)
         if rows <= 0 or columns <= 0:
             failures.append(f"{page_label}: grid rows/columns must be positive.")
         if not buttons:
             failures.append(f"{page_label}: page has no buttons.")
-        if rows and columns and len(buttons) > rows * columns:
+        if rows and columns and len(all_buttons) > rows * columns:
             failures.append(f"{page_label}: has more buttons than declared grid cells.")
         max_buttons_per_page = max(max_buttons_per_page, len(buttons))
         page_content_buttons = [
@@ -325,7 +330,7 @@ def validate(data: dict[str, Any]) -> tuple[list[str], list[str]]:
         ]
         max_content_buttons_per_page = max(max_content_buttons_per_page, len(page_content_buttons))
 
-        for button_index, raw_button in enumerate(buttons, start=1):
+        for button_index, raw_button in enumerate(all_buttons, start=1):
             button = as_dict(raw_button)
             button_label = text(button.get("id")) or f"{page_label} button {button_index}"
             button_id = text(button.get("id"))
@@ -495,7 +500,171 @@ def validate(data: dict[str, Any]) -> tuple[list[str], list[str]]:
     if not has_evidence_route(data, pages):
         warnings.append("Evidence route is thin; add evidencePlan or teacherNotes.evidence when curriculum/QCIA evidence matters.")
 
+    house_checks(data, failures, warnings)
     return failures, warnings
+
+
+ACTIVE_STRIP = {"speak-text", "speak-label", "add-to-message", "log-attempt"}
+
+
+def page_cells(page: dict[str, Any]) -> dict[str, tuple[int, int]]:
+    try:
+        return {button["id"]: (row + 1, column + 1) for row, column, button in grid_slots(page)}
+    except (KeyError, TypeError, ValueError):
+        return {}
+
+
+def house_checks(data: dict[str, Any], failures: list[str], warnings: list[str]) -> None:
+    """House word list, layout, literacy, colour, partner-card and schedule checks."""
+    pages = [as_dict(raw) for raw in as_list(data.get("pages"))]
+    house = as_dict(data.get("house"))
+    if not house:
+        if text(data.get("schemaVersion")) >= "0.5.0":
+            failures.append("IR 0.5.0 must record house standards; run scripts/apply_house_standards.py.")
+        else:
+            warnings.append("House standards (layout, word list, literacy pages) not applied; run scripts/apply_house_standards.py.")
+        return
+    lexicon = hs.words()
+    button_ids: dict[str, str] = {}
+    for page in pages:
+        for raw in as_list(page.get("buttons")):
+            button = as_dict(raw)
+            button_ids[text(button.get("id"))] = text(page.get("id"))
+
+    # Same button, same message: every recurring word uses the shared word list.
+    for page in pages:
+        for raw in as_list(page.get("buttons")):
+            button = as_dict(raw)
+            bid = text(button.get("id"))
+            lexicon_id = text(button.get("lexiconId"))
+            if lexicon_id:
+                entry = lexicon.get(lexicon_id)
+                if entry is None:
+                    failures.append(f"{bid}: unknown house word '{lexicon_id}'.")
+                    continue
+                for field in ("label", "spokenText", "wordClass"):
+                    if button.get(field) != entry[field]:
+                        failures.append(
+                            f"{bid}: house word '{lexicon_id}' must use {field} {entry[field]!r}, not {button.get(field)!r}."
+                        )
+                speech = [as_dict(action).get("text") for action in as_list(button.get("actions")) if as_dict(action).get("type") in {"speak-text", "add-to-message"}]
+                if any(value != entry["spokenText"] for value in speech if value):
+                    failures.append(f"{bid}: house word '{lexicon_id}' speaks something other than {entry['spokenText']!r}.")
+            else:
+                match = hs.lexicon_match(text(button.get("label")), text(button.get("wordClass")))
+                if match:
+                    failures.append(
+                        f"{bid}: label {text(button.get('label'))!r} is the house word '{match}'; set lexiconId so it says "
+                        f"{lexicon[match]['spokenText']!r} on every board."
+                    )
+            if not button.get("hidden") and not text(button.get("wordClass")):
+                warnings.append(f"{bid}: no wordClass; colour coding and logging need one.")
+
+    # Permanent addresses for house words.
+    if text(house.get("layoutSource")) == "house":
+        for page in pages:
+            rows, columns = grid_size(page)
+            cells = page_cells(page)
+            page_id = text(page.get("id"))
+            used: dict[tuple[int, int], str] = {}
+            help_cell = hs.house_address("help", rows, columns)
+            if rows < 2 or columns < 2:
+                warnings.append(f"{page_id}: no house layout for a {rows}x{columns} grid.")
+                continue
+            for raw in as_list(page.get("buttons")):
+                button = as_dict(raw)
+                bid = text(button.get("id"))
+                slot = hs.slot_for_button(button)
+                cell = cells.get(bid)
+                if slot:
+                    address = hs.house_address(slot, rows, columns)
+                    if address is None:
+                        warnings.append(f"{page_id}: no house address for '{slot}' on a {rows}x{columns} grid ({bid}).")
+                    elif cell != address:
+                        failures.append(
+                            f"{page_id}: '{text(button.get('label'))}' must sit at house address row {address[0]}, column {address[1]} "
+                            f"(found {cell}). House words never move between boards."
+                        )
+                    elif address in used:
+                        failures.append(f"{page_id}: '{used[address]}' and '{text(button.get('label'))}' share house address {address}.")
+                    if address:
+                        used[address] = text(button.get("label"))
+                elif cell and cell == help_cell and not button.get("hidden"):
+                    warnings.append(f"{page_id}: content '{text(button.get('label'))}' sits in the Help cell; Help lives there on every other board.")
+
+    # Literacy: a keyboard from the first page, or a recorded reason.
+    literacy = as_dict(data.get("literacy"))
+    keyboard = as_dict(literacy.get("keyboard"))
+    if not keyboard:
+        warnings.append("literacy.keyboard is not declared; every board should reach a spelling keyboard or record why not.")
+    elif keyboard.get("enabled") is True:
+        keyboard_pages = {text(page.get("id")) for page in pages if text(page.get("pattern")) == "keyboard"}
+        if not keyboard_pages:
+            failures.append("literacy.keyboard is enabled but there is no keyboard page.")
+        elif pages:
+            reaches = any(
+                as_dict(action).get("type") == "navigate-page" and text(as_dict(action).get("targetPageId")) in keyboard_pages
+                for raw in as_list(pages[0].get("buttons")) for action in as_list(as_dict(raw).get("actions"))
+            )
+            if not reaches:
+                failures.append("The first page has no ABC button reaching the keyboard page.")
+        if not as_dict(data.get("messageBar")).get("enabled"):
+            failures.append("A keyboard needs an enabled messageBar so spelled words can be seen and spoken.")
+    elif keyboard.get("enabled") is False and len(text(keyboard.get("omitReason"))) < 10:
+        failures.append("literacy.keyboard is disabled without an omitReason.")
+
+    # Colour means word class.
+    display = as_dict(data.get("display"))
+    scheme = text(display.get("colourScheme")) or "none"
+    if text(display.get("visualProfile")) == "cvi" and scheme != "none":
+        warnings.append("CVI profile should switch word-class colour coding off (colourScheme 'none').")
+    if scheme != "none":
+        for page in pages:
+            for raw in as_list(page.get("buttons")):
+                button = as_dict(raw)
+                expected = hs.fill_for(text(button.get("wordClass")), scheme)
+                actual = text(as_dict(button.get("style")).get("fillColour"))
+                if expected and actual.lower() != expected.lower():
+                    warnings.append(
+                        f"{text(button.get('id'))}: fill {actual or 'none'} is not the {scheme} colour {expected} for "
+                        f"'{text(button.get('wordClass'))}'; colour should mean word type, not decoration."
+                    )
+
+    # Community boards introduce the student's way of talking.
+    settings = [text(value) for value in as_list(as_dict(data.get("audience")).get("settings"))]
+    if "community" in settings and pages:
+        if not any(text(as_dict(raw).get("lexiconId")) == "how-i-talk" for raw in as_list(pages[0].get("buttons"))):
+            failures.append("Community board needs the 'How I talk' introduction on its first page.")
+
+    # Partner card.
+    card = as_dict(data.get("partnerCard"))
+    if not card:
+        warnings.append("No partnerCard: add 3-5 model words, wait time and comment examples for communication partners.")
+    else:
+        for bid in as_list(card.get("modelWords")):
+            if text(bid) not in button_ids:
+                failures.append(f"partnerCard model word '{bid}' is not a button on this board.")
+        try:
+            if int(card.get("waitSeconds", 0)) < 5:
+                failures.append("partnerCard.waitSeconds must be at least 5.")
+        except (TypeError, ValueError):
+            failures.append("partnerCard.waitSeconds must be a whole number of seconds.")
+
+    # Schedules refer to real steps on their own page.
+    for page in pages:
+        schedule = as_dict(page.get("schedule"))
+        if not schedule:
+            continue
+        own = {text(as_dict(raw).get("id")) for raw in as_list(page.get("buttons"))}
+        for bid in as_list(schedule.get("steps")):
+            if text(bid) not in own:
+                failures.append(f"{text(page.get('id'))}: schedule step '{bid}' is not a button on this page.")
+
+    log = as_dict(data.get("evidenceLog"))
+    if log.get("enabled") is True and not as_dict(data.get("evidencePlan")):
+        warnings.append("evidenceLog is enabled without an evidencePlan saying what the log is for.")
+    if not as_dict(data.get("speech")):
+        warnings.append("No speech settings: boards should prefer an installed voice so speech works offline.")
 
 
 def main() -> int:
