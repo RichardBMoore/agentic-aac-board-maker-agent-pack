@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.9.0 - 2026-10-04
+
+AAC output quality release: boards now behave like one consistent communication system.
+
+- **Speech no longer hides the board.** The full-screen Stop overlay is gone. The board stays visible and live while speaking, the spoken message stays on screen for the partner, Stop speech appears in a reserved right-edge column, and a new selection interrupts the current message. Fixes a gaze bug where the overlay appeared under a resting gaze, dwell-fired Stop and cut off the student's own message, then re-selected and cut it off again.
+- **Dwell re-arm.** After any selection, page change or setup action, dwell waits for the pointer to leave before it can start again, so a resting gaze cannot re-select the same cell or the cell that replaces it on the next page.
+- **House standards** (`skills/agentic-aac-board-maker/references/house-standards.md`, `skills/agentic-aac-board-maker/scripts/apply_house_standards.py`): permanent addresses for Help, Different/Undo, Finished, Stop/Speak, navigation and ABC (`skills/agentic-aac-board-maker/references/house-layout.json`); one shared word list so a label always says the same message (`skills/agentic-aac-board-maker/references/house-lexicon.json`); masked cells (`hidden`) that keep their address; `--check` mode for release gates. The validator fails moved house words, label/message drift and 0.5.0 IR without house standards. `house.layoutSource: "student-system"` respects a student's established device layout.
+- **Language, not just phrases.** By default boards reach a gaze-safe two-step QWERTY (or ABC) spelling keyboard from the first page, a core words page (I, want, don't, like, go, more) and, for older students, word endings (-s, -ing, -ed with common irregular forms). New actions: `add-letter`, `add-space`, `delete-letter`, `add-word-ending`. Small early-choice boards opt out with a recorded reason. Talking pages link forward and back.
+- **Symbols ship by default.** A proposed house symbol set (40 ARASAAC pictograms, age-neutral line figures, CC BY-NC-SA notice in `skills/agentic-aac-board-maker/assets/house-symbols/LICENCE.md`) applies to every board; `skills/agentic-aac-board-maker/scripts/review_house_symbols.py` lets the team review it once. Example boards now show symbols, reported honestly as proposed and awaiting team review.
+- **Colour means word type.** `wordClass` on every button, Modified Fitzgerald Key fills applied automatically, warnings for decorative colour, and a CVI profile (dark background, no colour coding, one highlight colour, wider spacing).
+- **Partner cards.** `partnerCard` in IR and `skills/agentic-aac-board-maker/scripts/render_partner_card.py`: 3-5 model words and where they are, wait time (at least 5 s; 15 s default for gaze, switch and partner-assisted access), comments instead of test questions, a least-to-most prompt ladder with no hand-over-hand. Also shown in the board's teacher panel.
+- **Community introduction.** Boards marked `audience.settings: ["community"]` open with How I talk ("I use this device to talk. Please wait while I build my message. Talk to me, not my helper.").
+- **Voice.** `speech` settings; the runtime prefers installed voices (`localService`) in en-AU, supports a pinned voice name, and reports online voices that need internet.
+- **Opt-in selection log.** `evidenceLog` (off by default): teacher-panel recording, partner-modelling tag (Ctrl+Shift+M), CSV export and a summary by communication function. In memory only.
+- **Visual schedules** show Now / Next / Done (text badges, border style and strike-through, not colour alone); Finished or the teacher panel moves the schedule on.
+- **Teacher panel** (three taps on the title, Ctrl+Shift+T or `?teacher=1`): voice, symbol status, partner card, notes, schedule and log controls; never a student target.
+- **Smaller, fitter files.** Each embedded image is stored once per HTML file and once per OBZ package (shared `images/` paths with licence blocks); boards use a flex layout that fits 1280 x 600 effective viewports.
+- **IR 0.5.0** schema adds `lexiconId`, `wordClass`, `hidden`, `symbolStatus`, page `schedule`, `house`, `literacy`, `partnerCard`, `speech`, `evidenceLog`, display `colourScheme`/`visualProfile`/`highlightColour` and `audience.settings`.
+- All seven example boards rebuilt to the new standards; the release gate checks house standards and partner-card drift; new unit and browser tests cover resting gaze, re-arm, interruption, spelling, endings, schedules, logging, voice choice, CVI and masked cells.
+
 ## 0.8.0 - 2026-09-06
 
 - Fix native touch/keyboard activation without dwell; restore visible focus after speech and retain a readable selected message.

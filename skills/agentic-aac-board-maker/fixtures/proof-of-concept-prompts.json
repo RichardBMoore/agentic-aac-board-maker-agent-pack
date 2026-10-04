@@ -1,5 +1,5 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "fixtures": [
     {
       "id": "gaze-choice-2x2",
@@ -13,7 +13,10 @@
         "dwell-safe",
         "large-targets",
         "repair-option",
-        "keyboard-fallback"
+        "keyboard-fallback",
+        "house-standards",
+        "partner-card",
+        "keyboard-omit-reason"
       ],
       "expectations": {
         "accessProfiles": [
@@ -45,7 +48,12 @@
         "qcia-evidence",
         "safety-language",
         "help-route",
-        "privacy-note"
+        "privacy-note",
+        "house-standards",
+        "partner-card",
+        "keyboard-route",
+        "core-words",
+        "community-intro"
       ],
       "expectations": {
         "accessProfiles": [
@@ -57,7 +65,8 @@
           "repair"
         ],
         "requiredLabels": [
-          "help"
+          "help",
+          "how i talk"
         ],
         "forbiddenPhrases": [
           "non-compliant",
@@ -77,7 +86,11 @@
         "opinion",
         "because",
         "rehearse-or-speak",
-        "repair-option"
+        "repair-option",
+        "house-standards",
+        "partner-card",
+        "keyboard-route",
+        "core-words"
       ],
       "expectations": {
         "accessProfiles": [
@@ -89,6 +102,7 @@
           "repair"
         ],
         "requiredLabels": [
+          "abc",
           "because",
           "help"
         ],
@@ -99,7 +113,7 @@
           {
             "buttonIds": [
               "btn-my-hero",
-              "btn-and-also",
+              "btn-firefighter",
               "btn-i-think",
               "btn-brave",
               "btn-because",
@@ -121,7 +135,11 @@
       "requiredChecks": [
         "schedule-order",
         "wait-help-change",
-        "not-full-aac-claim"
+        "not-full-aac-claim",
+        "house-standards",
+        "partner-card",
+        "keyboard-route",
+        "schedule-states"
       ],
       "expectations": {
         "accessProfiles": [
@@ -154,7 +172,11 @@
         "age-respectful",
         "repair-language",
         "privacy-safe",
-        "not-behaviour-control"
+        "not-behaviour-control",
+        "house-standards",
+        "partner-card",
+        "keyboard-route",
+        "core-words"
       ],
       "expectations": {
         "accessProfiles": [
@@ -188,7 +210,10 @@
         "scan-order",
         "black-and-white-readable",
         "partner-wait-confirm",
-        "attribution"
+        "attribution",
+        "house-standards",
+        "partner-card",
+        "keyboard-route"
       ],
       "expectations": {
         "accessProfiles": [

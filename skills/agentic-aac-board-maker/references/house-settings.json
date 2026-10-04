@@ -1,0 +1,119 @@
+{
+  "version": "1.0.0",
+  "description": "House defaults applied to every board by scripts/apply_house_standards.py unless a board overrides them.",
+  "speech": {
+    "lang": "en-AU",
+    "voiceName": "",
+    "rate": 1,
+    "preferLocal": true,
+    "note": "Pin one installed voice by name (e.g. 'Microsoft Catherine' on Windows, 'Karen' on iPad) after choosing it with the student. preferLocal keeps boards working offline: Edge 'Online (Natural)' voices need internet."
+  },
+  "colourScheme": "modified-fitzgerald",
+  "colourSchemes": {
+    "modified-fitzgerald": {
+      "name": "Modified Fitzgerald Key (pale fills)",
+      "source": "https://praacticalaac.org/strategy/communication-boards-colorful-considerations/",
+      "fills": {
+        "pronoun": "#FFF3A6",
+        "verb": "#CDEFC2",
+        "describing": "#CFE2FF",
+        "noun": "#FFD8B0",
+        "conjunction": "#FFFFFF",
+        "preposition": "#F9D3E6",
+        "social": "#F9D3E6",
+        "question": "#E3D3F6",
+        "adverb": "#E6D2BE",
+        "important": "#FFC7C7",
+        "determiner": "#DADADA",
+        "operation": "#E8EEF4",
+        "letter": "#FFFFFF",
+        "ending": "#FFFFFF"
+      },
+      "meaning": {
+        "pronoun": "yellow: people and pronouns",
+        "verb": "green: actions",
+        "describing": "blue: describing words",
+        "noun": "orange: things and places",
+        "conjunction": "white: joining words",
+        "preposition": "pink: position words",
+        "social": "pink: social words and phrases",
+        "question": "purple: questions",
+        "adverb": "brown: adverbs",
+        "important": "red: negation, stop and emergency words",
+        "determiner": "grey: determiners",
+        "operation": "light grey-blue: board operations (speak, undo, pages)",
+        "letter": "white: letters",
+        "ending": "white: word endings (-s, -ing, -ed)"
+      }
+    },
+    "none": {
+      "name": "No colour coding",
+      "fills": {}
+    }
+  },
+  "visualProfiles": {
+    "standard": {
+      "background": "#f7fbff"
+    },
+    "cvi": {
+      "background": "#000000",
+      "colourScheme": "none",
+      "highlightColour": "#FFD400",
+      "note": "Dark background, no word-class colour, one bright highlight colour (use the student's preferred colour), wider spacing, symbols on a plain plate. Set target count, dwell time and symbol type with the vision/CVI team."
+    }
+  },
+  "literacy": {
+    "keyboard": {
+      "enabled": true,
+      "layout": "qwerty",
+      "mode": "grouped"
+    },
+    "coreWords": {
+      "enabled": true,
+      "words": [
+        "i",
+        "want",
+        "dont",
+        "like",
+        "go",
+        "more"
+      ],
+      "note": "'don't' rather than 'not' by default so partners model 'I don't like it', not 'I not like'. Swap words to suit the student; the page holds six."
+    },
+    "wordEndings": {
+      "endings": [
+        "s",
+        "ing",
+        "ed"
+      ],
+      "enableForAgeBands": [
+        "secondary",
+        "year-5",
+        "year-6",
+        "year-7",
+        "year-8",
+        "year-9",
+        "year-10",
+        "year-11",
+        "year-12",
+        "senior",
+        "adult"
+      ]
+    }
+  },
+  "partnerCard": {
+    "waitSeconds": 10,
+    "promptLadder": [
+      "Model the word yourself on the board while you talk. Don't ask the student to copy you.",
+      "Wait with an expectant look: count the wait time in your head.",
+      "Comment on what is happening, then wait again.",
+      "Ask an open question, then wait.",
+      "Point near the part of the board (not the button), then wait.",
+      "Never move the student's hand or body to the board (no hand-over-hand)."
+    ]
+  },
+  "evidenceLog": {
+    "enabled": false,
+    "consentNote": "Off by default. Turn on only after the team and family agree, and only for the purpose in the evidence plan. Logs stay on this device in memory until exported."
+  }
+}

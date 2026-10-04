@@ -19,8 +19,8 @@ test('touch-only start, vocabulary and stop work with keyboard',async({page})=>{
  await open(page,file);await page.getByRole('button',{name:'Start board'}).focus();await page.keyboard.press('Enter');
  await expect(page.locator('#student-layer')).toBeVisible();await page.locator('#btn-art').focus();await page.keyboard.press('Space');
  expect(await page.evaluate(()=>window.__spoken)).toEqual(['Art']);
- await expect(page.locator('#stop-speech')).toBeFocused();await page.keyboard.press('Enter');
- await expect(page.locator('#btn-art')).toBeFocused();await expect(page.locator('#selected-message')).toHaveText('Art');
+ await expect(page.locator('#btn-art')).toBeFocused();await expect(page.locator('#stop-speech')).toBeVisible();await page.keyboard.press('Escape');
+ await expect(page.locator('#stop-speech')).toBeHidden();await expect(page.locator('#btn-art')).toBeFocused();await expect(page.locator('#selected-message')).toHaveText('Art');
  await page.locator('#btn-art').click();expect(await page.evaluate(()=>window.__spoken.length)).toBe(2);
 });
 
@@ -41,16 +41,16 @@ test('explicit slots preserve positions and keyboard order',async({page})=>{
 
 test('embedded symbols decode offline and print scan numbers are visible',async({page})=>{
  await page.context().setOffline(true);await open(page,path.join(root,'generated/symbol-shape-choice/symbol-shape-choice.html'));await page.locator('#start').click();
- const images=page.locator('.symbol');await expect(images).toHaveCount(6);expect(await images.evaluateAll(items=>items.every(img=>img.complete&&img.naturalWidth>0))).toBe(true);
+ const images=page.locator('[data-page-id]:not([hidden]) .symbol');await expect(images).toHaveCount(6);expect(await images.evaluateAll(items=>items.every(svg=>{const box=svg.getBoundingClientRect();return box.width>20&&box.height>20;}))).toBe(true);
+ expect(await page.evaluate(()=>Promise.all([...document.querySelectorAll('symbol image')].map(node=>{const img=new Image();img.src=node.getAttribute('href');return img.decode().then(()=>img.naturalWidth>0,()=>false);})))).not.toContain(false);
  await page.emulateMedia({media:'print'});await expect(page.locator('.scan-number').first()).toBeVisible();expect(await page.locator('.scan-number').allTextContents()).toEqual(['1. ','2. ','3. ','4. ','5. ','6. ']);
 });
 
 test('hero example constructs a complete opinion and reason',async({page})=>{
  await open(page,path.join(root,'generated/curriculum-sentence-builder/year7-hero-speech-sentence-builder.html'));await page.locator('#start').click();
- for(const label of ['My hero is…','a firefighter','I think…']){await page.getByRole('button',{name:label,exact:true}).click();await page.evaluate(()=>window.__utterance.onend());}
- await page.getByRole('button',{name:'Describing words ▶',exact:true}).click();await page.getByRole('button',{name:'brave',exact:true}).click();await page.evaluate(()=>window.__utterance.onend());
- await page.getByRole('button',{name:'◀ Sentence starters',exact:true}).click();await page.getByRole('button',{name:'because',exact:true}).click();await page.evaluate(()=>window.__utterance.onend());
- await page.getByRole('button',{name:'Describing words ▶',exact:true}).click();await page.getByRole('button',{name:'helps others',exact:true}).click();await page.evaluate(()=>window.__utterance.onend());
+ const press=async label=>page.getByRole('button',{name:label,exact:true}).click();
+ await press('My hero is…');await press('a firefighter');await press('I think they are');await press('brave');
+ await press('Reasons ▶');await press('because');await press('they help others');
  await expect(page.locator('#message-text')).toHaveText('My hero is a firefighter. I think they are brave because they help others.');
 });
 

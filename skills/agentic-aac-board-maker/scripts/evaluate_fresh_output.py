@@ -73,7 +73,7 @@ def check_named(name: str, ir: dict[str, Any], html_text: str, notes_text: str) 
         "repair-option": lambda: bool(functions(ir) & {"repair", "refuse", "regulate-rest"}),
         "keyboard-fallback": lambda: "keyboard" in intended,
         "qcia-evidence": lambda: bool(ir.get("evidencePlan") or ir.get("teacherNotes", {}).get("evidence")),
-        "safety-language": lambda: "safety" in blob or "supervision" in blob,
+        "safety-language": lambda: contains_label(ir, "help") and contains_label(ir, "stop", "wait"),
         "help-route": lambda: contains_label(ir, "help"),
         "privacy-note": lambda: bool(ir.get("privacy", {}).get("level")) and "privacy" in blob,
         "opinion": lambda: contains_label(ir, "think", "opinion"),
@@ -90,6 +90,16 @@ def check_named(name: str, ir: dict[str, Any], html_text: str, notes_text: str) 
         "black-and-white-readable": lambda: "@media print" in html_text and "border" in html_text,
         "partner-wait-confirm": lambda: "wait" in blob and "confirm" in blob,
         "attribution": lambda: bool(ir.get("attribution")),
+        "house-standards": lambda: bool(ir.get("house", {}).get("standardsVersion")) and all(button.get("wordClass") for button in buttons(ir) if not button.get("hidden")),
+        "keyboard-route": lambda: any(
+            action.get("type") == "navigate-page" and action.get("targetPageId") in {page["id"] for page in ir.get("pages", []) if page.get("pattern") == "keyboard"}
+            for button in ir.get("pages", [{}])[0].get("buttons", []) for action in button.get("actions", [])
+        ),
+        "core-words": lambda: any(page.get("pattern") == "core-words" for page in ir.get("pages", [])),
+        "community-intro": lambda: any(button.get("lexiconId") == "how-i-talk" for button in ir.get("pages", [{}])[0].get("buttons", [])),
+        "schedule-states": lambda: any(page.get("schedule", {}).get("steps") for page in ir.get("pages", [])) and "schedule-done" in action_types(ir),
+        "partner-card": lambda: 3 <= len(ir.get("partnerCard", {}).get("modelWords", [])) <= 5 and ir.get("partnerCard", {}).get("waitSeconds", 0) >= 5,
+        "keyboard-omit-reason": lambda: ir.get("literacy", {}).get("keyboard", {}).get("enabled") is True or len(ir.get("literacy", {}).get("keyboard", {}).get("omitReason", "")) >= 10,
     }
     check = named.get(name)
     if check is None:
@@ -112,11 +122,15 @@ def evaluate_fixture(root: Path, fixture: dict[str, Any], schema: dict[str, Any]
         record("fixture-folder", False, f"missing {folder}")
         return {"id": fixture["id"], "passed": False, "checks": checks}
     ir_files = sorted(folder.glob("*.ir.json"))
-    html_files = sorted(folder.glob("*.html"))
+    board_stem = ir_files[0].name.removesuffix(".ir.json") if len(ir_files) == 1 else ""
+    html_files = sorted(path for path in folder.glob("*.html") if path.name != "partner-card.html")
+    html_files.sort(key=lambda path: path.stem != board_stem)
+    partner_cards = sorted(folder.glob("partner-card.html"))
     notes_files = sorted(folder.glob("*teacher*notes*.md"))
     record("one-ir", len(ir_files) == 1, f"found {len(ir_files)}")
     record("html-output", bool(html_files), f"found {len(html_files)}")
     record("teacher-notes", bool(notes_files), f"found {len(notes_files)}")
+    record("partner-card", bool(partner_cards), "render_partner_card.py output for communication partners")
     if len(ir_files) != 1:
         return {"id": fixture["id"], "passed": False, "checks": checks}
     try:
@@ -128,7 +142,7 @@ def evaluate_fixture(root: Path, fixture: dict[str, Any], schema: dict[str, Any]
         record("parse-ir", False, "top-level JSON is not an object")
         return {"id": fixture["id"], "passed": False, "checks": checks}
     ir = canonicalize(raw)
-    record("canonical-ir", raw == ir, "fresh output must already be canonical IR 0.4.0")
+    record("canonical-ir", raw == ir, "fresh output must already be canonical IR 0.5.0")
     if Draft202012Validator is None:
         record("json-schema", False, "install requirements-dev.txt")
     else:

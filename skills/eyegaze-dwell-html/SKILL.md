@@ -11,7 +11,7 @@ Use for explicit gaze/dwell implementation and QA. For AAC vocabulary, board gra
 
 For AAC boards in this pack:
 
-1. Create canonical IR 0.4.0 with an `eye-gaze-dwell`/`mouse-dwell` profile or intended method.
+1. Create canonical IR 0.5.0 with an `eye-gaze-dwell`/`mouse-dwell` profile or intended method, and apply house standards (`../agentic-aac-board-maker/scripts/apply_house_standards.py`).
 2. Render with `../agentic-aac-board-maker/scripts/render_html.py`.
 3. Do not paste or invent another DwellManager. The only runtime source is `../agentic-aac-board-maker/assets/aac-board-runtime.js`.
 4. Verify with `../agentic-aac-board-maker/scripts/validate_html_parity.py`, `../build-aac-student-supports/scripts/check_eye_gaze_html.py` and the Playwright browser suite.
@@ -36,7 +36,7 @@ Read `../build-aac-student-supports/references/eye-gaze-and-switch.md` for acces
 - Visible progress and visible keyboard focus; no reliance on colour alone.
 - One activation per completed dwell and short suppression of the follow-on synthetic click.
 - No drag, long gaze sequence, single-dwell destructive action or hidden tiny control.
-- TTS errors are announced; active speech exposes one gaze-sized Stop Speech target.
+- TTS errors are announced; active speech shows one gaze-sized Stop speech target in a reserved right-edge column, never over the board.
 
 ## Total Active-Target Accounting
 
@@ -44,7 +44,8 @@ Count all simultaneously active student controls—not just choice cells.
 
 - Setup phase: Start board, Full screen and Sound check only; default maximum three.
 - Board phase: vocabulary, repair, navigation and any message utility controls together; conservative untested gaze maximum nine.
-- Speech phase: hide/inert setup and board; Stop Speech is the sole active target.
+- Speech phase: the board stays visible and live (a new selection interrupts); the edge Stop speech control is the one extra target, so the limit is the board limit plus one.
+- Re-arm: after any selection, page change or setup action, dwell does not start until the pointer leaves where it rests. Without this, a resting gaze re-selects the same cell or the cell that replaces it on the next page.
 - Teacher/settings controls do not remain in ordinary student mode.
 
 The canonical runtime exposes `window.AACBoard.auditVisibleTargets()`. Treat an over-limit result as a build failure.
@@ -64,7 +65,7 @@ Static inspection is insufficient. At minimum verify:
 - click and native keyboard activation;
 - setup/board/speech target counts and physical dimensions;
 - fullscreen rejection state;
-- Stop Speech isolation;
+- resting-gaze checks: a message is spoken once and not cut off; page changes do not auto-select;
 - navigation/message behaviour where present;
 - no page/console errors, serious accessibility violations or external runtime dependencies;
 - intended classroom/device-sized viewports and, before relying on it, the actual student/device/mount/browser environment.

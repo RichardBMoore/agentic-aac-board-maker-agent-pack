@@ -1,6 +1,8 @@
 import { defineConfig } from "@playwright/test";
 
 const installedChrome = process.env.PLAYWRIGHT_USE_INSTALLED_CHROME === "1";
+// Optional: point at a pre-installed Chromium when the pinned Playwright build is unavailable.
+const chromiumExecutable = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE;
 
 export default defineConfig({
   testDir: "./browser-tests",
@@ -13,6 +15,7 @@ export default defineConfig({
     browserName: "chromium",
     channel: installedChrome ? "chrome" : undefined,
     headless: true,
+    launchOptions: chromiumExecutable ? { executablePath: chromiumExecutable } : {},
   },
   projects: [
     {

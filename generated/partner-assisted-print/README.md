@@ -4,9 +4,11 @@ Generated from proof-of-concept fixture: `partner-assisted-print` / "Make a prin
 
 ## Files
 
-- `partner-assisted-scanning-print-board.ir.json` - canonical AAC Board IR source of truth.
-- `partner-assisted-scanning-print-board.html` - single-file offline HTML student/player draft with print stylesheet.
-- `partner-assisted-scanning-print-board.open-aac-studio.json` - Open AAC Studio-compatible renderer output created from the IR.
+- `partner-assisted-scanning-print-board.ir.json` - canonical AAC Board IR 0.5.0 source of truth (house standards applied).
+- `partner-assisted-scanning-print-board.html` - single-file offline HTML board with print stylesheet and teacher panel.
+- `partner-card.html` - one-page card for communication partners.
+- `partner-assisted-scanning-print-board.open-aac-studio.json` - Open AAC Studio-compatible export.
+- `partner-assisted-scanning-print-board.obz` - Open Board Format export.
 - `teacher-notes.md` - teacher notes, evidence/customisation notes and caveats.
 
 ## Expected outputs covered
@@ -21,24 +23,36 @@ Generated from proof-of-concept fixture: `partner-assisted-print` / "Make a prin
 - `black-and-white-readable`
 - `partner-wait-confirm`
 - `attribution`
+- `house-standards`
+- `partner-card`
+- `keyboard-route`
+
+## How the board works
+
+- **Talk** (3x3): Yes, No, Stop, ABC, More time, Choices ▶, Help, Different, Finished.
+- **Choices** (3x3): Choice A, Choice B, ◀ Talk, Core words ▶, Help.
+
+The house standards tool added a **Core words** page (I, want, don't, like, go, more) that builds messages in the message bar, a **Word endings** page (-s, -ing, -ed, with Undo and Start again) and an **ABC keyboard** (QWERTY letter groups, then letters; Speak, Delete and Help on the keyboard page). Talking pages link forward with the right-middle button and back with the left-middle button; ABC sits left-middle on the first page.
+
+- **House words:** Help is bottom-left on every page; Different is bottom-middle wherever it appears; Undo is bottom-middle wherever it appears; Finished is bottom-right wherever it appears; Stop is top-right wherever it appears; Speak is top-right wherever it appears; ABC is left-middle of the first page. Page buttons: ▶ forward is right-middle, ◀ back is left-middle. Stop speech appears at the right edge while the board is talking. Each house word says the same message on every board.
+- **Speech:** the board stays visible while it speaks; Stop speech appears at the right edge; a new selection interrupts.
+- **Colour:** fills follow the Modified Fitzgerald Key by word type (for example green actions, blue describing words, pink social words, red help/stop words).
 
 ## Access
 
-- Intended access: partner-assisted-scanning, print, touch, keyboard, mouse.
-- Minimum target size: 132 px.
-- Print: use the browser print command; the HTML includes a print stylesheet.
+- Intended access: partner-assisted-scanning, print, touch, keyboard, mouse (profile `partner-assisted-scanning`).
+- At most 16 active targets per page; minimum target size 132 px.
+- Dwell: not used; dwell re-arms only after the pointer leaves.
+- Keyboard: Tab plus Enter/Space; Escape cancels dwell or stops speech.
+- Print: browser print shows every page with scan numbers and a teacher/partner-card page.
 
 ## Communication purpose
 
 A printable partner-assisted scanning board with clear scan order, wait/confirm script, help, stop, different, finished and choice messages.
 
-## Teacher notes
+## Symbols
 
-- **Partner Script:** Partner says each option slowly in numbered order, waits, watches for the agreed signal, then confirms: I saw you choose __. Is that right?
-- **Scan Order:** Scan left to right, top to bottom: 1 Help, 2 Stop, 3 Different, 4 Finished, 5 Choice A, 6 Choice B, 7 Yes, 8 No, 9 More time.
-- **Wait Confirm:** Pause long enough for the student to respond. If unsure, repeat the scan or offer Yes/No confirmation without rushing.
-- **Print:** Print in black and white if needed. Strong borders, large labels and numbered order are included for readability.
-- **Attribution:** If adding symbols, record the symbol source and licence. Text-only printing is usable without symbols.
+16 of 20 different word and message buttons show a symbol; 16 of these were proposed by the agent and await team review. Letters and page buttons are text by design. Text-only words: Choice A, Choice B, don't, Space.
 
 ## Caveat
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Canonicalise legacy AAC Board IR data into renderer-independent IR 0.4.0."""
+"""Canonicalise legacy AAC Board IR data into renderer-independent IR 0.5.0."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "0.4.0"
+SCHEMA_VERSION = "0.5.0"
 FORMAT = "agentic-aac-board-ir"
 
 STRING_ACTION_SHORTHANDS = {
@@ -114,6 +114,9 @@ def canonical_button(raw: Any, page_id: str, index: int) -> dict[str, Any]:
         "actions": actions,
     }
     optional_fields = (
+        "lexiconId",
+        "wordClass",
+        "symbolStatus",
         "symbolateSegments",
         "audioCue",
         "result",
@@ -130,6 +133,8 @@ def canonical_button(raw: Any, page_id: str, index: int) -> dict[str, Any]:
     for field in optional_fields:
         if field in button and button[field] not in (None, "", [], {}):
             result[field] = copy.deepcopy(button[field])
+    if button.get("hidden") is True:
+        result["hidden"] = True
     return result
 
 
@@ -147,8 +152,8 @@ def canonical_page(raw: Any, index: int) -> dict[str, Any]:
         "grid": {"rows": max(1, rows), "columns": max(1, columns)},
         "buttons": [canonical_button(button, page_id, button_index) for button_index, button in enumerate(as_list(page.get("buttons")))],
     }
-    for field in ("margin", "backgroundColour", "backgroundImage"):
-        if field in page and page[field] not in (None, ""):
+    for field in ("margin", "backgroundColour", "backgroundImage", "schedule"):
+        if field in page and page[field] not in (None, "", {}):
             result[field] = copy.deepcopy(page[field])
     return result
 
@@ -199,6 +204,31 @@ def default_system_fit() -> dict[str, str]:
     }
 
 
+def canonical_audience(raw: dict[str, Any]) -> dict[str, Any]:
+    result: dict[str, Any] = {
+        "ageBand": text(raw.get("ageBand")) or "unspecified",
+        "tone": text(raw.get("tone")) or "age-respectful",
+        "locale": text(raw.get("locale")) or "en-AU",
+    }
+    settings = [text(value) for value in as_list(raw.get("settings")) if text(value)]
+    if settings:
+        result["settings"] = list(dict.fromkeys(settings))
+    return result
+
+
+def canonical_display(raw: dict[str, Any], settings: dict[str, Any]) -> dict[str, Any]:
+    result: dict[str, Any] = {
+        "orientation": text(raw.get("orientation")) or text(settings.get("orientation")) or "landscape",
+        "width": to_int(raw.get("width", settings.get("width")), 1024),
+        "height": to_int(raw.get("height", settings.get("height")), 768),
+        "backgroundColour": text(raw.get("backgroundColour")) or text(settings.get("backgroundColour")) or "#f7fbff",
+    }
+    for field in ("colourScheme", "visualProfile", "highlightColour"):
+        if text(raw.get(field)):
+            result[field] = text(raw.get(field))
+    return result
+
+
 def merged_defaults(defaults: dict[str, Any], value: Any) -> dict[str, Any]:
     return {**defaults, **copy.deepcopy(as_dict(value))}
 
@@ -217,7 +247,7 @@ def canonical_message_bar(value: Any) -> dict[str, Any] | None:
 
 
 def canonicalize(data: dict[str, Any]) -> dict[str, Any]:
-    """Return a new canonical IR 0.4.0 object without target-renderer aliases."""
+    """Return a new canonical IR 0.5.0 object without target-renderer aliases."""
     raw = copy.deepcopy(data)
     access_raw = as_dict(raw.get("access"))
     accessibility = as_dict(raw.get("accessibility"))
@@ -252,11 +282,7 @@ def canonicalize(data: dict[str, Any]) -> dict[str, Any]:
         "id": slug(raw.get("id") or title, "aac-board"),
         "title": title,
         "purpose": text(raw.get("purpose")) or "Draft classroom communication support.",
-        "audience": {
-            "ageBand": text(audience_raw.get("ageBand")) or "unspecified",
-            "tone": text(audience_raw.get("tone")) or "age-respectful",
-            "locale": text(audience_raw.get("locale")) or "en-AU",
-        },
+        "audience": canonical_audience(audience_raw),
         "access": {
             "intended": list(dict.fromkeys(text(value) for value in intended if text(value))),
             "profile": profile,
@@ -271,12 +297,7 @@ def canonicalize(data: dict[str, Any]) -> dict[str, Any]:
             "scanOrder": text(access_raw.get("scanOrder")) or text(accessibility.get("scanOrder")) or "dom-order",
             "audioCues": bool(access_raw.get("audioCues", accessibility.get("audioCues", True))),
         },
-        "display": {
-            "orientation": text(as_dict(raw.get("display")).get("orientation")) or text(settings.get("orientation")) or "landscape",
-            "width": to_int(as_dict(raw.get("display")).get("width", settings.get("width")), 1024),
-            "height": to_int(as_dict(raw.get("display")).get("height", settings.get("height")), 768),
-            "backgroundColour": text(as_dict(raw.get("display")).get("backgroundColour")) or text(settings.get("backgroundColour")) or "#f7fbff",
-        },
+        "display": canonical_display(as_dict(raw.get("display")), settings),
         "studentControls": merged_defaults(
             {
                 "startBoard": uses_gaze,
@@ -313,7 +334,20 @@ def canonicalize(data: dict[str, Any]) -> dict[str, Any]:
     if message_bar is not None:
         result["messageBar"] = message_bar
 
-    for field in ("navigation", "sett", "udl", "differentiation", "participationBarriers", "evidencePlan", "variables"):
+    for field in (
+        "navigation",
+        "speech",
+        "literacy",
+        "partnerCard",
+        "evidenceLog",
+        "house",
+        "sett",
+        "udl",
+        "differentiation",
+        "participationBarriers",
+        "evidencePlan",
+        "variables",
+    ):
         if raw.get(field) not in (None, "", [], {}):
             result[field] = copy.deepcopy(raw[field])
 

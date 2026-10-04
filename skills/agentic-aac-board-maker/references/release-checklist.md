@@ -46,7 +46,7 @@ Before saying the agentic board workflow is usable:
    - matching `*.open-aac-studio.json` renderer output;
    - matching `*.html` classroom/print/digital output;
    - `README.md` explaining use, access assumptions, and draft-status caveats.
-3. Require canonical IR 0.4.0 and pass JSON Schema plus `scripts/validate_board_ir.py`.
+3. Require canonical IR 0.5.0 with house standards applied (`scripts/apply_house_standards.py <ir> --check`) and pass JSON Schema plus `scripts/validate_board_ir.py`.
 4. Fresh-render HTML/Open AAC Studio/OBF outputs and fail byte drift.
 5. Pass HTML/IR/shared-runtime parity.
 6. Include powerhouse and `systemFit` metadata where practical.

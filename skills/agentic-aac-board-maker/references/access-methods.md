@@ -38,6 +38,8 @@ Rules:
 - Prevent repeat firing while gaze stays on one target.
 - Keep important controls on screen; reduce chrome before shrinking targets.
 - High-stakes actions need a confirm step.
+- After any selection, page change or setup action, do not start dwell again until the pointer has left the spot it is resting on. Gaze users keep looking where they selected; without this, the same button (or whatever appears in its place on the next page) fires again.
+- Never cover the board with a speech overlay. Keep the board visible while speaking (the partner needs to see the message), put Stop speech in a fixed edge position away from the grid, and let a new selection interrupt the current message.
 
 ## Mouse Dwell / Head Mouse / Joystick Mouse
 

@@ -36,7 +36,9 @@ Read these files based on task type:
 - `references/research-map.md` — source map and 2026-05-26 practice grounding for AAC, access, differentiation, and evidence.
 - `references/canonical-architecture.md` — plugin/standalone skill architecture and ownership boundaries.
 - `references/aac-board-ir.md` — canonical AAC Board IR used before rendering any output.
-- `references/aac-board-ir.schema.json` — executable JSON Schema for canonical IR 0.4.0.
+- `references/aac-board-ir.schema.json` — executable JSON Schema for canonical IR 0.5.0.
+- `references/house-standards.md` — house layout, shared word list, literacy pages, symbol set, colour, partner card, voice, logging and schedules; read before building any board.
+- `references/house-layout.json`, `references/house-lexicon.json`, `references/house-settings.json` — the editable house data applied by `scripts/apply_house_standards.py`.
 - `references/anti-patterns.md` — weak board patterns to detect and repair before delivery.
 - `references/release-checklist.md` — plugin/standalone skill release gates and validation commands.
 - `references/agent-workflow.md` — end-to-end workflow for direct agent generation.
@@ -62,11 +64,12 @@ Load `eyegaze-dwell-html` only when eye gaze/dwell is explicit. Load `accent-dis
 1. **Clarify only if needed.** If the request has enough context, proceed with sensible defaults. Ask only when missing information changes the output materially: access method, board purpose, output format, or privacy-sensitive details.
 2. **Identify the communication goal.** Convert the teacher task into communication functions: initiate, choose, request, refuse, repair, comment, ask, sequence, explain, reflect.
 3. **Select a board pattern.** Choose from yes/no, choice board, first-then, visual schedule, core/fringe board, quiz/comprehension, sentence builder, story/book reader, needs/repair, or curriculum participation board.
-4. **Create canonical AAC Board IR 0.4.0 before visuals.** Define pages, roles/functions/actions, real visible-target limits, student/setup controls, system fit, repair, privacy, attribution, SETT/UDL/differentiation and evidence needs. Run `scripts/canonicalize_board_ir.py` for legacy input, then validate against `references/aac-board-ir.schema.json` and `scripts/validate_board_ir.py`.
-5. **Review symbols as candidates.** When symbols are wanted, run `scripts/fetch_arasaac_symbols.py <ir> --review-out <review.json>`. A teacher/team reviewer chooses `approvedSymbolId` values from the contact sheet; apply them with `--apply-review`. Keep text fallback. Use `--auto-select` only when the user explicitly accepts automated semantic selection.
-6. **Render from IR.** Follow `references/output-quality.md`: preserve chosen positions, distinguish symbol drafts from complete representations, and reject unsupported access modes. Use `scripts/render_html.py` for deterministic single-file HTML, `scripts/render_open_aac_studio.py` for explicit app compatibility, and `scripts/render_obf.py` for OBF/OBZ. Never hand-edit a generated HTML export; change IR or the shared runtime and re-render.
-7. **Validate and run real QA.** Run `scripts/validate_html_parity.py`, static checks, and browser/device tests where available. Count every active student target, including setup, navigation and stop controls—not only vocabulary cells. For new candidate folders, run `scripts/evaluate_fresh_output.py` against the fixture manifest.
-8. **Return usable files and honest caveats.** Include where the file was saved, what it supports, what needs real-device/team testing, unresolved `systemFit` items, and what can be customised.
+4. **Create canonical AAC Board IR 0.5.0 before visuals.** Define pages, roles/functions/actions, `wordClass` for every button, real visible-target limits, student/setup controls, system fit, repair, privacy, attribution, SETT/UDL/differentiation, evidence needs and a `partnerCard` (3-5 model words, wait time, comment examples). Use house words (`lexiconId`) for recurring words. Run `scripts/canonicalize_board_ir.py` for legacy input.
+5. **Apply house standards.** Run `scripts/apply_house_standards.py board.ir.json`. It places house words at their permanent addresses, makes recurring words say the same thing everywhere, adds the ABC keyboard, core words and (for older students) word endings pages, links pages, colours by word class and adds community introductions. If it says a page is too full, split the page; never shrink targets. Then validate against `references/aac-board-ir.schema.json` and `scripts/validate_board_ir.py`.
+6. **Review symbols as candidates.** House words already carry the house symbol set (proposed or team-approved; see `references/house-standards.md`). For topic words run `scripts/fetch_arasaac_symbols.py <ir> --review-out <review.json>`. A teacher/team reviewer chooses `approvedSymbolId` values from the contact sheet; apply them with `--apply-review`. Keep text fallback. Use `--auto-select` only when the user explicitly accepts automated semantic selection.
+7. **Render from IR.** Follow `references/output-quality.md`: preserve chosen positions, distinguish symbol drafts from complete representations, and reject unsupported access modes. Use `scripts/render_html.py` for deterministic single-file HTML, `scripts/render_partner_card.py` for the one-page partner card, `scripts/render_open_aac_studio.py` for explicit app compatibility, and `scripts/render_obf.py` for OBF/OBZ. Never hand-edit a generated HTML export; change IR or the shared runtime and re-render.
+8. **Validate and run real QA.** Run `scripts/apply_house_standards.py <ir> --check`, `scripts/validate_html_parity.py`, static checks, and browser/device tests where available. Count every active student target, including setup, navigation and stop controls—not only vocabulary cells. For new candidate folders, run `scripts/evaluate_fresh_output.py` against the fixture manifest.
+9. **Return usable files and honest caveats.** Include where the file was saved, what it supports, what needs real-device/team testing, unresolved `systemFit` items, and what can be customised.
 
 ## Output Defaults
 
@@ -75,14 +78,16 @@ When the user does not specify output:
 - For classroom digital use: create a single self-contained HTML file.
 - For Open AAC Studio import/testing: create app-compatible JSON rendered from the canonical IR.
 - For low-tech use: create printable HTML or Markdown with symbols/search terms and attribution.
-- For complex curriculum tasks: create a resource pack with IR JSON, rendered HTML/print output, and teacher notes.
+- For complex curriculum tasks: create a resource pack with IR JSON, rendered HTML/print output, teacher notes and the partner card.
+- Every board: house standards applied, a partner card, speech settings that prefer an installed voice, and the selection log off unless the team has agreed its purpose.
 
 ## Definition Of Done
 
 A generated AAC board is ready only when it is:
 
 - **Evidence-informed:** aligned with communication rights, communicative competence, aided language/core vocabulary principles, and UDL action/expression.
-- **Communication-rich:** includes more than content labels or quiz answers.
+- **Communication-rich:** includes more than content labels or quiz answers, and reaches spelling and core words unless an omit reason is recorded.
+- **Consistent:** house words sit at their house addresses and say the house message; colour means word type.
 - **Access-real:** designed for the stated access method and usable by keyboard as a baseline.
 - **Curriculum-strong:** preserves learning intent while reducing access barriers.
 - **Privacy-safe:** no unnecessary student identifiers or sensitive notes.
@@ -111,6 +116,10 @@ When Richard asks for a build, give a short plan, then build unless he clearly a
 - No attribution for symbols.
 - No way for the teacher to adapt vocabulary after generation.
 - Multiple schemas drifting apart instead of rendering from the canonical IR.
+- Help (or any house word) in a different place, or saying something different, from one board to the next.
+- Phrase-only boards with no way to spell or combine words.
+- Decorative colour that does not mean word type.
+- Text-only boards shipped to students who do not read, when reviewed symbols are available.
 - Missing SETT/UDL/differentiation/evidence metadata while claiming the resource is differentiated.
 - Noun-grid, quiz-only, compliance-first, or adult-voice boards that look polished but reduce student agency.
 

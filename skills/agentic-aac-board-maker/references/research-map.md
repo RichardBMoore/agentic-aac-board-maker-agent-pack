@@ -18,6 +18,16 @@ Use this map to keep the pack grounded when adding prompts, fixtures, validators
 - ARASAAC terms: use open symbols with exact attribution, non-commercial/share-alike conditions, and text fallback.
 - Australian Curriculum student diversity, QCAA QCIA, and the Disability Standards for Education: adjustments should support access, participation, and defensible evidence without lowering expectations by default.
 
+## 0.9.0 Additions (checked 2026-10-04)
+
+- Consistent symbol location (Thistle et al. 2018) -> enforced house layout and masked cells instead of reshuffling.
+- Colour and grouping research (Thistle & Wilkinson) and the Modified Fitzgerald Key -> word classes, one scheme, grouping first, CVI profile.
+- Literacy access (Erickson & Koppenhaver via AssistiveWare) and morphology studies -> ABC keyboard, core words and word endings by default.
+- Partner instruction evidence and pause-time research (Mathis et al. 2011) -> partner cards with model words, wait time, comments and a least-to-most ladder.
+- Scope communication access -> How I talk on community boards.
+- Web Speech API facts (localService; Edge online voices) -> installed-voice preference and pinned voices.
+- Automated logging literature (logs miss context; consent) -> opt-in on-device log with partner-model tagging and function counts.
+
 ## How This Changes The Pack
 
 - Canonical IR 0.4.0 adds executable schema integrity, access/control limits and `systemFit` while retaining `sett`, `udl`, `differentiation`, `participationBarriers`, and `evidencePlan`.

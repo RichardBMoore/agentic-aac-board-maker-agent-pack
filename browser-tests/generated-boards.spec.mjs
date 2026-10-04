@@ -67,7 +67,7 @@ for (const relativePath of boards) {
   });
 }
 
-test("dwell cancellation, dwell activation and exclusive Stop Speech work", async ({ page }) => {
+test("dwell cancellation, dwell activation and the edge Stop control keep the board live", async ({ page }) => {
   await openBoard(page, boards[1]);
   await page.getByRole("button", { name: "Start board" }).click();
   const target = page.locator('[data-button-id="btn-art"]');
@@ -80,25 +80,29 @@ test("dwell cancellation, dwell activation and exclusive Stop Speech work", asyn
   await target.hover();
   await expect.poll(() => page.evaluate(() => window.__speechLog.length), { timeout: 5000 }).toBe(1);
   const speechAudit = await page.evaluate(() => window.AACBoard.auditVisibleTargets());
-  expect(speechAudit).toMatchObject({ phase: "speech", count: 1, limit: 1, ok: true });
+  const boardTargets = await page.locator("[data-page-id]:not([hidden]) [data-student-target]").count();
+  expect(speechAudit).toMatchObject({ phase: "speech", count: boardTargets + 1, ok: true });
+  await expect(target).toBeVisible();
+  await expect(page.locator("#selected-message")).toHaveText("Art");
   await page.getByRole("button", { name: "Stop speech" }).click();
   const boardAudit = await page.evaluate(() => window.AACBoard.auditVisibleTargets());
   expect(boardAudit.phase).toBe("board");
   expect(boardAudit.ok).toBe(true);
+  await expect(page.getByRole("button", { name: "Stop speech" })).toBeHidden();
 });
 
 test("sentence building and page navigation use the shared action runtime", async ({ page }) => {
   await openBoard(page, boards[0]);
   await page.getByRole("button", { name: "Start board" }).click();
   await page.locator('[data-button-id="btn-my-hero"]').click();
-  await page.getByRole("button", { name: "Stop speech" }).click();
-  await page.locator('[data-button-id="btn-because"]').click();
-  await page.getByRole("button", { name: "Stop speech" }).click();
-  await expect(page.locator("#message-text")).toContainText("My hero is");
-  await expect(page.locator("#message-text")).toContainText("because");
+  await page.locator('[data-button-id="btn-firefighter"]').click();
   await page.locator('[data-button-id="btn-to-describe"]').click();
-  await expect(page.locator('[data-page-id="page-describe"]')).toBeVisible();
-  await page.locator('[data-button-id="btn-undo-2"]').click();
+  await expect(page.locator('[data-page-id="page-reasons"]')).toBeVisible();
+  await page.locator('[data-button-id="btn-because"]').click();
+  await expect(page.locator("#message-text")).toContainText("My hero is a firefighter.");
+  await expect(page.locator("#message-text")).toContainText("because");
+  await page.locator('[data-button-id="btn-to-starters"]').click();
+  await page.locator('[data-button-id="btn-undo-1"]').click();
   await expect(page.locator("#message-text")).not.toContainText("because");
 });
 

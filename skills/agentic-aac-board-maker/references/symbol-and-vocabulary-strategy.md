@@ -10,6 +10,10 @@ This file guides how the agent chooses words and symbols.
 4. **Respect age and dignity.** Avoid babyish language for older students.
 5. **Keep teacher customisation easy.** Use clear labels and search terms that can be changed.
 
+## House Word List
+
+Recurring words come from `references/house-lexicon.json`: one label, one spoken message, one word class and one symbol on every board. Use `lexiconId` for them and let `scripts/apply_house_standards.py` fill the details. The tool also adds a core words page (I, want, don't, like, go, more), a spelling keyboard and, for older students, word endings (-s, -ing, -ed) so students can combine and spell words, not only select phrases. See `references/house-standards.md`.
+
 ## Core Vocabulary Bank
 
 Choose only what fits:
@@ -137,6 +141,10 @@ Check:
 - Are labels respectful for the student's age?
 - Is every symbol backed by a text label?
 - Is attribution included?
+
+## House Symbol Set
+
+House words carry one symbol each, reviewed once by the team with `scripts/review_house_symbols.py` and then applied to every board. Until approved they are marked `proposed` and the teacher panel says so. Prefer age-neutral black-line figures for secondary students, and avoid pictograms of trademarked characters.
 
 ## Candidate Review Before Embedding
 

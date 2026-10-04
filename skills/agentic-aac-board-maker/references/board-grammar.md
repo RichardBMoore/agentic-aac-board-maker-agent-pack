@@ -62,7 +62,7 @@ Avoid boards where every button has only `answer` or `label` function unless the
 
 ## Stable Positions
 
-For consistency, use stable positions when possible:
+Stable positions are now enforced by `references/house-layout.json` and `scripts/apply_house_standards.py` (see `references/house-standards.md`). Help is bottom-left, Different/Undo bottom-middle, Finished bottom-right, Stop/Speak top-right, the forward page button right-middle, and ABC (first page) or ◀ back (later pages) left-middle. The tables below describe intent; the house layout file is the source of truth.
 
 ### 2x2
 

@@ -38,7 +38,8 @@ It coordinates the core workflow:
 teacher intent
   -> communication functions
   -> canonical AAC Board IR
-  -> deterministic HTML, print, Open AAC Studio JSON, OBF/OBZ, or resource pack
+  -> house standards (fixed places for key words, shared word list, spelling/core-word pages, symbols, colour, partner card)
+  -> deterministic HTML, print, partner card, Open AAC Studio JSON, OBF/OBZ, or resource pack
   -> schema + parity + browser + fresh-output QA
 ```
 
@@ -53,11 +54,31 @@ npm ci
 .venv/bin/python scripts/check_pack.py
 ```
 
-Canonicalise legacy IR and verify canonical 0.4.0 output:
+Canonicalise legacy IR and verify canonical 0.5.0 output:
 
 ```sh
 python3 skills/agentic-aac-board-maker/scripts/canonicalize_board_ir.py legacy.ir.json board.ir.json
 python3 skills/agentic-aac-board-maker/scripts/canonicalize_board_ir.py board.ir.json --check
+```
+
+Apply house standards (idempotent; `--check` for release gates):
+
+```sh
+python3 skills/agentic-aac-board-maker/scripts/apply_house_standards.py board.ir.json
+python3 skills/agentic-aac-board-maker/scripts/apply_house_standards.py board.ir.json --check
+```
+
+Render the one-page communication partner card:
+
+```sh
+python3 skills/agentic-aac-board-maker/scripts/render_partner_card.py board.ir.json partner-card.html
+```
+
+Review the house symbol set once as a team:
+
+```sh
+python3 skills/agentic-aac-board-maker/scripts/review_house_symbols.py --review-out house-symbol-review.json
+python3 skills/agentic-aac-board-maker/scripts/review_house_symbols.py --apply-review house-symbol-review.decisions.json
 ```
 
 Validate a generated AAC Board IR:
@@ -138,6 +159,16 @@ Each skill folder also remains usable on its own:
 - `icp-backwards-mapping-assessment` - ICP backwards mapping, adapted assessment, rubrics, moderation notes, and evidence design.
 - `richard-school-resource-workflow` - Richard's broader school-resource workflow context.
 
+## What 0.9.0 changes in the boards
+
+- Speech keeps the board visible; Stop speech sits at the right edge; a resting gaze no longer cuts off or repeats the student's message; new selections interrupt.
+- Help, Different, Finished, Stop/Speak, page buttons and ABC have permanent places on every board, and recurring words always say the same thing.
+- Every board (except tiny early-choice boards, which record why) reaches a spelling keyboard, core words and, for older students, word endings.
+- House words carry symbols from a proposed house set the team reviews once; colour means word type; a CVI profile is available.
+- Each board ships with a partner card; community boards open with How I talk; speech prefers installed voices; an opt-in selection log separates student selections from partner models; schedules show Now / Next / Done.
+
+See `skills/agentic-aac-board-maker/references/house-standards.md`.
+
 ## Output quality in 0.8.0
 
 Native touch/keyboard activation works independently of dwell. Standalone HTML rejects switch-scanning configurations; use a verified scanning player for those requests. Symbol-review sheets support offline previews and downloadable revision-bound decisions. HTML/OBF preserve aligned grid cells; print supports A4/A3 portrait/landscape and scan numbers. See `skills/agentic-aac-board-maker/references/output-quality.md` for capabilities and acceptance checks.
@@ -146,17 +177,17 @@ Native touch/keyboard activation works independently of dwell. Standalone HTML r
 
 The `generated/` folder is intentionally kept in the repo. These examples are demonstrations and golden regression fixtures. The release check validates canonical IR against JSON Schema, fresh-renders HTML/Open AAC Studio/OBF outputs, and enforces HTML/IR/shared-runtime parity. `evaluate_fresh_output.py` separately checks new candidate generations so golden fixtures cannot mask weak new output.
 
-Included proof-of-concept examples:
+Included proof-of-concept examples (each folder also has `partner-card.html`):
 
-- `gaze-choice-2x2` - simple eye-gaze choice board.
-- `qcia-community-shops` - QCIA community access board.
-- `curriculum-sentence-builder` - Year 7 hero speech sentence builder; a two-page board with a sentence/message bar and Speak/Undo/Start-again controls.
-- `visual-schedule-expressive` - visual schedule with expressive options.
-- `needs-repair-board` - respectful needs and repair board; two gaze-safe pages with Help on each.
-- `partner-assisted-print` - printable partner-assisted scanning board.
+- `gaze-choice-2x2` - simple 2x3 eye-gaze choice board with symbols; keyboard omitted with a recorded reason (early choice board).
+- `qcia-community-shops` - QCIA community access board: Shop talk and Paying pages, How I talk introduction, ABC keyboard, core words, word endings and an example opt-in selection log.
+- `curriculum-sentence-builder` - Year 7 hero speech sentence builder: starters and hero words linked forward and back, a message bar, core words, word endings and an ABC keyboard so the student can spell their own hero.
+- `visual-schedule-expressive` - morning routine with Now / Next / Done states, Finished moving the schedule on, and a Talk about it page.
+- `needs-repair-board` - respectful needs and repair board for a secondary student; two gaze-safe pages plus core words, word endings and keyboard.
+- `partner-assisted-print` - printable partner-assisted scanning board (Talk and Choices pages) with the generated pages printable for partner-assisted spelling.
 - `symbol-shape-choice` - original embedded geometric symbols for offline rendering QA; learner familiarity remains unverified.
 
-The `curriculum-sentence-builder` and `needs-repair-board` examples also demonstrate multi-page `navigation` buttons (`next-page`/`previous-page` actions), so the regression fixtures cover navigation as well as single-page boards.
+All examples follow the house standards: the same house words sit in the same places and say the same messages on every board.
 
 ## Non-Negotiables
 
@@ -166,8 +197,8 @@ The `curriculum-sentence-builder` and `needs-repair-board` examples also demonst
 - Preserve student agency: initiate, refuse, repair, comment, ask, choose, answer, explain, stop, and finish where appropriate.
 - Match board density and interaction style to the access method.
 - Keep privacy and offline classroom use in mind.
-- Use open/free symbols or teacher-owned media with attribution.
-- Keep the canonical AAC Board IR as the source of truth.
+- Use open/free symbols or teacher-owned media with attribution. The bundled house symbols are ARASAAC pictograms under CC BY-NC-SA (not MIT); keep attribution and do not sell boards that embed them.
+- Keep the canonical AAC Board IR as the source of truth and apply house standards before rendering.
 - Review symbol candidates with the student/team; do not treat search ranking as semantic approval.
 - Prefer fullscreen student mode for eye gaze; use the page's gaze-safe launcher normally and EQ-managed Edge policy or kiosk deployment when fullscreen must be automatic or enforced.
 - Run QA before claiming a board is ready even as a draft.
@@ -183,13 +214,14 @@ Generated resources are draft classroom supports. Review them with the relevant 
 1. `skills/agentic-aac-board-maker/SKILL.md`
 2. `skills/agentic-aac-board-maker/references/evidence-base.md`
 3. `skills/agentic-aac-board-maker/references/research-map.md`
-4. `skills/agentic-aac-board-maker/references/agent-workflow.md`
-5. `skills/agentic-aac-board-maker/references/aac-board-ir.md`
-6. `skills/agentic-aac-board-maker/references/board-grammar.md`
-7. `skills/agentic-aac-board-maker/references/access-methods.md`
-8. `skills/agentic-aac-board-maker/references/curriculum-qcia-translation.md`
-9. `skills/agentic-aac-board-maker/references/qa-rubric.md`
-10. `skills/icp-backwards-mapping-assessment/SKILL.md`
+4. `skills/agentic-aac-board-maker/references/house-standards.md`
+5. `skills/agentic-aac-board-maker/references/agent-workflow.md`
+6. `skills/agentic-aac-board-maker/references/aac-board-ir.md`
+7. `skills/agentic-aac-board-maker/references/board-grammar.md`
+8. `skills/agentic-aac-board-maker/references/access-methods.md`
+9. `skills/agentic-aac-board-maker/references/curriculum-qcia-translation.md`
+10. `skills/agentic-aac-board-maker/references/qa-rubric.md`
+11. `skills/icp-backwards-mapping-assessment/SKILL.md`
 
 ## License
 
