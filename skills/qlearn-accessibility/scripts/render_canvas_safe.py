@@ -627,6 +627,9 @@ class Transformer:
             allowed = (name in GLOBAL_ATTRS or name.startswith(("aria-", "data-")) or name in ELEMENT_ATTRS.get(tag, set())
                        or (tag in MATHML_TAGS and not name.startswith("on")))
             if not allowed:
+                if name == "srcdoc" and value.strip():
+                    self.blocking.append("an iframe's built-in content (srcdoc) is removed by Canvas; put that content on the page itself")
+                    continue
                 self.changes[f"removed {name}= attribute from <{tag}> (not on the Canvas allowlist)"] += 1
                 continue
             if name == "id" and value.lower() in DISALLOWED_IDS:

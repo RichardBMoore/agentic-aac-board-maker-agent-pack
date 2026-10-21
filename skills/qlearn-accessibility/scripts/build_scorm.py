@@ -15,7 +15,8 @@ Layouts:
   inline), keeping every attribute. Use it only if the LMS player's Content
   Security Policy blocks inline scripts (the activity shows a blank or
   unstyled page inside QLearn). To keep behaviour the same, the builder
-  refuses split layout for inline scripts marked ``async``/``defer`` and for
+  refuses split layout for inline scripts marked ``async``/``defer``, for
+  ``<style>`` blocks with an ``id`` (a script might rewrite them), and for
   ``<style>``/``<script>`` inside ``<svg>``, ``<math>``, ``<textarea>``,
   ``<template>``, ``<noscript>`` or ``<title>``; use the inline layout then.
 
@@ -153,6 +154,8 @@ def split_inline_assets(text: str) -> tuple[str, dict[str, bytes], list[dict[str
                 raise PackagingError("an inline <script> is marked async/defer, which would start working once moved; use the inline layout")
         if block["contained"]:
             raise PackagingError(f"a <{kind}> sits inside <{block['contained'][-1]}>, where moving it would change behaviour; use the inline layout")
+        if kind == "style" and "id" in attrs:
+            raise PackagingError(f"<style id=\"{attrs['id']}\"> could be changed by a script, which a moved stylesheet would ignore; use the inline layout")
         counts[kind] += 1
         open_tag = block["open_tag"]
         attribute_text = open_tag[len(kind) + 1:-1]  # everything between "<script"/"<style" and ">", verbatim

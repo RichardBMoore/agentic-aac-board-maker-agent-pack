@@ -210,6 +210,20 @@ class LeastPrivilegeTests(unittest.TestCase):
         self.assertEqual(["a", "b"], [page["url"] for page in client.list_pages("1")])
         self.assertIn("per_page=100", opener.requests[0].full_url)
 
+    def test_long_bookmark_pages_and_everyday_searches_are_allowed(self) -> None:
+        bookmark = "bookmark:" + "WyJBIHZlcnkgbG9uZyB1bml0IHRpdGxlIGFib3V0IHBlcnN1YXNpdmUgbGFuZ3VhZ2UiLDEyMzQ1Nl0" * 3
+        next_url = f"https://qlearn.eq.edu.au/api/v1/courses/1/pages?page={bookmark}&per_page=100&sort=title"
+        client, opener, _ = make_client([
+            ("GET", "/courses/1/pages", FakeResponse([{"url": "a", "title": "A", "published": True}], f'<{next_url}>; rel="next"')),
+            ("GET", "/courses/1/pages", FakeResponse([{"url": "b", "title": "B", "published": True}])),
+            ("GET", "/courses/1/pages", FakeResponse([])),
+        ])
+        self.assertEqual(["a", "b"], [page["url"] for page in client.list_pages("1")])
+        self.assertEqual([], client.get_all("/courses/1/pages", {"search_term": "Teacher's notes & rubric"}))
+        for bad in ("bookmark:abc;drop", "x" * 300):
+            with self.subTest(page=bad), self.assertRaises(client_module.PolicyError):
+                client.get("/courses/1/pages", {"page": bad})
+
     def test_rate_limit_is_retried_with_backoff(self) -> None:
         client, opener, sleeps = make_client([
             ("GET", "/users/self", http_error(403, "403 Forbidden (Rate Limit Exceeded)")),

@@ -90,6 +90,11 @@ GET_ROUTES = tuple(re.compile(rf"^/api/v1/{route}$") for route in (
 POST_PAGE = re.compile(rf"^/api/v1/courses/(?P<course>{ID})/pages$")
 PUT_PAGE = re.compile(rf"^/api/v1/courses/(?P<course>{ID})/pages/(?P<page>{SLUG})$")
 SAFE_QUERY_VALUE = re.compile(r"^[A-Za-z0-9:_=+.\- ]{0,120}$")
+QUERY_VALUE_PATTERNS = {
+    "page": re.compile(r"^(?:\d{1,6}|first|last|next|bookmark:[A-Za-z0-9_\-]+=*)$"),  # Canvas bookmarks can be long
+    "per_page": re.compile(r"^\d{1,3}$"),
+    "search_term": re.compile(r"^[^\x00-\x1f\x7f]{1,200}$"),  # everyday text, e.g. "Teacher's notes & rubric"
+}
 QUERY_RULES: dict[str, frozenset[str] | None] = {
     # None = any short safe value; a set = only these values.
     "per_page": None,
@@ -197,7 +202,8 @@ class CanvasClient:
                 rule = QUERY_RULES.get(key, False)
                 if rule is False:
                     raise PolicyError(f"Query parameter '{key}' is not allowed")
-                if not SAFE_QUERY_VALUE.match(value) or (rule is not None and value not in rule):
+                pattern = QUERY_VALUE_PATTERNS.get(key, SAFE_QUERY_VALUE)
+                if not pattern.match(value) or (rule is not None and value not in rule):
                     raise PolicyError(f"Query value '{key}={value}' is not allowed")
             return
         if query:

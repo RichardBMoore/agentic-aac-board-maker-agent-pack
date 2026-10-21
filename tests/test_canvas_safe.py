@@ -155,6 +155,14 @@ class CanvasSafeRenderTests(unittest.TestCase):
         self.assertTrue(any("hidden" in item and "42" in item for item in result.blocking))
         self.assertTrue(any("Next lesson" in item for item in result.blocking))
 
+    def test_iframe_srcdoc_content_needs_the_teacher(self) -> None:
+        result = canvas_safe.transform('<iframe title="Quiz" srcdoc="<p>Question one</p>"></iframe>')
+        self.assertTrue(any("srcdoc" in item for item in result.blocking))
+
+    def test_mid_tone_backgrounds_are_reported(self) -> None:
+        result = canvas_safe.transform('<p style="background:#777777">Grey box</p>')
+        self.assertTrue(any("mid-toned" in warning for warning in result.warnings))
+
     def test_text_after_body_and_mathml_attributes_are_kept(self) -> None:
         result = canvas_safe.transform('<html><body><p>In body</p></body></html>After body'
                                        '<math display="block"><mi mathvariant="bold">x</mi></math>')

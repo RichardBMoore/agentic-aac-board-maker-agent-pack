@@ -199,7 +199,7 @@ class SplitLayoutSafetyTests(unittest.TestCase):
     """The split layout must keep behaviour, not just be reversible."""
 
     PAGE = ('<!doctype html><HTML lang="en-AU"><head><meta name="viewport" content="width=device-width"><title>T</title>'
-            '<STYLE id="theme" media="screen">p{color:#111}</STYLE></head><body><p>Hi</p>'
+            '<STYLE class="theme" media="screen">p{color:#111}</STYLE></head><body><p>Hi</p>'
             '<script data-note="a>b">window.ok = 1;</script>'
             '<script id="data" type="application/json">{"a": "</style>"}</script></body></HTML>')
 
@@ -221,7 +221,7 @@ class SplitLayoutSafetyTests(unittest.TestCase):
     def test_attributes_ids_and_case_survive(self) -> None:
         info, entries = self.build(self.PAGE)
         launch = entries["index.html"].decode("utf-8")
-        self.assertIn('href="assets/inline-style-1.css" id="theme" media="screen"', launch)
+        self.assertIn('href="assets/inline-style-1.css" class="theme" media="screen"', launch)
         self.assertIn('<script data-note="a>b" src="assets/inline-script-1.js"></script>', launch)
         self.assertEqual(b"window.ok = 1;", entries["assets/inline-script-1.js"])
         self.assertIn('<script id="data" type="application/json">', launch, "data blocks stay inline")
@@ -233,6 +233,7 @@ class SplitLayoutSafetyTests(unittest.TestCase):
             "defer": '<html><body><script defer>go()</script></body></html>',
             "svg-style": '<html><body><svg><style>circle{fill:red}</style><circle r="4"/></svg></body></html>',
             "template": '<html><body><template><script>go()</script></template></body></html>',
+            "named-style": '<html><head><style id="theme">p{}</style></head><body><script>x()</script></body></html>',
         }
         for label, html in cases.items():
             with self.subTest(case=label), self.assertRaises(build_scorm.PackagingError):
