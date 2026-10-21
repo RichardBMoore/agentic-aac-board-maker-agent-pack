@@ -13,3 +13,10 @@ playwright-report/
 *.log
 dist/
 build/
+
+# Credentials never belong in the repository (QLearn tokens live in the OS password vault).
+.env
+.env.*
+*.token
+# Built SCORM packages are reproducible from the boards; build them into dist/.
+*.scorm12.zip

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest identifier="${manifest_id}" version="1.0"
+  xmlns="http://www.imsproject.org/xsd/imscp_rootv1p1p2"
+  xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_rootv1p2"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"${schema_location}>
+  <metadata>
+    <schema>ADL SCORM</schema>
+    <schemaversion>1.2</schemaversion>
+  </metadata>
+  <organizations default="${organization_id}">
+    <organization identifier="${organization_id}">
+      <title>${title}</title>
+      <item identifier="${item_id}" identifierref="${resource_id}" isvisible="true">
+        <title>${title}</title>
+      </item>
+    </organization>
+  </organizations>
+  <resources>
+    <resource identifier="${resource_id}" type="webcontent" adlcp:scormtype="sco" href="${launch_href}">
+${file_entries}
+    </resource>
+  </resources>
+</manifest>

@@ -1,0 +1,7 @@
+interface:
+  display_name: "QLearn Accessibility"
+  short_description: "Accessible QLearn page copies and SCORM-packaged activities"
+  brand_color: "#5B2C83"
+  default_prompt: "Package this validated eye-gaze board as a SCORM file I can upload to my QLearn course."
+policy:
+  allow_implicit_invocation: false

@@ -41,6 +41,7 @@ teacher intent
   -> house standards (fixed places for key words, shared word list, spelling/core-word pages, symbols, colour, partner card)
   -> deterministic HTML, print, partner card, Open AAC Studio JSON, OBF/OBZ, or resource pack
   -> schema + parity + browser + fresh-output QA
+  -> optional QLearn delivery: Canvas-safe page copy or SCORM 1.2 package
 ```
 
 ## Quick Start
@@ -158,6 +159,22 @@ Each skill folder also remains usable on its own:
 - `accent-display-fit` - display fidelity on real Accent devices and EQ-managed Edge: effective-viewport maths (Windows scaling, NuVoice Key Mode, Empower browser), fit-first layout rules, conservative engine baseline, OneDrive/USB delivery routes, and a display-fit validator.
 - `icp-backwards-mapping-assessment` - ICP backwards mapping, adapted assessment, rubrics, moderation notes, and evidence design.
 - `richard-school-resource-workflow` - Richard's broader school-resource workflow context.
+- `qlearn-accessibility` - delivery inside QLearn (EQ's Canvas): accessible, Canvas-safe **unpublished** copies of course pages through a least-privilege API client, and deterministic SCORM 1.2 packages of validated activities for the teacher to upload. Never publishes or reads student data.
+
+## What 0.10.0 adds: accessibility inside QLearn
+
+Students should not have to download a file to use an accessible activity. The new `qlearn-accessibility` skill adds two routes into QLearn without changing any existing board output:
+
+- **SCORM packages.** `build_scorm.py` wraps a validated standalone activity (any rendered board, for example) as a SCORM 1.2 ZIP for upload through the course's SCORM tool as a page. The activity is byte-for-byte unchanged apart from one line that loads a small bridge, which only tells QLearn the activity opened and closed: no answers, messages or scores. `validate_scorm.py` checks the manifest, that nothing loads from the internet, and that there are no tokens or API endpoints, and proves equivalence with the original. A `split` layout covers players with a strict Content Security Policy.
+- **Canvas-safe page copies.** `render_canvas_safe.py` restyles a page body for readability (headings, contrast, text size, large link targets, tables) using only what Canvas keeps, and proves every word, link and image survives. `canvas_client.py` creates the result as a new **unpublished** `[WORKING FILE]` page only after the teacher confirms. `compare_saved_canvas_page.py` reports what QLearn kept.
+- **Credentials and privacy.** The QLearn token lives in the OS password vault and is read by code at request time. The client refuses student endpoints, publishing and deleting. The release gate scans the repository for secrets.
+
+```sh
+python3 skills/qlearn-accessibility/scripts/build_scorm.py generated/gaze-choice-2x2/gaze-choice-class-activity.html dist/gaze-choice.scorm12.zip
+python3 skills/qlearn-accessibility/scripts/validate_scorm.py dist/gaze-choice.scorm12.zip --source generated/gaze-choice-2x2/gaze-choice-class-activity.html
+```
+
+What still needs a real QLearn test (import permission, fullscreen, speech and gaze inside the player, the student's device) is listed in `skills/qlearn-accessibility/references/scorm-launch-and-testing.md`. The teacher guide and results sheet are in `skills/qlearn-accessibility/references/teacher-scorm-upload-guide.md`.
 
 ## What 0.9.0 changes in the boards
 

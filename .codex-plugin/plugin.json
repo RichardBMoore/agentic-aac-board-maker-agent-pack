@@ -1,7 +1,7 @@
 {
   "name": "agentic-aac-board-maker",
-  "version": "0.9.0",
-  "description": "Generate evidence-informed, accessible AAC boards, differentiated classroom communication resources, eye-gaze tools, and ICP assessment supports from teacher intent.",
+  "version": "0.10.0",
+  "description": "Generate evidence-informed, accessible AAC boards, differentiated classroom communication resources, eye-gaze tools, and ICP assessment supports from teacher intent, and deliver them inside QLearn/Canvas as accessible page copies or SCORM packages.",
   "author": {
     "name": "Richard Moore"
   },
@@ -15,13 +15,16 @@
     "qcia",
     "icp",
     "curriculum",
-    "offline-html"
+    "offline-html",
+    "qlearn",
+    "canvas-lms",
+    "scorm"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Agentic AAC Board Maker",
     "shortDescription": "Generate differentiated AAC and ICP classroom resources",
-    "longDescription": "Turns teacher intent into draft AAC boards, visual supports, printable resources, Open AAC Studio JSON, offline HTML tools, and ICP evidence packages with communication rights, SETT notes, UDL supports, differentiation, access method, curriculum/QCIA translation, privacy, and QA built in.",
+    "longDescription": "Turns teacher intent into draft AAC boards, visual supports, printable resources, Open AAC Studio JSON, offline HTML tools, and ICP evidence packages with communication rights, SETT notes, UDL supports, differentiation, access method, curriculum/QCIA translation, privacy, and QA built in. QLearn delivery: Canvas-safe accessible page copies (unpublished) and deterministic SCORM 1.2 packages of validated activities.",
     "developerName": "Richard Moore",
     "category": "Education",
     "capabilities": [

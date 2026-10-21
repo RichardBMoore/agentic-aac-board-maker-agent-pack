@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.10.0 - 2026-10-21
+
+QLearn delivery release: accessible activities inside QLearn instead of downloaded files. Additive only; existing skills, the shared runtime, renderers and generated boards are unchanged.
+
+- **New `qlearn-accessibility` skill** (`skills/qlearn-accessibility/SKILL.md`) with an output-target contract: `canvas_page` (static, allowlisted), `scorm` (interactive, packaged), `standalone` (unchanged).
+- **SCORM 1.2 packaging** (`skills/qlearn-accessibility/scripts/build_scorm.py`): the launch page is the original activity plus one bridge line, reversible byte-for-byte; a deterministic ZIP; an ARASAAC licence included when symbols are embedded; `inline` and CSP-friendly `split` layouts; completion reporting opt-in. The bridge (`skills/qlearn-accessibility/assets/scorm12-bridge.js`) calls only `LMSInitialize`/`LMSFinish`.
+- **SCORM validator** (`skills/qlearn-accessibility/scripts/validate_scorm.py`): ZIP hygiene, manifest structure and identifiers, every file listed and present, no internet-loaded assets, no tokens, credentials or LMS API endpoints, the IR privacy flags, and `--source` equivalence.
+- **Canvas-safe renderer** (`skills/qlearn-accessibility/scripts/render_canvas_safe.py`): Canvas allowlist, simple `<style>` rules inlined, heading order under the page title, WCAG AA colour repair, a 16 px text floor, large stand-alone link targets, and a preservation inventory with teacher-decision blocking (alt text, base64 images, unsupported embeds).
+- **Saved-page comparison** (`skills/qlearn-accessibility/scripts/compare_saved_canvas_page.py`) and a **least-privilege QLearn client** (`skills/qlearn-accessibility/scripts/canvas_client.py`): token from the OS password vault, QLearn hosts only, student endpoints refused, unpublished `[WORKING FILE]` writes only, with confirmation.
+- Teacher upload guide with a results sheet, Canvas allowlist notes, SCORM launch/testing notes, approval and privacy notes, acceptance checks and an architecture decision record under `skills/qlearn-accessibility/references/`.
+- Tests: `tests/test_scorm_packaging.py`, `tests/test_canvas_safe.py`, `tests/test_canvas_client.py` (stubbed API, synthetic fixtures) and `browser-tests/scorm-package.spec.mjs` (nested cross-origin LMS frames, dwell, blocked fullscreen, strict CSP, no external requests). The release gate now packages every generated board in both layouts and scans the repository for secrets.
+
 ## 0.9.0 - 2026-10-04
 
 AAC output quality release: boards now behave like one consistent communication system.

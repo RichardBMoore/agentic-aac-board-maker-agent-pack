@@ -700,6 +700,86 @@ def check_release_metadata() -> bool:
     return success
 
 
+def load_qlearn_script(name: str):
+    """Import a qlearn-accessibility script as a module (stdlib only, so this works in CI)."""
+    import importlib.util
+
+    scripts_dir = SKILLS / "qlearn-accessibility" / "scripts"
+    if str(scripts_dir) not in sys.path:
+        sys.path.insert(0, str(scripts_dir))
+    spec = importlib.util.spec_from_file_location(f"check_pack_{name}", scripts_dir / f"{name}.py")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def check_scorm_packaging() -> bool:
+    """Every generated board packages as a valid, deterministic SCORM 1.2 ZIP that changes nothing but the bridge."""
+    if not (SKILLS / "qlearn-accessibility" / "scripts" / "build_scorm.py").exists():
+        warn("qlearn-accessibility skill not found; skipping SCORM packaging checks")
+        return True
+    build_scorm = load_qlearn_script("build_scorm")
+    success = True
+    boards = sorted(path for path in (ROOT / "generated").glob("*/*.html") if path.name != "partner-card.html")
+    with tempfile.TemporaryDirectory() as tmp:
+        for board in boards:
+            for layout in ("inline", "split"):
+                output = Path(tmp) / f"{board.stem}.{layout}.zip"
+                try:
+                    info = build_scorm.build_package(board, output, layout=layout)
+                except build_scorm.PackagingError as error:
+                    fail(f"{board.relative_to(ROOT)} could not be packaged as SCORM ({layout}): {error}")
+                    success = False
+                    continue
+                if info["validation"]["warnings"]:
+                    fail(f"{board.relative_to(ROOT)} SCORM ({layout}) has warnings: {info['validation']['warnings'][:2]}")
+                    success = False
+        first = boards[0] if boards else None
+        if first is not None:
+            again_a, again_b = Path(tmp) / "a.zip", Path(tmp) / "b.zip"
+            build_scorm.build_package(first, again_a)
+            build_scorm.build_package(first, again_b)
+            if again_a.read_bytes() != again_b.read_bytes():
+                fail("SCORM packaging is not deterministic")
+                success = False
+    if success:
+        ok(f"{len(boards)} generated board(s) package as valid SCORM 1.2 (inline and split), unchanged apart from the bridge, deterministically")
+    return success
+
+
+def check_no_secrets() -> bool:
+    """No access tokens, bearer credentials or private keys anywhere in the repository."""
+    validate_scorm = load_qlearn_script("validate_scorm") if (SKILLS / "qlearn-accessibility").exists() else None
+    if validate_scorm is None:
+        return True
+    skip_parts = {".git", "node_modules", ".venv", "__pycache__", "test-results", "playwright-report", "dist", "build"}
+    text_suffixes = validate_scorm.TEXT_SUFFIXES | {".py", ".mjs", ".yml", ".yaml", ".toml", ".cfg", ".ini", ".sh", ".env"}
+    found: list[str] = []
+    scanned = 0
+    for path in sorted(ROOT.rglob("*")):
+        if not path.is_file() or any(part in skip_parts for part in path.relative_to(ROOT).parts):
+            continue
+        if path.suffix.lower() not in text_suffixes and path.name not in {".env", ".npmrc", ".netrc"}:
+            continue
+        try:
+            text = path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue
+        scanned += 1
+        for label in validate_scorm.find_secrets(text):
+            found.append(f"{path.relative_to(ROOT)} ({label})")
+    if found:
+        fail(f"possible secrets committed: {found[:5]}")
+        return False
+    gitignore = (ROOT / ".gitignore").read_text(encoding="utf-8").splitlines()
+    if ".env" not in gitignore:
+        fail(".gitignore should ignore .env files so credentials are never committed")
+        return False
+    ok(f"no access tokens, bearer credentials or private keys in {scanned} text file(s)")
+    return True
+
+
 def main() -> int:
     checks = [
         check_plugin_manifest,
@@ -713,6 +793,8 @@ def main() -> int:
         check_generated_html_accessibility,
         check_eye_gaze_template,
         check_reference_paths,
+        check_scorm_packaging,
+        check_no_secrets,
     ]
     success = True
     for check in checks:

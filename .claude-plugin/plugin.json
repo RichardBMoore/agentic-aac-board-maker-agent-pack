@@ -1,8 +1,8 @@
 {
   "name": "agentic-aac-board-maker",
   "displayName": "Agentic AAC Board Maker",
-  "version": "0.9.0",
-  "description": "Generate evidence-informed, accessible AAC boards, differentiated classroom communication resources, eye-gaze tools, and ICP assessment supports from teacher intent.",
+  "version": "0.10.0",
+  "description": "Generate evidence-informed, accessible AAC boards, differentiated classroom communication resources, eye-gaze tools, and ICP assessment supports from teacher intent, and deliver them inside QLearn/Canvas as accessible page copies or SCORM packages.",
   "author": {
     "name": "Richard Moore"
   },
@@ -16,6 +16,9 @@
     "qcia",
     "icp",
     "curriculum",
-    "offline-html"
+    "offline-html",
+    "qlearn",
+    "canvas-lms",
+    "scorm"
   ]
 }
