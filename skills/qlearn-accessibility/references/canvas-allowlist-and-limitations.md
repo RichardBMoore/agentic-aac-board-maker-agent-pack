@@ -22,6 +22,8 @@ A teacher controls the **body of their own course pages**: the HTML inside the r
 - **21 October 2026:** saving a page through the API removed `object-fit` and `box-sizing` from `<img style>` even though both appear on the published allowlist. Square symbols were unaffected. A padded symbol grew by its padding and border because the box model fell back to `content-box`. Size padded images as content box (width = target − padding − border) and don't rely on `object-fit`.
 - Pages read through the API include QLearn's mobile-theme `<link>` and `<script>` tags. These are injected by QLearn rather than authored. Strip them before re-saving (QLearn re-adds them), and don't count them as content.
 
+- **21 October 2026:** a SCORM package imported "as page" is a page whose body is one `<iframe>` to `/courses/<id>/external_tools/retrieve?borderless=true&url=…`. The same iframe can be placed in other pages to embed the tool inside a lesson, and it works there too. **But the API returns that body with the encoded `url=` parameter damaged** (`https%3A%2F%2F` becomes `https%3A%2F`). A copy made from the API version opens the course home instead of the tool. Repair it to `https%3A%2F%2F` (or copy the address from the rendered page) before saving, then check the embed in a browser. QLearn keeps the iframe's `allow="fullscreen; microphone; clipboard-write"`.
+
 Always run `scripts/compare_saved_canvas_page.py` after saving: it reports exactly which properties the real instance kept.
 
 ## Removed or not usable on a page
