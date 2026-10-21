@@ -3,8 +3,10 @@
 
 The activity itself is not changed. The launch page is the original file with
 one extra line before ``</body>`` that loads ``scorm/scorm12-bridge.js``; the
-bridge only tells the LMS the activity opened and closed. ``validate_scorm.py
---source`` proves this byte-for-byte.
+bridge only tells the LMS the activity opened and closed. With
+``--fullscreen-toggle`` a second line loads ``scorm/fullscreen-toggle.js``, a
+Full screen / Exit full screen button. ``validate_scorm.py --source`` proves
+nothing else changed, byte-for-byte.
 
 Layouts:
 
@@ -26,6 +28,7 @@ Examples:
 
     python3 build_scorm.py generated/gaze-choice-2x2/gaze-choice-class-activity.html dist/gaze-choice.scorm12.zip
     python3 build_scorm.py board.html board.split.scorm12.zip --layout split
+    python3 build_scorm.py game.html game.scorm12.zip --fullscreen-toggle bottom-right
 """
 
 from __future__ import annotations
@@ -55,11 +58,14 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 SKILL_DIR = SCRIPT_DIR.parent
 SKILLS_DIR = SKILL_DIR.parent
 BRIDGE_SOURCE = SKILL_DIR / "assets" / "scorm12-bridge.js"
+TOGGLE_SOURCE = SKILL_DIR / "assets" / "fullscreen-toggle.js"
 MANIFEST_TEMPLATE = SKILL_DIR / "templates" / "scorm12_manifest.xml"
 HOUSE_SYMBOL_LICENCE = SKILLS_DIR / "agentic-aac-board-maker" / "assets" / "house-symbols" / "LICENCE.md"
 
 LAUNCH = "index.html"
 BRIDGE_PATH = "scorm/scorm12-bridge.js"
+TOGGLE_PATH = "scorm/fullscreen-toggle.js"
+TOGGLE_POSITIONS = ("top-right", "top-left", "top-center", "middle-right", "middle-left", "bottom-right", "bottom-left", "bottom-center")
 FIXED_DATE = (1980, 1, 1, 0, 0, 0)
 FILE_MODE = 0o100644 << 16
 PACKAGE_FORMAT = "agentic-aac-scorm-package"
@@ -76,15 +82,20 @@ class PackagingError(RuntimeError):
     """Raised when a source activity is not safe or not suitable to package."""
 
 
-def bridge_tag(report_completion: bool, src: str = BRIDGE_PATH, multi_page: bool = False) -> str:
+def bridge_tag(report_completion: bool, src: str = BRIDGE_PATH, multi_page: bool = False,
+               toggle_position: str | None = None, toggle_src: str = TOGGLE_PATH) -> str:
     flag = "true" if report_completion else "false"
     multi = ' data-multi-page="true"' if multi_page else ""
-    return f'<script src="{src}" data-report-completion="{flag}"{multi}></script>\n'
+    tag = f'<script src="{src}" data-report-completion="{flag}"{multi}></script>\n'
+    if toggle_position:
+        tag += f'<script src="{toggle_src}" data-position="{toggle_position}"></script>\n'
+    return tag
 
 
-def insert_bridge(text: str, report_completion: bool, src: str = BRIDGE_PATH, multi_page: bool = False) -> str:
+def insert_bridge(text: str, report_completion: bool, src: str = BRIDGE_PATH, multi_page: bool = False,
+                  toggle_position: str | None = None, toggle_src: str = TOGGLE_PATH) -> str:
     matches = list(BODY_CLOSE.finditer(text))
-    tag = bridge_tag(report_completion, src, multi_page)
+    tag = bridge_tag(report_completion, src, multi_page, toggle_position, toggle_src)
     if not matches:
         raise PackagingError("the activity has no </body> tag to place the SCORM bridge before")
     position = matches[-1].start()
@@ -263,6 +274,7 @@ def build_package(
     schemas_dir: Path | None = None,
     includes: list[str] | None = None,
     pages: list[str] | None = None,
+    fullscreen_toggle: str | None = None,
 ) -> dict:
     """Build the SCORM ZIP and return package-info metadata. Raises PackagingError on unsafe input."""
     raw = source.read_bytes()
@@ -294,12 +306,16 @@ def build_package(
             notes.append(f"{collector.inline_style_attributes} inline style=\"…\" attribute(s) remain; a player that also forbids inline styles would ignore them (layout still usable in the strict-CSP browser test)")
     elif layout != "inline":
         raise PackagingError(f"unknown layout '{layout}' (use inline or split)")
+    if fullscreen_toggle is not None and fullscreen_toggle not in TOGGLE_POSITIONS:
+        raise PackagingError(f"unknown full screen toggle position '{fullscreen_toggle}' (use {', '.join(TOGGLE_POSITIONS)})")
     multi_page = bool(pages)
     if multi_page and layout != "inline":
         raise PackagingError("multi-page packages (--page) support the inline layout only")
-    launch_text = insert_bridge(launch_text, report_completion, multi_page=multi_page)
+    launch_text = insert_bridge(launch_text, report_completion, multi_page=multi_page, toggle_position=fullscreen_toggle)
     entries[LAUNCH] = launch_text.encode("utf-8")
     entries[BRIDGE_PATH] = BRIDGE_SOURCE.read_bytes()
+    if fullscreen_toggle:
+        entries[TOGGLE_PATH] = TOGGLE_SOURCE.read_bytes()
     page_records = []
     base = source.parent.resolve()
     for page in pages or []:
@@ -318,8 +334,11 @@ def build_package(
             page_check.fail(f"{relative} loads from the internet ({page_external[:3]})")
         if page_check.failures:
             raise PackagingError("; ".join(page_check.failures))
-        bridge_src = posixpath.relpath(BRIDGE_PATH, posixpath.dirname(relative) or ".")
-        entries[relative] = insert_bridge(page_text, report_completion, bridge_src, multi_page=True).encode("utf-8")
+        page_dir = posixpath.dirname(relative) or "."
+        bridge_src = posixpath.relpath(BRIDGE_PATH, page_dir)
+        toggle_src = posixpath.relpath(TOGGLE_PATH, page_dir)
+        entries[relative] = insert_bridge(page_text, report_completion, bridge_src, multi_page=True,
+                                          toggle_position=fullscreen_toggle, toggle_src=toggle_src).encode("utf-8")
         page_records.append({"path": relative, "sha256": hashlib.sha256(page_raw).hexdigest(), "bytes": len(page_raw)})
 
     for name, data in collect_includes(source, includes or []).items():
@@ -354,6 +373,7 @@ def build_package(
             "aacRuntimeSha256": runtime.group("sha") if runtime else None,
         },
         "bridge": {"file": BRIDGE_PATH, "reportCompletion": report_completion, "sendsStudentData": False},
+        "fullscreenToggle": {"file": TOGGLE_PATH, "position": fullscreen_toggle} if fullscreen_toggle else None,
         "split": split_map,
         "pages": page_records,
         "notes": notes,
@@ -387,6 +407,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--schemas-dir", type=Path, help="folder holding the four official SCORM 1.2 .xsd files to bundle")
     parser.add_argument("--include", action="append", default=[], help="extra file/folder (relative to the activity) the page needs")
     parser.add_argument("--page", action="append", default=[], help="another HTML page of the same activity (relative path); gets the bridge so one session spans all pages")
+    parser.add_argument("--fullscreen-toggle", nargs="?", const="top-right", choices=TOGGLE_POSITIONS, metavar="POSITION",
+                        help="add a compact Full screen / Exit full screen button at the edge of the activity (default top-right; also top-left, top-center, middle-right, middle-left, bottom-right, bottom-left, bottom-center)")
     args = parser.parse_args(argv)
     try:
         info = build_package(
@@ -399,6 +421,7 @@ def main(argv: list[str] | None = None) -> int:
             schemas_dir=args.schemas_dir,
             includes=args.include,
             pages=args.page,
+            fullscreen_toggle=args.fullscreen_toggle,
         )
     except PackagingError as error:
         print(f"FAIL: {error}", file=sys.stderr)
@@ -412,6 +435,8 @@ def main(argv: list[str] | None = None) -> int:
         print(f"WARN: {message}")
     print(f"Built {args.output} ({args.output.stat().st_size:,} bytes, layout={args.layout}, sha256={info['zipSha256'][:16]}…)")
     print(f"Title in QLearn: {info['title']}")
+    if info.get("fullscreenToggle"):
+        print(f"Full screen toggle: {info['fullscreenToggle']['position']}. When embedding the SCORM page in another page, give the iframe allow=\"fullscreen *\" (see references/canvas-allowlist-and-limitations.md).")
     print("Next: upload it through the course's SCORM tool as a page (see references/teacher-scorm-upload-guide.md).")
     return 0
 

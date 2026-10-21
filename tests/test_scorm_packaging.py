@@ -144,6 +144,41 @@ class BuildTests(unittest.TestCase):
         _, default_info = self.build()
         self.assertFalse(default_info["bridge"]["reportCompletion"])
 
+    def test_fullscreen_toggle_is_opt_in_and_reversible(self) -> None:
+        output, info = self.build()
+        with zipfile.ZipFile(output) as archive:
+            self.assertNotIn("scorm/fullscreen-toggle.js", archive.namelist())
+            self.assertNotIn(b"fullscreen-toggle", archive.read("index.html"))
+        self.assertIsNone(info["fullscreenToggle"])
+        for layout in ("inline", "split"):
+            with self.subTest(layout=layout):
+                output, info = self.build(f"toggle-{layout}.zip", layout=layout, fullscreen_toggle="bottom-left")
+                with zipfile.ZipFile(output) as archive:
+                    entries = {name: archive.read(name) for name in archive.namelist()}
+                    listed = {e.get("href") for e in ElementTree.fromstring(entries["imsmanifest.xml"]).iter(f"{CP}file")}
+                tag = build_scorm.bridge_tag(False, toggle_position="bottom-left").encode("utf-8")
+                self.assertEqual(1, entries["index.html"].count(tag), "toggle line sits straight after the bridge line")
+                self.assertEqual((build_scorm.SKILL_DIR / "assets" / "fullscreen-toggle.js").read_bytes(), entries["scorm/fullscreen-toggle.js"])
+                self.assertIn("scorm/fullscreen-toggle.js", listed)
+                self.assertEqual({"file": "scorm/fullscreen-toggle.js", "position": "bottom-left"}, info["fullscreenToggle"])
+                self.assertEqual(BOARD.read_bytes(), validate_scorm.restore_original(entries, info))
+                report = validate_scorm.validate_package(output, BOARD)
+                self.assertTrue(report.success, report.failures)
+                self.assertEqual([], report.warnings, "the toggle adds no network calls or internet addresses")
+        with self.assertRaises(build_scorm.PackagingError):
+            self.build("bad.zip", fullscreen_toggle="middle")
+
+    def test_fullscreen_toggle_from_the_command_line(self) -> None:
+        output = self.dir / "cli.zip"
+        result = subprocess.run(
+            [sys.executable, str(SCRIPTS / "build_scorm.py"), str(BOARD), str(output), "--fullscreen-toggle"],
+            capture_output=True, text=True, check=False,
+        )
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertIn("Full screen toggle: top-right", result.stdout)
+        with zipfile.ZipFile(output) as archive:
+            self.assertIn(b'<script src="scorm/fullscreen-toggle.js" data-position="top-right"></script>', archive.read("index.html"))
+
     def test_every_generated_board_packages_in_both_layouts(self) -> None:
         for board in ALL_BOARDS:
             for layout in ("inline", "split"):
@@ -279,6 +314,17 @@ class MultiPageTests(unittest.TestCase):
         report = validate_scorm.validate_package(output, self.dir / "index.html")
         self.assertTrue(report.success, report.failures)
         self.assertTrue(any("sub/two.html is its source page" in item for item in report.passes))
+
+    def test_every_page_gets_the_fullscreen_toggle_with_the_right_path(self) -> None:
+        output = self.dir / "multi-toggle.zip"
+        build_scorm.build_package(self.dir / "index.html", output, pages=["sub/two.html"], fullscreen_toggle="top-left")
+        with zipfile.ZipFile(output) as archive:
+            launch = archive.read("index.html").decode("utf-8")
+            second = archive.read("sub/two.html").decode("utf-8")
+        self.assertIn('<script src="scorm/fullscreen-toggle.js" data-position="top-left"></script>', launch)
+        self.assertIn('<script src="../scorm/fullscreen-toggle.js" data-position="top-left"></script>', second)
+        report = validate_scorm.validate_package(output, self.dir / "index.html")
+        self.assertTrue(report.success, report.failures)
 
     def test_tampered_page_and_bad_pages_are_caught(self) -> None:
         output = self.dir / "multi.zip"

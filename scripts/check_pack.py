@@ -743,8 +743,17 @@ def check_scorm_packaging() -> bool:
             if again_a.read_bytes() != again_b.read_bytes():
                 fail("SCORM packaging is not deterministic")
                 success = False
+            toggled = Path(tmp) / "toggle.zip"
+            try:
+                info = build_scorm.build_package(first, toggled, fullscreen_toggle="middle-right")
+                if info["validation"]["warnings"] or not info["validation"]["success"]:
+                    fail(f"SCORM package with the full screen toggle is not clean: {info['validation']['warnings'][:2]}")
+                    success = False
+            except build_scorm.PackagingError as error:
+                fail(f"SCORM package with the full screen toggle could not be built: {error}")
+                success = False
     if success:
-        ok(f"{len(boards)} generated board(s) package as valid SCORM 1.2 (inline and split), unchanged apart from the bridge, deterministically")
+        ok(f"{len(boards)} generated board(s) package as valid SCORM 1.2 (inline and split), unchanged apart from the bridge, deterministically; the full screen toggle option packages cleanly")
     return success
 
 

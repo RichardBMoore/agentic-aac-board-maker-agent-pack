@@ -72,6 +72,8 @@ META_REFRESH_URL = re.compile(r"url\s*=\s*['\"]?(?P<url>[^'\";\s]+)", re.IGNOREC
 EMBEDDED_IR = re.compile(r"<script\b[^>]*\bid=[\"']aac-board-ir[\"'][^>]*>(?P<json>.*?)</script\s*>", re.IGNORECASE | re.DOTALL)
 BRIDGE_TAG_RE = re.compile(
     r"<script src=\"(?:\.\./)*scorm/scorm12-bridge\.js\" data-report-completion=\"(?:true|false)\"(?: data-multi-page=\"true\")?></script>\n"
+    # Optional Full screen / Exit full screen button (build_scorm.py --fullscreen-toggle), always straight after the bridge.
+    r"(?:<script src=\"(?:\.\./)*scorm/fullscreen-toggle\.js\" data-position=\"(?:top-left|top-center|top-right|middle-left|middle-right|bottom-left|bottom-center|bottom-right)\"></script>\n)?"
 )
 
 # Attributes that load something into the page (as opposed to <a href>, which is navigation).
@@ -629,9 +631,9 @@ def check_page_equivalence(archive: zipfile.ZipFile, report: Report) -> None:
         restored, count = BRIDGE_TAG_RE.subn("", text, count=1)
         digest = hashlib.sha256(restored.encode("utf-8")).hexdigest()
         if count != 1 or digest != page.get("sha256"):
-            report.fail(f"{page['path']} differs from its source beyond the SCORM bridge")
+            report.fail(f"{page['path']} differs from its source beyond the SCORM bridge line(s)")
         else:
-            report.ok(f"{page['path']} is its source page plus only the SCORM bridge")
+            report.ok(f"{page['path']} is its source page plus only the SCORM bridge line(s)")
 
 
 def check_source_equivalence(archive: zipfile.ZipFile, source: Path, report: Report) -> None:
@@ -645,9 +647,9 @@ def check_source_equivalence(archive: zipfile.ZipFile, source: Path, report: Rep
         report.fail(f"could not reconstruct the source activity from the package: {error}")
         return
     if restored == source.read_bytes():
-        report.ok(f"packaged activity is byte-for-byte {source.name} plus only the SCORM bridge")
+        report.ok(f"packaged activity is byte-for-byte {source.name} plus only the SCORM bridge line(s)")
     else:
-        report.fail(f"packaged activity differs from {source.name} beyond the SCORM bridge")
+        report.fail(f"packaged activity differs from {source.name} beyond the SCORM bridge line(s)")
 
 
 # --------------------------------------------------------------------------- entry point

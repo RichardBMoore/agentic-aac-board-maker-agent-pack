@@ -36,6 +36,24 @@ test.beforeAll(() => {
   execFileSync(python, [builder, path.join(multiSource, "index.html"), path.join(workDir, "multi.zip"), "--page", "sub/two.html"], { stdio: "pipe" });
   execFileSync(python, ["-m", "zipfile", "-e", path.join(workDir, "multi.zip"), path.join(workDir, "multi")], { stdio: "pipe" });
   packages.multi = path.join(workDir, "multi");
+  execFileSync(python, [builder, path.join(multiSource, "index.html"), path.join(workDir, "multi-toggle.zip"), "--page", "sub/two.html", "--fullscreen-toggle", "bottom-right"], { stdio: "pipe" });
+  execFileSync(python, ["-m", "zipfile", "-e", path.join(workDir, "multi-toggle.zip"), path.join(workDir, "multi-toggle")], { stdio: "pipe" });
+  packages.multiToggle = path.join(workDir, "multi-toggle");
+  execFileSync(python, [builder, board, path.join(workDir, "split-toggle.zip"), "--layout", "split", "--fullscreen-toggle"], { stdio: "pipe" });
+  execFileSync(python, ["-m", "zipfile", "-e", path.join(workDir, "split-toggle.zip"), path.join(workDir, "split-toggle")], { stdio: "pipe" });
+  packages.splitToggle = path.join(workDir, "split-toggle");
+  // An activity whose dwell/switch engine guards every click on the document (capture phase),
+  // swallowing clicks on any button that is not one of its own.
+  const guardSource = path.join(workDir, "guard-source");
+  mkdirSync(guardSource, { recursive: true });
+  writeFileSync(path.join(guardSource, "index.html"), `<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Guarded</title></head>` +
+    `<body><h1>Guarded</h1><button id="own" type="button">Own button</button><script>window.__seen = [];` +
+    `document.addEventListener("click", (e) => { const b = e.target.closest ? e.target.closest("button") : null; window.__seen.push(b ? (b.id || "other") : "none");` +
+    ` if (b && b.id !== "own") { e.preventDefault(); e.stopImmediatePropagation(); } }, true);` +
+    `document.addEventListener("keyup", (e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); e.stopImmediatePropagation(); } }, true);</script></body></html>`);
+  execFileSync(python, [builder, path.join(guardSource, "index.html"), path.join(workDir, "guarded.zip"), "--fullscreen-toggle", "middle-right"], { stdio: "pipe" });
+  execFileSync(python, ["-m", "zipfile", "-e", path.join(workDir, "guarded.zip"), path.join(workDir, "guarded")], { stdio: "pipe" });
+  packages.guarded = path.join(workDir, "guarded");
   for (const layout of ["inline", "split"]) {
     const zip = path.join(workDir, `${layout}.zip`);
     const unpacked = path.join(workDir, layout);
@@ -237,5 +255,96 @@ test("opened outside an LMS the packaged board behaves as the standalone file", 
   expect(await page.evaluate(() => window.AACScorm.status().mode)).toBe("standalone");
   await page.getByRole("button", { name: "Start board" }).click();
   expect((await page.evaluate(() => window.AACBoard.auditVisibleTargets())).ok).toBe(true);
+  expect(errors).toEqual([]);
+});
+
+test("full screen toggle fills the screen from inside the LMS frames, survives page changes and comes back", async ({ page }) => {
+  const { content, frame, external, errors } = await openInLms(page, "multiToggle");
+  const toggle = content.locator("[data-aac-fullscreen-toggle]");
+  await expect(toggle).toBeVisible();
+  await expect(toggle).toHaveAccessibleName("Full screen");
+  const box = await toggle.boundingBox();
+  expect(box.width).toBeGreaterThanOrEqual(48);
+  expect(box.height).toBeGreaterThanOrEqual(48);
+  // Compact at rest (icon only); the words appear while it is hovered or focused.
+  const words = toggle.locator("span");
+  await expect(words).toBeHidden();
+  await toggle.hover();
+  await expect(words).toBeVisible();
+  await expect(words).toHaveText("Full screen");
+  await page.mouse.move(1, 1);
+  await expect(words).toBeHidden();
+  expect(await frame.evaluate(() => window.AACFullscreenToggle.status())).toMatchObject({ shown: true, position: "bottom-right", target: "player frame", fullscreen: false });
+
+  // A mouse/touch press goes full screen and hands focus back to what had it (so game keys keep working).
+  await content.locator("#go").focus();
+  await toggle.click();
+  await expect.poll(() => page.evaluate(() => Boolean(document.fullscreenElement))).toBe(true);
+  await expect(toggle).toHaveAccessibleName("Exit full screen");
+  expect(await frame.evaluate(() => document.activeElement && document.activeElement.id)).toBe("go");
+  await expect(content.locator("[data-aac-fullscreen-status]")).toContainText("Full screen on");
+
+  // Moving to the activity's next page keeps full screen, and the new page's button knows it.
+  await content.locator("#go").click();
+  await expect(content.locator("h1")).toHaveText("Activity");
+  expect(await page.evaluate(() => Boolean(document.fullscreenElement))).toBe(true);
+  await expect(content.locator("[data-aac-fullscreen-toggle]")).toHaveAccessibleName("Exit full screen");
+
+  // Keyboard: Tab to the button and press Enter to come back.
+  const second = page.frames().find((candidate) => candidate.url().endsWith("/content/sub/two.html"));
+  await second.focus("[data-aac-fullscreen-toggle]");
+  await page.keyboard.press("Enter");
+  await expect.poll(() => page.evaluate(() => Boolean(document.fullscreenElement))).toBe(false);
+  await expect(content.locator("[data-aac-fullscreen-toggle]")).toHaveAccessibleName("Full screen");
+  expect(external).toEqual([]);
+  expect(errors).toEqual([]);
+});
+
+test("full screen toggle is not shown when the course page does not allow full screen", async ({ page }) => {
+  const { content, frame, errors } = await openInLms(page, "multiToggle", { allowFullscreen: false });
+  await expect(content.locator("h1")).toHaveText("Menu");
+  await expect.poll(() => frame.evaluate(() => Boolean(window.AACFullscreenToggle))).toBe(true);
+  expect(await frame.evaluate(() => window.AACFullscreenToggle.status())).toMatchObject({ shown: false, target: "none" });
+  await expect(content.locator("[data-aac-fullscreen-toggle]")).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
+
+test("full screen toggle keeps its look under a strict player CSP (split layout)", async ({ page }) => {
+  const csp = "default-src 'self' data: blob:; script-src 'self'; style-src 'self'";
+  const { content, frame, errors } = await openInLms(page, "splitToggle", { csp });
+  await expect.poll(() => frame.evaluate(() => Boolean(window.AACBoard))).toBe(true);
+  const toggle = content.locator("[data-aac-fullscreen-toggle]");
+  await expect(toggle).toBeVisible();
+  const look = await toggle.evaluate((el) => { const s = getComputedStyle(el); return { position: s.position, background: s.backgroundColor, minHeight: s.minHeight }; });
+  expect(look).toEqual({ position: "fixed", background: "rgb(19, 68, 81)", minHeight: "52px" });
+  await toggle.click();
+  await expect.poll(() => page.evaluate(() => Boolean(document.fullscreenElement))).toBe(true);
+  await expect(toggle).toHaveAccessibleName("Exit full screen");
+  await toggle.click();
+  await expect.poll(() => page.evaluate(() => Boolean(document.fullscreenElement))).toBe(false);
+  // The board's own controls still work alongside it.
+  await content.getByRole("button", { name: "Start board" }).click();
+  expect((await frame.evaluate(() => window.AACBoard.auditVisibleTargets())).ok).toBe(true);
+  expect(errors).toEqual([]);
+});
+
+test("full screen toggle still works inside an activity that guards every click, and the activity never sees its presses", async ({ page }) => {
+  const { content, frame, errors } = await openInLms(page, "guarded");
+  const toggle = content.locator("[data-aac-fullscreen-toggle]");
+  await expect(toggle).toBeVisible();
+  await toggle.click();
+  await expect.poll(() => page.evaluate(() => Boolean(document.fullscreenElement))).toBe(true);
+  await expect(toggle).toHaveAccessibleName("Exit full screen");
+  await toggle.click();
+  await expect.poll(() => page.evaluate(() => Boolean(document.fullscreenElement))).toBe(false);
+  // Keyboard Space, even though the activity cancels Space/Enter key-ups on the document.
+  await frame.focus("[data-aac-fullscreen-toggle]");
+  await page.keyboard.press(" ");
+  await expect.poll(() => page.evaluate(() => Boolean(document.fullscreenElement))).toBe(true);
+  await expect(toggle).toHaveAccessibleName("Exit full screen");
+  await page.keyboard.press(" ");
+  await expect.poll(() => page.evaluate(() => Boolean(document.fullscreenElement))).toBe(false);
+  await content.locator("#own").click();
+  expect(await frame.evaluate(() => window.__seen)).toEqual(["own"]);
   expect(errors).toEqual([]);
 });

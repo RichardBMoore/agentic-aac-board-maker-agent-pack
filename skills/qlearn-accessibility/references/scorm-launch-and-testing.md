@@ -12,6 +12,7 @@ A course showing a SCORM link proves only that the tool is exposed. It does **no
 imsmanifest.xml              SCORM 1.2 manifest: one organisation, one item, one SCO
 index.html                   the original activity + one line loading the bridge
 scorm/scorm12-bridge.js      LMSInitialize on open, LMSFinish on leave; nothing else
+scorm/fullscreen-toggle.js   --fullscreen-toggle only: one Full screen / Exit full screen button; nothing else
 licences/ARASAAC-symbols-LICENCE.md   when the board embeds ARASAAC symbols
 package-info.json            source sha256, layout, bridge settings, extra pages, how to verify
 <other pages>.html           multi-page activities only (--page): each gets the bridge, one session across pages
@@ -28,7 +29,7 @@ assets/inline-*.js|css       split layout only
 
 | Feature | Why it might not work in QLearn | What the board does | How to test |
 | --- | --- | --- | --- |
-| Fullscreen | Every frame between QLearn and the activity must allow fullscreen. Cross-origin frames block it unless the course page's frame grants `allow="fullscreen"` | Announces "Full screen was blocked. The board is still ready to use." and stays usable | Press Full screen in Student View and on the device |
+| Fullscreen | Every frame between QLearn and the activity must allow full screen for the next frame's address. QLearn's player (Rustici, `syd.scorm.canvaslms.com`) allows it for its content frame. A page that embeds the tool must use `allow="fullscreen *"`, because the launch changes the frame's address (see below). The page QLearn creates on import does not allow it | Boards announce "Full screen was blocked. The board is still ready to use." and stay usable. With `--fullscreen-toggle`, one ⛶ button fills the screen and comes back, and it is hidden where full screen is not allowed | Press it in Student View and on the device |
 | Speech (text-to-speech) | Needs installed voices and a user action first (Start board counts). Usually allowed in frames | Prefers installed en-AU voices; reports failures in the status line | Sound check, then a symbol |
 | Microphone / dictation | Each frame needs `allow="microphone"` plus permission; browser speech recognition may send audio to a cloud service | Not used by the current boards | Treat as unavailable until proven; always keep a non-speech route |
 | Eye gaze (page dwell) | Works when the gaze cursor moves the Windows pointer over the frame | Dwell, cancel and re-arm run in the frame | Hover/dwell on the real Accent |
@@ -37,6 +38,27 @@ assets/inline-*.js|css       split layout only
 | Inline scripts | A strict player Content Security Policy can block inline `<script>`/`<style>` | Blank or unstyled page | Re-upload the `--layout split` package |
 | Screen size | QLearn's menus take space; the frame is smaller than the window | The board needs 960 × 600 px of frame at full target size (browser-tested) | Note whether anything scrolls or is cut off |
 | Saving progress | No storage is used; each launch starts fresh | Nothing to lose | — |
+
+## Full screen toggle (`--fullscreen-toggle [POSITION]`)
+
+Adds one line after the bridge line that loads `scorm/fullscreen-toggle.js`. The validator still proves the activity is otherwise byte-for-byte unchanged.
+
+- **One compact button** (52 px square, the ⛶ icon). The words "Full screen" or "Exit full screen" appear while it is hovered, looked at or focused, and are also its accessible name. A status message announces each change. Escape also comes back.
+- **What goes full screen.** Inside a same-site player (QLearn's), it makes the player's activity frame full screen, so a multi-page activity stays full screen while moving between its pages. Opened on its own, it uses the page itself.
+- **No dead button.** If no frame chain allows full screen, the button is not shown.
+- **Never in the activity's way.** Presses on the button are handled first and kept away from the activity, so a dwell, switch-scan or click guard can neither block it nor react to it. After a mouse, touch or dwell-click press, focus returns to where it was, so game keys keep working. It hides when printing. It sends and stores nothing.
+- **Position:** `top-right` (default), `top-left`, `top-center`, `middle-right`, `middle-left`, `bottom-right`, `bottom-left` or `bottom-center`. Pick the spot that covers none of the activity's own controls. Check the opening screen *and* the screens in use, at lesson-embed size (about 674 × 760) and full size. `middle-right` is easiest to find in a tall embed.
+- **Leave it off** when an activity already has a complete full screen toggle (one that enters *and* exits), such as the arcade games. Two buttons for one job only confuses.
+
+## Embedding a SCORM tool inside a lesson page
+
+"Import as page" gives a page whose body is one `<iframe>` to `/courses/<id>/external_tools/retrieve?borderless=true&url=…/packages/<n>/launch`. The same iframe placed in a lesson shows the tool there. Write it as:
+
+```html
+<iframe title="Rule Lab" src="/courses/<id>/external_tools/retrieve?borderless=true&amp;url=https%3A%2F%2F…%2Flaunch" width="100%" height="760" style="width: 100%; height: 760px; border: 0; display: block;" loading="lazy" allow="fullscreen *; microphone *; clipboard-write *; autoplay *" allowfullscreen="true"></iframe>
+```
+
+The `*` matters: without it, full screen, copy buttons and the microphone are refused inside the tool. Use `%2F%2F` in the `url=` value. The API returns it damaged; see `canvas-allowlist-and-limitations.md`. Students' saved work lives in that browser for the player's address under QLearn, so the embedded tool and the imported page share it.
 
 If fullscreen or space is the blocker, there are two options. Discuss them with the QLearn administrator first; neither is automated here. One is importing as an assignment and ticking "Load This Tool In A New Tab", which gives a full browser tab. The other is a separately approved hosted/LTI tool.
 

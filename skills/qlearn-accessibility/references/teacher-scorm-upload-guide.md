@@ -17,7 +17,7 @@
 6. Click **Sound check**, then **Start board**. Click a symbol: it should speak and show the message.
 7. Rest the mouse still on a symbol for about a second. It should fill up and speak once, and moving away early should cancel it.
 8. Click inside the activity once, then try **Tab** and **Enter**.
-9. Reload and press **Full screen**. Write down whether it opened or said "Full screen was blocked". Blocked is a result, not a failure: the board should still work.
+9. Reload and press **Full screen** (or the ⛶ button at the edge, if the package was built with `--fullscreen-toggle`). Write down whether it opened or said "Full screen was blocked". Blocked is a result, not a failure: the board should still work. On the page QLearn creates for the package, full screen is normally blocked and the ⛶ button is not shown. Inside a lesson page that embeds the tool with `allow="fullscreen *"`, it should open; press it again or press Esc to come back.
 
 **If the activity area is blank or looks unstyled:** QLearn is blocking the activity's built-in scripts. Upload the **`.split.scorm12.zip`** as a new page (steps 2–4) and test again. Delete the blank one from the SCORM tool afterwards.
 
