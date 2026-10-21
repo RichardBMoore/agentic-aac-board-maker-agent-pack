@@ -75,8 +75,8 @@ def http_error(code: int, body: str) -> urllib.error.HTTPError:
 def make_client(routes, **kwargs):
     opener = FakeOpener(routes)
     sleeps: list[float] = []
-    client = client_module.CanvasClient("https://qlearn.eq.edu.au", extra_hosts=["qed09.instructure.com"],
-                                        token_provider=lambda: TOKEN, opener=opener, sleep=sleeps.append, **kwargs)
+    client = client_module.CanvasClient("https://qlearn.eq.edu.au", token_provider=lambda: TOKEN, opener=opener,
+                                        sleep=sleeps.append, **kwargs)
     return client, opener, sleeps
 
 
@@ -110,23 +110,54 @@ class TokenHandlingTests(unittest.TestCase):
         finally:
             del sys.modules["keyring"]
 
-    def test_redirect_to_another_host_drops_the_token(self) -> None:
-        handler = client_module._StripAuthOnForeignRedirect({"qlearn.eq.edu.au"})
-        original = urllib.request.Request("https://qlearn.eq.edu.au/files/1", headers={"Authorization": f"Bearer {TOKEN}"})
-        foreign = handler.redirect_request(original, None, 302, "Found", {}, "https://files.example-cdn.com/1")
-        same = handler.redirect_request(original, None, 302, "Found", {}, "https://qlearn.eq.edu.au/files/2")
-        self.assertIsNone(foreign.get_header("Authorization"))
-        self.assertEqual(f"Bearer {TOKEN}", same.get_header("Authorization"))
+    def test_redirects_must_stay_on_https_qlearn_and_pass_the_policy(self) -> None:
+        client, _, _ = make_client([])
+        handler = client_module._SafeRedirect(client.check_policy)
+        original = urllib.request.Request("https://qlearn.eq.edu.au/api/v1/courses/1/pages/a", headers={"Authorization": f"Bearer {TOKEN}"})
+        for target in ("https://files.example-cdn.com/1",                       # another host
+                       "http://qlearn.eq.edu.au/api/v1/courses/1/pages/b",      # downgrade to plain http
+                       "https://qlearn.eq.edu.au/api/v1/courses/1/enrollments"):  # student data
+            with self.subTest(target=target), self.assertRaises(urllib.error.HTTPError):
+                handler.redirect_request(original, io.BytesIO(b""), 302, "Found", {}, target)
+        followed = handler.redirect_request(original, io.BytesIO(b""), 302, "Found", {}, "https://qlearn.eq.edu.au/api/v1/courses/1/pages/b")
+        self.assertEqual(f"Bearer {TOKEN}", followed.get_header("Authorization"))
+
+    def test_base_url_cannot_point_anywhere_else(self) -> None:
+        for base in ("https://evil.example.com", "http://qlearn.eq.edu.au", "https://qlearn.eq.edu.au.evil.example",
+                     "https://qlearn.eq.edu.au:8443", "https://qlearn.eq.edu.au/sub"):
+            with self.subTest(base=base), self.assertRaises(client_module.PolicyError):
+                client_module.CanvasClient(base, token_provider=lambda: TOKEN)
+        self.assertEqual("https://qed09.instructure.com", client_module.CanvasClient("https://qed09.instructure.com", token_provider=lambda: TOKEN).base_url)
 
 
 class LeastPrivilegeTests(unittest.TestCase):
     def test_student_areas_are_refused_before_any_request(self) -> None:
         client, opener, _ = make_client([])
-        for path in ("/courses/1/users", "/courses/1/enrollments", "/courses/1/assignments/2/submissions",
-                     "/courses/1/discussion_topics/3/entries", "/users/77", "/users/self/activity_stream",
-                     "/conversations", "/courses/1/analytics/student_summaries", "/courses/1/gradebook_history/days"):
+        # Documented Canvas endpoints that expose students, written independently of the client's own lists.
+        for path in ("/courses/1/users", "/courses/1/enrollments", "/courses/1/enrollments.json",
+                     "/courses/1/assignments/2/submissions", "/courses/1/assignments/2/gradeable_students",
+                     "/courses/1/discussion_topics/3/entries", "/courses/1/discussion_topics/3/view", "/users/77",
+                     "/users/self/activity_stream", "/users/self/profile", "/conversations", "/courses/1/recent_students",
+                     "/courses/1/bulk_user_progress", "/courses/1/sections", "/courses/1/custom_gradebook_columns/3/data",
+                     "/courses/1/quizzes/4/statistics", "/courses/1/quizzes/4/submissions", "/groups/5/memberships",
+                     "/audit/grade_change/courses/1", "/courses/1/analytics/student_summaries",
+                     "/courses/1/gradebook_history/days", "/courses/1/students/submissions", "/courses/1/pages/a/revisions",
+                     "/courses/1/../1/users", "/courses/1//users", "/courses/1/pages%2F..%2Fusers", "/courses/1/pages/"):
             with self.subTest(path=path), self.assertRaises(client_module.PolicyError):
                 client.get(path)
+        self.assertEqual([], opener.requests)
+
+    def test_query_strings_cannot_pull_in_student_data(self) -> None:
+        client, opener, _ = make_client([])
+        for path, params in (("/courses/1/modules", {"student_id": "99"}), ("/courses/1/assignments", {"include[]": "submission"}),
+                             ("/courses", {"include[]": "total_students"}), ("/courses/1/pages", {"user_id": "5"}),
+                             ("/courses", {"enrollment_type": "student"})):
+            with self.subTest(path=path, params=params), self.assertRaises(client_module.PolicyError):
+                client.get(path, params)
+        with self.assertRaises(client_module.PolicyError):
+            client.list_pages("1/sections?include[]=students&x=")
+        with self.assertRaises(client_module.PolicyError):
+            client.get_page("1", "../users")
         self.assertEqual([], opener.requests)
 
     def test_course_content_and_page_names_are_allowed(self) -> None:
@@ -147,12 +178,21 @@ class LeastPrivilegeTests(unittest.TestCase):
 
     def test_only_unpublished_page_writes_are_possible(self) -> None:
         client, opener, _ = make_client([])
+        marked = "Lesson [WORKING FILE]"
         refused = [
             ("POST", "/courses/1/assignments", {"assignment": {"name": "x"}}),
             ("DELETE", "/courses/1/pages/intro", None),
             ("PUT", "/courses/1/pages/intro", {"wiki_page": {"published": True}}),
-            ("POST", "/courses/1/pages", {"wiki_page": {"title": "x", "published": "true"}}),
+            ("PUT", "/courses/1/pages/intro", {"wiki_page": {"published": False}}),
+            ("POST", "/courses/1/pages", {"wiki_page": {"title": marked, "published": "true"}}),
+            ("POST", "/courses/1/pages", {"wiki_page": {"title": marked, "published": "yes"}}),
+            ("POST", "/courses/1/pages", {"wiki_page": {"title": marked, "body": "x"}}),
+            ("POST", "/courses/1/pages", {"wiki_page": {"title": "No marker", "published": False}}),
+            ("POST", "/courses/1/pages", {"wiki_page": {"title": marked, "published": False, "publish_at": "2026-11-01"}}),
+            ("POST", "/courses/1/pages", {"wiki_page": {"title": marked, "published": False, "notify_of_update": True}}),
+            ("POST", "/courses/1/pages", {"wiki_page": {"title": marked, "published": False}, "extra": 1}),
             ("PUT", "/courses/1/pages/intro", {"wiki_page": {"front_page": True}}),
+            ("PUT", "/courses/1/pages/intro", {"wiki_page": {"title": "Renamed without marker"}}),
             ("POST", "/courses/1/modules/2/items", {"module_item": {"type": "Page"}}),
             ("POST", "/conversations", {"recipients": ["1"]}),
         ]
@@ -211,6 +251,12 @@ class WorkingCopyTests(unittest.TestCase):
         ])
         with self.assertRaisesRegex(client_module.QLearnError, "Safety stop"):
             client.create_working_copy("1", "unit-overview", "<p>New</p>", confirmed=True)
+
+    def test_raw_put_to_a_published_original_is_refused(self) -> None:
+        client, opener, _ = make_client([("GET", "/courses/1/pages/unit-overview", FakeResponse(self.SOURCE))])
+        with self.assertRaisesRegex(client_module.PolicyError, "published"):
+            client.request("PUT", "/courses/1/pages/unit-overview", data={"wiki_page": {"body": "<p>x</p>"}})
+        self.assertEqual(["GET"], [request.get_method() for request in opener.requests])
 
     def test_update_refuses_published_or_unmarked_pages(self) -> None:
         client, opener, _ = make_client([

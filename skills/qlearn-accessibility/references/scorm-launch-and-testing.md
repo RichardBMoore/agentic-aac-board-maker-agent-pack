@@ -17,9 +17,10 @@ package-info.json            source sha256, layout, bridge settings, how to veri
 assets/inline-*.js|css       split layout only
 ```
 
-- **No data leaves the activity.** The bridge never calls `LMSSetValue` unless the package was built with `--report-completion`, and even then only `cmi.core.lesson_status = completed`. Selections, messages and logs stay in the browser tab.
+- **No data leaves the activity.** The bridge never calls `LMSSetValue` unless the package was built with `--report-completion`, and even then only `cmi.core.lesson_status = completed`. Selections, messages and logs stay in the browser tab. Some players record a launch status of their own when a session closes; that is the LMS, not the activity.
 - **Graceful outside an LMS.** Opened from a file, the bridge finds no API and the board behaves exactly like the standalone file (`window.AACScorm.status().mode === "standalone"`).
-- **Deterministic.** The same input always gives the same ZIP. `validate_scorm.py --source` proves the launch page is the original file plus only the bridge line.
+- **Deterministic.** The same input gives the same ZIP on the same Python/zlib build. `validate_scorm.py --source` proves the launch page is the original file plus only the bridge line.
+- **Split layout safety.** The split layout keeps every attribute (ids, media) and leaves JSON data blocks inline. It refuses (use inline instead) inline scripts marked `async`/`defer`, and `<style>`/`<script>` inside `<svg>`, `<math>`, `<template>`, `<noscript>`, `<title>` or `<textarea>`, where moving them would change behaviour. Inline `style="…"` attributes stay in place; a player that forbids inline styles would ignore them. The board stayed usable in the strict-CSP browser test.
 - **Schema files.** The official SCORM 1.2 `.xsd` files are not bundled by default; Canvas and most players import without them. Add `--schemas-dir` if a player demands them.
 
 ## What can block features inside the player

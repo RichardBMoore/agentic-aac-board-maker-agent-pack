@@ -18,7 +18,7 @@ Status: proposed on branch `feature/qlearn-accessibility-scorm` (21 October 2026
 4. **Minimal bridge, no data.** `LMSInitialize`/`LMSFinish` only. Completion is opt-in and never sends answers, messages or logs. With no LMS present the bridge does nothing.
 5. **Two layouts.** `inline` is closest to the tested file. `split` moves inline CSS/JS into files for players with a strict Content Security Policy; it is browser-tested under `script-src 'self'; style-src 'self'`.
 6. **Output-target contract.** `canvas_page` (static, allowlisted, restyled, preservation-checked), `scorm` (interactive, packaged), `standalone` (unchanged existing output). LTI/hosted delivery is deferred until tests show SCORM is insufficient **and** EQ approves.
-7. **Least privilege in code.** The QLearn client refuses student endpoints, foreign hosts, publishing, deleting and any write except creating/updating unpublished working copies, and needs explicit confirmation. The token comes from the OS vault at call time.
+7. **Least privilege in code.** The QLearn client uses an allowlist of course-content reads (not a denylist of student paths), two hard-coded hosts, safe redirects only, and payload-allowlisted writes limited to unpublished working copies, with explicit confirmation. The token comes from the OS vault at call time.
 8. **Repository conventions over the handoff's suggested layout.** Tests live in the top-level `tests/` and `browser-tests/` folders (discovered by CI) rather than inside the skill.
 
 ## Consequences and limits

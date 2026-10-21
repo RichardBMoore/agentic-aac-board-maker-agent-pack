@@ -7,13 +7,19 @@ Safety model (enforced in code, not just in instructions):
   (Python ``keyring``: macOS Keychain, Windows Credential Manager) at the
   moment of each request. It is never accepted on the command line, printed,
   logged, written to disk or included in error messages.
-- Requests go only to QLearn hosts over HTTPS. A redirect to any other host is
-  followed without the token.
-- Read-only by default. The only writes are creating a new **unpublished**
-  page and updating an unpublished page whose title marks it as a working
-  file. Nothing can publish, delete, message, grade or touch enrolments.
-- Student areas are refused: enrolments, users, submissions, grades,
-  discussion replies, conversations, analytics, page views.
+- Requests go only to the two QLearn hosts (hard-coded) over HTTPS. Redirects
+  are followed only if they stay on HTTPS, on QLearn, and pass the same checks.
+- **Allowlist, not denylist.** Only named course-content routes can be read
+  (your own name, your course list, course pages, modules, assignment/quiz
+  descriptions, discussion topics, files, folders, tabs), with a small set of
+  query parameters. Everything else (enrolments, users, submissions, grades,
+  discussion replies, messages, analytics, statistics, groups...) is refused
+  before anything is sent.
+- The only writes: creating a new **unpublished** page titled ``[WORKING FILE]``,
+  and changing the title/body of a page that is unpublished and titled
+  ``[WORKING FILE]`` (checked against QLearn before every update). Payload keys
+  are allowlisted, so nothing can publish, schedule publishing, notify, delete,
+  message, grade or touch enrolments.
 - Writes need ``confirmed=True`` (``--confirm`` on the command line), which an
   agent passes only after the teacher has said yes to that specific change.
 
@@ -31,8 +37,7 @@ Commands:
     python3 canvas_client.py update-working-copy COURSE_ID PAGE_URL body.html --confirm --saved-out saved.html
 
 Configuration (environment variables, all optional):
-    QLEARN_BASE_URL          default https://qlearn.eq.edu.au
-    QLEARN_EXTRA_HOSTS       comma-separated extra hosts for the same QLearn (default adds qed09.instructure.com)
+    QLEARN_BASE_URL          https://qlearn.eq.edu.au (default) or https://qed09.instructure.com; nothing else
     QLEARN_KEYRING_SERVICE   default qlearn-token
     QLEARN_KEYRING_USER      default qlearn
 """
@@ -52,21 +57,54 @@ from pathlib import Path
 from typing import Any, Callable
 
 DEFAULT_BASE_URL = "https://qlearn.eq.edu.au"
-DEFAULT_EXTRA_HOSTS = ("qed09.instructure.com",)
+ALLOWED_HOSTS = frozenset({"qlearn.eq.edu.au", "qed09.instructure.com"})  # hard-coded on purpose
 WORKING_MARKER = "[WORKING FILE]"
-COURSE_ID = r"(?:\d+|\d+~\d+|sis_course_id:[A-Za-z0-9_.-]+)"
-PAGE_URL = r"[A-Za-z0-9_.~%-]+"
+ID = r"\d+(?:~\d+)?"
+SLUG = r"[A-Za-z0-9_%-]+"
+ID_RE = re.compile(rf"^{ID}$")
+SLUG_RE = re.compile(rf"^{SLUG}$")
 
-BLOCKED_SEGMENTS = {
-    "enrollments", "students", "users", "submissions", "quiz_submissions", "submission_history", "grades",
-    "gradebook_history", "gradebook", "analytics", "conversations", "entries", "entry_list", "view", "participants",
-    "recipients", "search_users", "activity_stream", "page_views", "communication_channels", "peer_reviews",
-    "outcome_results", "outcome_rollups", "student_summaries", "logins", "avatars", "observees", "messages",
+# Course content only. Anything not listed is refused before a request is made.
+GET_ROUTES = tuple(re.compile(rf"^/api/v1/{route}$") for route in (
+    "users/self",
+    "courses",
+    rf"courses/{ID}",
+    rf"courses/{ID}/tabs",
+    rf"courses/{ID}/front_page",
+    rf"courses/{ID}/pages",
+    rf"courses/{ID}/pages/{SLUG}",
+    rf"courses/{ID}/modules",
+    rf"courses/{ID}/modules/{ID}",
+    rf"courses/{ID}/modules/{ID}/items",
+    rf"courses/{ID}/modules/{ID}/items/{ID}",
+    rf"courses/{ID}/assignments",
+    rf"courses/{ID}/assignments/{ID}",
+    rf"courses/{ID}/quizzes",
+    rf"courses/{ID}/quizzes/{ID}",
+    rf"courses/{ID}/discussion_topics",
+    rf"courses/{ID}/discussion_topics/{ID}",
+    rf"courses/{ID}/files",
+    rf"courses/{ID}/files/{ID}",
+    rf"courses/{ID}/folders",
+))
+POST_PAGE = re.compile(rf"^/api/v1/courses/(?P<course>{ID})/pages$")
+PUT_PAGE = re.compile(rf"^/api/v1/courses/(?P<course>{ID})/pages/(?P<page>{SLUG})$")
+SAFE_QUERY_VALUE = re.compile(r"^[A-Za-z0-9:_=+.\- ]{0,120}$")
+QUERY_RULES: dict[str, frozenset[str] | None] = {
+    # None = any short safe value; a set = only these values.
+    "per_page": None,
+    "page": None,
+    "sort": None,
+    "order": None,
+    "search_term": None,
+    "enrollment_type": frozenset({"teacher", "ta", "designer"}),
+    "state[]": frozenset({"available", "unpublished", "completed"}),
+    "include[]": frozenset({"items", "content_details"}),
 }
-WRITE_RULES: dict[str, list[re.Pattern[str]]] = {
-    "POST": [re.compile(rf"^/api/v1/courses/{COURSE_ID}/pages$")],
-    "PUT": [re.compile(rf"^/api/v1/courses/{COURSE_ID}/pages/{PAGE_URL}$")],
-}
+STUDENT_WORDS = ("enrollment", "student", "user", "submission", "grade", "entries", "entry", "conversation",
+                 "analytics", "statistic", "progress", "group", "membership", "audit", "page_view", "custom_gradebook")
+CREATE_KEYS = frozenset({"title", "body", "published"})
+UPDATE_KEYS = frozenset({"title", "body"})
 TOKEN_SHAPES = re.compile(r"\d{1,8}~[A-Za-z0-9]{20,}|Bearer\s+\S+", re.IGNORECASE)
 
 
@@ -97,15 +135,18 @@ def keyring_token() -> str:
     return token.strip()
 
 
-class _StripAuthOnForeignRedirect(urllib.request.HTTPRedirectHandler):
-    def __init__(self, allowed_hosts: set[str]) -> None:
-        self.allowed_hosts = allowed_hosts
+class _SafeRedirect(urllib.request.HTTPRedirectHandler):
+    """Follow a redirect only if it stays on HTTPS, on QLearn, and passes the same policy."""
+
+    def __init__(self, check: Callable[[str, str], None]) -> None:
+        self.check = check
 
     def redirect_request(self, req, fp, code, msg, headers, newurl):  # noqa: D401 - urllib signature
-        new = super().redirect_request(req, fp, code, msg, headers, newurl)
-        if new is not None and (urllib.parse.urlparse(newurl).hostname or "").lower() not in self.allowed_hosts:
-            new.remove_header("Authorization")
-        return new
+        try:
+            self.check("GET", newurl)
+        except PolicyError as error:
+            raise urllib.error.HTTPError(req.full_url, code, f"redirect refused: {error}", headers, fp) from None
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
 
 
 class CanvasClient:
@@ -113,7 +154,6 @@ class CanvasClient:
         self,
         base_url: str | None = None,
         *,
-        extra_hosts: list[str] | None = None,
         token_provider: Callable[[], str] = keyring_token,
         opener: Any = None,
         sleep: Callable[[float], None] = time.sleep,
@@ -121,14 +161,11 @@ class CanvasClient:
     ) -> None:
         self.base_url = (base_url or os.environ.get("QLEARN_BASE_URL") or DEFAULT_BASE_URL).rstrip("/")
         parsed = urllib.parse.urlparse(self.base_url)
-        if parsed.scheme != "https" or not parsed.hostname:
-            raise PolicyError("QLEARN_BASE_URL must be an https:// address")
-        hosts = extra_hosts if extra_hosts is not None else [
-            host.strip() for host in os.environ.get("QLEARN_EXTRA_HOSTS", ",".join(DEFAULT_EXTRA_HOSTS)).split(",") if host.strip()
-        ]
-        self.allowed_hosts = {parsed.hostname.lower(), *(host.lower() for host in hosts)}
+        if parsed.scheme != "https" or (parsed.hostname or "").lower() not in ALLOWED_HOSTS or parsed.path or parsed.port:
+            raise PolicyError(f"QLEARN_BASE_URL must be one of: {', '.join('https://' + host for host in sorted(ALLOWED_HOSTS))}")
+        self.allowed_hosts = ALLOWED_HOSTS
         self._token_provider = token_provider
-        self._opener = opener or urllib.request.build_opener(_StripAuthOnForeignRedirect(self.allowed_hosts))
+        self._opener = opener or urllib.request.build_opener(_SafeRedirect(self.check_policy))
         self._sleep = sleep
         self.timeout = timeout
 
@@ -140,36 +177,51 @@ class CanvasClient:
         return url
 
     def check_policy(self, method: str, url: str, data: dict | None = None) -> None:
+        """Refuse anything that is not an allowlisted course-content read or an unpublished working-file write."""
         parsed = urllib.parse.urlparse(url)
-        if parsed.scheme != "https" or (parsed.hostname or "").lower() not in self.allowed_hosts:
-            raise PolicyError(f"Refusing to send the QLearn token to {parsed.hostname or url}")
-        path = urllib.parse.unquote(parsed.path)
-        segments = [segment.lower() for segment in path.split("/") if segment]
-        if segments[:2] != ["api", "v1"]:
-            raise PolicyError("Only QLearn's /api/v1/ endpoints are used")
-        rest = segments[2:]
-        if rest[:2] == ["users", "self"]:
-            if len(rest) > 2 and rest[2] not in {"courses", "profile"}:
-                raise PolicyError("Only your own name and course list are read from /users/self")
-            checked = rest[2:]
-        else:
-            # A page's own address (e.g. a page called "Grades") is a name, not a student area.
-            checked = [segment for index, segment in enumerate(rest) if not (index > 0 and rest[index - 1] == "pages")]
-        blocked = BLOCKED_SEGMENTS.intersection(checked)
-        if blocked:
-            raise PolicyError(f"'{sorted(blocked)[0]}' is student information, which this tool never reads")
+        if parsed.scheme != "https" or (parsed.hostname or "").lower() not in self.allowed_hosts or parsed.port not in (None, 443):
+            raise PolicyError(f"Refusing to send the QLearn token to {parsed.scheme}://{parsed.hostname or url}")
+        if parsed.username or parsed.password or parsed.fragment or parsed.params:
+            raise PolicyError("Unexpected characters in the QLearn address")
+        path = parsed.path
+        if any(marker in path.lower() for marker in ("%2f", "%5c", "%2e", "//", "/./", "/../")) or path.endswith("/"):
+            raise PolicyError("Encoded or relative path segments are not allowed")
+        query = urllib.parse.parse_qsl(parsed.query, keep_blank_values=True)
         if method == "GET":
+            if not any(route.match(path) for route in GET_ROUTES):
+                lowered = path.lower()
+                if any(word in lowered for word in STUDENT_WORDS):
+                    raise PolicyError(f"{path} is student information or outside course content, which this tool never reads")
+                raise PolicyError(f"{path} is not on the course-content allowlist")
+            for key, value in query:
+                rule = QUERY_RULES.get(key, False)
+                if rule is False:
+                    raise PolicyError(f"Query parameter '{key}' is not allowed")
+                if not SAFE_QUERY_VALUE.match(value) or (rule is not None and value not in rule):
+                    raise PolicyError(f"Query value '{key}={value}' is not allowed")
             return
-        rules = WRITE_RULES.get(method)
-        if not rules or not any(rule.match(path) for rule in rules):
-            raise PolicyError(f"{method} {path} is not allowed; this tool only creates and updates unpublished pages")
-        if data is not None and _would_publish(data):
-            raise PolicyError("Publishing is not allowed. Pages are created and kept unpublished; publish in QLearn yourself.")
+        if query:
+            raise PolicyError("Writes may not carry query parameters")
+        if method == "POST" and POST_PAGE.match(path):
+            page = _wiki_page(data, CREATE_KEYS)
+            if page.get("published") is not False:
+                raise PolicyError("New pages must be created with published: false")
+            if WORKING_MARKER not in str(page.get("title", "")):
+                raise PolicyError(f"New pages must be titled with {WORKING_MARKER}")
+            return
+        if method == "PUT" and PUT_PAGE.match(path):
+            page = _wiki_page(data, UPDATE_KEYS)
+            if "title" in page and WORKING_MARKER not in str(page["title"]):
+                raise PolicyError(f"A working copy must keep {WORKING_MARKER} in its title")
+            return
+        raise PolicyError(f"{method} {path} is not allowed; this tool only creates and updates unpublished working-file pages")
 
     # ------------------------------------------------------------------ transport
     def request(self, method: str, path_or_url: str, *, params: dict | None = None, data: dict | None = None) -> tuple[Any, str]:
         url = self._url(path_or_url, params)
         self.check_policy(method, url, data)
+        if method == "PUT":
+            self._require_working_copy(url)
         token = self._token_provider()
         body = json.dumps(data).encode("utf-8") if data is not None else None
         headers = {"Authorization": f"Bearer {token}", "Accept": "application/json"}
@@ -204,6 +256,17 @@ class CanvasClient:
             raw = raw[len("while(1);"):]
         return (json.loads(raw) if raw.strip() else None), link
 
+    def _require_working_copy(self, url: str) -> None:
+        """Check with QLearn that the page about to be changed is an unpublished working file."""
+        match = PUT_PAGE.match(urllib.parse.urlparse(url).path)
+        if not match:
+            raise PolicyError("Only course pages can be updated")
+        current = self.get(f"/courses/{match.group('course')}/pages/{match.group('page')}")
+        if current.get("published"):
+            raise PolicyError("That page is published, so students can see it. Make a working copy instead of editing it.")
+        if WORKING_MARKER not in (current.get("title") or ""):
+            raise PolicyError(f"Only pages titled with {WORKING_MARKER} are updated by this tool.")
+
     def get(self, path: str, params: dict | None = None) -> Any:
         return self.request("GET", path, params=params)[0]
 
@@ -230,19 +293,20 @@ class CanvasClient:
         return [{"id": course.get("id"), "name": course.get("name")} for course in courses]
 
     def list_pages(self, course_id: str) -> list[dict]:
+        course_id = _course_id(course_id)
         pages = self.get_all(f"/courses/{course_id}/pages", {"sort": "title"})
         return [{"url": page.get("url"), "title": page.get("title"), "published": page.get("published")} for page in pages]
 
     def get_page(self, course_id: str, page_url: str) -> dict:
-        return self.get(f"/courses/{course_id}/pages/{urllib.parse.quote(page_url, safe='')}")
+        return self.get(f"/courses/{_course_id(course_id)}/pages/{_page_slug(page_url)}")
 
-    def create_working_copy(self, course_id: str, source_page_url: str, body_html: str, *, confirmed: bool = False,
-                            marker: str = WORKING_MARKER) -> dict:
+    def create_working_copy(self, course_id: str, source_page_url: str, body_html: str, *, confirmed: bool = False) -> dict:
         """Create a NEW unpublished page titled '<source title> [WORKING FILE]'; read it back; return the saved page."""
         if not confirmed:
             raise PolicyError("Ask the teacher first, then call with confirmed=True (--confirm).")
+        course_id = _course_id(course_id)
         source = self.get_page(course_id, source_page_url)
-        title = f"{source.get('title', 'Untitled')} {marker}".strip()
+        title = f"{source.get('title', 'Untitled')} {WORKING_MARKER}".strip()
         created = self.request("POST", f"/courses/{course_id}/pages",
                                data={"wiki_page": {"title": title, "body": body_html, "published": False}})[0]
         if not created or created.get("url") == source.get("url"):
@@ -252,39 +316,42 @@ class CanvasClient:
             raise QLearnError(f"Safety stop: the new page {saved.get('url')} is published. Unpublish it in QLearn now.")
         return saved
 
-    def update_working_copy(self, course_id: str, page_url: str, body_html: str, *, confirmed: bool = False,
-                            marker: str = WORKING_MARKER) -> dict:
+    def update_working_copy(self, course_id: str, page_url: str, body_html: str, *, confirmed: bool = False) -> dict:
         """Replace the body of an unpublished working-file page only; read it back; return the saved page."""
         if not confirmed:
             raise PolicyError("Ask the teacher first, then call with confirmed=True (--confirm).")
-        current = self.get_page(course_id, page_url)
-        if current.get("published"):
-            raise PolicyError("That page is published, so students can see it. Make a working copy instead of editing it.")
-        if marker not in (current.get("title") or ""):
-            raise PolicyError(f"Only pages titled with {marker} are updated by this tool.")
-        self.request("PUT", f"/courses/{course_id}/pages/{urllib.parse.quote(page_url, safe='')}",
-                     data={"wiki_page": {"body": body_html}})
+        course_id, page_url = _course_id(course_id), _page_slug(page_url)
+        # request() checks with QLearn that the page is unpublished and titled [WORKING FILE] before the PUT.
+        self.request("PUT", f"/courses/{course_id}/pages/{page_url}", data={"wiki_page": {"body": body_html}})
         saved = self.get_page(course_id, page_url)
         if saved.get("published"):
             raise QLearnError(f"Safety stop: {page_url} is now published. Unpublish it in QLearn now.")
         return saved
 
 
-def _would_publish(data: Any) -> bool:
-    if isinstance(data, dict):
-        for key, value in data.items():
-            name = str(key).lower()
-            if name.endswith("published") and str(value).lower() in {"true", "1"}:
-                return True
-            if name in {"event", "workflow_state"} and str(value).lower() in {"publish", "offer", "active", "available"}:
-                return True
-            if name in {"notify_of_update", "front_page"} and str(value).lower() in {"true", "1"}:
-                return True
-            if _would_publish(value):
-                return True
-    elif isinstance(data, list):
-        return any(_would_publish(item) for item in data)
-    return False
+def _wiki_page(data: Any, allowed_keys: frozenset[str]) -> dict:
+    """Payload must be exactly {"wiki_page": {...allowed keys...}}; anything else (publish_at, notify...) is refused."""
+    if not isinstance(data, dict) or set(data) != {"wiki_page"} or not isinstance(data["wiki_page"], dict):
+        raise PolicyError('Page writes must look like {"wiki_page": {...}}')
+    page = data["wiki_page"]
+    extra = set(page) - allowed_keys
+    if extra:
+        raise PolicyError(f"Page fields {sorted(extra)} are not allowed (no publishing, scheduling or notifications)")
+    return page
+
+
+def _course_id(value: str) -> str:
+    value = str(value).strip()
+    if not ID_RE.match(value):
+        raise PolicyError(f"'{value}' is not a course id (use the number from the course list)")
+    return value
+
+
+def _page_slug(value: str) -> str:
+    value = str(value).strip()
+    if not SLUG_RE.match(value):
+        raise PolicyError(f"'{value}' is not a page address (use the address from the page list)")
+    return value
 
 
 def _next_link(header: str) -> str | None:

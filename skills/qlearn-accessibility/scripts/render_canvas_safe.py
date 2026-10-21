@@ -185,17 +185,30 @@ class TreeBuilder(HTMLParser):
 
 
 def parse(text: str) -> Element:
+    """Parse HTML; for a whole document return the body plus anything a browser would still show after it."""
     builder = TreeBuilder()
     builder.feed(text)
     builder.close()
     root = builder.root
-    body = next((element for element in root.iter() if element.tag == "body"), None)
-    if body is not None:
-        return Element("#root", children=body.children)
-    html_element = next((child for child in root.children if isinstance(child, Element) and child.tag == "html"), None)
-    if html_element is not None:
-        return Element("#root", children=[child for child in html_element.children if not (isinstance(child, Element) and child.tag == "head")])
-    return root
+
+    def is_tag(node: Element | str, name: str) -> bool:
+        return isinstance(node, Element) and node.tag == name
+
+    html_element = next((child for child in root.children if is_tag(child, "html")), None)
+    container = html_element if html_element is not None else root
+    body = next((child for child in container.children if is_tag(child, "body")), None)
+    if body is None and html_element is None:
+        return root
+    nodes: list[Element | str] = []
+    for owner in ([html_element] if html_element is not None else []) + [root]:
+        for child in owner.children:
+            if child is html_element or is_tag(child, "head"):
+                continue
+            if child is body:
+                nodes.extend(body.children)
+            else:
+                nodes.append(child)
+    return Element("#root", children=nodes)
 
 
 def serialise(node: Element | str) -> str:
@@ -223,7 +236,8 @@ def parse_style(value: str) -> list[tuple[str, str]]:
         if ":" not in chunk:
             continue
         name, raw = chunk.split(":", 1)
-        name, raw = name.strip().lower(), raw.strip()
+        # !important is meaningless inline and would hide values from the checks below.
+        name, raw = name.strip().lower(), re.sub(r"\s*!\s*important\s*$", "", raw.strip(), flags=re.IGNORECASE)
         if name and raw:
             declarations.append((name, raw))
     return declarations
@@ -233,46 +247,73 @@ def style_text(declarations: list[tuple[str, str]]) -> str:
     return " ".join(f"{name}: {value};" for name, value in declarations)
 
 
+# Shorthands whose longhands Canvas keeps (margin-top, border-left-color, font-size...). Other
+# hyphenated names (content-visibility, text-wrap...) are not on the allowlist.
+SHORTHANDS = ("margin", "padding", "border", "background", "font", "text-decoration", "list-style", "outline",
+              "flex", "grid", "column-rule", "columns", "animation", "transition", "overflow", "place")
+
+
 def css_property_allowed(name: str) -> bool:
     if name in CSS_PROPERTIES:
         return True
-    if name.startswith("--"):
-        return False
-    return any(name.startswith(prefix + "-") for prefix in CSS_PROPERTIES)
+    return any(name.startswith(prefix + "-") for prefix in SHORTHANDS)
 
 
-def parse_colour(value: str) -> tuple[float, float, float] | None:
-    value = value.strip().lower().replace("!important", "").strip()
+Colour = tuple[float, float, float, float]
+
+
+def parse_colour(value: str) -> Colour | None:
+    value = value.strip().lower()
+    if value == "transparent":
+        return (0.0, 0.0, 0.0, 0.0)
     value = NAMED_COLOURS.get(value, value)
     match = re.fullmatch(r"#([0-9a-f]{3}|[0-9a-f]{6})", value)
     if match:
         digits = match.group(1)
         if len(digits) == 3:
             digits = "".join(character * 2 for character in digits)
-        return tuple(int(digits[index:index + 2], 16) / 255 for index in (0, 2, 4))  # type: ignore[return-value]
-    match = re.fullmatch(r"rgba?\(\s*(\d+)[\s,]+(\d+)[\s,]+(\d+)(?:[\s,/]+[\d.]+%?)?\s*\)", value)
+        return (int(digits[0:2], 16) / 255, int(digits[2:4], 16) / 255, int(digits[4:6], 16) / 255, 1.0)
+    match = re.fullmatch(r"rgba?\(\s*(\d+)[\s,]+(\d+)[\s,]+(\d+)(?:[\s,/]+([\d.]+)(%?))?\s*\)", value)
     if match:
-        return tuple(min(int(part), 255) / 255 for part in match.groups())  # type: ignore[return-value]
+        alpha = 1.0
+        if match.group(4) is not None:
+            alpha = float(match.group(4)) / (100 if match.group(5) else 1)
+        return (min(int(match.group(1)), 255) / 255, min(int(match.group(2)), 255) / 255,
+                min(int(match.group(3)), 255) / 255, max(0.0, min(alpha, 1.0)))
     return None
 
 
-def luminance(colour: tuple[float, float, float]) -> float:
+def blend(colour: Colour, under: Colour) -> Colour:
+    alpha = colour[3]
+    return (colour[0] * alpha + under[0] * (1 - alpha), colour[1] * alpha + under[1] * (1 - alpha),
+            colour[2] * alpha + under[2] * (1 - alpha), 1.0)
+
+
+def to_hex(colour: Colour) -> str:
+    return "#" + "".join(f"{round(channel * 255):02x}" for channel in colour[:3])
+
+
+def luminance(colour: Colour) -> float:
     def channel(c: float) -> float:
         return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
-    r, g, b = (channel(c) for c in colour)
+    r, g, b = (channel(c) for c in colour[:3])
     return 0.2126 * r + 0.7152 * g + 0.0722 * b
 
 
 def contrast_ratio(foreground: str, background: str) -> float | None:
+    """Contrast of foreground text over an opaque background; see-through text is blended first."""
     fg, bg = parse_colour(foreground), parse_colour(background)
     if fg is None or bg is None:
         return None
+    bg = blend(bg, (1.0, 1.0, 1.0, 1.0))
+    fg = blend(fg, bg)
     high, low = sorted((luminance(fg), luminance(bg)), reverse=True)
     return (high + 0.05) / (low + 0.05)
 
 
 def background_colour(declarations: list[tuple[str, str]]) -> str | None:
-    for name, value in declarations:
+    """The element's own background colour token (may be see-through), or None."""
+    for name, value in reversed(declarations):
         if name == "background-color" and parse_colour(value):
             return value
         if name == "background":
@@ -280,6 +321,13 @@ def background_colour(declarations: list[tuple[str, str]]) -> str | None:
                 if parse_colour(token):
                     return token
     return None
+
+
+def resolve_background(token: str | None, inherited: str) -> str:
+    """Opaque hex background actually behind the text."""
+    under = parse_colour(inherited) or (1.0, 1.0, 1.0, 1.0)
+    own = parse_colour(token) if token else None
+    return to_hex(blend(own, under)) if own else to_hex(blend(under, (1.0, 1.0, 1.0, 1.0)))
 
 
 MIN_TEXT_PX = 16
@@ -292,6 +340,12 @@ def font_size_px(value: str) -> float | None:
         return named.get(value.strip().lower())
     number, unit = float(match.group(1)), match.group(2)
     return number * {"px": 1, "pt": 4 / 3, "rem": 16, "em": 16, "%": 0.16}[unit]
+
+
+def shorthand_font_size_px(value: str) -> float | None:
+    """Size inside a `font:` shorthand such as `italic 11px/1.4 Arial`."""
+    match = re.search(r"(?:^|\s)([\d.]+(?:px|pt|rem|em|%))(?:/|\s|$)", value)
+    return font_size_px(match.group(1)) if match else None
 
 
 def is_large_text(declarations: list[tuple[str, str]], tag: str) -> bool:
@@ -545,6 +599,11 @@ class Transformer:
                 self.blocking.append(f"a form field <{tag}>{' (' + label + ')' if label else ''} cannot work on a Canvas page; use a Canvas quiz/assignment or a SCORM activity")
             else:
                 self.changes[f"unwrapped <{tag}> (Canvas pages do not keep form controls; text kept)"] += 1
+                if tag == "button":
+                    for handler_name, handler in node.attrs:
+                        if handler_name.startswith("on") and re.search(r"location|window\.open|href|navigate|https?:", handler, re.IGNORECASE):
+                            self.blocking.append(f"button '{' '.join(node.text().split())[:40]}' went somewhere with a script ({handler[:60]}); replace it with a link")
+                    self.warnings.append(f"button '{' '.join(node.text().split())[:40]}' did something with a script; on a Canvas page it is plain text")
             return self.clean_children(node)
         if tag in TAG_RENAMES:
             original = tag
@@ -560,9 +619,13 @@ class Transformer:
         cleaned = Element(tag)
         for name, value in node.attrs:
             if name.startswith("on"):
-                self.changes["removed inline event handler (on…=)"] += 1
+                if re.search(r"location|window\.open|href|navigate|\.html?\b|https?:", value, re.IGNORECASE):
+                    self.blocking.append(f"a script action on <{tag}> went somewhere ({value[:60]}); replace it with an ordinary link so the destination is kept")
+                else:
+                    self.changes["removed inline event handler (on…=)"] += 1
                 continue
-            allowed = name in GLOBAL_ATTRS or name.startswith(("aria-", "data-")) or name in ELEMENT_ATTRS.get(tag, set())
+            allowed = (name in GLOBAL_ATTRS or name.startswith(("aria-", "data-")) or name in ELEMENT_ATTRS.get(tag, set())
+                       or (tag in MATHML_TAGS and not name.startswith("on")))
             if not allowed:
                 self.changes[f"removed {name}= attribute from <{tag}> (not on the Canvas allowlist)"] += 1
                 continue
@@ -627,7 +690,8 @@ class Transformer:
                 if name == "position" and value.strip().lower() in {"fixed", "sticky"}:
                     self.changes["removed position: fixed/sticky (Canvas strips it)"] += 1
                     continue
-                if name == "font-size" and font_size_px(value) is not None and font_size_px(value) < MIN_TEXT_PX:
+                size = font_size_px(value) if name == "font-size" else shorthand_font_size_px(value) if name == "font" else None
+                if size is not None and size < MIN_TEXT_PX:
                     self.changes[f"removed text sizes under {MIN_TEXT_PX}px so text stays readable"] += 1
                     continue
                 kept.append((name, value))
@@ -640,22 +704,37 @@ class Transformer:
                 merged = button_look + [(n, v) for n, v in kept if n not in button_names]
                 self.changes["standalone link given a large, button-sized target"] += 1
 
-            background = background_colour(merged) or inherited_bg
-            foreground = next((value for name, value in merged if name == "color"), inherited_fg)
-            ratio = contrast_ratio(foreground, background)
-            if ratio is not None:
-                needed = 3.0 if is_large_text(merged, child.tag) else 4.5
-                if ratio < needed:
-                    ink = self.styles["ink"]
-                    merged = [(n, v) for n, v in merged if n != "color"] + [("color", ink)]
-                    if contrast_ratio(ink, background) and contrast_ratio(ink, background) < needed:
-                        merged = [(n, v) for n, v in merged if n not in {"background", "background-color"}]
-                        background = inherited_bg
+            background = resolve_background(background_colour(merged), inherited_bg)
+            needed = 3.0 if is_large_text(merged, child.tag) else 4.5
+            source_colour = next((value for name, value in reversed(kept) if name == "color"), None)
+            merged_colour = next((value for name, value in reversed(merged) if name == "color"), None)
+            if source_colour is not None and parse_colour(source_colour) is None:
+                self.warnings.append(f"could not check the contrast of colour '{source_colour}' on <{child.tag}>; check it by eye")
+                foreground = source_colour
+            else:
+                # Prefer the teacher's own colour, then the house colour, then the inherited colour,
+                # taking the first that is readable on the real background behind it.
+                candidates = [c for c in (source_colour, merged_colour, inherited_fg) if c is not None]
+                chosen = next((c for c in candidates if (contrast_ratio(c, background) or 0) >= needed), None)
+                if chosen is None:
+                    chosen = max((self.styles["ink"], "#ffffff"), key=lambda c: contrast_ratio(c, background) or 0)
+                    if (contrast_ratio(chosen, background) or 0) < needed:
+                        self.warnings.append(f"background {background} behind '{' '.join(child.text().split())[:40]}' is too mid-toned for AA text; change it")
+                if source_colour is not None and chosen != source_colour:
                     self.changes["low-contrast colour replaced so text meets WCAG AA"] += 1
                     self.warnings.append(f"colour changed on '{' '.join(child.text().split())[:40]}': check colour did not carry meaning on its own")
-                    foreground = ink
-            elif any(name in {"color", "background", "background-color"} for name, _ in kept):
-                self.warnings.append(f"could not check the contrast of a colour on <{child.tag}>; check it by eye")
+                if chosen != (merged_colour or inherited_fg):
+                    if merged_colour is not None:
+                        merged = [(n, chosen if n == "color" else v) for n, v in merged]
+                    else:
+                        merged = merged + [("color", chosen)]
+                foreground = chosen
+
+            hidden = any((n == "display" and v.lower() == "none") or (n == "visibility" and v.lower() in {"hidden", "collapse"})
+                         or (n == "opacity" and v.strip() in {"0", "0.0", "0%"}) for n, v in merged)
+            if hidden and visible_words(child):
+                self.blocking.append(f"'{' '.join(visible_words(child))[:50]}' is hidden (display:none or similar); with no scripts on a "
+                                     "Canvas page it would stay hidden for good. Show it, or put it in a <details> 'Show answer' box")
 
             if child.tag == "img" and not any(name == "alt" for name, _ in child.attrs):
                 self.blocking.append(f"image {child.get('src')[:80]} has no alt text; write alt text (or alt=\"\" if decorative)")

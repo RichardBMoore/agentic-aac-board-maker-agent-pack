@@ -10,15 +10,14 @@
 
 ## Least privilege, enforced in code
 
-`scripts/canvas_client.py` refuses, before sending anything:
+`scripts/canvas_client.py` works from an **allowlist**, so anything not named is refused before a request is sent:
 
-- any host other than the configured QLearn hosts, and plain `http`;
-- student areas: users, enrolments, submissions, grades, gradebook history, discussion replies (entries), conversations, analytics, page views, peer reviews and outcome results;
-- any write other than creating a page or updating an unpublished `[WORKING FILE]` page;
-- any payload that would publish, notify or set a front page;
-- any write without `confirmed=True`, which an agent sets only after the teacher says yes.
+- **Hosts:** only `https://qlearn.eq.edu.au` and `https://qed09.instructure.com`, hard-coded. Configuration cannot add others. Redirects are followed only when they stay on HTTPS, on those hosts, and pass the same checks.
+- **Reads:** your own name (`/users/self`), your course list, and a course's tabs, pages, modules and module items, assignment and quiz descriptions, discussion topics (not replies), files and folders. Query parameters are limited to paging/sorting and a few fixed values (for example `include[]=items`), so `student_id`, `include[]=submission` and the like are refused. Encoded or relative path tricks (`%2F`, `..`, `//`, `.json`) are refused.
+- **Writes:** only creating a page whose payload is exactly `title` (containing `[WORKING FILE]`), `body` and `published: false`, and changing the `title`/`body` of a page that QLearn confirms, just before the change, is unpublished and titled `[WORKING FILE]`. Any other field (`publish_at`, `notify_of_update`, `front_page`…) is refused.
+- **Confirmation:** every write needs `confirmed=True`, which an agent sets only after the teacher says yes.
 
-It cannot delete. Deleting, publishing and module changes stay with the teacher in QLearn.
+It cannot delete. Deleting, publishing and module changes stay with the teacher in QLearn. The allowlist is tested against documented Canvas student endpoints in `tests/test_canvas_client.py`.
 
 ## What goes to the AI provider
 

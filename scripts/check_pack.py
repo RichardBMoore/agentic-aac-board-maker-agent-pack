@@ -760,7 +760,8 @@ def check_no_secrets() -> bool:
     for path in sorted(ROOT.rglob("*")):
         if not path.is_file() or any(part in skip_parts for part in path.relative_to(ROOT).parts):
             continue
-        if path.suffix.lower() not in text_suffixes and path.name not in {".env", ".npmrc", ".netrc"}:
+        credential_name = path.name.startswith(".env") or path.name in {".npmrc", ".netrc", ".pypirc"}
+        if path.suffix.lower() not in text_suffixes and path.suffix and not credential_name:
             continue
         try:
             text = path.read_text(encoding="utf-8")

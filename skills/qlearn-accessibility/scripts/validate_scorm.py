@@ -62,6 +62,12 @@ API_ENDPOINT = re.compile(r"/api/v1/|instructure\.com/api|/login/oauth2", re.IGN
 NETWORK_CALLS = re.compile(r"\bfetch\s*\(|XMLHttpRequest|navigator\.sendBeacon|new\s+WebSocket|new\s+EventSource")
 CSS_URL = re.compile(r"url\(\s*(['\"]?)(?P<url>[^)'\"]+)\1\s*\)", re.IGNORECASE)
 CSS_IMPORT = re.compile(r"@import\s+(['\"])(?P<url>[^'\"]+)\1", re.IGNORECASE)
+# Any absolute internet address in CSS/JS text (image-set('https…'), import('https…'), new Image().src…),
+# except XML namespace identifiers, which are names rather than downloads.
+INTERNET_ADDRESS = re.compile(r"(?:https?:)?//(?!www\.w3\.org/)[A-Za-z0-9.-]+\.[A-Za-z]{2,}[^\s'\"`)<>]*", re.IGNORECASE)
+JS_URL_LITERAL = re.compile(r"['\"`](?P<url>https?://(?!www\.w3\.org/)[^'\"`\s]+)['\"`]", re.IGNORECASE)
+JS_REMOTE_IMPORT = re.compile(r"\bimport\s*\(\s*['\"`]https?://|\bimport\s+[^;]*?\bfrom\s*['\"]https?://|importScripts\s*\(", re.IGNORECASE)
+META_REFRESH_URL = re.compile(r"url\s*=\s*['\"]?(?P<url>[^'\";\s]+)", re.IGNORECASE)
 EMBEDDED_IR = re.compile(r"<script\b[^>]*\bid=[\"']aac-board-ir[\"'][^>]*>(?P<json>.*?)</script\s*>", re.IGNORECASE | re.DOTALL)
 BRIDGE_TAG_RE = re.compile(r"<script src=\"scorm/scorm12-bridge\.js\" data-report-completion=\"(?:true|false)\"></script>\n")
 
@@ -79,7 +85,25 @@ ASSET_ATTRIBUTES = {
     "embed": ("src",),
     "object": ("data",),
     "input": ("src",),
+    "base": ("href",),
+    "image": ("href", "xlink:href"),  # SVG
+    "use": ("href", "xlink:href"),    # SVG
+    "feimage": ("href", "xlink:href"),
 }
+JS_TYPES = {"", "text/javascript", "application/javascript", "module", "text/ecmascript", "application/ecmascript"}
+
+
+def srcset_urls(value: str) -> list[str]:
+    """URLs in a srcset, keeping data: URIs whole (they contain commas but no spaces)."""
+    urls: list[str] = []
+    expecting_url = True
+    for token in value.split():
+        if expecting_url:
+            urls.append(token.rstrip(","))
+            expecting_url = token.endswith(",")
+        else:
+            expecting_url = token.endswith(",")
+    return [url for url in urls if url]
 
 
 @dataclass
@@ -155,7 +179,9 @@ class AssetCollector(HTMLParser):
         self.has_viewport = False
         self.inline_event_handlers = 0
         self.inline_style_attributes = 0
+        self.script_chunks: list[str] = []
         self._in_style = False
+        self._in_script = False
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         tag = tag.lower()
@@ -166,6 +192,12 @@ class AssetCollector(HTMLParser):
             self.has_viewport = True
         if tag == "style":
             self._in_style = True
+        if tag == "script" and "src" not in values and values.get("type", "").strip().lower() in JS_TYPES:
+            self._in_script = True
+        if tag == "meta" and values.get("http-equiv", "").lower() == "refresh":
+            match = META_REFRESH_URL.search(values.get("content", ""))
+            if match:
+                self.assets.append(("meta", "refresh", match.group("url")))
         if tag == "a" and values.get("href"):
             self.navigation.append(values["href"])
         for attribute in ASSET_ATTRIBUTES.get(tag, ()):
@@ -173,10 +205,10 @@ class AssetCollector(HTMLParser):
             if not raw:
                 continue
             if attribute == "srcset":
-                for candidate in raw.split(","):
-                    url = candidate.strip().split(" ")[0]
-                    if url:
-                        self.assets.append((tag, attribute, url))
+                for url in srcset_urls(raw):
+                    self.assets.append((tag, attribute, url))
+            elif tag in {"use", "image", "feimage"} and raw.startswith("#"):
+                continue  # reference to something on the same page
             else:
                 self.assets.append((tag, attribute, raw))
         if values.get("style"):
@@ -190,16 +222,30 @@ class AssetCollector(HTMLParser):
     def handle_endtag(self, tag: str) -> None:
         if tag.lower() == "style":
             self._in_style = False
+        if tag.lower() == "script":
+            self._in_script = False
 
     def handle_data(self, data: str) -> None:
         if self._in_style:
             self.css_chunks.append(data)
+        if self._in_script:
+            self.script_chunks.append(data)
 
 
 def css_references(css: str) -> list[str]:
     refs = [match.group("url").strip() for match in CSS_URL.finditer(css)]
     refs += [match.group("url").strip() for match in CSS_IMPORT.finditer(css)]
+    # image-set("https://…"), bare addresses in other functions: anything absolute counts as an internet load.
+    without_data = re.sub(r"data:[^)'\"]*", "", css)
+    refs += [match.group(0) for match in INTERNET_ADDRESS.finditer(without_data) if match.group(0) not in refs]
     return refs
+
+
+def script_findings(script: str) -> tuple[list[str], list[str]]:
+    """(definite remote loads, internet addresses mentioned) in JavaScript text."""
+    remote = [match.group(0)[:60] for match in JS_REMOTE_IMPORT.finditer(script)]
+    mentioned = sorted({match.group("url")[:80] for match in JS_URL_LITERAL.finditer(script)})
+    return remote, mentioned
 
 
 def find_secrets(text: str) -> list[str]:
@@ -239,7 +285,8 @@ def html_external_assets(text: str) -> list[str]:
     collector = AssetCollector()
     collector.feed(text)
     external = [f"<{tag} {attr}={value}>" for tag, attr, value in collector.assets if is_external(value)]
-    external += [f"CSS url({ref})" for chunk in collector.css_chunks for ref in css_references(chunk) if is_external(ref)]
+    external += [f"CSS {ref}" for chunk in collector.css_chunks for ref in css_references(chunk) if is_external(ref)]
+    external += [f"script loads {load}" for chunk in collector.script_chunks for load in script_findings(chunk)[0]]
     return external
 
 
@@ -497,6 +544,13 @@ def check_launch_pages(archive: zipfile.ZipFile, files: dict[str, zipfile.ZipInf
         if not external and not missing:
             report.ok(f"{launch}: every asset resolves inside the package and nothing loads from the internet")
 
+        script_sources = collector.script_chunks + [read_text(archive, path) or "" for path in local_scripts]
+        remote_loads = [load for chunk in script_sources for load in script_findings(chunk)[0]]
+        mentioned = sorted({url for chunk in script_sources for url in script_findings(chunk)[1]})
+        if remote_loads:
+            report.fail(f"{launch} scripts load code from the internet: {remote_loads[:3]}")
+        if mentioned:
+            report.warn(f"{launch} scripts mention internet addresses {mentioned[:3]}; check nothing is downloaded or sent")
         script_texts = [text] + [read_text(archive, path) or "" for path in local_scripts]
         if any("LMSInitialize" in chunk for chunk in script_texts):
             report.ok(f"{launch} starts a SCORM 1.2 session (LMSInitialize)")

@@ -195,6 +195,60 @@ class BuildTests(unittest.TestCase):
         self.assertIn("RESULT: ready for a teacher test upload", check.stdout)
 
 
+class SplitLayoutSafetyTests(unittest.TestCase):
+    """The split layout must keep behaviour, not just be reversible."""
+
+    PAGE = ('<!doctype html><HTML lang="en-AU"><head><meta name="viewport" content="width=device-width"><title>T</title>'
+            '<STYLE id="theme" media="screen">p{color:#111}</STYLE></head><body><p>Hi</p>'
+            '<script data-note="a>b">window.ok = 1;</script>'
+            '<script id="data" type="application/json">{"a": "</style>"}</script></body></HTML>')
+
+    def setUp(self) -> None:
+        self.tmp = tempfile.TemporaryDirectory()
+        self.dir = Path(self.tmp.name)
+
+    def tearDown(self) -> None:
+        self.tmp.cleanup()
+
+    def build(self, html: str) -> tuple[dict, dict]:
+        source = self.dir / "page.html"
+        source.write_text(html, encoding="utf-8")
+        output = self.dir / "page.zip"
+        info = build_scorm.build_package(source, output, layout="split")
+        with zipfile.ZipFile(output) as archive:
+            return info, {name: archive.read(name) for name in archive.namelist()}
+
+    def test_attributes_ids_and_case_survive(self) -> None:
+        info, entries = self.build(self.PAGE)
+        launch = entries["index.html"].decode("utf-8")
+        self.assertIn('href="assets/inline-style-1.css" id="theme" media="screen"', launch)
+        self.assertIn('<script data-note="a>b" src="assets/inline-script-1.js"></script>', launch)
+        self.assertEqual(b"window.ok = 1;", entries["assets/inline-script-1.js"])
+        self.assertIn('<script id="data" type="application/json">', launch, "data blocks stay inline")
+        self.assertEqual(self.PAGE.encode("utf-8"), validate_scorm.restore_original(entries, info))
+
+    def test_unsafe_cases_are_refused(self) -> None:
+        cases = {
+            "async": '<html><body><script async>go()</script></body></html>',
+            "defer": '<html><body><script defer>go()</script></body></html>',
+            "svg-style": '<html><body><svg><style>circle{fill:red}</style><circle r="4"/></svg></body></html>',
+            "template": '<html><body><template><script>go()</script></template></body></html>',
+        }
+        for label, html in cases.items():
+            with self.subTest(case=label), self.assertRaises(build_scorm.PackagingError):
+                self.build(html)
+
+    def test_text_inside_a_textarea_is_never_moved(self) -> None:
+        # Newer Python parsers read <textarea> as plain text (nothing to move); older ones see a <style> and refuse.
+        html = '<html><body><textarea><style>p{}</style></textarea></body></html>'
+        try:
+            info, entries = self.build(html)
+        except build_scorm.PackagingError:
+            return
+        self.assertEqual([], info["split"])
+        self.assertIn("<textarea><style>p{}</style></textarea>", entries["index.html"].decode("utf-8"))
+
+
 class ValidatorTests(unittest.TestCase):
     def setUp(self) -> None:
         self.tmp = tempfile.TemporaryDirectory()
@@ -242,6 +296,28 @@ class ValidatorTests(unittest.TestCase):
         self.assert_fails(minimal_package(self.dir / "cdn.zip", extra={"index.html": page}), "loads from the internet")
         report = validate_scorm.validate_package(minimal_package(self.dir / "net.zip", extra={"b.js": "API.LMSInitialize(''); fetch('data.json')"}))
         self.assertTrue(any("network calls" in warning for warning in report.warnings))
+
+    def test_hidden_internet_loads_are_caught(self) -> None:
+        loads = {
+            "svg-image": GOOD_PAGE.replace("</body>", '<svg><image href="https://example.com/a.png"/></svg></body>'),
+            "svg-use": GOOD_PAGE.replace("</body>", '<svg><use xlink:href="https://example.com/s.svg#i"/></svg></body>'),
+            "refresh": GOOD_PAGE.replace("<head>", '<head><meta http-equiv="refresh" content="0; url=https://example.com/">'),
+            "base": GOOD_PAGE.replace("<head>", '<head><base href="https://example.com/">'),
+            "image-set": GOOD_PAGE.replace("</body>", "<style>p{background:image-set('https://example.com/a.png' 1x)}</style></body>"),
+            "import": GOOD_PAGE.replace("</body>", "<script>import('https://example.com/m.js')</script></body>"),
+        }
+        for label, page in loads.items():
+            with self.subTest(case=label):
+                self.assert_fails(minimal_package(self.dir / f"{label}.zip", extra={"index.html": page}), "internet")
+        mention = GOOD_PAGE.replace("</body>", "<script>const img = new Image(); img.src = 'https://example.com/p.gif';</script></body>")
+        report = validate_scorm.validate_package(minimal_package(self.dir / "mention.zip", extra={"index.html": mention}))
+        self.assertTrue(any("mention internet addresses" in warning for warning in report.warnings), report.warnings)
+
+    def test_srcset_with_data_uri_is_not_a_missing_file(self) -> None:
+        page = GOOD_PAGE.replace("</body>", '<img alt="" srcset="data:image/png;base64,AAAA,BBBB 1x, b.js 2x"></body>')
+        report = validate_scorm.validate_package(minimal_package(self.dir / "srcset.zip", extra={"index.html": page}))
+        self.assertTrue(report.success, report.failures)
+        self.assertEqual(["data:image/png;base64,AAAA,BBBB", "b.js"], validate_scorm.srcset_urls("data:image/png;base64,AAAA,BBBB 1x, b.js 2x"))
 
     def test_bad_identifiers_and_scorm_2004_fail(self) -> None:
         bad = GOOD_MANIFEST.replace('identifier="i"', 'identifier="1 bad"').format(files='<file href="index.html"/><file href="b.js"/>')

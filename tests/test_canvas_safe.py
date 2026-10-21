@@ -114,6 +114,55 @@ class CanvasSafeRenderTests(unittest.TestCase):
         checked = {pair[0] for pair in styles["checkedPairs"]}
         self.assertLessEqual(colours, checked, "every text colour in the house styles is in checkedPairs")
 
+    def test_canvas_facts_independent_of_the_module_lists(self) -> None:
+        # Written from Instructure's allowlist article, not from render_canvas_safe's constants.
+        html = canvas_safe.transform('<p style="position:fixed">a</p><script>x()</script><form><input></form><object data="x"></object>'
+                                     '<iframe src="https://e.org/v" title="Video"></iframe><img src="/f.png" alt="A">').html.lower()
+        for gone in ("<script", "<form", "<input", "<object", "position: fixed"):
+            self.assertNotIn(gone, html)
+        for kept in ("<iframe", "<img", 'alt="a"'):
+            self.assertIn(kept, html)
+
+    def test_dark_callouts_stay_readable(self) -> None:
+        result = canvas_safe.transform('<div style="background-color:#003366;color:#fff"><h3>Remember</h3>'
+                                       '<p>Bring your book. <a style="color:#fff" href="https://e.org/x">Reading list</a></p></div>'
+                                       '<div style="background:#0b2a4a"><h3 style="color:#ffffff">White heading</h3><p>Plain text</p></div>')
+        self.assertTrue(result.ok, result.blocking)
+        backgrounds = {"Remember": "#003366", "Reading list": "#003366", "White heading": "#0b2a4a", "Plain text": "#0b2a4a"}
+        for element in elements(result.html):
+            text = " ".join(element.text().split())
+            if text in backgrounds:
+                colour = dict(canvas_safe.parse_style(element.get("style"))).get("color")
+                inherited = colour or "#ffffff"
+                self.assertGreaterEqual(canvas_safe.contrast_ratio(inherited, backgrounds[text]), 4.5, text)
+
+    def test_see_through_colours_important_and_shorthands(self) -> None:
+        result = canvas_safe.transform('<p style="color: rgba(0,0,0,0.2)">Faint</p><p style="color:#fff;background:rgba(0,0,0,0)">Ghost</p>'
+                                       '<p style="font-size: 11px !important; position: fixed !important; content-visibility: hidden">Tiny</p>'
+                                       '<p style="font: 11px Arial">Short</p>')
+        for element in elements(result.html):
+            styles = dict(canvas_safe.parse_style(element.get("style")))
+            if element.tag == "p":
+                self.assertNotIn("content-visibility", styles)
+                self.assertNotEqual("fixed", styles.get("position"))
+                self.assertNotIn("11px", styles.get("font-size", "") + styles.get("font", ""))
+                self.assertGreaterEqual(canvas_safe.contrast_ratio(styles.get("color", "#1b1b1b"), "#ffffff"), 4.5)
+
+    def test_hidden_answers_and_script_links_need_the_teacher(self) -> None:
+        result = canvas_safe.transform('<style>.ans{display:none}</style><p class="ans">The answer is 42</p>'
+                                       '<button onclick="location=\'https://e.org/next\'">Next lesson</button>')
+        self.assertFalse(result.ok)
+        self.assertTrue(any("hidden" in item and "42" in item for item in result.blocking))
+        self.assertTrue(any("Next lesson" in item for item in result.blocking))
+
+    def test_text_after_body_and_mathml_attributes_are_kept(self) -> None:
+        result = canvas_safe.transform('<html><body><p>In body</p></body></html>After body'
+                                       '<math display="block"><mi mathvariant="bold">x</mi></math>')
+        self.assertIn("After body", result.html)
+        self.assertIn('display="block"', result.html)
+        self.assertIn('mathvariant="bold"', result.html)
+        self.assertEqual({"words": [], "links": [], "images": [], "media": []}, result.report["lost"])
+
     def test_complex_css_rules_are_reported(self) -> None:
         result = canvas_safe.transform("<style>a:hover{color:red} @media print{p{display:none}} .ok{font-weight:bold}</style><p class='ok'>Hi</p>")
         self.assertIn("font-weight: bold", result.html)

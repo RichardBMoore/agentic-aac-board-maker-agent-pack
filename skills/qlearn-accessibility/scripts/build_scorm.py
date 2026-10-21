@@ -12,11 +12,14 @@ Layouts:
   bridge line. Closest to the tested standalone file.
 - ``split``: moves inline ``<style>`` blocks and executable inline
   ``<script>`` blocks into files under ``assets/`` (JSON data blocks stay
-  inline). Behaviour is identical; use it only if the LMS player's Content
+  inline), keeping every attribute. Use it only if the LMS player's Content
   Security Policy blocks inline scripts (the activity shows a blank or
-  unstyled page inside QLearn).
+  unstyled page inside QLearn). To keep behaviour the same, the builder
+  refuses split layout for inline scripts marked ``async``/``defer`` and for
+  ``<style>``/``<script>`` inside ``<svg>``, ``<math>``, ``<textarea>``,
+  ``<template>``, ``<noscript>`` or ``<title>``; use the inline layout then.
 
-The ZIP is deterministic: the same input always produces the same bytes.
+The ZIP is deterministic for a given input and Python/zlib build.
 
 Examples:
 
@@ -36,6 +39,7 @@ import sys
 import tempfile
 import zipfile
 from html import unescape
+from html.parser import HTMLParser
 from pathlib import Path
 from xml.sax.saxutils import escape, quoteattr
 
@@ -59,15 +63,9 @@ FILE_MODE = 0o100644 << 16
 PACKAGE_FORMAT = "agentic-aac-scorm-package"
 PACKAGE_FORMAT_VERSION = 1
 
-BLOCK_RE = re.compile(
-    r"(?P<script><script\b(?P<script_attrs>[^>]*)>(?P<script_body>.*?)(?P<script_close></script\s*>))"
-    r"|(?P<style><style\b(?P<style_attrs>[^>]*)>(?P<style_body>.*?)(?P<style_close></style\s*>))",
-    re.IGNORECASE | re.DOTALL,
-)
-TYPE_ATTR = re.compile(r"\btype\s*=\s*([\"'])(?P<type>[^\"']*)\1", re.IGNORECASE)
-MEDIA_ATTR = re.compile(r"\bmedia\s*=\s*([\"'])(?P<media>[^\"']*)\1", re.IGNORECASE)
 JS_TYPES = {"", "text/javascript", "application/javascript", "module", "text/ecmascript", "application/ecmascript"}
 BODY_CLOSE = re.compile(r"</body\s*>", re.IGNORECASE)
+FOREIGN_OR_TEXT_CONTAINERS = {"svg", "math", "textarea", "template", "noscript", "title", "xmp", "iframe", "noembed", "noframes"}
 TITLE_RE = re.compile(r"<title[^>]*>(?P<title>.*?)</title\s*>", re.IGNORECASE | re.DOTALL)
 RUNTIME_SHA = re.compile(r"data-runtime-sha256=\"(?P<sha>[0-9a-f]{64})\"")
 
@@ -90,41 +88,85 @@ def insert_bridge(text: str, report_completion: bool) -> str:
     return text[:position] + tag + text[position:]
 
 
+class _BlockFinder(HTMLParser):
+    """Locate <style>/<script> elements exactly (offsets, raw tags, context) with a real HTML tokenizer."""
+
+    def __init__(self, text: str) -> None:
+        super().__init__(convert_charrefs=False)
+        self.text = text
+        self.line_starts = [0] + [index + 1 for index, character in enumerate(text) if character == "\n"]
+        self.blocks: list[dict] = []
+        self.containers: list[str] = []
+        self.current: dict | None = None
+
+    def position(self) -> int:
+        line, column = self.getpos()
+        return self.line_starts[line - 1] + column
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag in ("script", "style"):
+            start = self.position()
+            raw = self.get_starttag_text() or ""
+            if self.text[start:start + len(raw)] != raw:
+                raise PackagingError("could not locate a <script>/<style> tag exactly; use the inline layout")
+            self.current = {
+                "kind": tag, "start": start, "open_end": start + len(raw), "open_tag": raw,
+                "attrs": {name.lower(): value for name, value in attrs}, "contained": list(self.containers),
+            }
+        elif tag in FOREIGN_OR_TEXT_CONTAINERS:
+            self.containers.append(tag)
+
+    def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag in ("script", "style"):
+            raise PackagingError(f"self-closing <{tag}/> found; use the inline layout")
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag in ("script", "style") and self.current and self.current["kind"] == tag:
+            close_start = self.position()
+            close_end = self.text.index(">", close_start) + 1
+            self.current.update({"close_start": close_start, "close_end": close_end})
+            self.blocks.append(self.current)
+            self.current = None
+        elif tag in self.containers:
+            while self.containers and self.containers.pop() != tag:
+                pass
+
+
 def split_inline_assets(text: str) -> tuple[str, dict[str, bytes], list[dict[str, str]]]:
     """Move inline CSS and executable JS into files; return new text, files and the reversal map."""
+    finder = _BlockFinder(text)
+    finder.feed(text)
+    finder.close()
     files: dict[str, bytes] = {}
     split_map: list[dict[str, str]] = []
     pieces: list[str] = []
     cursor = 0
-    style_count = 0
-    script_count = 0
-    for match in BLOCK_RE.finditer(text):
-        pieces.append(text[cursor:match.start()])
-        cursor = match.end()
-        if match.group("script"):
-            attrs = match.group("script_attrs")
-            type_match = TYPE_ATTR.search(attrs)
-            script_type = (type_match.group("type") if type_match else "").strip().lower()
-            if re.search(r"\bsrc\s*=", attrs, re.IGNORECASE) or script_type not in JS_TYPES or not match.group("script_body").strip():
-                pieces.append(match.group(0))
-                continue
-            script_count += 1
-            path = f"assets/inline-script-{script_count}.js"
-            open_tag = f"<script{attrs}>"
-            replacement = f'<script{attrs} src="{path}"></script>'
-            files[path] = match.group("script_body").encode("utf-8")
-            split_map.append({"file": path, "openTag": open_tag, "closeTag": match.group("script_close"), "replacement": replacement})
-            pieces.append(replacement)
+    counts = {"script": 0, "style": 0}
+    for block in finder.blocks:
+        kind, attrs = block["kind"], block["attrs"]
+        body = text[block["open_end"]:block["close_start"]]
+        if kind == "script":
+            script_type = (attrs.get("type") or "").strip().lower()
+            if "src" in attrs or script_type not in JS_TYPES or not body.strip():
+                continue  # already external, or a data block (e.g. the board's JSON IR): leave untouched
+            if "async" in attrs or "defer" in attrs:
+                raise PackagingError("an inline <script> is marked async/defer, which would start working once moved; use the inline layout")
+        if block["contained"]:
+            raise PackagingError(f"a <{kind}> sits inside <{block['contained'][-1]}>, where moving it would change behaviour; use the inline layout")
+        counts[kind] += 1
+        open_tag = block["open_tag"]
+        attribute_text = open_tag[len(kind) + 1:-1]  # everything between "<script"/"<style" and ">", verbatim
+        if kind == "script":
+            path = f"assets/inline-script-{counts[kind]}.js"
+            replacement = f'<script{attribute_text} src="{path}"></script>'
         else:
-            attrs = match.group("style_attrs")
-            style_count += 1
-            path = f"assets/inline-style-{style_count}.css"
-            media = MEDIA_ATTR.search(attrs)
-            media_attr = f' media="{media.group("media")}"' if media else ""
-            replacement = f'<link rel="stylesheet" href="{path}"{media_attr} data-aac-split="style-{style_count}">'
-            files[path] = match.group("style_body").encode("utf-8")
-            split_map.append({"file": path, "openTag": f"<style{attrs}>", "closeTag": match.group("style_close"), "replacement": replacement})
-            pieces.append(replacement)
+            path = f"assets/inline-style-{counts[kind]}.css"
+            replacement = f'<link rel="stylesheet" href="{path}"{attribute_text} data-aac-split="style-{counts[kind]}">'
+        pieces.append(text[cursor:block["start"]])
+        pieces.append(replacement)
+        cursor = block["close_end"]
+        files[path] = body.encode("utf-8")
+        split_map.append({"file": path, "openTag": open_tag, "closeTag": text[block["close_start"]:block["close_end"]], "replacement": replacement})
     pieces.append(text[cursor:])
     return "".join(pieces), files, split_map
 
@@ -234,9 +276,14 @@ def build_package(
     entries: dict[str, bytes] = {}
     split_map: list[dict[str, str]] = []
     launch_text = text
+    notes: list[str] = []
     if layout == "split":
         launch_text, split_files, split_map = split_inline_assets(text)
         entries.update(split_files)
+        collector = validate_scorm.AssetCollector()
+        collector.feed(text)
+        if collector.inline_style_attributes:
+            notes.append(f"{collector.inline_style_attributes} inline style=\"…\" attribute(s) remain; a player that also forbids inline styles would ignore them (layout still usable in the strict-CSP browser test)")
     elif layout != "inline":
         raise PackagingError(f"unknown layout '{layout}' (use inline or split)")
     launch_text = insert_bridge(launch_text, report_completion)
@@ -276,6 +323,7 @@ def build_package(
         },
         "bridge": {"file": BRIDGE_PATH, "reportCompletion": report_completion, "sendsStudentData": False},
         "split": split_map,
+        "notes": notes,
         "verify": "python3 validate_scorm.py <package.zip> --source <original.html>",
         "builtBy": "skills/qlearn-accessibility/scripts/build_scorm.py",
     }
@@ -290,6 +338,7 @@ def build_package(
         output.unlink(missing_ok=True)
         raise PackagingError("built package failed validation: " + "; ".join(report.failures))
     info["zipSha256"] = hashlib.sha256(output.read_bytes()).hexdigest()
+    report.notes.extend(notes)
     info["validation"] = report.as_dict()
     return info
 
