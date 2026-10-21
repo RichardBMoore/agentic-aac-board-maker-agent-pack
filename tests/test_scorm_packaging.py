@@ -250,6 +250,51 @@ class SplitLayoutSafetyTests(unittest.TestCase):
         self.assertIn("<textarea><style>p{}</style></textarea>", entries["index.html"].decode("utf-8"))
 
 
+class MultiPageTests(unittest.TestCase):
+    """An activity made of several linked pages keeps one session and stays unchanged."""
+
+    def setUp(self) -> None:
+        self.tmp = tempfile.TemporaryDirectory()
+        self.dir = Path(self.tmp.name)
+        page = ('<!doctype html><html lang="en-AU"><head><meta name="viewport" content="width=device-width">'
+                '<!-- <title>Not this</title> --><title>{title}</title></head><body><a href="{other}">Go</a></body></html>')
+        (self.dir / "index.html").write_text(page.format(title="Practice", other="sub/two.html"), encoding="utf-8")
+        (self.dir / "sub").mkdir()
+        (self.dir / "sub" / "two.html").write_text(page.format(title="Two", other="../index.html"), encoding="utf-8")
+
+    def tearDown(self) -> None:
+        self.tmp.cleanup()
+
+    def test_every_page_gets_the_bridge_and_stays_unchanged(self) -> None:
+        output = self.dir / "multi.zip"
+        info = build_scorm.build_package(self.dir / "index.html", output, pages=["sub/two.html"])
+        self.assertEqual("Practice", info["title"], "a <title> inside a comment is ignored")
+        with zipfile.ZipFile(output) as archive:
+            launch = archive.read("index.html").decode("utf-8")
+            second = archive.read("sub/two.html").decode("utf-8")
+            listed = {e.get("href") for e in ElementTree.fromstring(archive.read("imsmanifest.xml")).iter(f"{CP}file")}
+        self.assertIn('src="scorm/scorm12-bridge.js" data-report-completion="false" data-multi-page="true"', launch)
+        self.assertIn('src="../scorm/scorm12-bridge.js" data-report-completion="false" data-multi-page="true"', second)
+        self.assertIn("sub/two.html", listed)
+        report = validate_scorm.validate_package(output, self.dir / "index.html")
+        self.assertTrue(report.success, report.failures)
+        self.assertTrue(any("sub/two.html is its source page" in item for item in report.passes))
+
+    def test_tampered_page_and_bad_pages_are_caught(self) -> None:
+        output = self.dir / "multi.zip"
+        build_scorm.build_package(self.dir / "index.html", output, pages=["sub/two.html"])
+        with zipfile.ZipFile(output) as archive:
+            entries = {name: archive.read(name) for name in archive.namelist()}
+        entries["sub/two.html"] = entries["sub/two.html"].replace(b"Go", b"Gone")
+        tampered = write_zip(self.dir / "tampered.zip", entries)
+        self.assertTrue(any("differs from its source" in item for item in validate_scorm.validate_package(tampered).failures))
+        for bad in (["../outside.html"], ["missing.html"], ["index.html"]):
+            with self.subTest(pages=bad), self.assertRaises(build_scorm.PackagingError):
+                build_scorm.build_package(self.dir / "index.html", self.dir / "bad.zip", pages=bad)
+        with self.assertRaises(build_scorm.PackagingError):
+            build_scorm.build_package(self.dir / "index.html", self.dir / "split.zip", pages=["sub/two.html"], layout="split")
+
+
 class ValidatorTests(unittest.TestCase):
     def setUp(self) -> None:
         self.tmp = tempfile.TemporaryDirectory()

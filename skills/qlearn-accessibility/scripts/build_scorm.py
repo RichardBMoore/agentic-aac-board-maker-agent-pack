@@ -34,6 +34,7 @@ import argparse
 import hashlib
 import json
 import os
+import posixpath
 import re
 import string
 import sys
@@ -75,14 +76,15 @@ class PackagingError(RuntimeError):
     """Raised when a source activity is not safe or not suitable to package."""
 
 
-def bridge_tag(report_completion: bool) -> str:
+def bridge_tag(report_completion: bool, src: str = BRIDGE_PATH, multi_page: bool = False) -> str:
     flag = "true" if report_completion else "false"
-    return f'<script src="{BRIDGE_PATH}" data-report-completion="{flag}"></script>\n'
+    multi = ' data-multi-page="true"' if multi_page else ""
+    return f'<script src="{src}" data-report-completion="{flag}"{multi}></script>\n'
 
 
-def insert_bridge(text: str, report_completion: bool) -> str:
+def insert_bridge(text: str, report_completion: bool, src: str = BRIDGE_PATH, multi_page: bool = False) -> str:
     matches = list(BODY_CLOSE.finditer(text))
-    tag = bridge_tag(report_completion)
+    tag = bridge_tag(report_completion, src, multi_page)
     if not matches:
         raise PackagingError("the activity has no </body> tag to place the SCORM bridge before")
     position = matches[-1].start()
@@ -182,7 +184,9 @@ def slug_identifier(value: str) -> str:
 
 
 def activity_title(text: str, fallback: str) -> str:
-    match = TITLE_RE.search(text)
+    text = re.sub(r"<!--.*?-->", "", text, flags=re.DOTALL)  # titles mentioned in comments are not the title
+    head = re.search(r"<head\b.*?</head\s*>", text, flags=re.IGNORECASE | re.DOTALL)
+    match = TITLE_RE.search(head.group(0) if head else text)
     title = unescape(re.sub(r"\s+", " ", match.group("title"))).strip() if match else ""
     return title or fallback
 
@@ -258,6 +262,7 @@ def build_package(
     report_completion: bool = False,
     schemas_dir: Path | None = None,
     includes: list[str] | None = None,
+    pages: list[str] | None = None,
 ) -> dict:
     """Build the SCORM ZIP and return package-info metadata. Raises PackagingError on unsafe input."""
     raw = source.read_bytes()
@@ -289,9 +294,33 @@ def build_package(
             notes.append(f"{collector.inline_style_attributes} inline style=\"…\" attribute(s) remain; a player that also forbids inline styles would ignore them (layout still usable in the strict-CSP browser test)")
     elif layout != "inline":
         raise PackagingError(f"unknown layout '{layout}' (use inline or split)")
-    launch_text = insert_bridge(launch_text, report_completion)
+    multi_page = bool(pages)
+    if multi_page and layout != "inline":
+        raise PackagingError("multi-page packages (--page) support the inline layout only")
+    launch_text = insert_bridge(launch_text, report_completion, multi_page=multi_page)
     entries[LAUNCH] = launch_text.encode("utf-8")
     entries[BRIDGE_PATH] = BRIDGE_SOURCE.read_bytes()
+    page_records = []
+    base = source.parent.resolve()
+    for page in pages or []:
+        page_path = (base / page).resolve()
+        relative = page_path.relative_to(base).as_posix() if base in page_path.parents else None
+        if relative is None or not page_path.is_file() or page_path.suffix.lower() not in {".html", ".htm"}:
+            raise PackagingError(f"--page {page} must be an HTML file inside the activity's folder")
+        if relative in entries or relative == source.name:
+            raise PackagingError(f"--page {page} clashes with the launch page or another package file")
+        page_raw = page_path.read_bytes()
+        page_text = page_raw.decode("utf-8")
+        page_check = validate_scorm.Report()
+        validate_scorm.scan_source_text(page_text, page_check, relative)
+        page_external = validate_scorm.html_external_assets(page_text)
+        if page_external:
+            page_check.fail(f"{relative} loads from the internet ({page_external[:3]})")
+        if page_check.failures:
+            raise PackagingError("; ".join(page_check.failures))
+        bridge_src = posixpath.relpath(BRIDGE_PATH, posixpath.dirname(relative) or ".")
+        entries[relative] = insert_bridge(page_text, report_completion, bridge_src, multi_page=True).encode("utf-8")
+        page_records.append({"path": relative, "sha256": hashlib.sha256(page_raw).hexdigest(), "bytes": len(page_raw)})
 
     for name, data in collect_includes(source, includes or []).items():
         if name in entries:
@@ -326,6 +355,7 @@ def build_package(
         },
         "bridge": {"file": BRIDGE_PATH, "reportCompletion": report_completion, "sendsStudentData": False},
         "split": split_map,
+        "pages": page_records,
         "notes": notes,
         "verify": "python3 validate_scorm.py <package.zip> --source <original.html>",
         "builtBy": "skills/qlearn-accessibility/scripts/build_scorm.py",
@@ -356,6 +386,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--report-completion", action="store_true", help="tell the LMS the activity is 'completed' when it opens (off by default)")
     parser.add_argument("--schemas-dir", type=Path, help="folder holding the four official SCORM 1.2 .xsd files to bundle")
     parser.add_argument("--include", action="append", default=[], help="extra file/folder (relative to the activity) the page needs")
+    parser.add_argument("--page", action="append", default=[], help="another HTML page of the same activity (relative path); gets the bridge so one session spans all pages")
     args = parser.parse_args(argv)
     try:
         info = build_package(
@@ -367,6 +398,7 @@ def main(argv: list[str] | None = None) -> int:
             report_completion=args.report_completion,
             schemas_dir=args.schemas_dir,
             includes=args.include,
+            pages=args.page,
         )
     except PackagingError as error:
         print(f"FAIL: {error}", file=sys.stderr)

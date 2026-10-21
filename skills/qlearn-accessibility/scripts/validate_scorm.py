@@ -24,6 +24,7 @@ Exit status is 0 when there are no FAIL lines.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import posixpath
 import re
@@ -69,7 +70,9 @@ JS_URL_LITERAL = re.compile(r"['\"`](?P<url>https?://(?!www\.w3\.org/)[^'\"`\s]+
 JS_REMOTE_IMPORT = re.compile(r"\bimport\s*\(\s*['\"`]https?://|\bimport\s+[^;]*?\bfrom\s*['\"]https?://|importScripts\s*\(", re.IGNORECASE)
 META_REFRESH_URL = re.compile(r"url\s*=\s*['\"]?(?P<url>[^'\";\s]+)", re.IGNORECASE)
 EMBEDDED_IR = re.compile(r"<script\b[^>]*\bid=[\"']aac-board-ir[\"'][^>]*>(?P<json>.*?)</script\s*>", re.IGNORECASE | re.DOTALL)
-BRIDGE_TAG_RE = re.compile(r"<script src=\"scorm/scorm12-bridge\.js\" data-report-completion=\"(?:true|false)\"></script>\n")
+BRIDGE_TAG_RE = re.compile(
+    r"<script src=\"(?:\.\./)*scorm/scorm12-bridge\.js\" data-report-completion=\"(?:true|false)\"(?: data-multi-page=\"true\")?></script>\n"
+)
 
 # Attributes that load something into the page (as opposed to <a href>, which is navigation).
 ASSET_ATTRIBUTES = {
@@ -502,7 +505,12 @@ def read_text(archive: zipfile.ZipFile, name: str) -> str | None:
 
 
 def check_launch_pages(archive: zipfile.ZipFile, files: dict[str, zipfile.ZipInfo], launches: Iterable[tuple[str, str]], report: Report) -> None:
-    for resource_id, launch in launches:
+    launches = list(launches)
+    launch_names = {launch for _, launch in launches}
+    # Other pages of a multi-page activity get the same asset/internet checks as the launch page.
+    others = [("page", name) for name in sorted(files) if name.lower().endswith((".html", ".htm")) and name not in launch_names]
+    for resource_id, launch in launches + others:
+        is_launch = launch in launch_names
         text = read_text(archive, launch)
         if text is None:
             report.fail(f"{launch} is not UTF-8 text")
@@ -552,6 +560,8 @@ def check_launch_pages(archive: zipfile.ZipFile, files: dict[str, zipfile.ZipInf
         if mentioned:
             report.warn(f"{launch} scripts mention internet addresses {mentioned[:3]}; check nothing is downloaded or sent")
         script_texts = [text] + [read_text(archive, path) or "" for path in local_scripts]
+        if not is_launch:
+            continue
         if any("LMSInitialize" in chunk for chunk in script_texts):
             report.ok(f"{launch} starts a SCORM 1.2 session (LMSInitialize)")
         else:
@@ -605,6 +615,25 @@ def restore_original(entries: dict[str, bytes], info: dict | None = None) -> byt
     return text.encode("utf-8")
 
 
+def check_page_equivalence(archive: zipfile.ZipFile, report: Report) -> None:
+    """Other pages of a multi-page package must be their recorded source plus only the bridge."""
+    if "package-info.json" not in archive.namelist():
+        return
+    info = json.loads(archive.read("package-info.json").decode("utf-8"))
+    for page in info.get("pages", []):
+        try:
+            text = archive.read(page["path"]).decode("utf-8")
+        except KeyError:
+            report.fail(f"package-info lists page {page['path']}, which is not in the package")
+            continue
+        restored, count = BRIDGE_TAG_RE.subn("", text, count=1)
+        digest = hashlib.sha256(restored.encode("utf-8")).hexdigest()
+        if count != 1 or digest != page.get("sha256"):
+            report.fail(f"{page['path']} differs from its source beyond the SCORM bridge")
+        else:
+            report.ok(f"{page['path']} is its source page plus only the SCORM bridge")
+
+
 def check_source_equivalence(archive: zipfile.ZipFile, source: Path, report: Report) -> None:
     entries = {name: archive.read(name) for name in archive.namelist() if not name.endswith("/")}
     info = None
@@ -636,6 +665,7 @@ def validate_package(path: Path, source: Path | None = None) -> Report:
         launches = check_manifest(archive, files, report)
         check_launch_pages(archive, files, launches, report)
         check_content_safety(archive, files, report)
+        check_page_equivalence(archive, report)
         if source is not None:
             check_source_equivalence(archive, source, report)
     return report

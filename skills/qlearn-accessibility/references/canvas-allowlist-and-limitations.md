@@ -17,6 +17,13 @@ A teacher controls the **body of their own course pages**: the HTML inside the r
 - **iframe `sandbox` tokens** kept: `allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation allow-downloads allow-forms`. `allow-top-navigation` is removed.
 - `target="_blank"` links get `rel="noopener"` on save. `data-url`, `data-method`, `data-remote`, `data-remove`, `data-confirm` and `data-disable-with` are renamed `data-custom-*`.
 
+## Observed on QLearn (differs from the published list)
+
+- **21 October 2026:** saving a page through the API removed `object-fit` and `box-sizing` from `<img style>` even though both appear on the published allowlist. Square symbols were unaffected. A padded symbol grew by its padding and border because the box model fell back to `content-box`. Size padded images as content box (width = target − padding − border) and don't rely on `object-fit`.
+- Pages read through the API include QLearn's mobile-theme `<link>` and `<script>` tags. These are injected by QLearn rather than authored. Strip them before re-saving (QLearn re-adds them), and don't count them as content.
+
+Always run `scripts/compare_saved_canvas_page.py` after saving: it reports exactly which properties the real instance kept.
+
 ## Removed or not usable on a page
 
 - `<script>`, `<style>`, `<link>`, `<meta>`, `<form>`, `<input>`, `<button>`, `<select>`, `<textarea>`, `<canvas>`, inline `<svg>` and every `on…=` event handler. No interactivity survives, so dwell, speech buttons, drag-and-drop and self-marking quizzes cannot work on a page.

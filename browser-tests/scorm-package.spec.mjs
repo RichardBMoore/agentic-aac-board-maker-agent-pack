@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdtempSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -26,6 +26,16 @@ const EMBED = { width: 960, height: 600 };
 const packages = {};
 test.beforeAll(() => {
   const workDir = mkdtempSync(path.join(os.tmpdir(), "aac-scorm-"));
+  // A two-page activity (menu + activity) for the multi-page session test.
+  const multiSource = path.join(workDir, "multi-source");
+  const page = (title, other) => `<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>${title}</title></head>` +
+    `<body><h1>${title}</h1><a id="go" href="${other}">Next page</a></body></html>`;
+  mkdirSync(path.join(multiSource, "sub"), { recursive: true });
+  writeFileSync(path.join(multiSource, "index.html"), page("Menu", "sub/two.html"));
+  writeFileSync(path.join(multiSource, "sub", "two.html"), page("Activity", "../index.html"));
+  execFileSync(python, [builder, path.join(multiSource, "index.html"), path.join(workDir, "multi.zip"), "--page", "sub/two.html"], { stdio: "pipe" });
+  execFileSync(python, ["-m", "zipfile", "-e", path.join(workDir, "multi.zip"), path.join(workDir, "multi")], { stdio: "pipe" });
+  packages.multi = path.join(workDir, "multi");
   for (const layout of ["inline", "split"]) {
     const zip = path.join(workDir, `${layout}.zip`);
     const unpacked = path.join(workDir, layout);
@@ -46,14 +56,16 @@ function playerHtml() {
 <body style="margin:0;overflow:hidden">
 <script>
   window.__scormCalls = [];
+  let open = false; let finished = false; let lastError = "0";
   const record = (name, result) => (...args) => { window.__scormCalls.push([name, ...args]); return result; };
   window.API = {
-    LMSInitialize: record("LMSInitialize", "true"),
-    LMSFinish: record("LMSFinish", "true"),
+    // Behaves like a strict SCORM 1.2 runtime: one session, no re-initialising, nothing after finish.
+    LMSInitialize: (...args) => { window.__scormCalls.push(["LMSInitialize", ...args]); if (open || finished) { lastError = "101"; return "false"; } open = true; lastError = "0"; return "true"; },
+    LMSFinish: (...args) => { window.__scormCalls.push(["LMSFinish", ...args]); if (!open) { lastError = "301"; return "false"; } open = false; finished = true; return "true"; },
     LMSGetValue: record("LMSGetValue", ""),
     LMSSetValue: record("LMSSetValue", "true"),
     LMSCommit: record("LMSCommit", "true"),
-    LMSGetLastError: () => "0",
+    LMSGetLastError: () => lastError,
     LMSGetErrorString: () => "",
     LMSGetDiagnostic: () => "",
   };
@@ -143,6 +155,22 @@ for (const layout of ["inline", "split"]) {
     expect(errors).toEqual([]);
   });
 }
+
+test("multi-page activity keeps one SCORM session while moving between its pages", async ({ page }) => {
+  const { content, player, external, errors } = await openInLms(page, "multi");
+  await expect(content.locator("h1")).toHaveText("Menu");
+  await content.locator("#go").click();
+  await expect(content.locator("h1")).toHaveText("Activity");
+  const frame = page.frames().find((candidate) => candidate.url().endsWith("/content/sub/two.html"));
+  await expect.poll(() => frame.evaluate(() => window.AACScorm && window.AACScorm.status())).toMatchObject({ initialised: true, continued: true, finished: false });
+  await content.locator("#go").click();
+  await expect(content.locator("h1")).toHaveText("Menu");
+  expect((await player.evaluate(() => window.__scormCalls)).filter((call) => call[0] === "LMSFinish")).toEqual([]);
+  await player.evaluate(() => { document.getElementById("wrapper").src = "about:blank"; });
+  await expect.poll(() => player.evaluate(() => window.__scormCalls.filter((call) => call[0] === "LMSFinish").length)).toBe(1);
+  expect(external).toEqual([]);
+  expect(errors).toEqual([]);
+});
 
 test("board fits the embedded player area at full target size", async ({ page }) => {
   const { content, frame, errors } = await openInLms(page, "inline");

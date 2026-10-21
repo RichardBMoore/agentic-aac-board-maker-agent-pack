@@ -13,7 +13,8 @@ imsmanifest.xml              SCORM 1.2 manifest: one organisation, one item, one
 index.html                   the original activity + one line loading the bridge
 scorm/scorm12-bridge.js      LMSInitialize on open, LMSFinish on leave; nothing else
 licences/ARASAAC-symbols-LICENCE.md   when the board embeds ARASAAC symbols
-package-info.json            source sha256, layout, bridge settings, how to verify
+package-info.json            source sha256, layout, bridge settings, extra pages, how to verify
+<other pages>.html           multi-page activities only (--page): each gets the bridge, one session across pages
 assets/inline-*.js|css       split layout only
 ```
 

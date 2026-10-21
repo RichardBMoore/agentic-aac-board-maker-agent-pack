@@ -10,6 +10,10 @@
  * - With no LMS (opened from a file or a plain web page) it does nothing,
  *   so the activity behaves exactly as the standalone file does.
  *
+ * Multi-page packages (data-multi-page="true" on every page's bridge tag):
+ * moving between the package's own pages keeps one LMS session open, so the
+ * session is finished only when the learner leaves the activity.
+ *
  * Status for teachers/QA: window.AACScorm.status() in the browser console.
  */
 (function () {
@@ -18,12 +22,17 @@
   var MAX_PARENT_HOPS = 12;
   var script = document.currentScript;
   var reportCompletion = Boolean(script && script.getAttribute("data-report-completion") === "true");
+  var multiPage = Boolean(script && script.getAttribute("data-multi-page") === "true");
+  var INTERNAL_NAVIGATION_WINDOW_MS = 5000;
+  var internalNavigationAt = 0;
 
   var state = {
     mode: "standalone",
     apiFound: false,
     initialised: false,
     finished: false,
+    continued: false,
+    multiPage: multiPage,
     completionReported: false,
     reportCompletion: reportCompletion,
     calls: [],
@@ -90,13 +99,36 @@
     state.mode = "lms";
     state.apiFound = true;
     state.initialised = call("LMSInitialize", "");
-    if (state.initialised && reportCompletion) {
+    if (!state.initialised && multiPage && state.lastError === "101") {
+      // Already initialised by an earlier page of this package: carry on in the same session.
+      state.initialised = true;
+      state.continued = true;
+      state.lastError = "";
+    }
+    if (state.initialised && reportCompletion && !state.continued) {
       state.completionReported = call("LMSSetValue", "cmi.core.lesson_status", "completed") && call("LMSCommit", "");
     }
   }
 
+  if (multiPage) {
+    document.addEventListener("click", function (event) {
+      var link = event.target && event.target.closest ? event.target.closest("a[href]") : null;
+      if (!link || (link.target && link.target !== "_self")) return;
+      var url;
+      try {
+        url = new URL(link.getAttribute("href"), window.location.href);
+      } catch (error) {
+        return;
+      }
+      if (url.origin === window.location.origin && /\.html?$/i.test(url.pathname)) {
+        internalNavigationAt = Date.now();
+      }
+    }, true);
+  }
+
   function finish() {
     if (!api || !state.initialised || state.finished) return;
+    if (multiPage && Date.now() - internalNavigationAt < INTERNAL_NAVIGATION_WINDOW_MS) return; // moving to another page of this activity
     state.finished = true;
     call("LMSFinish", "");
   }
