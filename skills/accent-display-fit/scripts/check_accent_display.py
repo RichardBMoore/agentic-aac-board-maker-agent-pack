@@ -31,8 +31,12 @@ PROFILES = {
 BANNED_CSS = [":has(", "@container", "subgrid"]
 DEFAULT_GAP = 12
 MIN_TARGET = 120
-CHROME_PLAIN = 96
-CHROME_MESSAGE_BAR = 166
+# Height above the grid. Measured on the pack's renderer in Chrome at 1264 x 600:
+# the first grid row starts 103 px down, 173 px with a message bar. Both carry
+# 7 px for platform font differences. Keep equal to display_fit.py in the
+# agentic-aac-board-maker skill (tests/test_display_fit.py checks this).
+CHROME_PLAIN = 110
+CHROME_MESSAGE_BAR = 180
 
 
 class ElementCollector(HTMLParser):
@@ -63,7 +67,9 @@ def grid_dimensions(text: str) -> list[tuple[int, int]]:
     """Collect (rows, columns) pairs from inline style/CSS variable declarations."""
     pairs: list[tuple[int, int]] = []
     for match in re.finditer(r"grid-rows\s*:\s*(\d+)\s*;?\s*(?:--)?grid-columns\s*:\s*(\d+)", text):
-        pairs.append((int(match.group(1)), int(match.group(2))))
+        pair = (int(match.group(1)), int(match.group(2)))
+        if pair not in pairs:  # report each grid size once, not once per page
+            pairs.append(pair)
     for match in re.finditer(r"grid-columns\s*:\s*(\d+)\s*;?\s*(?:--)?grid-rows\s*:\s*(\d+)", text):
         pair = (int(match.group(2)), int(match.group(1)))
         if pair not in pairs:
@@ -78,7 +84,7 @@ def main() -> int:
                         help="named effective-viewport floor (default: mustfit 1264x600)")
     parser.add_argument("--floor", help="explicit WxH floor in CSS px, e.g. 1264x600 (overrides --profile)")
     parser.add_argument("--chrome", type=int, default=None,
-                        help="page chrome height in px reserved above/around the grid (default: 96, or 166 with a message bar)")
+                        help="page chrome height in px reserved above/around the grid (default: 110, or 180 with a message bar)")
     args = parser.parse_args()
 
     if args.floor:
@@ -194,7 +200,13 @@ def main() -> int:
     gap = first_int(r"\.board-grid[^}]*?gap\s*:\s*(\d+)px", text) or first_int(r"--gap\s*:\s*(\d+)px", text) or DEFAULT_GAP
     chrome = args.chrome
     if chrome is None:
-        chrome = CHROME_MESSAGE_BAR if "message-bar" in text else CHROME_PLAIN
+        # Look for a message bar element. The class name alone also appears in
+        # the stylesheet of boards that have no message bar.
+        has_message_bar = any(
+            "message-bar" in attrs.get("class", "").split() or attrs.get("id") == "message-bar"
+            for _tag, attrs in collector.elements
+        )
+        chrome = CHROME_MESSAGE_BAR if has_message_bar else CHROME_PLAIN
 
     grids = grid_dimensions(text)
     if target and grids:

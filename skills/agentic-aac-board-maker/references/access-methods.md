@@ -31,6 +31,7 @@ Rules:
 
 - Prefer 2x2, 2x3, 3x3; avoid dense 4x4 unless tested.
 - Target floor: 120 px; 150–200 px for small boards when screen allows.
+- Check the page still fits before enlarging targets. A page taller than the screen is cut off, not scrolled, and the bottom row holds Help, Different and Finished. At the 1264 x 600 floor, three rows with a message bar allow at most 132 px (155 px without one) and two rows allow 204 px (239 px without one). For bigger targets use fewer rows. `scripts/build_board.py` fails a board that does not fit and gives the largest size that does.
 - Gap: 20 px where practical.
 - Dwell: start 800-1200 ms (800 ms matches the PRC-Saltillo NuVoice factory default for Accent eye tracking: https://documentation.prc-saltillo.com/docs/calibrate-and-set-up-eye-tracking-in-nuvoice-1). Use 1000-1500 ms when accidental activation is a risk; below 800 ms only for confident, experienced gaze users; outside 500-1500 ms is a team/SLP decision. Expose dwell time as a teacher-adjustable control where practical. The eyegaze-dwell-html skill owns the full dwell rules.
 - Show visible dwell progress.

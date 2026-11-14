@@ -1,6 +1,6 @@
 # Evaluation Fixtures
 
-Use these fixtures to check whether the skill stack helps different agents generate useful AAC resources from short teacher prompts.
+Use these fixtures to check whether the skill stack helps different agents generate useful AAC resources from short teacher prompts. This is pack maintenance. An ordinary new board is checked with `scripts/build_board.py`, not with this harness.
 
 Each fixture should produce:
 

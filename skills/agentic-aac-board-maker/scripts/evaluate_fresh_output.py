@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Evaluate newly generated AAC resource folders against proof fixture expectations."""
+"""Score freshly generated answers to the pack's benchmark prompts.
+
+This is pack maintenance: it checks that the skill stack still produces good
+boards for the six prompts in fixtures/proof-of-concept-prompts.json. The
+candidate root must hold one subfolder per fixture id. To check an ordinary
+board, use build_board.py (add --check to change nothing).
+"""
 
 from __future__ import annotations
 
@@ -208,6 +214,18 @@ def main(argv: list[str] | None = None) -> int:
         print(f"FAIL: cannot read fixture manifest: {error}", file=sys.stderr)
         return 1
     report = evaluate(args.candidate_root, manifest, set(args.fixtures) if args.fixtures else None)
+    folders_missing = [
+        fixture["id"] for fixture in report["fixtures"]
+        if any(item["name"] == "fixture-folder" and not item["passed"] for item in fixture["checks"])
+    ]
+    if report["fixtures"] and len(folders_missing) == len(report["fixtures"]):
+        print(
+            f"FAIL: {args.candidate_root} has no benchmark fixture folders ({', '.join(folders_missing)}). "
+            "This harness only scores the pack's benchmark prompts. To check an ordinary board run "
+            "build_board.py <board.ir.json> --check.",
+            file=sys.stderr,
+        )
+        return 1
     for fixture in report["fixtures"]:
         print(f"{'PASS' if fixture['passed'] else 'FAIL'}: {fixture['id']}")
         for item in fixture["checks"]:

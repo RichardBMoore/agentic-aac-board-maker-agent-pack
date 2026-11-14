@@ -7,7 +7,7 @@ python3 scripts/apply_house_standards.py board.ir.json            # apply (idemp
 python3 scripts/apply_house_standards.py board.ir.json --check    # release gate: already applied?
 ```
 
-Run it after writing the IR and before rendering. It changes nothing on a second run. The validator fails canonical IR 0.5.0 that does not record `house`.
+`scripts/build_board.py` runs this step for you as the first part of every build; run it directly only when you need that step alone. It changes nothing on a second run. The validator fails canonical IR 0.5.0 that does not record `house`.
 
 | File | What it holds | Who changes it |
 | --- | --- | --- |

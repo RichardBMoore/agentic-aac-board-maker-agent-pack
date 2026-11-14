@@ -20,13 +20,13 @@ export default defineConfig({
   projects: [
     {
       name: "accent-1000-classroom",
-      testIgnore: /accent-display\.spec\.mjs/,
+      testIgnore: /(accent-display|screen-fit)\.spec\.mjs/,
       use: { viewport: { width: 1280, height: 800 } },
     },
     { name: "accent-1400-classroom", use: { viewport: { width: 1920, height: 1080 } } },
     {
       name: "classroom-laptop",
-      testIgnore: /accent-display\.spec\.mjs/,
+      testIgnore: /(accent-display|screen-fit)\.spec\.mjs/,
       use: { viewport: { width: 1366, height: 768 } },
     },
   ],

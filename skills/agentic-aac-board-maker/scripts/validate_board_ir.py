@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import display_fit  # noqa: E402
 import house_standards as hs  # noqa: E402
 from output_layout import grid_slots  # noqa: E402
 
@@ -76,6 +77,12 @@ AGENCY_FUNCTIONS = {
 
 CONTENT_ONLY_FUNCTIONS = {"answer", "choose", "sequence"}
 CONTENT_ONLY_ROLES = {"fringe", "evidence"}
+
+# Pages house standards add to every board. They always hold Help and core words,
+# so they must not count when judging whether the pages the author wrote give the
+# student a way to repair, refuse or say more than an answer.
+LITERACY_PATTERNS = hs.GENERATED_PATTERNS
+REPAIR_FUNCTIONS = {"repair", "refuse", "regulate-rest"}
 
 REPAIR_LABELS = {
     "help",
@@ -396,7 +403,8 @@ def validate(data: dict[str, Any]) -> tuple[list[str], list[str]]:
         if minimum_target_px is None:
             failures.append(
                 "Eye-gaze/mouse-dwell profile must declare a numeric minimumTargetSizePx of at least 120 "
-                "(prefer 200+ per gaze-interface research)."
+                "(gaze-interface research favours larger targets, up to 200+, where the page still fits the screen: "
+                "use fewer rows rather than a size that cuts off the bottom row)."
             )
         elif minimum_target_px < 120:
             failures.append("Eye-gaze/mouse-dwell profile should use minimumTargetSizePx >= 120.")
@@ -404,6 +412,13 @@ def validate(data: dict[str, Any]) -> tuple[list[str], list[str]]:
         failures.append("Direct-selection profile should not use minimumTargetSizePx below 44.")
     if profile in {"single-switch", "two-switch"} and max_buttons_per_page > 9:
         warnings.append("Switch-scanning board has more than 9 buttons on a page; confirm scan fatigue and pattern.")
+
+    # A page taller than the screen is cut off, not scrolled, and the house layout
+    # keeps Help, Different and Finished on the bottom row.
+    if display_fit.is_on_screen(data):
+        for entry in display_fit.board_fit(data):
+            if not entry["fits"]:
+                warnings.append("Screen fit: " + display_fit.describe(entry))
 
     visible_target_limit = access.get("visibleTargetLimit")
     if visible_target_limit is not None:
@@ -428,18 +443,35 @@ def validate(data: dict[str, Any]) -> tuple[list[str], list[str]]:
         except (TypeError, ValueError):
             failures.append("setupTargetLimit must be an integer.")
 
-    total_content_buttons = content_button_count(pages)
-    if total_content_buttons > 2 and not has_repair_route(pages):
-        failures.append("Board has more than two content buttons but no repair/refusal/finished route.")
+    # Judge agency on the pages the author wrote, not on the literacy pages house standards add.
+    literacy_pages = [page for page in pages if text(as_dict(page).get("pattern")) in LITERACY_PATTERNS]
+    authored_pages = [page for page in pages if text(as_dict(page).get("pattern")) not in LITERACY_PATTERNS] or pages
+    added_note = " The Help and core words on the added spelling and core-word pages do not count." if literacy_pages else ""
+    total_content_buttons = content_button_count(authored_pages)
+    if total_content_buttons > 2 and not has_repair_route(authored_pages):
+        failures.append("Board has more than two content buttons but no repair/refusal/finished route." + added_note)
     if total_content_buttons >= 4:
-        content = content_buttons(pages)
+        content = content_buttons(authored_pages)
         content_functions = {text(button.get("function")) for button in content if text(button.get("function"))}
         content_roles = {text(button.get("role")) for button in content if text(button.get("role"))}
-        top_level_functions = {text(value) for value in communication_functions}
+        # Applying house standards merges every page's functions into communicationFunctions,
+        # so drop the ones that only the added literacy pages realise.
+        only_on_literacy_pages = realised_button_functions(literacy_pages) - realised_button_functions(authored_pages)
+        top_level_functions = {text(value) for value in communication_functions} - only_on_literacy_pages
         if content_functions <= CONTENT_ONLY_FUNCTIONS and content_roles <= CONTENT_ONLY_ROLES and not top_level_functions.intersection(AGENCY_FUNCTIONS):
-            failures.append("Board appears to be a noun/content grid with no communication agency function.")
-        if content_functions <= {"answer"} or (top_level_functions <= {"answer", "choose"} and max_content_buttons_per_page >= 3 and not has_button_agency(pages)):
-            failures.append("Board appears quiz-only or answer-only; add repair, explanation, uncertainty, or student agency.")
+            failures.append("Board appears to be a noun/content grid with no communication agency function." + added_note)
+        if content_functions <= {"answer"} or (top_level_functions <= {"answer", "choose"} and max_content_buttons_per_page >= 3 and not has_button_agency(authored_pages)):
+            failures.append("Board appears quiz-only or answer-only; add repair, explanation, uncertainty, or student agency." + added_note)
+    for raw_page in authored_pages:
+        page = as_dict(raw_page)
+        visible = [as_dict(raw) for raw in as_list(page.get("buttons")) if as_dict(raw).get("hidden") is not True]
+        words = [button for button in visible if text(button.get("role")) not in {"repair", "navigation", "teacher"}]
+        has_repair = any(text(button.get("role")) == "repair" or text(button.get("function")) in REPAIR_FUNCTIONS for button in visible)
+        if len(words) >= 3 and not has_repair:
+            warnings.append(
+                f"{text(page.get('id')) or 'page'}: no Help or other repair word on this page. Add a button labelled Help; "
+                "house standards keep it bottom-left on every page so the student never has to leave the page to ask."
+            )
 
     declared_functions = {text(value) for value in communication_functions if text(value)}
     realised_functions = realised_button_functions(pages)

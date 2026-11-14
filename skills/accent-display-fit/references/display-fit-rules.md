@@ -10,18 +10,24 @@ Check before building, at the **must-fit floor 1264 x 600**:
 needed_width  = cols * target + (cols - 1) * gap + horizontal_page_padding
 needed_height = rows * target + (rows - 1) * gap + page_chrome
 
-page_chrome ≈ 96 px (title + padding)   |   ≈ 166 px with a message bar
+page_chrome ≈ 110 px (title + padding)   |   ≈ 180 px with a message bar
 ```
+
+The chrome figures were measured on the pack's renderer in Chrome at 1264 x 600 (the first grid row starts 103 px down, 173 px with a message bar) and include 7 px for platform font differences. Measure your own page's chrome for custom activities and pass it with `--chrome`.
 
 With the pack defaults (target 150, gap 12, padding 24):
 
 | Grid | Needs (no message bar) | Needs (message bar) | Fits 1264 x 600? |
 | --- | --- | --- | --- |
-| 1 x 2, 2 x 2 | ≤ 336 x 408 | ≤ 336 x 478 | Yes |
-| 2 x 3 | 498 x 408 | 498 x 478 | Yes |
-| 3 x 3 | 498 x 570 | 498 x 640 | Yes / **No with message bar** |
-| 3 x 4 | 660 x 570 | 660 x 640 | Yes / **No with message bar** |
+| 1 x 2, 2 x 2 | ≤ 336 x 422 | ≤ 336 x 492 | Yes |
+| 2 x 3 | 498 x 422 | 498 x 492 | Yes |
+| 3 x 3 | 498 x 584 | 498 x 654 | Yes / **No with message bar** |
+| 3 x 4 | 660 x 584 | 660 x 654 | Yes / **No with message bar** |
 | 4 x anything | — | — | **No** (4 rows x 150 + chrome > 600) |
+
+Largest target that still fits 600 px of height: 3 rows with a message bar **132 px** (155 px without); 2 rows with a message bar **204 px** (239 px without). Boards with a spelling keyboard or core words have a message bar. A page that is too tall is cut off rather than scrolled, and the house layout keeps Help, Different and Finished on the bottom row, so those are the words that go missing.
+
+During speech the renderer reserves a Stop speech column one target wide at the right edge, so width needs `(cols + 1) x target + cols x gap + padding`. The one-page keyboard (4 x 11) at 96 px needs 1308 px and does not fit 1264: use targets of 92 px or less, or the grouped keyboard.
 
 When the maths fails you have exactly three levers, in order:
 

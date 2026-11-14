@@ -6,7 +6,7 @@ Use this when preparing the pack for distribution as a Codex plugin or as standa
 
 The plugin root must include:
 
-- `.codex-plugin/plugin.json`;
+- `.codex-plugin/plugin.json` and `.claude-plugin/plugin.json` with the same name and version;
 - `skills/` with installable skill folders;
 - each skill folder has `SKILL.md`;
 - each key skill has `agents/openai.yaml`;
@@ -42,7 +42,7 @@ Before saying the agentic board workflow is usable:
 
 1. Create an IR fixture for each proof-of-concept prompt.
 2. Keep each generated fixture as a small resource pack containing:
-   - `*.ir.json` as the source of truth;
+   - `*.ir.json` as the source of truth for renders (new boards also keep the small `*.source.json` it was built from);
    - matching `*.open-aac-studio.json` renderer output;
    - matching `*.html` classroom/print/digital output;
    - `README.md` explaining use, access assumptions, and draft-status caveats.
@@ -51,9 +51,10 @@ Before saying the agentic board workflow is usable:
 5. Pass HTML/IR/shared-runtime parity.
 6. Include powerhouse and `systemFit` metadata where practical.
 7. Run static HTML/eye-gaze checks and Playwright device-viewport interaction QA.
-8. Evaluate newly generated candidate folders with `scripts/evaluate_fresh_output.py`.
-9. Review symbols as candidates; apply only approved ids.
-10. Review against `qa-rubric.md` and `anti-patterns.md`, recording the owning reference when a fixture fails.
+8. Every fixture passes `scripts/build_board.py <ir> --check`, and the starter skeleton builds into a valid pack.
+9. After changing skill instructions, regenerate the six benchmark prompts with a fresh agent and score the candidates with `scripts/evaluate_fresh_output.py`.
+10. Review symbols as candidates; apply only approved ids.
+11. Review against `qa-rubric.md` and `anti-patterns.md`, recording the owning reference when a fixture fails.
 
 `python3 scripts/check_pack.py` now enforces the generated-fixture regression gate for every `generated/**/*.ir.json` and static generated HTML access/offline checks for every `generated/**/*.html`.
 

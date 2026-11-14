@@ -242,10 +242,11 @@ def is_external(value: str) -> bool:
     return parsed.scheme in {"http", "https"} or value.startswith("//")
 
 
-def check_ir_schema_file(path: Path) -> bool:
+def check_ir_schema_file(path: Path, label: str | None = None) -> bool:
     if Draft202012Validator is None:
         fail("jsonschema is missing; install requirements-dev.txt before release checks")
         return False
+    name = label or str(path.relative_to(ROOT))
     schema_path = SKILLS / "agentic-aac-board-maker" / "references" / "aac-board-ir.schema.json"
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
     data = json.loads(path.read_text(encoding="utf-8"))
@@ -253,50 +254,37 @@ def check_ir_schema_file(path: Path) -> bool:
     if errors:
         first = errors[0]
         location = ".".join(str(part) for part in first.path) or "<root>"
-        fail(f"{path.relative_to(ROOT)} fails AAC Board IR schema at {location}: {first.message}")
+        fail(f"{name} fails AAC Board IR schema at {location}: {first.message}")
         return False
-    ok(f"{path.relative_to(ROOT)} satisfies AAC Board IR JSON Schema")
+    ok(f"{name} satisfies AAC Board IR JSON Schema")
     return True
 
 
 def check_ir_pipeline() -> bool:
-    ir = SKILLS / "agentic-aac-board-maker" / "templates" / "board-json-skeleton.json"
-    validator = SKILLS / "agentic-aac-board-maker" / "scripts" / "validate_board_ir.py"
-    renderer = SKILLS / "agentic-aac-board-maker" / "scripts" / "render_open_aac_studio.py"
-    canonicalizer = SKILLS / "agentic-aac-board-maker" / "scripts" / "canonicalize_board_ir.py"
-    html_renderer = SKILLS / "agentic-aac-board-maker" / "scripts" / "render_html.py"
-    parity = SKILLS / "agentic-aac-board-maker" / "scripts" / "validate_html_parity.py"
-    if not run_command([sys.executable, str(canonicalizer), str(ir), "--check"]):
-        fail("canonical IR skeleton is not canonical")
+    """The starter file must stay small and must build into a complete, valid pack."""
+    skeleton = SKILLS / "agentic-aac-board-maker" / "templates" / "board-json-skeleton.json"
+    builder = SKILLS / "agentic-aac-board-maker" / "scripts" / "build_board.py"
+    text = skeleton.read_text(encoding="utf-8")
+    if "data:" in text or len(text) > 20_000:
+        fail("starter skeleton must stay a small source file with no embedded pictures (agents read it in full)")
         return False
-    if not check_ir_schema_file(ir):
-        return False
-    if not run_command([sys.executable, str(validator), str(ir)]):
-        fail("canonical IR skeleton failed validation")
-        return False
-
     with tempfile.TemporaryDirectory() as tmp:
-        out = Path(tmp) / "open-aac-studio.json"
-        if not run_command([sys.executable, str(renderer), str(ir), str(out)]):
-            fail("Open AAC Studio renderer failed")
+        source = Path(tmp) / "starter.source.json"
+        source.write_text(text, encoding="utf-8")
+        formats = "html,partner-card,obf,open-aac-studio"
+        if not run_command([sys.executable, str(builder), str(source), "--quiet", "--formats", formats]):
+            fail("starter skeleton does not build into a valid pack with build_board.py")
             return False
-        try:
-            data = json.loads(out.read_text(encoding="utf-8"))
-        except json.JSONDecodeError as error:
-            fail(f"Rendered Open AAC Studio JSON did not parse: {error}")
+        if not check_ir_schema_file(Path(tmp) / "starter.ir.json", label="built starter skeleton"):
             return False
+        if not run_command([sys.executable, str(builder), str(source), "--quiet", "--check", "--formats", formats]):
+            fail("starter skeleton build is not reproducible (build_board.py --check failed straight after building)")
+            return False
+        data = json.loads((Path(tmp) / "starter.open-aac-studio.json").read_text(encoding="utf-8"))
         if data.get("app") != "Open AAC Studio" or not data.get("pages"):
             fail("Rendered Open AAC Studio JSON missing app/pages")
             return False
-        ok("IR validates and renders to Open AAC Studio JSON")
-        html_out = Path(tmp) / "board.html"
-        if not run_command([sys.executable, str(html_renderer), str(ir), str(html_out)]):
-            fail("canonical IR skeleton failed HTML rendering")
-            return False
-        if not run_command([sys.executable, str(parity), str(ir), str(html_out)]):
-            fail("canonical IR skeleton HTML failed parity")
-            return False
-        ok("IR renders to HTML with IR/runtime parity")
+    ok("starter skeleton is a small source file that builds into a valid HTML/partner card/OBF/Open AAC Studio pack")
     return True
 
 
@@ -473,6 +461,12 @@ def check_generated_resource_fixtures() -> bool:
                 continue
 
             ok(f"{rel} validates and renders ({len(pages)} page(s), {buttons} button(s), HTML/OAS/OBF in sync)")
+
+        # The one-command gate agents use must agree with the checks above.
+        builder = SKILLS / "agentic-aac-board-maker" / "scripts" / "build_board.py"
+        if not run_command([sys.executable, str(builder), str(ir), "--check", "--quiet"]):
+            fail(f"{rel} fails build_board.py --check (stale output, screen fit or validation)")
+            success = False
 
     return success
 
@@ -656,44 +650,56 @@ def check_release_metadata() -> bool:
         fail(f"CHANGELOG.md has no entry for version {version}")
         success = False
 
+    # Hooks: the default hooks/hooks.json plus anything the manifest names.
+    hook_files = [ROOT / "hooks" / "hooks.json"] if (ROOT / "hooks" / "hooks.json").exists() else []
     hooks_ref = claude.get("hooks")
-    if hooks_ref:
+    if isinstance(hooks_ref, str):
         hooks_path = (ROOT / hooks_ref).resolve()
         if not hooks_path.exists():
             fail(f".claude-plugin/plugin.json hooks path {hooks_ref} does not exist")
             success = False
-        else:
-            hooks_data = json.loads(hooks_path.read_text(encoding="utf-8"))
-            for event, entries in (hooks_data.get("hooks") or {}).items():
-                for entry in entries:
-                    for hook in entry.get("hooks", []):
-                        command = hook.get("command", "")
-                        if "${CLAUDE_PLUGIN_ROOT}" in command:
-                            rel = command.split("${CLAUDE_PLUGIN_ROOT}/", 1)[1].strip('"')
-                            script = ROOT / rel
-                            if not script.exists():
-                                fail(f"hooks.json {event} references missing script {rel}")
+        elif hooks_path not in hook_files:
+            hook_files.append(hooks_path)
+    for hooks_path in hook_files:
+        hooks_data = json.loads(hooks_path.read_text(encoding="utf-8"))
+        if not isinstance(hooks_data.get("hooks"), dict):
+            fail(f"{hooks_path.relative_to(ROOT)} must wrap its events in a top-level 'hooks' object")
+            success = False
+            continue
+        for event, entries in hooks_data["hooks"].items():
+            for entry in entries:
+                for hook in entry.get("hooks", []):
+                    # Exec form keeps the script path in args; shell form keeps it in command.
+                    parts = [str(hook.get("command", "")), *(str(arg) for arg in hook.get("args", []))]
+                    for part in parts:
+                        if "${CLAUDE_PLUGIN_ROOT}/" not in part:
+                            continue
+                        rel = part.split("${CLAUDE_PLUGIN_ROOT}/", 1)[1].strip('"').split('"')[0]
+                        script = ROOT / rel
+                        if not script.exists():
+                            fail(f"{hooks_path.name} {event} references missing script {rel}")
+                            success = False
+                        elif script.suffix == ".py":
+                            try:
+                                ast.parse(script.read_text(encoding="utf-8"))
+                            except SyntaxError as error:
+                                fail(f"hook script {rel} has a syntax error: {error}")
                                 success = False
-                            elif script.suffix == ".py":
-                                try:
-                                    ast.parse(script.read_text(encoding="utf-8"))
-                                except SyntaxError as error:
-                                    fail(f"hook script {rel} has a syntax error: {error}")
-                                    success = False
 
-    agent_refs = claude.get("agents") or []
-    for agents_ref in agent_refs:
-        agents_dir = (ROOT / agents_ref).resolve()
-        agent_files = sorted(agents_dir.glob("*.md")) if agents_dir.exists() else []
-        if not agent_files:
+    # Agents: the default agents/ folder plus anything the manifest names.
+    agent_files = sorted((ROOT / "agents").glob("*.md")) if (ROOT / "agents").exists() else []
+    for agents_ref in claude.get("agents") or []:
+        listed = (ROOT / agents_ref).resolve()
+        found = [listed] if listed.is_file() else sorted(listed.glob("*.md")) if listed.exists() else []
+        if not found:
             fail(f".claude-plugin/plugin.json agents path {agents_ref} has no agent markdown files")
             success = False
-        for agent_md in agent_files:
-            content = agent_md.read_text(encoding="utf-8")
-            front = content.split("---")[1] if content.startswith("---") and content.count("---") >= 2 else ""
-            if "name:" not in front or "description:" not in front:
-                fail(f"agent {agent_md.name} is missing name/description frontmatter")
-                success = False
+        agent_files += [path for path in found if path not in agent_files]
+    for agent_md in agent_files:
+        front = parse_frontmatter(agent_md.read_text(encoding="utf-8"))
+        if front is None or not front.get("name") or not front.get("description"):
+            fail(f"agent {agent_md.name} is missing name/description frontmatter")
+            success = False
 
     if success:
         ok("release metadata (versions, marketplace, hooks, agents) is consistent")

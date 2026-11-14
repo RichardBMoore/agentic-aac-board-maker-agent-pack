@@ -51,7 +51,7 @@ MANAGED_ACTIONS = {
     "speak-text", "speak-label", "add-to-message", "log-attempt", "speak-message", "remove-last-word",
     "clear-message", "delete-letter", "add-space", "add-letter",
 }
-GENERATED_PATTERNS = {"keyboard", "keyboard-letters", "core-words", "word-endings"}
+GENERATED_PATTERNS = hs.GENERATED_PATTERNS
 ENDING_LABELS = {"s": "-s", "ing": "-ing", "ed": "-ed", "er": "-er", "est": "-est"}
 
 

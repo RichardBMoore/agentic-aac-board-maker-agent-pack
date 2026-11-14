@@ -2,8 +2,11 @@
 
 Every output derives from canonical AAC Board IR 0.5.0 with house standards applied. The IR is the design source; HTML, Open AAC Studio JSON and OBF/OBZ are disposable deterministic renders.
 
+`scripts/build_board.py <name>.source.json --out-dir <folder>` produces the IR and the default renders and enforces the contracts below in one step; `scripts/build_board.py <name>.ir.json --check` re-verifies a finished pack without changing it. The source file is the small, editable form of the board; the built IR is what renderers read.
+
 ## Contract 0 — Canonical IR
 
+- Built by `scripts/build_board.py`, not written or edited by hand (it embeds pictures and is too large to read; view it with `scripts/inspect_board.py`).
 - Pass `scripts/canonicalize_board_ir.py <ir> --check` and `scripts/apply_house_standards.py <ir> --check`.
 - Pass `references/aac-board-ir.schema.json` and `scripts/validate_board_ir.py`.
 - Contain no target-renderer aliases.
@@ -18,6 +21,7 @@ Every output derives from canonical AAC Board IR 0.5.0 with house standards appl
 - Live total-target audit; setup and speech are exclusive phases.
 - Working navigation/message actions, TTS failure state and large Stop Speech target.
 - Teacher notes/attribution outside normal student mode; print stylesheet; no sensitive data.
+- Every page fits the screen it is for (default floor 1264 x 600) without cutting off the bottom row.
 - Pass `scripts/validate_html_parity.py`, static HTML checks and browser/device tests.
 
 ## Contract B — Open AAC Studio JSON
@@ -50,7 +54,8 @@ Include large labels, strong borders, declared scan/pointing order, partner wait
 ```text
 <fixture-or-resource-id>/
   README.md
-  <slug>.ir.json
+  <slug>.source.json                # the small file to edit (new boards)
+  <slug>.ir.json                    # built from the source
   <slug>.html
   <slug>.open-aac-studio.json       # when useful
   <slug>.obf or <slug>.obz          # when useful
@@ -61,15 +66,15 @@ Include large labels, strong borders, declared scan/pointing order, partner wait
 
 README states purpose, access, established-system relationship, customisation, privacy, source IR, real-device/team checks and unresolved `systemFit` items.
 
-## Fresh-Output Gate
+## Benchmark Gate (Pack Maintenance)
 
-Evaluate newly generated candidate folders, not only committed golden outputs:
+`scripts/build_board.py` is the gate for an ordinary new board. The fresh-output harness is different: it scores freshly generated answers to the pack's six benchmark prompts, to check that the skill stack still produces good boards after the pack changes.
 
 ```sh
 python3 scripts/evaluate_fresh_output.py <candidate-root> --report evaluation-report.json
 ```
 
-The harness requires canonical/schema-valid IR, semantic validation, HTML/IR/runtime parity, expected artifacts and fixture-specific communication/access/resource checks. A golden fixture passing does not prove a newly generated resource passes.
+`<candidate-root>` must hold one subfolder per benchmark fixture id. The harness requires canonical/schema-valid IR, semantic validation, HTML/IR/runtime parity, expected artifacts and fixture-specific communication/access/resource checks. A golden fixture passing does not prove a newly generated resource passes. Pointed at any other folder it reports every fixture as missing.
 
 ## File Naming And Handoff
 

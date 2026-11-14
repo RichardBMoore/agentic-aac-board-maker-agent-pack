@@ -16,8 +16,9 @@ This is not "AI inside a board maker." It is a workflow for AI as the draft boar
 agentic-aac-board-maker-agent-pack/
   .claude-plugin/            Claude Code plugin manifest and marketplace listing
   .codex-plugin/             Codex plugin manifest
+  AGENTS.md                  Rules for agents and people changing this repository
   agents/                    Claude Code subagents (independent board QA reviewer)
-  hooks/                     Claude Code hooks (auto-validate boards on write)
+  hooks/                     Hook that checks board files as they are written
   .github/workflows/         GitHub validation workflow
   generated/                 Proof-of-concept boards and regression fixtures
   scripts/                   Repository validation script
@@ -37,13 +38,39 @@ It coordinates the core workflow:
 ```text
 teacher intent
   -> communication functions
-  -> canonical AAC Board IR
-  -> house standards (fixed places for key words, shared word list, spelling/core-word pages, symbols, colour, partner card)
-  -> deterministic HTML, print, partner card, Open AAC Studio JSON, OBF/OBZ, or resource pack
-  -> schema + parity + browser + fresh-output QA
+  -> a small board source file the agent writes (about 5 KB)
+  -> build_board.py, one command:
+       house standards (fixed places for key words, shared word list, spelling/core-word pages, symbols, colour, partner card)
+       -> canonical AAC Board IR
+       -> schema, communication and access validation
+       -> offline HTML board, partner card, OBF/OBZ (Open AAC Studio JSON on request)
+       -> HTML/IR parity, eye-gaze rules, screen fit
+       -> an outline of the finished board and what still needs attention
+  -> symbol review, fresh-eyes review, browser and device QA
 ```
 
-## Quick Start
+## What The Pack Does For An Agent
+
+An agent asked for "an eye-gaze board for this lesson" has no way to know the things that make a board usable: where Help must sit, that a resting gaze re-selects, how many targets fit on an Accent screen, which symbol licences apply. The pack supplies that in four layers:
+
+1. **Rules** in each skill's `references/` folder: communication rights, board grammar, access methods, symbols, curriculum and QCIA translation, privacy.
+2. **A board format** (AAC Board IR) that makes the agent state purpose, access and each button's job before anything is drawn.
+3. **Tools** that do the mechanical work the same way every time and refuse boards that break the rules.
+4. **Host automation** where the host supports it: a hook that checks board files as they are written and a reviewer subagent (Claude Code).
+
+## Make A Board
+
+```sh
+S=skills/agentic-aac-board-maker
+cp $S/templates/board-json-skeleton.json shops.source.json      # edit this small file
+python3 $S/scripts/build_board.py shops.source.json --out-dir shops-pack
+python3 $S/scripts/inspect_board.py shops-pack/shops.ir.json    # read the built board as an outline
+python3 $S/scripts/build_board.py shops-pack/shops.ir.json --check   # re-verify later without changing anything
+```
+
+`build_board.py` exits 1 when the pack is not ready and says why, for example a page too tall for the screen (the bottom row, where Help, Different and Finished live, would be cut off) or a quiz-only page with no Help. The built `*.ir.json` embeds its pictures and is 300-450 KB, about 80% base64: edit the source and rebuild, and read it with `inspect_board.py` rather than opening it.
+
+## Quick Start For Development
 
 Install development checks, then run the release gate:
 
@@ -53,6 +80,8 @@ python3 -m venv .venv
 npm ci
 .venv/bin/python scripts/check_pack.py
 ```
+
+The individual tools below still work on their own; `build_board.py` runs them in the right order.
 
 Canonicalise legacy IR and verify canonical 0.5.0 output:
 
@@ -115,7 +144,7 @@ python3 skills/agentic-aac-board-maker/scripts/render_obf.py generated/qcia-comm
 
 Generated packs now ship `.obf`/`.obz` files importable by CoughDrop, Cboard, AsTeRICS Grid, and OptiKey.
 
-Run unit, fresh-output and installed-Chrome interaction tests:
+Run unit, benchmark-fixture and installed-Chrome interaction tests (`evaluate_fresh_output.py` scores the six benchmark prompts; it is not a check for an ordinary board):
 
 ```sh
 .venv/bin/python -m unittest discover -s tests
@@ -134,8 +163,10 @@ The repo doubles as a single-plugin marketplace (`.claude-plugin/marketplace.jso
 
 Installing the plugin also activates two automation layers that standalone skill copies do not have:
 
-- A `PostToolUse` hook that automatically runs the IR validator on any written `*.ir.json` and the strict eye-gaze checker on any written dwell HTML, feeding failures straight back to the agent for repair.
-- An `aac-board-qa` subagent for independent fresh-eyes QA of a generated board before it is presented as a draft.
+- A `PostToolUse` hook that automatically runs the IR validator on any written `*.ir.json` and the strict eye-gaze checker on any written dwell HTML, feeding failures straight back to the agent for repair. A freshly written board that has not been built yet gets the exact build command instead of an error.
+- An `aac-board-qa` subagent for independent fresh-eyes QA of a generated board before it is presented as a draft. It runs `build_board.py --check` and reads the board through `inspect_board.py`.
+
+The hook is a safety net. `build_board.py` runs the same checks and more, so boards are held to the same standard on hosts that do not run plugin hooks.
 
 ## Codex And Claude Code Use
 
@@ -144,6 +175,16 @@ The repository root is the plugin folder for both supported agent hosts:
 - Codex reads `.codex-plugin/plugin.json`.
 - Claude Code reads `.claude-plugin/plugin.json`.
 - Both manifests expose the same shared skill folders under `./skills/`.
+
+What differs between the hosts:
+
+| | Claude Code | Codex |
+| --- | --- | --- |
+| Skills, scripts, references | Yes | Yes |
+| `build_board.py` and `inspect_board.py` | Yes | Yes |
+| Hook on file writes | Yes | OpenAI's plugin documentation (checked November 2026) says Codex finds `hooks/hooks.json` in a plugin and runs it only after you review and trust it. The hook script reads Codex's `apply_patch` payload in unit tests, but it has not been run inside a live Codex session |
+| Reviewer subagent | `aac-board-qa` | Not available. The main skill tells the agent to review from `inspect_board.py --all` against the QA rubric |
+| Rules for changing this repository | `.claude/CLAUDE.md` points to `AGENTS.md` | `AGENTS.md` |
 
 Install or check out the whole repository folder so the manifest, skills, scripts, templates, generated examples, and tests stay together. In plugin-aware agents that namespace skills, use the pack name with the skill name, for example `$agentic-aac-board-maker:agentic-aac-board-maker` or `$agentic-aac-board-maker:eyegaze-dwell-html`.
 
@@ -158,6 +199,16 @@ Each skill folder also remains usable on its own:
 - `accent-display-fit` - display fidelity on real Accent devices and EQ-managed Edge: effective-viewport maths (Windows scaling, NuVoice Key Mode, Empower browser), fit-first layout rules, conservative engine baseline, OneDrive/USB delivery routes, and a display-fit validator.
 - `icp-backwards-mapping-assessment` - ICP backwards mapping, adapted assessment, rubrics, moderation notes, and evidence design.
 - `richard-school-resource-workflow` - Richard's broader school-resource workflow context.
+
+## What 0.10.0 changes for agents
+
+- One command, `build_board.py`, builds and checks a whole pack and lists what still needs work. It replaces about ten separate commands that had to be remembered in order.
+- Agents write a small source file. The starter template went from 48 KB (78% embedded pictures) to 5 KB, and `inspect_board.py` shows a built board as a 2-7 KB outline instead of a file of up to 468 KB.
+- A page too tall for the screen now fails the build with the size that fits. Before, a valid eye-gaze board with 160 px targets passed every check while about half of the Help, Different and Finished row was cut off at 1264 x 600.
+- A quiz-only page with no Help fails again. Since 0.9.0 the Help and core words on the pages house standards add had been satisfying those checks for every board.
+- The build reports when a label matched a house word and the agent's own wording was replaced.
+
+See `CHANGELOG.md` for the full list, including what was measured and what was not verified.
 
 ## What 0.9.0 changes in the boards
 

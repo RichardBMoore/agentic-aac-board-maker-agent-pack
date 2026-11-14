@@ -58,19 +58,19 @@ For direct generation, use this pipeline:
 teacher request
   -> intake assumptions / clarifying question only if needed
   -> communication functions
-  -> canonical AAC Board IR
-  -> schema + semantic validation
-  -> optional reviewed symbol candidates
-  -> renderer choice
-       -> single-file HTML
-       -> printable board
-       -> Open AAC Studio JSON
-       -> full resource pack
-  -> HTML/IR/runtime parity + static/browser/fresh-output QA
+  -> small board source file (<name>.source.json)
+  -> scripts/build_board.py
+       -> house standards -> canonical AAC Board IR
+       -> schema + semantic validation
+       -> single-file HTML, partner card, OBF/OBZ (Open AAC Studio JSON on request)
+       -> HTML/IR/runtime parity, eye-gaze rules, screen fit
+       -> outline of the board + what still needs attention
+  -> optional reviewed symbol candidates, then rebuild
+  -> fresh-eyes review + browser/device QA
   -> draft classroom support with real-device/team caveat
 ```
 
-Do not let an agent jump straight from teacher request to visual grid. The IR step is the guardrail against pretty, weak communication boards.
+Do not let an agent jump straight from teacher request to visual grid. Writing the board as data first is the guardrail against pretty, weak communication boards. The build is the same on every host, so the checks do not depend on plugin hooks being available.
 
 ## Duplication Rules
 
@@ -98,6 +98,6 @@ Before treating a generated resource as ready for classroom draft use:
 2. Fresh renders match committed outputs and HTML passes IR/shared-runtime parity.
 3. Access method assumptions match total active-target accounting and real browser/device-sized interaction tests.
 4. Symbols have reviewed approval or remain text fallback.
-5. A newly generated candidate passes its fresh-output fixture checks.
+5. `scripts/build_board.py` passes for the board (benchmark fixtures additionally pass their fresh-output checks).
 6. The QA rubric is green or explicitly caveated amber.
 7. The final response states unresolved system-fit and real student/device/team testing needs.
