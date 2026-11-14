@@ -14,9 +14,23 @@ python3 scripts/canonicalize_board_ir.py legacy.ir.json canonical.ir.json
 
 Canonicalisation removes renderer aliases such as `app`, top-level `name`, `settings`, `accessibility`, page `gridRows/gridColumns`, `metadata` and `licences`. Renderers also canonicalise legacy input internally, but committed/new IR files must already be canonical (`--check`).
 
+## Source File And Built IR
+
+Write a board as a small source file and let the build produce the canonical IR:
+
+```sh
+cp templates/board-json-skeleton.json shops.source.json     # then edit
+python3 scripts/build_board.py shops.source.json --out-dir shops-pack
+python3 scripts/inspect_board.py shops-pack/shops.ir.json   # read the result as an outline
+```
+
+The source is ordinary IR input with the tool-managed parts left out. The build canonicalises it (filling derivable fields such as button actions, display and student-control defaults), applies house standards and writes `<name>.ir.json`. A built IR embeds its pictures and is typically 300-450 KB, about 80% base64, so do not open or hand-edit it: change the source and rebuild. Symbols a reviewer approved in the built IR are kept when the source is rebuilt, matched by button id, label and search term; pass `--no-carry-symbols` to drop them.
+
+In a source file a button can be as short as `{"id": "btn-bread", "label": "Bread", "role": "fringe", "function": "request", "wordClass": "noun", "searchTerm": "bread"}`. A house word needs only `{"id": "btn-help", "label": "Help"}`. Actions default to speaking the label; write `actions` only for navigation, message building, schedules or evidence marking.
+
 ## Required Shape
 
-Use `templates/board-json-skeleton.json` as the complete editable starter. Canonical IR requires:
+Start from `templates/board-json-skeleton.json`. The built canonical IR requires:
 
 - safe `id`, `title`, `purpose`, audience age/tone/locale;
 - access methods/profile, target size, dwell/scan settings and total visible/setup target limits;
@@ -141,6 +155,10 @@ Never hand-edit generated HTML. Change IR or the shared runtime and re-render. P
 ### Open Board Format
 
 `scripts/render_obf.py` writes `.obf` for one page or `.obz` for multiple pages. Navigation maps to `load_board`; message actions map to supported OBF commands (`:speak`, `:clear`, `:backspace`, `:space`, `+letter`); word endings become `:ext_aac_ending_<ending>`; hidden buttons keep their grid address with `hidden: true`; every ARASAAC image carries a licence block; in `.obz` each picture is stored once under `images/`.
+
+## Screen Fit
+
+The renderer's grid cells cannot shrink below `minimumTargetSizePx`. A page taller than the viewport is cut off rather than scrolled, and the house layout keeps Help, Different and Finished on the bottom row. `scripts/display_fit.py` holds the maths; the validator warns and `scripts/build_board.py` fails when a page does not fit the 1264 x 600 floor, giving the largest target size that would. Three rows with a message bar allow 132 px. Width includes the Stop speech column, so the one-page keyboard (4 x 11) needs targets of 92 px or less at that floor.
 
 ## Validation Failures
 

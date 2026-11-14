@@ -58,6 +58,73 @@ class PayloadAndPathTests(unittest.TestCase):
                 self.assertIsNone(hook.extract_target(payload))
 
 
+class CodexPatchPayloadTests(unittest.TestCase):
+    """Codex edits files with apply_patch; the patch text names the files."""
+
+    PATCH = (
+        "*** Begin Patch\n"
+        "*** Add File: boards/new.ir.json\n+{}\n"
+        "*** Update File: boards/old.html\n@@\n-a\n+b\n"
+        "*** Update File: notes/old-name.md\n*** Move to: notes/new-name.md\n@@\n-a\n+b\n"
+        "*** Delete File: boards/gone.ir.json\n"
+        "*** End Patch\n"
+    )
+
+    def test_patch_text_in_any_documented_field_yields_written_files(self) -> None:
+        expected = [
+            Path("/work/boards/new.ir.json"), Path("/work/boards/old.html"),
+            Path("/work/notes/old-name.md"), Path("/work/notes/new-name.md"),
+        ]
+        for field in ("command", "patch", "input"):
+            with self.subTest(field=field):
+                payload = {"tool_name": "apply_patch", "cwd": "/work", "tool_input": {field: self.PATCH}}
+                self.assertEqual(expected, hook.extract_targets(payload))
+
+    def test_argv_style_command_list_is_understood(self) -> None:
+        payload = {"cwd": "/work", "tool_input": {"command": ["apply_patch", self.PATCH]}}
+        self.assertEqual(Path("/work/boards/new.ir.json"), hook.extract_targets(payload)[0])
+
+    def test_shell_command_without_a_patch_has_no_targets(self) -> None:
+        self.assertEqual([], hook.extract_targets({"cwd": "/work", "tool_input": {"command": "ls boards/*.ir.json"}}))
+
+    def test_each_patched_board_file_is_checked(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            first, second = Path(tmp) / "one.ir.json", Path(tmp) / "two.ir.json"
+            first.write_text("{}", encoding="utf-8")
+            second.write_text("{}", encoding="utf-8")
+            patch = f"*** Begin Patch\n*** Update File: {first.name}\n*** Update File: {second.name}\n*** End Patch\n"
+            with mock.patch.object(hook, "run_checker", return_value=(0, "")) as checker:
+                self.assertEqual((0, ""), run_main({"cwd": tmp, "tool_input": {"command": patch}}))
+            checked = [call.args[1] for call in checker.call_args_list if call.args[0] == hook.IR_VALIDATOR]
+            self.assertEqual([first, second], checked)
+
+
+class UnbuiltBoardTests(unittest.TestCase):
+    def test_freshly_written_board_is_told_to_build_not_that_it_failed(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "fresh.ir.json"
+            target.write_text(json.dumps({"id": "fresh", "pages": [{"id": "page-main", "buttons": [{"label": "Help"}]}]}), encoding="utf-8")
+            with mock.patch.object(hook, "run_checker") as checker:
+                code, stderr = run_main(payload_for(target))
+            checker.assert_not_called()
+        self.assertEqual(2, code)
+        self.assertIn("not built yet", stderr)
+        self.assertIn("build_board.py", stderr)
+        self.assertIn(str(target), stderr)
+        self.assertNotIn("validation failed", stderr)
+
+    def test_build_tool_named_by_the_hook_exists(self) -> None:
+        self.assertTrue(hook.BUILD_TOOL.is_file())
+
+    def test_source_files_are_left_to_the_build(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "fresh.source.json"
+            target.write_text(json.dumps({"id": "fresh", "pages": [{"id": "page-main", "buttons": []}]}), encoding="utf-8")
+            with mock.patch.object(hook, "run_checker") as checker:
+                self.assertEqual((0, ""), run_main(payload_for(target)))
+            checker.assert_not_called()
+
+
 class HookRoutingTests(unittest.TestCase):
     def test_malformed_json_and_non_object_payload_are_ignored(self) -> None:
         self.assertEqual(0, hook.main(io.StringIO("{")))

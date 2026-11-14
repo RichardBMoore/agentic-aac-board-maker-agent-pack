@@ -46,17 +46,23 @@ Produce an internal plan before file generation:
 
 For complex tasks, briefly share this plan with Richard before coding unless he asked to just build.
 
-## Phase 3 — Generate Canonical AAC Board IR
+## Phase 3 — Write The Board Source
 
-Create canonical AAC Board IR even if final output is HTML or print. Start from `templates/board-json-skeleton.json`; do not invent a smaller shape that omits schema-required access, display, student-control, system-fit, symbol, privacy or attribution fields. See `aac-board-ir.md` for controlled values and behaviour.
+Write the board as data before any visuals, even if the final output is HTML or print. Copy `templates/board-json-skeleton.json` to `<name>.source.json` and edit it. The source holds what needs judgement: pages, each button's words, role, function and word class, access, audience, partner card, teacher notes, `systemFit`, SETT/UDL/differentiation and evidence. Leave out what the tools add (house-word wording, symbols and positions, literacy pages, navigation, colours, defaults); the build fills schema-required fields it can derive. See `aac-board-ir.md` for controlled values and behaviour.
 
-This prevents the agent from jumping straight to pretty but weak boards. Renderers should preserve the IR's roles, functions, access assumptions, privacy note, attribution, teacher notes, SETT, UDL, differentiation, participation-barrier, and evidence-plan metadata.
+This prevents the agent from jumping straight to pretty but weak boards. Renderers preserve the board's roles, functions, access assumptions, privacy note, attribution, teacher notes, SETT, UDL, differentiation, participation-barrier, and evidence-plan metadata.
 
-## Phase 4 — Output Generation
+## Phase 4 — Build
 
-First run canonical `--check`, JSON Schema and semantic validation. If symbols are requested, generate a candidate review/contact sheet and apply only approved ids. Then render rather than hand-authoring target outputs.
+Run one command:
 
-Choose the renderer/output contract:
+```sh
+python3 scripts/build_board.py <name>.source.json --out-dir <pack-folder>
+```
+
+It applies house standards, runs canonical, JSON Schema and semantic validation, renders the outputs, checks parity, eye-gaze rules and screen fit, and prints an outline with a "Needs attention" list. Fix problems in the source and rebuild. Never hand-author or hand-edit target outputs, and never open the built `*.ir.json` directly (it is mostly embedded pictures): use `scripts/inspect_board.py`. If symbols are requested, generate a candidate review/contact sheet from the built IR, apply only approved ids, and rebuild.
+
+The build writes these outputs by default: the HTML board, the partner card and OBF/OBZ. The contracts are:
 
 - **Single-file HTML:** generate deterministically with `scripts/render_html.py` for direct student use.
 - **Canonical IR JSON:** best as the editable source of truth.
@@ -78,7 +84,7 @@ Run the QA rubric. Fix issues before final response where practical.
 
 Minimum checks:
 
-- Does IR canonical/schema/semantic validation pass?
+- Does `scripts/build_board.py` pass (house standards, canonical/schema/semantic validation, parity, eye-gaze rules, screen fit)?
 - Can the student say more than adult-selected answers?
 - Is there repair/escape language?
 - Does total active-target accounting pass in every interaction phase?
@@ -88,8 +94,11 @@ Minimum checks:
 - Is symbol attribution present?
 - Are privacy and filenames safe?
 - Does the IR include a differentiation/evidence route for any curriculum or QCIA task?
-- Does HTML/IR/shared-runtime parity pass, followed by browser/device tests where applicable?
-- Does a newly generated candidate folder pass `scripts/evaluate_fresh_output.py` rather than relying only on golden fixtures?
+- Have the build's TO DO items been dealt with or carried into the handover (symbols for this board's own words, partner card, teacher notes)?
+- Do browser/device tests pass where applicable?
+- Has someone who did not build the board reviewed it (the `aac-board-qa` subagent in Claude Code; otherwise a self-review from `scripts/inspect_board.py <ir> --all`)?
+
+`scripts/evaluate_fresh_output.py` is for regression-testing the pack against its six benchmark prompts. It does not evaluate an ordinary new board.
 
 ## Phase 6 — Delivery
 

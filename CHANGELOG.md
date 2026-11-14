@@ -2,6 +2,47 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.10.0 - 2026-11-15
+
+Agent workflow release: one command builds and checks a board, built boards become readable, and two guards that had stopped working are restored. Every item below came from running the pack the way an agent would and from measuring the rendered boards in Chrome.
+
+### Added
+
+- **`skills/agentic-aac-board-maker/scripts/build_board.py`**: one command that applies house standards, validates (canonical form, JSON Schema, communication and access rules), renders the HTML board, partner card and OBF/OBZ (Open AAC Studio JSON on request or when one already exists), checks HTML/IR parity, the eye-gaze rules and screen fit, then prints an outline of the finished board with a "Needs attention" list. Exit status 1 means the pack is not ready. `--check` changes nothing and fails on any failing, missing or stale file. It replaces about ten separate commands and runs the same on every host, so the checks no longer depend on plugin hooks.
+- **`skills/agentic-aac-board-maker/scripts/inspect_board.py`**: prints a board as an outline (each page as a grid, every button's words, role, word class, house word, symbol status and actions) plus what needs attention: validator failures and warnings, this board's own words with no symbol, a default partner card or teacher notes, proposed house symbols, unresolved `systemFit`. 2-7 KB for the shipped examples against files of up to 468 KB.
+- **Board source files.** Agents now write a small `<name>.source.json` and the build produces `<name>.ir.json`. A house word needs only its label; ordinary speak buttons need no `actions`. Symbols a reviewer approved in the built board are kept when the source is rebuilt (matched by button id, label and search term; `--no-carry-symbols` drops them). Existing boards with only an `.ir.json` rebuild in place.
+- **`skills/agentic-aac-board-maker/scripts/display_fit.py`**: screen-fit maths at the board level, used by the validator (warning), the outline and the build (failure). `--display-floor WIDTHxHEIGHT` states a confirmed device viewport.
+- **`AGENTS.md`** (and `.claude/CLAUDE.md`, which points to it): rules and commands for agents and people changing this repository.
+- **`browser-tests/screen-fit.spec.mjs`**: holds the fit maths to a real browser. Every example must keep its bottom row on a 1264 x 600 screen with the space above the grid inside the allowance the maths uses; a board the build accepts must fit, and a board it rejects must really have Help cut off. Before this, no browser test loaded the message-bar examples at the 600 px floor.
+
+### Fixed
+
+- **A quiz-only page with no Help passed every check.** Since 0.9.0 the Help and core words on the spelling and core-word pages that house standards add to every board satisfied the "no repair route", "noun grid" and "quiz-only" checks. Six fruit nouns with `function: answer` and no Help, Different or Finished built cleanly. Those checks now judge only the pages the author wrote. A page with three or more words and no repair word also gets a warning. All seven examples still pass with no warnings.
+- **A valid eye-gaze board could have its bottom row cut off.** The renderer's cells cannot shrink below `minimumTargetSizePx`, and a page taller than the viewport is clipped, not scrolled. A 3 x 3 gaze board with 160 px targets passed the validator, parity and the eye-gaze checker while 77 px of the Help / Different / Finished row was off the bottom of a 1264 x 600 screen (measured in Chrome). The validator's own message recommended "200+" px. The validator now warns, the build fails, and both give the largest size that fits (132 px for three rows with a message bar).
+- **`skills/accent-display-fit/scripts/check_accent_display.py` was miscalibrated for the pack's own boards.** Measured page chrome is 103 px without a message bar and 173 px with one; the checker assumed 96 and 166, and applied 166 to every board because it matched the class name in the stylesheet rather than the element. It therefore passed 135-136 px targets that clip by 2-5 px (136 px measured at 5 px over), and would have failed two-row boards without a message bar above 211 px that really fit up to 242 px. Constants are now 110 and 180 (measured plus 7 px for platform fonts), the message bar is detected as an element, and each grid size is reported once instead of once per page. `skills/accent-display-fit/references/display-fit-rules.md` carries the new numbers.
+- **The starter template could not be read by an agent.** `skills/agentic-aac-board-maker/templates/board-json-skeleton.json` was 48 KB, 78% embedded pictures, and told the agent to delete a block by hand or ship a board with no keyboard. It is now a 5 KB source file, and the gate builds it to prove it works.
+- **The QA subagent could not do its job on an installed plugin.** It looked for validators with Glob in the project folder (they live in the plugin folder) and was told to "read the resource", a 300-450 KB file. It now uses `${CLAUDE_PLUGIN_ROOT}` paths, `build_board.py --check` and `inspect_board.py`.
+- **The hook called a freshly written board a failure.** Any new `*.ir.json` failed with "must record house standards" before the agent could run the tool that records them. The hook now says the board is not built yet and gives the exact command.
+- **The skill sent agents to the wrong check.** `SKILL.md`, `agent-workflow.md` and `output-contracts.md` said to run `evaluate_fresh_output.py` on new boards. It scores only the six benchmark prompts and reports every fixture missing for anything else. The documents now say so, and the script prints a plain message.
+- **Release gate.** `scripts/check_pack.py` only checked hook scripts and agent frontmatter when the manifest named them, which it never did, so those checks did not run. They now cover the default `hooks/hooks.json` (including exec-form `args`) and `agents/` folder. CI ran `claude plugin validate . --strict`, which at this repository root validates only the marketplace file; with a deliberately broken hook, agent and skill it still passed. CI now also validates `.claude-plugin/plugin.json`, which does check them.
+
+### Changed
+
+- The build reports when a label matched a house word and the agent's own wording was replaced (for example "Why?" written to say "Why did that happen?" becomes the house word `why`, which adds "why" to the message bar).
+- `SKILL.md` workflow steps 4-9 are rewritten around the source file, the build and the outline. The QA rubric gains screen fit, Help on every authored page and house-word wording.
+- The hook also reads the Codex `apply_patch` payload (file names in the patch text) and checks every file a patch touches.
+
+### Known and not fixed here
+
+- The one-page keyboard (`literacy.keyboard.mode: "full"`, a 4 x 11 grid) at the default 96 px needs 1308 px of width including the Stop speech column. On a 1264 px screen the Stop speech control overlaps the last column by 32 px (measured). The build now fails such a board and suggests 92 px or the grouped keyboard; the renderer and `apply_house_standards.py` are unchanged.
+- The display checker still warns about `100vw`, optional chaining and a missing `<noscript>` fallback in every board the renderer produces.
+- A built IR still stores each picture once per button. Storing each picture once per board would shrink the files about fivefold but changes the canonical format.
+
+### Verified
+
+- `scripts/check_pack.py`, 151 unit tests (was 108) and 105 Playwright tests (was 96) pass in installed Chrome. All seven examples pass `build_board.py --check` and rebuild to identical files. `claude plugin validate` (CLI 2.1.206) passes for the marketplace and for the plugin.
+- Not verified: a real Accent or other student device, the EQ network, real voices, the hook inside a live Codex session, and `${CLAUDE_PLUGIN_ROOT}` substitution in the agent file inside a running Claude Code session (taken from the plugin reference documentation).
+
 ## 0.9.0 - 2026-10-04
 
 AAC output quality release: boards now behave like one consistent communication system.

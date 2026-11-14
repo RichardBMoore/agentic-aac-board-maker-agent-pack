@@ -12,7 +12,8 @@ Scoring: Green = ready for draft use; Amber = usable with caveat/fix soon; Red =
 
 Required checks:
 
-- [ ] Help/repair option included when appropriate.
+- [ ] Help/repair option included when appropriate, on every page the author wrote. The Help on the spelling and core-word pages that house standards add does not count.
+- [ ] Each button says what the request asked for. A label that matches a house word takes the house message; check the `says` and `does` columns of `scripts/inspect_board.py`.
 - [ ] Stop/Finished/Different/Not that considered.
 - [ ] Student is not spoken for in teacher notes.
 - [ ] Board supports meaningful choices, not token choices only.
@@ -42,6 +43,7 @@ Checks:
 
 - [ ] Total simultaneously active targets match `visibleTargetLimit`; setup matches `setupTargetLimit`.
 - [ ] Targets large enough.
+- [ ] Every page fits the screen it is for (1264 x 600 unless a device viewport was confirmed). A page that is too tall is cut off, not scrolled, and the bottom row holds Help, Different and Finished.
 - [ ] Keyboard fallback present for digital outputs.
 - [ ] Dwell cancellation and progress if gaze/dwell.
 - [ ] Scan order logical if switch scanning.
@@ -51,6 +53,7 @@ Red flags:
 
 - More than 9 active targets—including navigation/utilities—for an untested gaze user.
 - Scrolling required for routine gaze selections.
+- Targets enlarged past what the grid allows, so the bottom row is cut off (three rows with a message bar allow 132 px).
 - Hover-only UI without cancellation.
 - Hidden tiny controls in student mode.
 

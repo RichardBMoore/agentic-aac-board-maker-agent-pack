@@ -20,6 +20,9 @@ REFERENCES = SKILL_DIR / "references"
 SYMBOL_DIR = SKILL_DIR / "assets" / "house-symbols"
 
 NAVIGATION_ACTIONS = {"navigate-page", "next-page", "previous-page"}
+# Page patterns apply_house_standards.py adds to a board (spelling keyboard, core words, word endings).
+# The validator leaves them out when judging the pages an author wrote.
+GENERATED_PATTERNS = frozenset({"keyboard", "keyboard-letters", "core-words", "word-endings"})
 HOUSE_STANDARDS_VERSION = "1.0.0"
 
 
